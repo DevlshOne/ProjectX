@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Users><User user_id="1" user="AAA" full_name="AA SOUTH TRNG" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="2" user="aaaa" full_name="Test user for Dani" user_level="1" user_group="UE"  />
+<User user_id="3" user="AAB" full_name="AA LV Training" user_level="1" user_group="SYSTEM-TRNG"  />
+<User user_id="4" user="AAE" full_name="AAE" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="5" user="AAE2" full_name="AAE" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="6" user="aakin" full_name="Aakin Patel" user_level="1" user_group="ADMIN"  />
+<User user_id="7" user="AAM" full_name="AAM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="8" user="AAM2" full_name="AAM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="9" user="AAZ" full_name="AAZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="10" user="AAZ2" full_name="AAZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="11" user="ACB" full_name="ACB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="12" user="ACB2" full_name="ACB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="13" user="ACD" full_name="AARON DAVIS" user_level="1" user_group="94B-TAP"  />
+<User user_id="14" user="ADS" full_name="ANGELO SHOWERS" user_level="1" user_group="94B-TAP"  />
+<User user_id="15" user="AEM" full_name="AEM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="16" user="AEM2" full_name="AEM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="17" user="AER" full_name="AER" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="18" user="AER2" full_name="AER" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="19" user="AKB" full_name="AUSTIN BARDEN" user_level="1" user_group="94A-TAP"  />
+<User user_id="20" user="AKR" full_name="AMBER K RICHARDSON" user_level="1" user_group="verifiers"  />
+<User user_id="21" user="ALD" full_name="ANDREA L DONNELL" user_level="1" user_group="verifiers"  />
+<User user_id="22" user="AMR" full_name="ANNE M RAY" user_level="1" user_group="UE-TAP"  />
+<User user_id="23" user="ANDREW" full_name="ANDREW JOHNSON" user_level="1" user_group="ADMIN"  />
+<User user_id="24" user="annette" full_name="Annette Bordenave" user_level="1" user_group="managers"  />
+<User user_id="25" user="ARB" full_name="APRIL BROOKS" user_level="1" user_group="94B-TAP"  />
+<User user_id="26" user="ARH" full_name="ARH" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="27" user="ARL" full_name="ARL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="28" user="ARL2" full_name="ARL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="29" user="ASA" full_name="ASA" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="30" user="ASA2" full_name="ASA" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="31" user="AXH" full_name="AMANDA HILBURN" user_level="1" user_group="94B-TAP"  />
+<User user_id="32" user="AXM" full_name="AMANDA MCELRATH" user_level="1" user_group="94A-TAPW"  />
+<User user_id="33" user="AXR" full_name="AXR" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="34" user="AXR2" full_name="AXR" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="35" user="AZH" full_name="ARH Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="36" user="AZH2" full_name="ARH Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="37" user="BAP" full_name="BETH PITTS" user_level="1" user_group="94B-TAP"  />
+<User user_id="38" user="BAS" full_name="BRANDON A SIMPSON" user_level="1" user_group="verifiers"  />
+<User user_id="39" user="BEM" full_name="BEM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="40" user="BEM2" full_name="BEM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="41" user="bga" full_name="bga" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="42" user="BIM" full_name="BIM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="43" user="BIM2" full_name="BIM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="44" user="bmc" full_name="Barbara Castro" user_level="1" user_group="verifiers"  />
+<User user_id="45" user="BP2" full_name="BRIAN PRESTON" user_level="1" user_group="verifiers"  />
+<User user_id="46" user="BPX" full_name="BRIAN PRESTON" user_level="1" user_group="94A-TAP"  />
+<User user_id="47" user="BPXX" full_name="BRIAN PRESTON" user_level="1" user_group="94A-TAP"  />
+<User user_id="48" user="brian" full_name="Brian Layden" user_level="1" user_group="ADMIN"  />
+<User user_id="49" user="BTM" full_name="BRAD MARTIN" user_level="1" user_group="94A-TAP"  />
+<User user_id="50" user="butch" full_name="Butch Jones" user_level="1" user_group="managers"  />
+<User user_id="51" user="BXA" full_name="BGA Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="52" user="BXA2" full_name="BGA Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="53" user="BZA" full_name="BZA Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="54" user="BZM" full_name="BZM Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="55" user="KXB2" full_name="Kimberly X Bridges" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="56" user="CAB2" full_name="CAB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="57" user="CAL" full_name="CAL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="58" user="CAL2" full_name="CAL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="59" user="CAM" full_name="CYNTHIA A MCCOLLUM" user_level="1" user_group="UE-TAP"  />
+<User user_id="60" user="CAP" full_name="CAP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="61" user="CAP2" full_name="CAP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="62" user="CC" full_name="CAROLYN CONSALVO" user_level="1" user_group="UE-TAP"  />
+<User user_id="63" user="CCF2" full_name="CCF" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="64" user="CDB" full_name="CDB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="65" user="CDB2" full_name="CDB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="66" user="CDC" full_name="CARLTON D CRAIG" user_level="1" user_group="94B-TAP"  />
+<User user_id="67" user="cdf" full_name="cdf" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="68" user="cdf2" full_name="cdf" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="69" user="CDX" full_name="CARLTON D CRAIG" user_level="1" user_group="94B-TAP"  />
+<User user_id="70" user="CGA" full_name="CONNIE G AJERO" user_level="1" user_group="verifiers"  />
+<User user_id="71" user="CGO" full_name="CGO" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="72" user="CGO2" full_name="CGO" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="73" user="CGS" full_name="CGS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="74" user="CGS2" full_name="CGS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="75" user="CGW" full_name="CRYSTAL WILSON" user_level="1" user_group="94A-TAPW"  />
+<User user_id="76" user="CHO" full_name="CHO" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="77" user="CHO2" full_name="CHO" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="78" user="CHR" full_name="CARRIE H REED" user_level="1" user_group="verifiers"  />
+<User user_id="79" user="chr1" full_name="Carrie Reed" user_level="1" user_group="managers"  />
+<User user_id="80" user="CKH" full_name="CKH" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="81" user="CKH2" full_name="CKH" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="82" user="CLA" full_name="CYNNETHIA L ABDULL" user_level="1" user_group="verifiers"  />
+<User user_id="83" user="CLH" full_name="CLH" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="84" user="CLH2" full_name="CLH" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="85" user="CLL" full_name="CHRISTY LIGHTSEY" user_level="1" user_group="94B-TAP"  />
+<User user_id="86" user="CMP2" full_name="CMP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="87" user="CTR" full_name="CLIFFORD T RICH-KE" user_level="1" user_group="verifiers"  />
+<User user_id="88" user="CUR" full_name="CUR" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="89" user="CUR2" full_name="CUR" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="90" user="CXL" full_name="CURTIS LIMBAUGH" user_level="1" user_group="94B-TAP"  />
+<User user_id="91" user="Daniel" full_name="Daniel Roberson" user_level="1" user_group="ADMIN"  />
+<User user_id="92" user="DBR" full_name="DANIEL B ROBERSON" user_level="1" user_group="managers"  />
+<User user_id="93" user="SLP2" full_name="SHELLYANN L PERKIN" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="94" user="DDA" full_name="Dalisha N Allen" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="95" user="DDA2" full_name="Dalisha N Allen" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="96" user="DDH" full_name="DARON HOWARD" user_level="1" user_group="94A-TAP"  />
+<User user_id="97" user="DER" full_name="DYLAN E ROBERTS" user_level="1" user_group="verifiers"  />
+<User user_id="98" user="DLE" full_name="DONNIE ECKLES" user_level="1" user_group="94A-TAP"  />
+<User user_id="99" user="DMW" full_name="DANA WILLIAMS" user_level="1" user_group="94A-TAPW"  />
+<User user_id="100" user="DNA" full_name="Dalisha N. Allen" user_level="1" user_group="verifiers"  />
+<User user_id="101" user="DRB" full_name="DRB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="102" user="DRB2" full_name="DRB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="103" user="DSA" full_name="DSA" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="104" user="DSA2" full_name="DSA" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="105" user="DSL" full_name="DARLENE S LINDOW" user_level="1" user_group="monitors"  />
+<User user_id="106" user="DSL1" full_name="Darlene S Lindow" user_level="1" user_group="UE"  />
+<User user_id="107" user="DSL2" full_name="DARLENE S LINDOW" user_level="1" user_group="verifiers"  />
+<User user_id="108" user="DTC" full_name="DTC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="109" user="DTC2" full_name="DTC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="110" user="DXT" full_name="DBT Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="111" user="DXT2" full_name="DBT Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="112" user="DZP" full_name="DINA Z PARRA" user_level="1" user_group="verifiers"  />
+<User user_id="113" user="EAG" full_name="Elizabeth A Gresse" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="114" user="EAP" full_name="ERIC POE" user_level="1" user_group="94A-TAP"  />
+<User user_id="115" user="ECV" full_name="ECV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="116" user="ECV2" full_name="ECV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="117" user="EDF" full_name="ERIC FUGATE" user_level="1" user_group="94A-TAP"  />
+<User user_id="118" user="EGR" full_name="EGR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="119" user="EGR2" full_name="EGR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="120" user="EJC" full_name="ERICK CONTRERAS" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="121" user="ELY" full_name="ELY" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="122" user="ELY2" full_name="ELY" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="123" user="EMM" full_name="EMM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="124" user="EMM2" full_name="EMM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="125" user="EMR" full_name="EMR" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="126" user="EMR2" full_name="EMR" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="127" user="EPB" full_name="EPB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="128" user="EPB2" full_name="EPB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="129" user="KDF2" full_name="Kandace D Fitch" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="130" user="ETO" full_name="ETO" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="131" user="ETO2" full_name="ETO" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="132" user="EVD" full_name="EVD" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="133" user="EVD2" full_name="EVD" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="134" user="EXC" full_name="EPC Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="135" user="EXC2" full_name="EPC Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="136" user="EXR" full_name="EXR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="137" user="EXR2" full_name="EXR2" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="138" user="EZE" full_name="EZE Verifier" user_level="1" user_group="Verifier-Training"  />
+<User user_id="139" user="EZG" full_name="Elizabeth Gressett" user_level="1" user_group="monitors"  />
+<User user_id="140" user="EZR" full_name="EZR Verifier" user_level="1" user_group="Verifier-Training"  />
+<User user_id="141" user="FCA" full_name="FCA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="142" user="FCA2" full_name="FCA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="143" user="FCP" full_name="FCP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="144" user="FCP2" full_name="FCP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="145" user="FEP2" full_name="FEP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="146" user="FHG" full_name="FHG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="147" user="FHG2" full_name="FHG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="148" user="FTC" full_name="FTC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="149" user="FTC2" full_name="FTC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="150" user="GCD" full_name="GCD" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="151" user="GCD2" full_name="GCD" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="152" user="JYB" full_name="Justin Buse" user_level="1" user_group="SYSTEM-DVS"  />
+<User user_id="153" user="GGG" full_name="GGG" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="154" user="GGG2" full_name="GGG" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="155" user="GMF" full_name="GMF" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="156" user="GMF2" full_name="GMF" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="157" user="GMG" full_name="GMG" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="158" user="GMG2" full_name="GMG" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="159" user="GMM" full_name="GINA MOSLEY" user_level="1" user_group="94B-TAP"  />
+<User user_id="160" user="GMU" full_name="GMU" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="161" user="GMU2" full_name="GMU" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="162" user="GRB" full_name="GLENDA R BRULEY" user_level="1" user_group="verifiers"  />
+<User user_id="163" user="GRC2" full_name="GRC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="164" user="GRF" full_name="GRF" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="165" user="GRF2" full_name="GRF" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="166" user="GRZ" full_name="GRZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="167" user="GRZ2" full_name="GRZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="168" user="GWN" full_name="GWN" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="169" user="GWN2" full_name="GWN" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="170" user="GXL" full_name="GFL  Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="171" user="GXL2" full_name="GFL  Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="172" user="JPW" full_name="JOHN P WILL" user_level="1" user_group="managers"  />
+<User user_id="173" user="HXG" full_name="HWG Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="174" user="HXG2" full_name="HWG Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="175" user="HZA" full_name="HZA Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="176" user="IMG" full_name="IMG" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="177" user="IMG2" full_name="IMG" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="178" user="projectx" full_name="ProjectX" user_level="1" user_group="ADMIN"  />
+<User user_id="179" user="JAL" full_name="JAL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="180" user="JAL2" full_name="JAL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="181" user="JAV" full_name="JAV" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="182" user="JAV2" full_name="JAV" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="183" user="JBB" full_name="BLAKE BULLARD" user_level="1" user_group="94A-TAP"  />
+<User user_id="184" user="JCF" full_name="JCF" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="185" user="JCF2" full_name="JCF" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="186" user="JCG" full_name="JCG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="187" user="JCG2" full_name="JCG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="188" user="JCH" full_name="JOHN C HICKERNELL" user_level="1" user_group="DE-TAP-A"  />
+<User user_id="189" user="JCM" full_name="JOHN C MTICHELL" user_level="1" user_group="verifiers"  />
+<User user_id="190" user="JDB" full_name="JDB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="191" user="JDB2" full_name="JDB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="192" user="jec" full_name="jec" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="193" user="MRZ2" full_name="MRZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="194" user="JFV2" full_name="JFV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="195" user="JGV2" full_name="JGV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="196" user="JKP" full_name="JKP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="197" user="JKP2" full_name="JKP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="198" user="JLB" full_name="JUSTIN L BUSE" user_level="1" user_group="managers"  />
+<User user_id="199" user="JLB2" full_name="JUSTIN L BUSE" user_level="1" user_group="managers"  />
+<User user_id="200" user="JLM" full_name="JESSICA MCDANIEL" user_level="1" user_group="94A-TAPW"  />
+<User user_id="201" user="JLN" full_name="LEE NORRIS" user_level="1" user_group="managers"  />
+<User user_id="202" user="JMP" full_name="JMP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="203" user="JMP2" full_name="JMP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="204" user="JMR" full_name="JMR" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="205" user="JMR2" full_name="JMR" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="206" user="JMS" full_name="JOEL M SARLOT" user_level="1" user_group="DE-TAP-A"  />
+<User user_id="207" user="JNS" full_name="JNS" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="208" user="JNS2" full_name="JNS" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="209" user="jon" full_name="Jon Will" user_level="1" user_group="ADMIN"  />
+<User user_id="210" user="JPD2" full_name="JPD" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="211" user="JPV" full_name="JPV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="212" user="JPV2" full_name="JPV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="213" user="jpw2" full_name="Jonathan Terrance " user_level="1" user_group="managers"  />
+<User user_id="214" user="JR" full_name="JOANN ROBERSON" user_level="1" user_group="94A-TAPW"  />
+<User user_id="215" user="JRC2" full_name="JRC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="216" user="JSM" full_name="JSM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="217" user="JSM2" full_name="JSM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="218" user="JTJ" full_name="JOSH JONES" user_level="1" user_group="94A-TAP"  />
+<User user_id="219" user="JULIE" full_name="JULIE JOHNSON" user_level="1" user_group="ADMIN"  />
+<User user_id="220" user="Julio" full_name="Julio Gonzalez" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="221" user="JVP" full_name="JVP" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="222" user="JVP2" full_name="JVP" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="223" user="JWT" full_name="JEREMY THOMAS" user_level="1" user_group="94B-TAP"  />
+<User user_id="224" user="JWV" full_name="JEREMY VARNER" user_level="1" user_group="94B-TAP"  />
+<User user_id="225" user="JXB" full_name="JAB Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="226" user="JXB2" full_name="JAB Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="227" user="JXC" full_name="JEC Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="228" user="JXC2" full_name="JEC Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="229" user="JXG" full_name="JUAN X GARCIA" user_level="1" user_group="verifiers"  />
+<User user_id="230" user="JXH" full_name="JERRY HARGETT" user_level="1" user_group="94A-TAP"  />
+<User user_id="231" user="JXS" full_name="JANICE X SPEARS" user_level="1" user_group="verifiers"  />
+<User user_id="232" user="JXW" full_name="JESSICA WARD" user_level="1" user_group="94A-TAPW"  />
+<User user_id="233" user="KAL" full_name="Kurtis Lejk" user_level="1" user_group="94A-TAP"  />
+<User user_id="234" user="KAV" full_name="KAV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="235" user="KAV2" full_name="KAV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="236" user="KCZ" full_name="KCZ" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="237" user="KCZ2" full_name="KCZ" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="238" user="KDF" full_name="Kandace D Fitch" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="239" user="KEB" full_name="KEB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="240" user="KEB2" full_name="KEB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="241" user="KFM" full_name="KFM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="242" user="KFM2" full_name="KFM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="243" user="KGC" full_name="KGC" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="244" user="KJG" full_name="KATHLEEN J GILBROO" user_level="1" user_group="verifiers"  />
+<User user_id="245" user="KLC" full_name="KATHLEEN L CRAWFOR" user_level="1" user_group="verifiers"  />
+<User user_id="246" user="KLP" full_name="KLP" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="247" user="KLP2" full_name="KLP" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="248" user="JLB3" full_name="JUSTIN BUSE" user_level="1" user_group="managers"  />
+<User user_id="249" user="KOB" full_name="KOB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="250" user="KOB2" full_name="KOB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="251" user="KRI" full_name="KRI" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="252" user="KRI2" full_name="KRI" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="253" user="KSC" full_name="KSC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="254" user="KSC2" full_name="KSC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="255" user="KSS" full_name="KSS" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="256" user="KSS2" full_name="KSS" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="257" user="KWI" full_name="KARL WILLIAMS I" user_level="1" user_group="verifiers"  />
+<User user_id="258" user="MBM" full_name="MBM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="259" user="KXC" full_name="KGC Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="260" user="KXC2" full_name="KGC Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="261" user="KXL" full_name="KML Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="262" user="KXL2" full_name="KML Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="263" user="KZB" full_name="Kimberly X Bridges" user_level="1" user_group="monitors"  />
+<User user_id="264" user="KZF" full_name="Kandace Fitch" user_level="1" user_group="monitors"  />
+<User user_id="265" user="LAL" full_name="LAL" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="266" user="LAL2" full_name="LAL" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="267" user="LEP" full_name="LEP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="268" user="LEP2" full_name="LEP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="269" user="lic" full_name="lic" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="270" user="LKW" full_name="LARRY  KENT WILLIA" user_level="1" user_group="94A-TAP"  />
+<User user_id="271" user="LLF" full_name="LLF" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="272" user="LLF2" full_name="LLF" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="273" user="LMR" full_name="LMR" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="274" user="LMR2" full_name="LMR" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="275" user="LRC" full_name="LRC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="276" user="LRC2" full_name="LRC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="277" user="LSC" full_name="SCOTT CLEVELAND" user_level="1" user_group="94A-TAP"  />
+<User user_id="278" user="LSM" full_name="LSM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="279" user="LSM2" full_name="LSM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="280" user="LXC" full_name="LIC Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="281" user="LXC2" full_name="LIC Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="282" user="LZA" full_name="LZA Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="283" user="LZR" full_name="LZR Verifier" user_level="1" user_group="Verifier-Training"  />
+<User user_id="284" user="MAB" full_name="MAGDALENE A BARRY" user_level="1" user_group="UE-TAP"  />
+<User user_id="285" user="marissa" full_name="Marissa Ramirez" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="286" user="ike" full_name="Ike Samuelson" user_level="1" user_group="ADMIN"  />
+<User user_id="287" user="MBM2" full_name="MBM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="288" user="MCF" full_name="MICHAEL C FLOOD" user_level="1" user_group="DE-TAP-A"  />
+<User user_id="289" user="MDP" full_name="MICHAEL PARKER" user_level="1" user_group="verifiers"  />
+<User user_id="290" user="MGG" full_name="MGG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="291" user="MGG2" full_name="MGG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="292" user="MGL" full_name="MICHAELA LYNCH" user_level="1" user_group="94B-TAP"  />
+<User user_id="293" user="mit" full_name="Monitor In Trianin" user_level="1" user_group="monitors"  />
+<User user_id="294" user="MJG" full_name="MARIAM J GARDNER" user_level="1" user_group="verifiers"  />
+<User user_id="295" user="MJS" full_name="MICHAEL J SULLIVAN" user_level="1" user_group="managers"  />
+<User user_id="296" user="MJS1" full_name="MIKE SULLIVAN" user_level="1" user_group="managers"  />
+<User user_id="297" user="MJS2" full_name="MICHAEL J SULLIVAN" user_level="1" user_group="managers"  />
+<User user_id="298" user="MJSSPS" full_name="Michael Sullivan" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="299" user="MLP" full_name="MARY L PATT" user_level="1" user_group="verifiers"  />
+<User user_id="300" user="MNS" full_name="MNS" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="301" user="MNS2" full_name="MNS" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="302" user="MRC" full_name="MRC" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="303" user="MRC2" full_name="MRC" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="304" user="MRL" full_name="MRL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="305" user="GFL2" full_name="GFL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="306" user="MSF" full_name="MSF" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="307" user="MSF2" full_name="MSF" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="308" user="MSM" full_name="MSM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="309" user="MSM2" full_name="MSM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="310" user="MSS" full_name="MICHAEL SPENCE" user_level="1" user_group="94B-TAP"  />
+<User user_id="311" user="MXE" full_name="MALACHI X EPHRAIM" user_level="1" user_group="verifiers"  />
+<User user_id="312" user="MXG" full_name="MIRIAM X GARCIA-TA" user_level="1" user_group="verifiers"  />
+<User user_id="313" user="MXL" full_name="MRL Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="314" user="MXL2" full_name="MRL Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="315" user="MXM" full_name="MARISSA MALDANADO" user_level="1" user_group="verifiers"  />
+<User user_id="316" user="MXP" full_name="Michael Parker" user_level="1" user_group="monitors"  />
+<User user_id="317" user="MXR" full_name="MARISSA X RAMIREZ" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="318" user="MXR2" full_name="MARISSA X RAMIREZ" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="319" user="MXS" full_name="NUREKK A SANDERS" user_level="1" user_group="verifiers"  />
+<User user_id="320" user="MXZ" full_name="MRZ Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="321" user="MXZ2" full_name="MRZ Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="322" user="MZB" full_name="MZB Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="323" user="MZC" full_name="MZC Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="324" user="MZJ" full_name="MZJ Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="325" user="NCG" full_name="Nicole C Gaines" user_level="1" user_group="verifiers"  />
+<User user_id="326" user="NJG" full_name="NJG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="327" user="NJG2" full_name="NJG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="328" user="NML" full_name="NAOMI M LOPEZ-CORD" user_level="1" user_group="verifiers"  />
+<User user_id="329" user="NSB" full_name="NSB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="330" user="NSB2" full_name="NSB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="331" user="NSZ" full_name="NSZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="332" user="NSZ2" full_name="NSZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="333" user="NVP" full_name="NVP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="334" user="NVP2" full_name="NVP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="335" user="NXD" full_name="Nicole Dillman" user_level="1" user_group="verifiers"  />
+<User user_id="336" user="NXH" full_name="NICOLE HOVANEC" user_level="1" user_group="managers"  />
+<User user_id="337" user="NXH1" full_name="NICOLE X HOVANEC" user_level="1" user_group="managers"  />
+<User user_id="338" user="NXH2" full_name="NICOLE X HOVANEC" user_level="1" user_group="managers"  />
+<User user_id="339" user="OAR" full_name="OAR" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="340" user="OGV" full_name="OGV" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="341" user="OGV2" full_name="OGV" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="342" user="OMC" full_name="OMC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="343" user="OMC2" full_name="OMC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="344" user="OTZ" full_name="OTZ" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="345" user="OTZ2" full_name="OTZ" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="346" user="OXR" full_name="OAR Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="347" user="OXR2" full_name="OAR Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="348" user="PLH" full_name="PATRICIA L HOFMANN" user_level="1" user_group="monitors"  />
+<User user_id="349" user="PRC" full_name="PRC" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="350" user="PRC2" full_name="PRC" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="351" user="PZD" full_name="PZD Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="352" user="PZH" full_name="Patty Hoffman" user_level="1" user_group="monitors"  />
+<User user_id="353" user="PZJ" full_name="PZJ Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="354" user="PZM" full_name="PZM Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="355" user="QRL" full_name="Quaneadra R Langfo" user_level="1" user_group="verifiers"  />
+<User user_id="356" user="AMJ" full_name="ANDREW JOHNSON" user_level="1" user_group="ADMIN"  />
+<User user_id="357" user="raz" full_name="raz" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="358" user="raz2" full_name="raz" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="359" user="RDA" full_name="ROGER ALDRIDGE" user_level="1" user_group="94B-TAP"  />
+<User user_id="360" user="RDT" full_name="RICHARD D THOMPSON" user_level="1" user_group="DE-TAP-A"  />
+<User user_id="361" user="RDV" full_name="RICHARD VARNER" user_level="1" user_group="94B-TAP"  />
+<User user_id="362" user="REC" full_name="REC" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="363" user="REC2" full_name="REC" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="364" user="RFH" full_name="RICHARD F HEINZ" user_level="1" user_group="verifiers"  />
+<User user_id="365" user="RJB" full_name="REBECCA J BROWN" user_level="1" user_group="verifiers"  />
+<User user_id="366" user="RJG" full_name="ROBIN GARDNER" user_level="1" user_group="94B-TAP"  />
+<User user_id="367" user="RLB" full_name="RENA L BAKER" user_level="1" user_group="UE-TAP"  />
+<User user_id="368" user="RLS" full_name="R L SUMMERLIN" user_level="1" user_group="UE-TAP"  />
+<User user_id="369" user="RMP" full_name="RMP" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="370" user="RMP2" full_name="RMP" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="371" user="RWB" full_name="ROBERT BAILEY" user_level="1" user_group="94A-TAP"  />
+<User user_id="372" user="RWH" full_name="WES HAMILTON" user_level="1" user_group="94B-TAP"  />
+<User user_id="373" user="RXB" full_name="REBECCA L BLEASDEL" user_level="1" user_group="verifiers"  />
+<User user_id="374" user="RXG" full_name="RAG Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="375" user="RXG2" full_name="RAG Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="376" user="RZB" full_name="RAHSAAN J BIZZLE" user_level="1" user_group="verifiers"  />
+<User user_id="377" user="RZD" full_name="RZD Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="378" user="RZO" full_name="RZO Verifier" user_level="1" user_group="verifier-training"  />
+<User user_id="379" user="RZV" full_name="RAMIRO VAN NORMAN" user_level="1" user_group="94B-TAP"  />
+<User user_id="380" user="SBN" full_name="SBN" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="381" user="SBN2" full_name="SBN" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="382" user="scm2" full_name="SCM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="383" user="SDF" full_name="SHANTELL D FRITZ" user_level="1" user_group="verifiers"  />
+<User user_id="384" user="SDJ" full_name="DENISE JONES" user_level="1" user_group="94A-TAPW"  />
+<User user_id="385" user="SET" full_name="STEPHANIE TIPTON" user_level="1" user_group="verifiers"  />
+<User user_id="386" user="SEW" full_name="SHAWN E WEDDLE" user_level="1" user_group="verifiers"  />
+<User user_id="387" user="SGH" full_name="SHONNIE HOLMES" user_level="1" user_group="verifiers"  />
+<User user_id="388" user="SJB" full_name="SJB" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="389" user="SJB2" full_name="SJB" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="390" user="SJJ" full_name="SJJ" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="391" user="SJJ2" full_name="SJJ" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="392" user="SKI" full_name="SARAH K IVEY" user_level="1" user_group="managers"  />
+<User user_id="393" user="SKI2" full_name="SARAH K IVEY" user_level="1" user_group="managers"  />
+<User user_id="394" user="VBM" full_name="VBM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="395" user="SME" full_name="STACEY ELLISON" user_level="1" user_group="94A-TAPW"  />
+<User user_id="396" user="SMM" full_name="SHANNON M MCKENNEY" user_level="1" user_group="verifiers"  />
+<User user_id="397" user="southmn2" full_name="South Monitor 2" user_level="1" user_group="monitors"  />
+<User user_id="398" user="SRR" full_name="STEVE RILEY" user_level="1" user_group="ADMIN"  />
+<User user_id="399" user="SSS" full_name="SSS" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="400" user="SSS2" full_name="SSS" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="401" user="STM" full_name="Shakeria T McGraw" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="402" user="SVG" full_name="SVG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="403" user="SVG2" full_name="SVG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="404" user="SXB" full_name="STEVEN M BRIDGES" user_level="1" user_group="verifiers"  />
+<User user_id="405" user="SXG" full_name="SVG Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="406" user="SXG2" full_name="SVG Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="407" user="SXJ" full_name="SHIANA M JOHNSON" user_level="1" user_group="verifiers"  />
+<User user_id="408" user="SXP" full_name="Shelly Perkins" user_level="1" user_group="managers"  />
+<User user_id="409" user="SZM" full_name="Shakeria T McGraw" user_level="1" user_group="monitors"  />
+<User user_id="410" user="TAB" full_name="TIM BRIDGES" user_level="1" user_group="94A-TAP"  />
+<User user_id="411" user="TAI" full_name="TODD ISBELL" user_level="1" user_group="94A-TAP"  />
+<User user_id="412" user="TAJ" full_name="Butch Jones" user_level="1" user_group="managers"  />
+<User user_id="413" user="TEW" full_name="TYLER WILSON" user_level="1" user_group="94A-TAP"  />
+<User user_id="414" user="TLG" full_name="TLG" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="415" user="TLG2" full_name="TLG" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="416" user="TMB" full_name="TY BENNETT" user_level="1" user_group="94A-TAP"  />
+<User user_id="417" user="TMH" full_name="TRUDY HAYES" user_level="1" user_group="94B-TAP"  />
+<User user_id="418" user="ZNN" full_name="ZNN  Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="419" user="caleb" full_name="Caleb Schmucker" user_level="1" user_group="ADMIN"  />
+<User user_id="420" user="VCS" full_name="VCS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="421" user="VCS2" full_name="VCS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="422" user="VDAD" full_name="OUTBOUND AUTO DIAL" user_level="1" user_group="ADMIN"  />
+<User user_id="423" user="VDCL" full_name="INBOUND NO AGENT" user_level="1" user_group="ADMIN"  />
+<User user_id="424" user="VIR" full_name="VIR" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="425" user="VIR2" full_name="VIR" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="426" user="VXM" full_name="VBM Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="427" user="VXM2" full_name="VBM Leads" user_level="1" user_group="System-Leads-South"  />
+<User user_id="428" user="william" full_name="William Lynn" user_level="1" user_group="ADMIN"  />
+<User user_id="429" user="WSH" full_name="WANDA HARTSFIELD" user_level="1" user_group="94A-TAPW"  />
+<User user_id="430" user="WVM" full_name="WVM" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="431" user="WVM2" full_name="WVM" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="432" user="XLR" full_name="Leshia Russell" user_level="1" user_group="94monitors"  />
+<User user_id="433" user="mtrngtest" full_name="Test user" user_level="1" user_group="managers"  />
+<User user_id="434" user="xspp" full_name="Sheila Parker" user_level="1" user_group="94monitors"  />
+<User user_id="435" user="XST" full_name="STEPHANIE TIPTON" user_level="1" user_group="94monitors"  />
+<User user_id="436" user="XXE" full_name="XXE" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="437" user="XXE2" full_name="XXE" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="438" user="YCG2" full_name="YCG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="439" user="YEH" full_name="YEH" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="440" user="YEH2" full_name="YEH" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="441" user="YMH" full_name="YMH" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="442" user="YMH2" full_name="YMH" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="443" user="ZAE" full_name="ZAE Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="444" user="ZAG" full_name="ZAG Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="445" user="ZBA" full_name="ZBA Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="446" user="ZCG" full_name="ZCG Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="447" user="ZEC" full_name="ZEC Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="448" user="ZEE" full_name="ZEE Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="449" user="ZER" full_name="ZER Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="450" user="ZGA" full_name="ZGA Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="451" user="ZJP" full_name="ZJP Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="452" user="ZLA" full_name="ZLA Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="453" user="ZLC" full_name="ZLC Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="454" user="ZMB" full_name="ZMB Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="455" user="ZMC" full_name="ZMC Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="456" user="ZPM" full_name="ZPM Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="457" user="ZSG" full_name="ZSG Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="458" user="CZL" full_name="CZL Verifier" user_level="1" user_group="Verifier-Training"  />
+<User user_id="459" user="jarvis" full_name="Jarvis Mishler" user_level="1" user_group="ADMIN"  />
+<User user_id="460" user="CRK" full_name="Clifford Rich Keho" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="461" user="CRK2" full_name="Clifford Rich Keho" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="462" user="MGT" full_name="Miriam Garcia Tapi" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="463" user="MGT2" full_name="Miriam Garcia Tapi" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="464" user="EJC2" full_name="Eric Contreras" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="465" user="SLP" full_name="SHELLYANN L PERKIN" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="466" user="DBT2" full_name="DBT" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="467" user="DBT" full_name="DBT" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="468" user="RAG2" full_name="RAG" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="469" user="OAR2" full_name="OAR" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="470" user="RAG" full_name="RAG" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="471" user="KGC2" full_name="KGC" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="472" user="ARH2" full_name="ARH" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="473" user="jec2" full_name="jec" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="474" user="lic2" full_name="lic" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="475" user="JAB2" full_name="JAB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="476" user="KML" full_name="KML" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="477" user="KML2" full_name="KML" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="478" user="bga2" full_name="bga" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="479" user="HWG2" full_name="HWG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="480" user="MRL2" full_name="MRL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="481" user="YCG" full_name="YCG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="482" user="FEP" full_name="FEP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="483" user="MZS" full_name="Mike Sullivan" user_level="1" user_group="Verifier-Training"  />
+<User user_id="484" user="VBM2" full_name="VBM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="485" user="CAB" full_name="CAB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="486" user="HWG" full_name="HWG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="487" user="CCF" full_name="CCF" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="488" user="CMP" full_name="CMP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="489" user="JAB" full_name="JAB" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="490" user="JRC" full_name="JRC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="491" user="JPD" full_name="JPD" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="492" user="SCM" full_name="SCM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="493" user="JGV" full_name="JGV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="494" user="JFV" full_name="JFV" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="495" user="EPC" full_name="EPC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="496" user="EPC2" full_name="EPC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="497" user="KXB" full_name="Kimberly X Bridges" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="498" user="GRC" full_name="GRC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="499" user="southmn" full_name="South Monitor" user_level="1" user_group="monitors"  />
+<User user_id="500" user="KEL" full_name="KEL" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="501" user="KEL2" full_name="KEL" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="502" user="LBC" full_name="LBC" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="503" user="LBC2" full_name="LBC" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="504" user="ARI" full_name="ARI" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="505" user="ARI2" full_name="ARI" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="506" user="GMS" full_name="GMS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="507" user="GMS2" full_name="GMS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="508" user="VSC" full_name="VSC" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="509" user="VSC2" full_name="VSC" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="510" user="CNS" full_name="CNS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="511" user="CNS2" full_name="CNS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="512" user="YMM" full_name="YMM" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="513" user="YMM2" full_name="YMM" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="514" user="TNS" full_name="TNS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="515" user="TNS2" full_name="TNS" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="516" user="MRB" full_name="MRB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="517" user="MRB2" full_name="MRB" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="518" user="DMM" full_name="DMM" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="519" user="DMM2" full_name="DMM" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="520" user="SRM" full_name="SRM" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="521" user="SRM2" full_name="SRM" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="522" user="WVP" full_name="WVP" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="523" user="WVP2" full_name="WVP" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="524" user="JRS" full_name="JORDAN SCOTT" user_level="1" user_group="94B-TAP"  />
+<User user_id="525" user="SLW" full_name="STEPHANIE WELCH" user_level="1" user_group="94A-TAPW"  />
+<User user_id="526" user="JZM" full_name="John Mitchell" user_level="1" user_group="monitors"  />
+<User user_id="527" user="SZB" full_name="Steven Bridges" user_level="1" user_group="monitors"  />
+<User user_id="528" user="QZL" full_name="Princess Langford" user_level="1" user_group="monitors"  />
+<User user_id="529" user="RPR" full_name="PAUL ROGERS" user_level="1" user_group="94B-TAP"  />
+<User user_id="530" user="JSS" full_name="SCOTT STANLEY" user_level="1" user_group="94B-TAP"  />
+<User user_id="531" user="EAG2" full_name="Elizabeth A Gresse" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="532" user="STM2" full_name="Shakeria T McGraw" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="533" user="Sabina" full_name="Sabina Villeda" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="534" user="ZCH" full_name="ZCH Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="535" user="LMM" full_name="LISA MCGUIRE" user_level="1" user_group="94A-TAPW"  />
+<User user_id="536" user="CZK" full_name="Cliff Rich-Keho" user_level="1" user_group="monitors"  />
+<User user_id="537" user="MZT" full_name="Miriam Garcia Tapi" user_level="1" user_group="monitors"  />
+<User user_id="538" user="daniel-te" full_name="Daniel-test" user_level="1" user_group="verifiers-south"  />
+<User user_id="539" user="AOR" full_name="AOR" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="540" user="AOR2" full_name="AOR" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="541" user="COA" full_name="COA" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="542" user="COA2" full_name="COA" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="543" user="CPZ" full_name="CPZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="544" user="CPZ2" full_name="CPZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="545" user="DRP" full_name="DRP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="546" user="DRP2" full_name="DRP" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="547" user="DUC" full_name="DUC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="548" user="DUC2" full_name="DUC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="549" user="EPG" full_name="EPG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="550" user="EPG2" full_name="EPG" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="551" user="JCE" full_name="JCE" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="552" user="GEC2" full_name="GEC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="553" user="GMA" full_name="GMA" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="554" user="GMA2" full_name="GMA" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="555" user="JAE" full_name="JAE" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="556" user="JAE2" full_name="JAE" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="557" user="JCE2" full_name="JCE" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="558" user="JGN" full_name="JGN" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="559" user="JGN2" full_name="JGN" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="560" user="KSG" full_name="KSG" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="561" user="KSG2" full_name="KSG" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="562" user="MCM2" full_name="MCM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="563" user="NPP" full_name="NPP" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="564" user="NPP2" full_name="NPP" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="565" user="PVL" full_name="PVL" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="566" user="PVL2" full_name="PVL" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="567" user="ZGR" full_name="ZGR Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="568" user="QCtest" full_name="QC test " user_level="1" user_group="Verifier-Training"  />
+<User user_id="569" user="KNC" full_name="KAYLA CARTER" user_level="1" user_group="verifiers"  />
+<User user_id="570" user="mgrtraini" full_name="Manager Training" user_level="1" user_group="managers"  />
+<User user_id="571" user="ZKB" full_name="ZKB Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="572" user="NRP" full_name="NATHAN PAYNE" user_level="1" user_group="94B-TAP"  />
+<User user_id="573" user="EKR" full_name="ELIZABETH ROBINSON" user_level="1" user_group="94A-TAPW"  />
+<User user_id="574" user="GFL" full_name="GFL" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="575" user="XPH" full_name="PATTY HOFFMAN" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="576" user="XPH2" full_name="PATTY HOFFMAN" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="577" user="guillermo" full_name="guillermo" user_level="1" user_group="MANAGERS-SOUTH"  />
+<User user_id="578" user="ZZZ" full_name="ERICK CONTRERAS" user_level="1" user_group="verifiers-south"  />
+<User user_id="579" user="JYB2" full_name="Justin Buse" user_level="1" user_group="SYSTEM-DVS"  />
+<User user_id="580" user="RJS" full_name="ROBIN SANDOVAL" user_level="1" user_group="94B-TAP"  />
+<User user_id="581" user="DAP" full_name="DEBBIE PORTER" user_level="1" user_group="94B-TAP"  />
+<User user_id="582" user="LAW" full_name="LAURA WILLIAMS" user_level="1" user_group="94A-TAPW"  />
+<User user_id="583" user="SSE" full_name="SAUL EPPERSON" user_level="1" user_group="94B-TAP"  />
+<User user_id="584" user="LXM" full_name="LIBBY MCINTOSH" user_level="1" user_group="94B-TAP"  />
+<User user_id="585" user="LMX" full_name="LIBBY MCINTOSH" user_level="1" user_group="94B-TAP"  />
+<User user_id="586" user="STE" full_name="STEPHANIE TIPTON" user_level="1" user_group="94A-TAPW"  />
+<User user_id="587" user="ARO" full_name="ANDREW ODEN" user_level="1" user_group="94B-TAP"  />
+<User user_id="588" user="JWTX" full_name="JEREMY THOMAS" user_level="1" user_group="verifiers"  />
+<User user_id="589" user="MRZ" full_name="MRZ" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="590" user="ZGF" full_name="ZGF Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="591" user="ZJZ" full_name="JORDAN" user_level="1" user_group="verifiers-south"  />
+<User user_id="592" user="APA" full_name="APA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="593" user="APA2" full_name="APA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="594" user="ABC" full_name="ABC" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="595" user="ABC2" full_name="ABC" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="596" user="BSR" full_name="BSR" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="597" user="BSR2" full_name="BSR" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="598" user="BRM" full_name="BRM" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="599" user="BRM2" full_name="BRM" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="600" user="BHB" full_name="BHB" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="601" user="BHB2" full_name="BHB" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="602" user="ECR" full_name="ECR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="603" user="ECR2" full_name="ECR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="604" user="FNO" full_name="FNO" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="605" user="FNO2" full_name="FNO" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="606" user="GEA" full_name="GEA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="607" user="GEA2" full_name="GEA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="608" user="GOG" full_name="GOG" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="609" user="GOG2" full_name="GOG" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="610" user="GGM" full_name="GGM" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="611" user="GGM2" full_name="GGM" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="612" user="JBV" full_name="JBV" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="613" user="JBV2" full_name="JBV" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="614" user="JPS" full_name="JPS" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="615" user="JPS2" full_name="JPS" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="616" user="JAA" full_name="JAA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="617" user="JAA2" full_name="JAA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="618" user="JSA" full_name="JSA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="619" user="JSA2" full_name="JSA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="620" user="KSD" full_name="KSD" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="621" user="KSD2" full_name="KSD" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="622" user="KJA" full_name="KJA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="623" user="KJA2" full_name="KJA" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="624" user="KBZ" full_name="KBZ" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="625" user="KBZ2" full_name="KBZ" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="626" user="KAR" full_name="KAR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="627" user="KAR2" full_name="KAR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="628" user="LES" full_name="LES" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="629" user="LES2" full_name="LES" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="630" user="MBS" full_name="MBS" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="631" user="MBS2" full_name="MBS" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="632" user="SGR" full_name="SGR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="633" user="SGR2" full_name="SGR" user_level="1" user_group="SYSTEM-TRNG-SOUTH"  />
+<User user_id="634" user="WVG" full_name="WVG" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="635" user="WVG2" full_name="WVG" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="636" user="WPM" full_name="WPM" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="637" user="WPM2" full_name="WPM" user_level="1" user_group="SYSTEM-DVS-SOUTH"  />
+<User user_id="638" user="GEC" full_name="GEC" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="639" user="MCM" full_name="MCM" user_level="1" user_group="SYSTEM-BCRSF-SOUTH"  />
+<User user_id="640" user="EJT" full_name="EMILY THOMAS" user_level="1" user_group="94A-TAPW"  />
+<User user_id="641" user="BNW" full_name="BRITTANY WHITE" user_level="1" user_group="94B-TAP"  />
+<User user_id="642" user="TFS" full_name="TINA STRICKLAND" user_level="1" user_group="verifiers"  />
+<User user_id="643" user="JDH" full_name="JOHN HODGE" user_level="1" user_group="94A-TAP"  />
+<User user_id="644" user="ZAC" full_name="ZAC Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="645" user="ZAF" full_name="ZAF Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="646" user="TXS" full_name="TINA STRICKLAND" user_level="1" user_group="verifiers"  />
+<User user_id="647" user="ZMO" full_name="ZMO Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="648" user="ZCC" full_name="ZCC Verifier" user_level="1" user_group="verifiers-south"  />
+<User user_id="649" user="MMG" full_name="Mariam J Gardner" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="650" user="MMG2" full_name="Mariam J Gardner" user_level="1" user_group="SYSTEM-BCRSF"  />
+<User user_id="651" user="WMR" full_name="WILLIAM MCDONALD" user_level="1" user_group="94B-TAP"  />
+<User user_id="652" user="JPP" full_name="JASON PICKETT" user_level="1" user_group="94B-TAP"  />
+<User user_id="653" user="WRM" full_name="WILLIAM MCDONALD" user_level="1" user_group="94B-TAP"  />
+<User user_id="654" user="DHC" full_name="DANIEL CROWDER" user_level="1" user_group="94B-TAP"  />
+<User user_id="655" user="MTL" full_name="MARK LYONS" user_level="1" user_group="94B-TAP"  />
+<User user_id="656" user="BDJ" full_name="BRIDGETTE JONES" user_level="1" user_group="94B-TAP"  />
+<User user_id="657" user="ANG" full_name="ATHANASIA GERONTAK" user_level="1" user_group="94B-TAP"  />
+<User user_id="658" user="BLT" full_name="BRANDIS THRASHER" user_level="1" user_group="94B-TAP"  />
+<User user_id="659" user="JKH" full_name="JUSTIN HARRISON" user_level="1" user_group="94B-TAP"  />
+<User user_id="660" user="AZS" full_name="ARTEMAS SMITH" user_level="1" user_group="94B-TAP"  />
+<User user_id="661" user="DCT" full_name="DAVID TIPTON" user_level="1" user_group="94A-TAP"  />
+<User user_id="662" user="CRD" full_name="CHRIS DOSSIA" user_level="1" user_group="94B-TAP"  />
+</Users>
