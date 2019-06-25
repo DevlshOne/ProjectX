@@ -478,7 +478,7 @@ class LoginTracker{
 
 		<table border="0" align="center">
 		<tr>
-			<th align="left" height="30">User ID:</th>
+			<th align="left" height="30" width="100">User ID:</th>
 			<td><?=htmlentities($row['user_id'])?></td>
 		</tr>	
 		<tr>
@@ -498,12 +498,42 @@ class LoginTracker{
 			<td><?=htmlentities($row['section'])?></td>
 		</tr>
 		<tr>
-			<th align="left" height="30">Script ID:</th>
-			<td><?=htmlentities($row['script_id'])?></td>
+			<th align="left" height="30">Campaign:</th>
+			<td><?=htmlentities($row['script_id'])?> - <?
+
+				$campaign_info = $_SESSION['dbapi']->campaigns->getByID($row['script_id']);
+
+				if($campaign_info){	
+					
+					echo htmlentities($campaign_info['name']);
+				
+				} else {
+
+					echo "Name not available";
+
+				}
+			
+			
+			?></td>
 		</tr>
 		<tr>
-			<th align="left" height="30">Voice ID:</th>
-			<td><?=htmlentities($row['voice_id'])?></td>
+			<th align="left" height="30">Voice:</th>
+			<td><?=htmlentities($row['voice_id'])?> - <?
+
+				$voice_info = $_SESSION['dbapi']->voices->getByID($row['voice_id']);
+
+				if($voice_info){	
+					
+					echo htmlentities($voice_info['name']);
+				
+				} else {
+
+					echo "Name not available";
+
+				}
+
+
+			?></td>
 		</tr>			
 		<tr>
 			<th align="left" height="30">IP:</th>
