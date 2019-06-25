@@ -53,7 +53,7 @@ class AnsweringMachines{
 
 
 		$res = query(
-				"SELECT `lead_id`,`vici_cluster_id`, `phone_num` FROM `lead_tracking` ".
+				"SELECT DISTINCT(`phone_num`) FROM `lead_tracking` ".
 				" WHERE `time` BETWEEN '$stime' AND '$etime' ".
 				" AND `dispo`='".mysqli_real_escape_string($_SESSION['db'], $dispo)."' ".
 
@@ -66,36 +66,77 @@ class AnsweringMachines{
 
 		echo date("h:i:s m/d/Y")." - ".number_format(mysqli_num_rows($res))." records to be processed.\n";
 
+		$phone_arr = array();
+
 		$z=0;
+
+		// GO THROUGH EACH DISTINCT PHONE NUMBER
 		while($data = mysqli_fetch_row($res)){
 
-			list($lead_id, $vici_cluster_id, $phone) = $data;
+			list($phone) = $data;
 
+			// GRAB EVERY CALL WE'VE MADE TO THEM IN THE LAST 30 DAYS
 			$re2 = query(
-					"SELECT `id`,`lead_id`,`vici_cluster_id`,`time`,`dispo` FROM `lead_tracking` ".
+					"SELECT `id`,`lead_id`,`vici_cluster_id`,`time`,`dispo`,`campaign` FROM `lead_tracking` ".
 					" WHERE `phone_num`='".mysqli_real_escape_string($_SESSION['db'], $phone)."' ".
 					(($timeframe == 'AM' || $timeframe == 'PM')?" AND FROM_UNIXTIME(time,'%p')='".$timeframe."'":'').
 					"",1);
 
 			$bad_dispo_cnt = 0;
 
+
+
 			while($row = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
 
+				// IF ANY OTHER DISPO FOUND, KICK OUT AND SKIP THE NUMBER
 				if(strtoupper($row['dispo']) != strtoupper($dispo)){
 					$bad_dispo_cnt++;
 					break;
 				}
 
+				if(!array_key_exists($phone, $phone_arr)){
+					$phone_arr[$phone] = array();
+				}
 
-
+				$phone_arr[$phone][] = $row;
 			}
+
 
 			// IF EVEN A SINGLE BAD DISPO FOUND, REJECT THE LEAD
 			if($bad_dispo_cnt > 0){
 
+				unset($phone_arr[$phone]);
+
 				continue;
 			}
 
+
+			if(count($phone_arr[$phone]) < $num_times){
+
+				unset($phone_arr[$phone]);
+
+			}else{
+
+
+				if(count($phone_arr[$phone]) >= $this->call_attempts_dnc_limit){
+					echo "PHONE $phone - DNC LIMIT HIT!\n";
+				}else{
+
+					echo "PHONE $phone - Pushed for rotation!\n";
+				}
+
+			}
+
+
+
+
+
+
+		} // END WHILE(distinct phone numbers)
+
+
+
+		return $phone_arr;
 //
 //			// GET COUNT OF ANY DISPO BESIDES THE ONE SPECIFIED
 //			list($notcnt) = queryROW(
@@ -133,11 +174,11 @@ class AnsweringMachines{
 //
 //				$z++;
 //			}
-		}
-
-
-
-		return $out;
+//		}
+//
+//
+//
+//		return $out;
 	}
 
 
@@ -148,6 +189,9 @@ class AnsweringMachines{
 			$stime = mktime(0,0,0);
 			$etime = mktime(23,59,59);
 
+			// MOVE IT BACK 1 DAY!
+			$stime = $stime - 86400;
+			$etime = $etime - 86400;
 
 			$ignore_list_sql = '';
 
