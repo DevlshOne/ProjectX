@@ -50,6 +50,7 @@ class DBAPI {
 		$extensions,
 		$messages,
 		$names,
+		$login_tracker,
 		$problems,
 		$scripts,
 		$users,
@@ -200,7 +201,11 @@ class DBAPI {
 		include_once($_SESSION['site_config']['basedir']."dbapi/names.db.php");
 		$this->names = new NamesAPI();
 
+		## LOGIN TRACKER
+		include_once($_SESSION['site_config']['basedir']."dbapi/login_tracker.db.php");
+		$this->login_tracker = new LoginTrackerAPI();
 
+		## Problems
 		include_once($_SESSION['site_config']['basedir']."dbapi/problems.db.php");
 		$this->problems = new ProblemsAPI();
 

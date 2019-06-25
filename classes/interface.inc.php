@@ -108,6 +108,7 @@ class InterfaceClass{
 					checkAccess('employee_hours')	||
 					checkAccess('ringing_calls')	||
 					checkAccess('messages')			||
+					checkAccess('login_tracker')	||
 					checkAccess('server_status')	||
 					checkAccess('extensions')
 					){
@@ -141,6 +142,10 @@ class InterfaceClass{
 
 							if(checkAccess('messages')){
 								?><li><a href="?area=messages&no_script=1" onclick="loadSection(this.href);return false">Agent Messages</a></li><?
+							}
+
+							if(checkAccess('login_tracker')){
+								?><li><a href="?area=login_tracker&no_script=1" onclick="loadSection(this.href);return false">Login Tracker</a></li><?
 							}
 
 							if(checkAccess('server_status')){
