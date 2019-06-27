@@ -16,6 +16,9 @@ class AnsweringMachines{
 	var $dnc_default_duration = 15768000; // (15768000 = Half a year)
 
 
+	var $AM_type_code = "7";
+	var $PM_type_code = "8";
+
 	function AnsweringMachines(){
 
 
@@ -209,6 +212,53 @@ class AnsweringMachines{
 	}
 
 
+
+	function findOrAddViciListID($type_code, $row){
+
+		$campaign = $row['campaign'];
+
+		$base_list_id = $row['list_id'];
+
+		if($type_code == $this->AM_type_code){
+			$time_mode = "AM";
+		}else{
+			$time_mode = "PM";
+		}
+
+		list($list_id) = queryROW("SELECT list_id FROM `vicidial_lists` WHERE `list_id` LIKE '".mysqli_real_escape_string($_SESSION['db'], $type_code)."%' AND campaign_id='".mysqli_real_escape_string($_SESSION['db'],$campaign)."'");
+
+		if($list_id)return $list_id;
+
+
+		// FIND THE NEXT OPEN ID IN OUR RANGE
+		list($last_id) = queryROW("SELECT MAX(list_id) FROM vicidial_lists ".
+								" WHERE list_id REGEXP '^".mysqli_real_escape_string($_SESSION['db'], $type_code)."[[:digit:]]{2}".mysqli_real_escape_string($_SESSION['db'],$base_list_id)."$' ");
+
+		echo "Highest List ID in use: ".$last_id."\n";
+
+		$new_list_id = $last_id;
+		$new_list_id[2] = intval($new_list_id[2])+1;
+
+		// CREATE THE LIST ID
+		echo "New List ID to create: ".$new_list_id."\n";
+
+		// RETURN THE NEW LIST ID
+
+		$dat['list_id'] = $new_list_id;
+		$dat['list_name'] = $campaign." AnsM-Gen-".$time_mode;
+		$dat['campaign_id'] = $campaign;
+		$dat['active'] = 'N';
+		$dat['list_description'] = "Answering Machine generated ".$time_mode." rotation list";
+		$dat['list_changedate'] = date("Y-m-d H:i:s");
+
+
+		aadd($dat, "vicidial_lists");
+
+		$list_id = mysqli_insert_id($_SESSION['db']);
+
+
+		return $list_id;
+	}
 
 
 	function handlePOST(){
