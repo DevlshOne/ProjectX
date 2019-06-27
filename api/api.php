@@ -84,6 +84,14 @@
 			$names->handleSecondaryAjax();
 
 			break;
+
+		case 'login_tracker':
+
+			include_once($basedir."api/login_tracker.api.php");
+			$login_tracker = new API_LoginTracker();
+			$login_tracker->handleSecondaryAjax();
+
+			break;				
 		case 'voice':
 
 			include_once($basedir."api/voices.api.php");
@@ -287,6 +295,14 @@
 		$names->handleAPI();
 
 		break;
+
+	case 'login_tracker':
+
+		include_once($basedir."api/login_tracker.api.php");
+		$login_tracker = new API_LoginTracker();
+		$login_tracker->handleAPI();
+
+		break;		
 
 	case 'problems':
 

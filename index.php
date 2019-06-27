@@ -519,7 +519,22 @@
 
 				}
 
+				break;
 
+			case 'login_tracker':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['login_tracker'] == 'yes') // MANAGERS WITH LOGIN TRACKER ACCESS
+				){
+
+					include_once("classes/login_tracker.inc.php");
+					$_SESSION['login_tracker']->handleFLOW();
+
+				}else{
+
+					accessDenied("LoginTracker");
+
+				}				
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //
