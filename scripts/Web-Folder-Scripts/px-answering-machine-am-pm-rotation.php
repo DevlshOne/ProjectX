@@ -20,10 +20,11 @@
 	// CONNECT PX DB
 	connectPXDB();
 
-
+	// ROTATE AM TO PM LIST
 	$_SESSION['answering_machines']->extractAnswerDispos('AM');
 
-
+	// ROTATE PM TO AM LIST
+	$_SESSION['answering_machines']->extractAnswerDispos('PM');
 
 
 
