@@ -13,51 +13,20 @@ class API_LoginTracker{
 
 	function handleAPI(){
 
-
-
 		if(!checkAccess('login_tracker')){
-
 
 			$_SESSION['api']->errorOut('Access denied to Login Tracker');
 
 			return;
 		}
 
-//		if($_SESSION['user']['priv'] < 5){
-//
-//
-//			$_SESSION['api']->errorOut('Access denied to non admins.');
-//
-//			return;
-//		}
-
 		switch($_REQUEST['action']){
-		case 'delete':
-
-			$id = intval($_REQUEST['id']);
-
-			//$row = $_SESSION['dbapi']->campaigns->getByID($id);
-
-
-			$_SESSION['dbapi']->login_tracker->delete($id);
-
-			logAction('delete', 'logins', $id, "");
-
-
-			$_SESSION['api']->outputDeleteSuccess();
-
-
-			break;
-
 		case 'view':
 
 
 			$id = intval($_REQUEST['id']);
 
 			$row = $_SESSION['dbapi']->login_tracker->getByID($id);
-
-
-
 
 			## BUILD XML OUTPUT
 			$out = "<".$this->xml_record_tagname." ";
@@ -72,50 +41,7 @@ class API_LoginTracker{
 			$out .= " />\n";
 
 
-
-
-
-
-			///$out .= "</".$this->xml_record_tagname.">";
-
 			echo $out;
-
-
-
-			break;
-		case 'edit':
-
-			$id = intval($_POST['adding_login']);
-
-
-			unset($dat);
-
-
-			$dat['username'] = trim($_POST['username']);
-			$dat['result'] = trim($_POST['result']);
-			$dat['section'] = intval($_POST['section']);
-
-			if($id){
-
-				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->login_tracker->table);
-
-				logAction('edit', 'logins', $id, "Username=".$dat['username']);
-
-			}else{
-
-
-
-				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->login_tracker->table);
-				$id = mysqli_insert_id($_SESSION['dbapi']->db);
-
-
-				logAction('add', 'logins', $id, "Username=".$dat['username']);
-			}
-
-
-
-
-			$_SESSION['api']->outputEditSuccess($id);
 
 
 
@@ -124,14 +50,9 @@ class API_LoginTracker{
 		default:
 		case 'list':
 
-
-
 			$dat = array();
 			$totalcount = 0;
 			$pagemode = false;
-
-
-
 
 
 			## ID SEARCH
@@ -169,8 +90,6 @@ class API_LoginTracker{
 
 			}			
 
-
-
 			## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
 			if(isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])){
 
@@ -194,21 +113,16 @@ class API_LoginTracker{
 			}
 
 
-
-
-
-
 			$res = $_SESSION['dbapi']->login_tracker->getResults($dat);
 
 
 
-	## OUTPUT FORMAT TOGGLE
+			## OUTPUT FORMAT TOGGLE
 			switch($_SESSION['api']->mode){
 			default:
+
+			## GENERATE XML
 			case 'xml':
-
-
-		## GENERATE XML
 
 				if($pagemode){
 
@@ -222,7 +136,7 @@ class API_LoginTracker{
 				$out .= '</'.$this->xml_parent_tagname.">";
 				break;
 
-		## GENERATE JSON
+			## GENERATE JSON
 			case 'json':
 
 				$out = '['."\n";
@@ -234,7 +148,7 @@ class API_LoginTracker{
 			}
 
 
-	## OUTPUT DATA!
+			## OUTPUT DATA!
 			echo $out;
 
 		}
@@ -244,18 +158,12 @@ class API_LoginTracker{
 
 	function handleSecondaryAjax(){
 
-
-
 		$out_stack = array();
 
-		//print_r($_REQUEST);
 
 		foreach($_REQUEST['special_stack'] as $idx => $data){
 
 			$tmparr = preg_split("/:/",$data);
-
-			//print_r($tmparr);
-
 
 			switch($tmparr[1]){
 			default:
@@ -271,9 +179,8 @@ class API_LoginTracker{
 					$out_stack[$idx] = '-';
 				}else{
 
-					//echo "ID#".$tmparr[2];
-
 					$out_stack[$idx] = $_SESSION['dbapi']->voices->getName($tmparr[2]);
+
 				}
 
 				break;
@@ -285,11 +192,8 @@ class API_LoginTracker{
 
 		}
 
-
-
 		$out = $_SESSION['api']->renderSecondaryAjaxXML('Data',$out_stack);
 
-		//print_r($out_stack);
 		echo $out;
 
 	} ## END HANDLE SECONDARY AJAX

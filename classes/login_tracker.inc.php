@@ -7,39 +7,37 @@ $_SESSION['login_tracker'] = new LoginTracker;
 
 class LoginTracker{
 
-	var $table		= 'logins';		## Classes main table to operate on
-	var $orderby	= 'time';		## Default Order field
-	var $orderdir	= 'DESC';		## Default order direction
+	var $table		= 'logins';					## Class main table to operate on
+	var $orderby	= 'time';					## Default Order field
+	var $orderdir	= 'DESC';					## Default order direction
 
 
 	## Page  Configuration
-	var $pagesize	= 20;	## Adjusts how many items will appear on each page
-	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+	var $pagesize	= 20;						## Adjusts how many items will appear on each page
+	var $index		= 0;						## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
 
-	var $index_name = 'login_tracker_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-	var $frm_name = 'login_trackernextfrm';
+	var $index_name = 'login_tracker_list';		## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+	var $frm_name 	= 'login_trackernextfrm';
 
-	var $order_prepend = 'login_tracker_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+	var $order_prepend = 'login_tracker_';		## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
 	function LoginTracker(){
 
-
-		## REQURES DB CONNECTION!
-
-
-
 		$this->handlePOST();
+
 	}
 
 
+	## NOT USED CURRENTLY
 	function handlePOST(){
 
 
 	}
 
+	## HANDLE FLOW BASED ON QUERY STRINGS
 	function handleFLOW(){
-		# Handle flow, based on query string
 
+		## CHECK FOR FEATURE ACCESS
 		if(!checkAccess('login_tracker')){
 
 
@@ -49,23 +47,22 @@ class LoginTracker{
 
 		}else{
 
+			## DISPLAY MAKE ADD DIALOG OR LIST ENTRIES BASED ON QUERY STRING
 			if(isset($_REQUEST['add_login'])){
 
 				$this->makeAdd($_REQUEST['add_login']);
 
 			}else{
+
 				$this->listEntrys();
+
 			}
 
 		}
 
 	}
 
-
-
-
-
-
+	## LIST ENTRIES FROM DATABASE
 	function listEntrys(){
 
 
@@ -83,7 +80,6 @@ class LoginTracker{
 				['id','align_left'],
 				['[time:time]','align_left'],
 				['username','align_left'],
-				//['[get:voice_name:voice_id]','align_center'],
 				['result','align_left'],
 				['section','align_left'],
 				['ip','align_left']
@@ -126,14 +122,16 @@ class LoginTracker{
 				// CHECK IF WE ARE ALREADY LOADING THIS DATA
 				if(val == true){
 
-					//console.log("NAMES ALREADY LOADING (BYPASSED) \n");
 					return;
+
 				}else{
 
 					eval('logintracker_loading_flag = true');
 				}
 
 				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
+
+				$('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
 
 				loadAjaxData(getLoginsURL(),'parseLogins');
 
@@ -213,13 +211,6 @@ class LoginTracker{
 			}
 
 
-			var loginsrchtog = false;
-
-			function toggleLoginSearch(){
-				loginsrchtog = !loginsrchtog;
-				ieDisplay('login_search_table', loginsrchtog);
-			}
-
 		</script>
 		<div id="dialog-modal-add-login" title="Adding new Login" class="nod">
 		<?
@@ -231,7 +222,6 @@ class LoginTracker{
 
 		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadLogins();return false">
 			<input type="hidden" name="searching_login">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
 
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
@@ -240,11 +230,7 @@ class LoginTracker{
 				<table border="0" width="100%" >
 				<tr>
 					<td width="500">
-						Logins
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<?#<input type="button" value="Add" onclick="displayAddLoginDialog(0)">?>
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Search" onclick="toggleLoginSearch()">
+						Login Tracker
 					</td>
 
 					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadLogins();return false">
@@ -273,9 +259,13 @@ class LoginTracker{
 		</tr>
 
 		<tr>
-			<td colspan="2"><table border="0" width="100%" id="login_search_table" class="nod">
+			<td colspan="2"><table border="0" width="100%" id="login_search_table">
 			<tr>
-				<td rowspan="2"></td>
+				<td rowspan="2" width="100" align="center" style="border-right:1px solid #000">
+
+					<span id="total_count_div"></span>
+
+				</td>
 				<th class="row2">ID</th>
 				<th class="row2">Username</th>
 				<th class="row2">Result</th>
@@ -346,7 +336,7 @@ class LoginTracker{
 
 	}
 
-
+	## DISPLAY MAKE ADD FORM WHICH IS DISPLAY ONLY
 	function makeAdd($id){
 
 		$id=intval($id);
@@ -360,110 +350,6 @@ class LoginTracker{
 		}
 
 		?><script>
-
-			function validateLoginField(name,value,frm){
-
-				//alert(name+","+value);
-
-
-				switch(name){
-				default:
-
-					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-					return true;
-					break;
-
-				case 'filename':
-
-
-					if(!value)return false;
-
-					return true;
-
-
-					break;
-
-				}
-				return true;
-			}
-
-
-
-			function checkLoginFrm(frm){
-
-
-				var params = getFormValues(frm,'validateLoginField');
-
-
-				// FORM VALIDATION FAILED!
-				// param[0] == field name
-				// param[1] == field value
-				if(typeof params == "object"){
-
-					switch(params[0]){
-					default:
-
-						alert("Error submitting form. Check your values");
-
-						break;
-
-					case 'filename':
-
-						alert("Please enter the filename for this name.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-
-					}
-
-				// SUCCESS - POST AJAX TO SERVER
-				}else{
-
-
-					//alert("Form validated, posting");
-
-					$.ajax({
-						type: "POST",
-						cache: false,
-						url: 'api/api.php?get=logins&mode=xml&action=edit',
-						data: params,
-						error: function(){
-							alert("Error saving user form. Please contact an admin.");
-						},
-						success: function(msg){
-
-//alert(msg);
-
-							var result = handleEditXML(msg);
-							var res = result['result'];
-
-							if(res <= 0){
-
-								alert(result['message']);
-
-								return;
-
-							}
-
-
-							loadLogins();
-
-
-							displayAddLoginDialog(res);
-
-							alert(result['message']);
-
-						}
-
-
-					});
-
-				}
-
-				return false;
-
-			}
-
-
 
 
 			// SET TITLEBAR
@@ -544,7 +430,6 @@ class LoginTracker{
 
 
 	}
-
 
 
 

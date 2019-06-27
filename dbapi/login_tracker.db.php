@@ -10,19 +10,9 @@ class LoginTrackerAPI{
 	var $table = "logins";
 
 
-
 	/**
-	 * Marks a campaign as deleted
-	 */
-	function delete($id){
-
-		return $_SESSION['dbapi']->adelete($id,$this->table);
-	}
-
-
-	/**
-	 * Get a Name by ID
-	 * @param 	$id		The database ID of the record
+	 * Get a Login by ID
+	 * 	@param 	$id		The database ID of the record
 	 * 	 * @return	assoc-array of the database record
 	 */
 	function getByID($id){
@@ -32,21 +22,6 @@ class LoginTrackerAPI{
 						" WHERE id='".$id."' "
 
 					);
-	}
-
-
-	function getLogin($id){
-		$id=intval($id);
-		list($username) = $_SESSION['dbapi']->queryROW("SELECT username FROM `".$this->table."` ".
-						" WHERE id='".$id."' ");
-		return $username;
-	}
-
-	function getByUsername($username){
-		$id=intval($id);
-		list($username) = $_SESSION['dbapi']->queryROW("SELECT username FROM `".$this->table."` ".
-						" WHERE username LIKE '".mysqli_real_escape_string($_SESSION['dbapi']->db,$username)."' ");
-		return $filename;
 	}
 
 
@@ -75,7 +50,7 @@ class LoginTrackerAPI{
 		$sql = "SELECT $fields FROM `".$this->table."` WHERE 1 ";
 
 
-	## ID FIELD SEARCH
+		## ID FIELD SEARCH
 		## ARRAY OF id's SEARCH
 		if(is_array($info['id'])){
 
@@ -99,7 +74,7 @@ class LoginTrackerAPI{
 
 
 
-	### USERNAME SEARCH
+		### USERNAME SEARCH
 		## ARRAY OF STRINGS, OR SEPERATED SEARCH
 		if(is_array($info['username'])){
 
@@ -121,7 +96,7 @@ class LoginTrackerAPI{
 
 		}
 
-	### RESULT SEARCH
+		### RESULT SEARCH
 		## ARRAY OF STRINGS, OR SEPERATED SEARCH
 		if(is_array($info['result'])){
 
@@ -143,7 +118,7 @@ class LoginTrackerAPI{
 
 		}	
 		
-	### SECTION SEARCH
+		### SECTION SEARCH
 		## ARRAY OF STRINGS, OR SEPERATED SEARCH
 		if(is_array($info['section'])){
 
@@ -165,7 +140,7 @@ class LoginTrackerAPI{
 
 		}
 		
-	### IP SEARCH
+		### IP SEARCH
 		## ARRAY OF STRINGS, OR SEPERATED SEARCH
 		if(is_array($info['ip'])){
 
@@ -188,7 +163,7 @@ class LoginTrackerAPI{
 		}		
 
 
-	## SKIP/IGNORE ID's
+		## SKIP/IGNORE ID's
 		if(isset($info['skip_id'])){
 
 			$sql .= " AND (";
@@ -210,7 +185,7 @@ class LoginTrackerAPI{
 		}
 
 
-	### ORDER BY
+		### ORDER BY
 		if(is_array($info['order'])){
 
 			$sql .= " ORDER BY ";
@@ -230,9 +205,6 @@ class LoginTrackerAPI{
 						$info['limit']['count'];
 
 		}
-
-
-		#echo $sql;
 
 		## RETURN RESULT SET
 		return $_SESSION['dbapi']->query($sql);
