@@ -389,7 +389,7 @@ class API_Lead_Management{
 
 
 			// MUST'VE BEEN A SALE, BUT IS OVVVERRRR NOWWWW
-			if(($row['dispo'] == 'SALE' || $row['dispo'] == 'PAIDCC') || $row['dispo'] == 'SALECC' && $dat['dispo'] != $row['dispo']){
+			if(($row['dispo'] == 'SALE' || $row['dispo'] == 'PAIDCC' || $row['dispo'] == 'SALECC') && $dat['dispo'] != $row['dispo']){
 
 
 				// CHANGING FROM SALE TO PAIDCC
@@ -802,7 +802,7 @@ class API_Lead_Management{
 
 				$xfer_id = $xfer['id'];
 
-				if($dispo == 'SALE' || $dispo == 'PAIDCC'){
+				if($dispo == 'SALE' || $dispo == 'PAIDCC' || $dispo == 'SALECC'){
 
 
 					if(intval($sale['id']) > 0){
