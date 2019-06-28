@@ -1575,7 +1575,7 @@ class LeadManagement{
 		<center>
 			<input type="button" value="Change Dispo" onclick="loadDispoSection()">
 
-			<input type="button" value="Create new Sale" onclick="loadSaleSection(0)">
+			<input type="button" value="Create new XFER and Sale" onclick="loadSaleSection(0)">
 		</center>
 
 		<br />
