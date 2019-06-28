@@ -223,5 +223,61 @@ class LoginTrackerAPI{
 		return $row[0];
 	}
 
+	
+	## GET LOGIN TRACKER SECTIONS
+	function getLoginSections(){
+
+		$sql = "SELECT DISTINCT(section) FROM `".$this->table."` WHERE 1";
+
+		$res = $_SESSION['dbapi']->getResult($sql);
+
+		return mysqli_fetch_all($res);
+
+	}
+
+	## GET LOGIN TRACKER DATA AGGREGATION COUNTS
+	function getDataAggrCount($time_range,$section,$result){
+
+		## TIME RANGE CAN BE 1h (1 hour), 24h (24 hour) or 7d (7 days)
+
+		$currtime = time();
+
+		$count_where = "WHERE 1 AND section='".$section."' ";
+
+		if($section=='API' && $result=='success'){
+
+			$count_where .= " AND result='success-api' ";
+
+		}elseif($section=='API' && $result=='failure'){
+
+			$count_where .= " AND result='failure-api' ";
+
+		}else{
+
+			$count_where .= " AND result='".$result."' ";
+
+		}
+
+		if($time_range=='1h'){
+
+			$count_where .= " AND time BETWEEN ".($currtime-3600)." AND ".$currtime." ";
+
+		}elseif($time_range=='24h'){
+
+			$count_where .= " AND time BETWEEN ".($currtime-86400)." AND ".$currtime." ";
+
+		}elseif($time_range=='7d'){
+
+			$count_where .= " AND time BETWEEN ".($currtime-604800)." AND ".$currtime." ";
+
+		}
+
+		$count = $_SESSION['dbapi']->getCount($this->table,$count_where);
+		return $count;
+
+
+
+	}
+
 
 }
