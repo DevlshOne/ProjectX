@@ -843,7 +843,7 @@ class SalesAnalysis{
 						<th>Date Start:</th>
 						<td><?
 
-							echo makeTimebar("stime_", 1, null,false,$timestamp);
+							echo makeTimebar("stime_", 0, null, true, $timestamp);
 
 						?></td>
 					</tr>
@@ -851,7 +851,7 @@ class SalesAnalysis{
 						<th>Date End:</th>
 						<td><?
 
-							echo makeTimebar("etime_", 1, null,false,$timestamp2);
+							echo makeTimebar("etime_", 0, null, true, $timestamp2);
 
 						?></td>
 					</tr>
