@@ -330,50 +330,65 @@ class LoginTracker{
 
 		</script>
 		<br><br>
-		<table border="5" width="100%">
+		<table width="100%">
 			<tr>
 				<td></td>
-				<td align="center">Admin</td>
-				<td align="center">Client</td>
-				<td align="center">Live Client</td>
-				<td align="center">Quiz</td>
-				<td align="center">Rouster</td>
-				<td align="center">Rouster Sys</td>
-				<td align="center">Verifier</td>
-				<td align="center">API</td>
+
+				<?
+
+					## GRAB DISTINCT SECTIONS AND BUILD DATA AGGREGATION TABLE
+					$sections = $_SESSION['dbapi']->login_tracker->getLoginSections();
+
+					foreach($sections as $value){
+
+						?><td align="center"><?=ucfirst($value['0'])?></td><?
+
+					}
+
+				?>
+
 			</tr>
 			<tr>
-				<td align="right">1 hour</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>				
+				<td align="right" height="35">1 hour</td>
+				<?
+
+					foreach($sections as $value){
+
+						?><td align="center"><font size="1px" color="green">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('1h',$value['0'],'success')?></font>
+						<br>
+						<font size="1px" color="red">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('1h',$value['0'],'failure')?></font></td><?
+
+					}
+
+				?>		
 			</tr>
 			<tr>
-				<td align="right">24 hour</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td align="right" height="35">24 hour</td>
+				<?
+
+					foreach($sections as $value){
+
+						?><td align="center"><font size="1px" color="green">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('24h',$value['0'],'success')?></font>
+						<br>
+						<font size="1px" color="red">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('24h',$value['0'],'failure')?></font></td><?
+
+					}
+
+				?>
 			</tr>
 			<tr>
-				<td align="right">7 day</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
+				<td align="right" height="35">7 day</td>
+				<?
+
+					foreach($sections as $value){
+
+						?><td align="center"><font size="1px" color="green">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('7d',$value['0'],'success')?></font>
+						<br>
+						<font size="1px" color="red">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('7d',$value['0'],'failure')?></font></td><?
+
+					}
+
+				?>
 			</tr>
 			</table>
 		
