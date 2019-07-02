@@ -286,7 +286,7 @@ class AnsweringMachines{
 
 		$campaign = $row['campaign'];
 
-		$base_list_id = $row['list_id'];
+		$base_list_id = intval($row['list_id']);
 
 		$new_list_id = $type_code. $base_list_id;
 
@@ -328,7 +328,16 @@ class AnsweringMachines{
 
 		$list_id = mysqli_insert_id($_SESSION['db']);
 
-		echo "Created LIST ID $list_id on ".$row['vici_cluster_id']."\n";
+		echo "Created LIST ID $list_id on ".$row['vici_cluster_id'].", copying custom fields...\n";
+
+
+		execSQL(
+			"INSERT INTO vicidial_lists_fields(`list_id`,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order`) ".
+			"SELECT $list_id,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order` FROM vicidial_lists_fields ".
+				"WHERE list_id='".$base_list_id."' "
+		);
+
+
 
 		return $list_id;
 	}
