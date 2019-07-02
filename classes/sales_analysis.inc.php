@@ -778,7 +778,8 @@ class SalesAnalysis
             $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
             $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
         } else {
-            $timestamp = $timestamp2 = time();
+            $timestamp = mktime(0,0,0);
+            $timestamp2 = mktime(23,59,59);
         }
 
 
@@ -803,7 +804,14 @@ class SalesAnalysis
 <script>
 $(function() {
   let timeFields = $('#startTimeFilter, #endTimeFilter');
+  let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
+  if(retainTime) {
+    $(timeFields).show();
+    $('#timeFilter').prop('checked', true);
+  } else {
   $(timeFields).hide();
+      $('#timeFilter').prop('checked', false);
+}
   $('#timeFilter').on('click', function() {
     $(timeFields).toggle();
   });
@@ -815,14 +823,14 @@ $(function() {
 						<th>Date Start:</th>
 						<td>
            <?php  echo makeTimebar("strt_date_", 1, null, false, $timestamp); ?>
-           <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php  echo makeTimebar("strt_time_", 2, array(0,0), false, null); ?></div>
+           <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php  echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?></div>
             </td>
 					</tr>
 					<tr>
 						<th>Date End:</th>
 						<td>
               <?php echo makeTimebar("end_date_", 1, null, false, $timestamp2); ?>
-              <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php  echo makeTimebar("end_time_", 2, array(23,59), false, null); ?></div>
+              <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php  echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>
             </td>
 					</tr>
           <tr>
@@ -919,12 +927,25 @@ $(function() {
 
 
             ## TIME
-            $timestamp = strtotime($_REQUEST['stime_month']."/".$_REQUEST['stime_day']."/".$_REQUEST['stime_year']);
-            $timestamp2 = strtotime($_REQUEST['etime_month']."/".$_REQUEST['etime_day']."/".$_REQUEST['etime_year']);
+            $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
+            $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
+            /*
+            $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']);
+            $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']);
+            */
 
             ## TIMEFRAMES
-            $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-            $etime = mktime(23, 59, 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+            if (!isset($_REQUEST['strt_time_hour'])) {
+                $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+                $etime = mktime(23, 59, 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+                #echo "Human Start : " . date("r", $stime) . PHP_EOL;
+                #echo "Human End : " . date("r", $etime) . PHP_EOL;
+            } else {
+                $stime = mktime(date("H", $timestamp), date("i", $timestamp), 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+                $etime = mktime(date("H", $timestamp2), date("i", $timestamp2), 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+                #echo "Human Start : " . date("r", $stime) . PHP_EOL;
+                #echo "Human End : " . date("r", $etime) . PHP_EOL;
+            }
 
             ## AGENT CLUSTER
             $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
