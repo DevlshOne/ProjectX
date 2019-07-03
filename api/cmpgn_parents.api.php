@@ -5,8 +5,6 @@ class API_CampaignParents
     public $xml_record_tagname = "CampaignParent";
     public $json_parent_tagname = "ResultSet";
     public $json_record_tagname = "Result";
-
-
     public function handleAPI()
     {
         if (!checkAccess('campaigns')) {
@@ -34,28 +32,20 @@ class API_CampaignParents
             echo $out;
             break;
         case 'edit':
-            $id = intval($_POST['adding_campaign']);
+            $id = intval($_POST['adding_campaign_parent']);
             $name = trim($_POST['name']);
             unset($dat);
             $dat['name'] = $name;
-            $dat['status'] = $_POST['status'];
-            if ($_POST['px_hidden']) {
-                $dat['px_hidden'] = ($_POST['px_hidden'] == 'yes')?'yes':'no';
-            }
-            $dat['vici_campaign_id'] = trim($_POST['vici_campaign_id']);
-            $dat['manager_transfer'] = ($_POST['manager_transfer'] == 'yes')?'yes':'no';
-            if (isset($_POST['warm_transfers'])) {
-                $dat['warm_transfers'] = ($_POST['warm_transfers'] == 'yes')?'yes':'no';
-            }
+            $dat['code'] = $_POST['code'];
             if ($id) {
                 $dat['time_modified'] = time();
-                $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->campaigns->table);
-                logAction('edit', 'campaigns', $id, "Name: $name");
+                $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->campaign_parents->table);
+                logAction('edit', 'campaign_parents', $id, "Name: $name");
             } else {
                 $dat['time_created'] = time();
-                $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->campaigns->table);
+                $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->campaign_parents->table);
                 $id = mysqli_insert_id($_SESSION['dbapi']->db);
-                logAction('add', 'campaigns', $id, "Name: $name");
+                logAction('add', 'campaign_parents', $id, "Name: $name");
             }
             $_SESSION['api']->outputEditSuccess($id);
             break;
@@ -64,7 +54,6 @@ class API_CampaignParents
             $dat = array();
             $totalcount = 0;
             $pagemode = false;
-            $dat['status'] = 'active';
             ## ID SEARCH
             if ($_REQUEST['s_id']) {
                 $dat['id'] = intval($_REQUEST['s_id']);
@@ -73,8 +62,8 @@ class API_CampaignParents
             if ($_REQUEST['s_name']) {
                 $dat['name'] = trim($_REQUEST['s_name']);
             }
-            if ($_REQUEST['s_status']) {
-                $dat['status'] = $_REQUEST['s_status'];
+            if ($_REQUEST['s_code']) {
+                $dat['code'] = $_REQUEST['s_code'];
             }
             ## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
             if (isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])) {

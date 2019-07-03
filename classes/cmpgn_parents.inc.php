@@ -103,7 +103,7 @@ class CampaignParents
 			function getCampaignParentsURL(){
 				var frm = getEl('<?=$this->frm_name?>');
 				return 'api/api.php'+
-								"?get=campaigns&"+
+								"?get=campaign_parents&"+
 								"mode=xml&"+
 								//'s_id='+escape(frm.s_id.value)+"&"+
 								//'s_name='+escape(frm.s_name.value)+"&"+
