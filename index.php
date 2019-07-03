@@ -307,6 +307,8 @@
 
 					include_once("classes/campaigns.inc.php");
 					$_SESSION['campaigns']->handleFLOW();
+					include_once("classes/cmpgn_parents.inc.php");
+					$_SESSION['campaign_parents']->handleFLOW();
 
 				}else{
 
