@@ -102,6 +102,11 @@ class LoginTracker{
 								's_section='+escape(frm.s_section.value)+"&"+
 								's_ip='+escape(frm.s_ip.value)+"&"+
 
+								's_date_month='+escape(frm.s_date_month.value)+"&"+'s_date_day='+escape(frm.s_date_day.value)+"&"+'s_date_year='+escape(frm.s_date_year.value)+"&"+
+								's_date2_month='+escape(frm.s_date2_month.value)+"&"+'s_date2_day='+escape(frm.s_date2_day.value)+"&"+'s_date2_year='+escape(frm.s_date2_year.value)+"&"+
+
+								's_date_mode='+escape(frm.s_date_mode.value)+"&"+								
+
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
@@ -208,6 +213,8 @@ class LoginTracker{
 				frm.s_section.value='';
 				frm.s_ip.value = '';
 
+				frm.s_date_mode.value = 'date';
+
 			}
 
 
@@ -264,6 +271,12 @@ class LoginTracker{
 						<th class="row2">Result</th>
 						<th class="row2">Section</th>
 						<th class="row2">IP</th>
+						<th class="row2">
+						<select name="s_date_mode" onchange="toggleDateMode(this.value);loadLogins();">
+							<option value="date">Date</option>
+							<option value="daterange"<?=($_REQUEST['s_date_mode']=='daterange')?' SELECTED ':''?>>Date Range</option>
+						</select>
+					</th>
 						<td><input type="submit" value="Search" name="the_Search_button"></td>
 					</tr>
 					<tr>
@@ -292,6 +305,16 @@ class LoginTracker{
 								<option value="API">API</option>
 							</select></td>
 						<td align="center"><input type="text" name="s_ip" size="20" value="<?=htmlentities($_REQUEST['s_ip'])?>"></td>
+						<td align="center"><?
+
+							echo makeTimebar("s_date_",1,null,false,time()," onchange=\"".$this->index_name." = 0;loadLogins()\" ");
+
+						?><span id="date2_span" class="nod"><br /><?
+							
+							echo makeTimebar("s_date2_",1,null,false,time()," onchange=\"".$this->index_name." = 0;loadLogins()\" ");
+
+						?></span>
+						</td>
 						<td><input type="button" value="Reset" onclick="resetLoginForm(this.form);resetPageSystem('<?=$this->index_name?>');loadLogins();"></td>
 					</tr>
 				</table>

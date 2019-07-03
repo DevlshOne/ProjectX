@@ -49,6 +49,15 @@ class LoginTrackerAPI{
 
 		$sql = "SELECT $fields FROM `".$this->table."` WHERE 1 ";
 
+		
+		// TIME SEARCH
+		// array(start time, end time)
+
+		if(is_array($info['time'])){
+
+			$sql .= " AND `time` BETWEEN '".intval($info['time'][0])."' AND '".intval($info['time'][1])."' ";
+
+		}
 
 		## ID FIELD SEARCH
 		## ARRAY OF id's SEARCH

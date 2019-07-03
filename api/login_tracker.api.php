@@ -55,6 +55,36 @@ class API_LoginTracker{
 			$pagemode = false;
 
 
+			if($_REQUEST['s_date_mode']){
+
+					if($_REQUEST['s_date_mode'] == 'daterange'){
+
+						$tmp0 = strtotime($_REQUEST['s_date_month'].'/'.$_REQUEST['s_date_day'].'/'.$_REQUEST['s_date_year']);
+						$tmp1 = strtotime($_REQUEST['s_date2_month'].'/'.$_REQUEST['s_date2_day'].'/'.$_REQUEST['s_date2_year']);
+
+
+						$tmp0 = mktime(0,0,0, date("m", $tmp0), date("d", $tmp0), date("Y", $tmp0));
+						$tmp1 = mktime(23,59,59, date("m", $tmp1), date("d", $tmp1), date("Y", $tmp1));
+
+					}else{
+
+						$tmp0 = strtotime($_REQUEST['s_date_month'].'/'.$_REQUEST['s_date_day'].'/'.$_REQUEST['s_date_year']);
+						$tmp0 = mktime(0,0,0, date("m", $tmp0), date("d", $tmp0), date("Y", $tmp0));
+
+						$tmp1 = $tmp0 + 86399;
+
+
+					}
+
+					$dat['time'] = array($tmp0, $tmp1);
+
+			}else{
+
+
+
+			}
+
+
 			## ID SEARCH
 			if($_REQUEST['s_id']){
 
