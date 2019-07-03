@@ -4,8 +4,7 @@
      *	Written By: Jonathan Will
      ***************************************************************/
 
-$_SESSION['campaigns'] = new Campaigns;
-
+$_SESSION['cmpgn_parents'] = new CampaignParents;
 
 class CampaignParents
 {
@@ -15,16 +14,14 @@ class CampaignParents
     ## Page  Configuration
     public $pagesize	= 20;	## Adjusts how many items will appear on each page
     public $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
-    public $index_name = 'cmpgn_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-    public $frm_name = 'cpgnnextfrm';
-    public $order_prepend = 'cpgn_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
-
+    public $index_name = 'cmpgn_parents_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+    public $frm_name = 'cmpgnparentsnextfrm';
+    public $order_prepend = 'cmpgn_parents_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
     public function CampaignParents()
     {
         ## REQURES DB CONNECTION!
         $this->handlePOST();
     }
-
     public function makeDD($name, $sel, $class, $onchange, $size, $blank_entry=1, $extra_where=null)
     {
         $names		= 'name';	## or Array('field1','field2')
@@ -44,7 +41,6 @@ class CampaignParents
         $DD = new genericDD($sql, $names, $value, $seperator);
         return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
     }
-
     public function makeDDByCode($name, $sel, $class, $onchange, $size, $blank_entry=1, $extra_where=null)
     {
         $names		= 'vici_campaign_id';
@@ -66,14 +62,12 @@ class CampaignParents
         $DD = new genericDD($sql, $names, $value, $seperator);
         return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
     }
-
     public function handlePOST()
     {
         // THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
         // SEE api/campaigns.api.php FOR POST HANDLING!
         // <3 <3 -Jon
     }
-
     public function handleFLOW()
     {
         # Handle flow, based on query string
@@ -81,33 +75,32 @@ class CampaignParents
             accessDenied("Campaigns");
             return;
         } else {
-            if (isset($_REQUEST['add_campaign'])) {
-                $this->makeAdd($_REQUEST['add_campaign']);
+            if (isset($_REQUEST['add_campaign_parent'])) {
+                $this->makeAdd($_REQUEST['add_campaign_parent']);
             } else {
                 $this->listEntrys();
             }
         }
     }
-
     public function listEntrys()
     {
         ?>
 		<script>
-			var campaign_delmsg = 'Are you sure you want to delete this campaign?';
+			var campaign_parents_delmsg = 'Are you sure you want to delete this campaign parent?';
 			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
 			var <?=$this->index_name?> = 0;
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-			var CampaignsTableFormat = [
+			var CampaignParentsTableFormat = [
 				['id','align_center'],
 				['name','align_left'],
-				['status','align_center'],
+				['code','align_center'],
 				['[delete]','align_center']
 			];
 			/**
 			* Build the URL for AJAX to hit, to build the list
 			*/
-			function getCampaignsURL(){
+			function getCampaignParentsURL(){
 				var frm = getEl('<?=$this->frm_name?>');
 				return 'api/api.php'+
 								"?get=campaigns&"+
@@ -118,89 +111,86 @@ class CampaignParents
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
-			var campaigns_loading_flag = false;
+			var campaign_parents_loading_flag = false;
 			/**
 			* Load the campaign data - make the ajax call, callback to the parse function
 			*/
-			function loadCampaigns(){
+			function loadCampaignParents(){
 				// ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
 				var val = null;
-				eval('val = campaigns_loading_flag');
+				eval('val = campaign_parents_loading_flag');
 				// CHECK IF WE ARE ALREADY LOADING THIS DATA
 				if(val == true){
 					//console.log("CAMPAIGNS ALREADY LOADING (BYPASSED) \n");
 					return;
 				}else{
-					eval('campaigns_loading_flag = true');
+					eval('campaign_parents_loading_flag = true');
 				}
-				loadAjaxData(getCampaignsURL(),'parseCampaigns');
+				loadAjaxData(getCampaignParentsURL(),'parseCampaignParents');
 			}
 			/**
 			* CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
 			*/
 			var <?=$this->order_prepend?>totalcount = 0;
-			function parseCampaigns(xmldoc){
-				<?=$this->order_prepend?>totalcount = parseXMLData('campaign',CampaignsTableFormat,xmldoc);
+			function parseCampaignParents(xmldoc){
+				<?=$this->order_prepend?>totalcount = parseXMLData('campaign_parents',CampaignParentsTableFormat,xmldoc);
 				// ACTIVATE PAGE SYSTEM!
 				if(<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize){
-					makePageSystem('campaigns',
+					makePageSystem('campaign_parents',
 									'<?=$this->index_name?>',
 									<?=$this->order_prepend?>totalcount,
 									<?=$this->index_name?>,
 									<?=$this->order_prepend?>pagesize,
-									'loadCampaigns()'
+									'loadCampaignParents()'
 								);
 				}else{
-					hidePageSystem('campaigns');
+					hidePageSystem('campaign_parents');
 				}
-				eval('campaigns_loading_flag = false');
+				eval('campaign_parents_loading_flag = false');
 			}
-
-			function handleCampaignListClick(id){
-				displayAddCampaignDialog(id);
+			function handleCampaignParentsListClick(id){
+				displayAddCampaignParentsDialog(id);
 			}
-
-			function displayAddCampaignDialog(campaignid){
-				var objname = 'dialog-modal-add-campaign';
+			function displayAddCampaignParentDialog(campaignparentid){
+				var objname = 'dialog-modal-add-campaign-parent';
 				if(campaignid > 0){
-					$('#'+objname).dialog( "option", "title", 'Editing Campaign' );
+					$('#'+objname).dialog( "option", "title", 'Editing Campaign Parent' );
 				}else{
-					$('#'+objname).dialog( "option", "title", 'Adding new Campaign' );
+					$('#'+objname).dialog( "option", "title", 'Adding new Campaign Parent' );
 				}
 				$('#'+objname).dialog("open");
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-				$('#'+objname).load("index.php?area=campaigns&add_campaign="+campaignid+"&printable=1&no_script=1");
+				$('#'+objname).load("index.php?area=campaign_parents&add_campaign_parent="+campaignparentid+"&printable=1&no_script=1");
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
-			function resetCampaignForm(frm){
+			function resetCampaignParentForm(frm){
 				frm.s_id.value='';
 				frm.s_name.value = '';
 				frm.s_status.value='active';
 			}
 		</script>
-		<div id="dialog-modal-add-campaign" title="Adding new Campaign" class="nod">
+		<div id="dialog-modal-add-campaign-parent" title="Adding new Campaign Parent" class="nod">
 		</div>
-		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadCampaigns();return false">
-			<input type="hidden" name="searching_campaigns">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
+		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadCampaignParents();return false">
+			<input type="hidden" name="searching_campaign_parents">
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
 			<td height="40" class="pad_left ui-widget-header">
 				<table border="0" width="100%" >
 				<tr>
 					<td>
-						Campaigns
+						Campaign Parents
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddCampaignDialog(0)">
+						<input type="button" value="Add" onclick="displayAddCampaignParentDialog(0)">
 					</td>
 					<td align="right"><?php
                         /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
 						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
 						<tr>
-							<td id="campaigns_prev_td" class="page_system_prev"></td>
-							<td id="campaigns_page_td" class="page_system_page"></td>
-							<td id="campaigns_next_td" class="page_system_next"></td>
+							<td id="campaign_parents_prev_td" class="page_system_prev"></td>
+							<td id="campaign_parents_page_td" class="page_system_page"></td>
+							<td id="campaign_parents_next_td" class="page_system_next"></td>
 						</tr>
 						</table>
 					</td>
@@ -210,16 +200,16 @@ class CampaignParents
 		</tr>
 </form>
 		<tr>
-			<td colspan="2"><table border="0" width="100%" id="campaign_table">
+			<td colspan="2"><table border="0" width="100%" id="campaign_parent_table">
 			<tr>
 				<th class="row2"><?=$this->getOrderLink('id')?>ID</a></th>
 				<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>
-				<th class="row2"><?=$this->getOrderLink('status')?>Status</a></th>
+				<th class="row2"><?=$this->getOrderLink('code')?>Code</a></th>
 				<th class="row2">&nbsp;</th>
 			</tr></table></td>
 		</tr></table>
 		<script>
-			$("#dialog-modal-add-campaign").dialog({
+			$("#dialog-modal-add-campaign-parent").dialog({
 				autoOpen: false,
 				width: 480,
 				height: 220,
@@ -227,7 +217,7 @@ class CampaignParents
 				draggable:true,
 				resizable: false
 			});
-			loadCampaigns();
+			loadCampaignParents();
 		</script>
 		<?php
     }
@@ -236,18 +226,17 @@ class CampaignParents
     {
         $id=intval($id);
         if ($id) {
-            $row = $_SESSION['dbapi']->campaigns->getByID($id);
+            $row = $_SESSION['dbapi']->campaign_parents->getByID($id);
         } ?>
 		<script>
 
-			function validateCampaignField(name,value,frm){
+			function validateCampaignParentField(name,value,frm){
 				//alert(name+","+value);
 				switch(name){
 				default:
 					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
 					return true;
 					break;
-				case 'vici_campaign_id':
 				case 'name':
 					if(!value)return false;
 					return true;
@@ -256,8 +245,8 @@ class CampaignParents
 				return true;
 			}
 
-			function checkCampaignFrm(frm){
-				var params = getFormValues(frm,'validateCampaignField');
+			function checkCampaignParentFrm(frm){
+				var params = getFormValues(frm,'validateCampaignParentField');
 				// FORM VALIDATION FAILED!
 				// param[0] == field name
 				// param[1] == field value
@@ -265,10 +254,6 @@ class CampaignParents
 					switch(params[0]){
 					default:
 						alert("Error submitting form. Check your values");
-						break;
-					case 'vici_campaign_id':
-						alert("Please enter the exact campaign ID field from vici\nExample: BCRSFC");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
 						break;
 					case 'name':
 						alert("Please enter a name for this campaign.");
@@ -281,7 +266,7 @@ class CampaignParents
 					$.ajax({
 						type: "POST",
 						cache: false,
-						url: 'api/api.php?get=campaigns&mode=xml&action=edit',
+						url: 'api/api.php?get=campaign_parents&mode=xml&action=edit',
 						data: params,
 						error: function(){
 							alert("Error saving user form. Please contact an admin.");
@@ -294,8 +279,8 @@ class CampaignParents
 								alert(result['message']);
 								return;
 							}
-							loadCampaigns();
-							displayAddCampaignDialog(res);
+							loadCampaignParents();
+							displayAddCampaignParentDialog(res);
 							alert(result['message']);
 						}
 					});
@@ -303,47 +288,24 @@ class CampaignParents
 				return false;
 			}
 			// SET TITLEBAR
-			$('#dialog-modal-add-campaign').dialog( "option", "title", '<?=($id)?'Editing Campaign #'.$id.' - '.htmlentities($row['name']):'Adding new Campaign'?>' );
+			$('#dialog-modal-add-campaign-parent').dialog( "option", "title", '<?=($id)?'Editing Campaign Parent #'.$id.' - '.htmlentities($row['name']):'Adding new Campaign Parent'?>' );
 		</script>
-		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkCampaignFrm(this); return false">
-			<input type="hidden" id="adding_campaign" name="adding_campaign" value="<?=$id?>" >
+		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkCampaignParentFrm(this); return false">
+			<input type="hidden" id="adding_campaign_parent" name="adding_campaign_parent" value="<?=$id?>" >
 		<table border="0" align="center">
 		<tr>
 			<th align="left" height="30">Name</th>
 			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>"></td>
 		</tr>
 		<tr>
-			<th align="left" height="30">Status</th>
+			<th align="left" height="30">Code</th>
 			<td>
-				<select name="status">
+				<select name="code">
 					<option value="active">Active</option>
 					<option value="suspended"<?=($row['status'] == 'suspended')?' SELECTED ':''?>>Suspended</option>
 					<option value="deleted"<?=($row['status'] == 'deleted')?' SELECTED ':''?>>Deleted</option>
 				</select>
-				&nbsp;&nbsp;PX Hidden (<a href="#" onclick="alert('PX Hidden will remove the campaign from the PX login screen dropdown, but still appear in other places of the PX GUI.');return false">help?</a>):&nbsp;&nbsp;
-				<select name="px_hidden">
-					<option value="no">No</option>
-					<option value="yes"<?=($row['px_hidden'] == 'yes')?' SELECTED ':''?>>Yes</option>
-				</select>
 			</td>
-		</tr>
-		<tr>
-			<th align="left" height="30">Vici Campaign ID</th>
-			<td><input name="vici_campaign_id" type="text" size="50" value="<?=htmlentities($row['vici_campaign_id'])?>"></td>
-		</tr>
-		<tr>
-			<th align="left" height="30">Manager Transfer:</th>
-			<td><select name="manager_transfer">
-				<option value="no">Disabled</option>
-				<option value="yes"<?=($row['manager_transfer'] == 'yes')?' SELECTED ':''?>>Enabled</option>
-			</select></td>
-		</tr>
-		<tr>
-			<th align="left" height="30">Warm Transfers:</th>
-			<td><select name="warm_transfers">
-				<option value="no">Disabled</option>
-				<option value="yes"<?=($row['warm_transfers'] == 'yes')?' SELECTED ':''?>>Enabled</option>
-			</select></td>
 		</tr>
 		<tr>
 			<th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
@@ -357,7 +319,7 @@ class CampaignParents
     {
         $var = '<a href="#" onclick="setOrder(\''.addslashes($this->order_prepend).'\',\''.addslashes($field).'\',';
         $var .= "((".$this->order_prepend."orderdir == 'DESC')?'ASC':'DESC')";
-        $var.= ");loadCampaigns();return false;\">";
+        $var.= ");loadCampaignParents();return false;\">";
         return $var;
     }
 }
