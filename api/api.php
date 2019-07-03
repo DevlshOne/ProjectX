@@ -266,7 +266,6 @@
             break;
 
     case 'extensions':
-
         include_once($basedir."api/extensions.api.php");
         $extensions = new API_Extensions();
         $extensions->handleAPI();
