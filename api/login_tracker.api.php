@@ -55,7 +55,46 @@ class API_LoginTracker{
 			$pagemode = false;
 
 
-			if($_REQUEST['s_date_mode']){
+			## CHECK IF WE'RE DOING A CUSTOM SEARCH FROM THE DATA AGGR TABLE
+			if($_REQUEST['data_aggr_search']=='true'){
+
+				if($_REQUEST['data_aggr_range']!='false'){
+
+					switch($_REQUEST['data_aggr_range']){
+
+						case '1h':
+
+							$tmp0 = time();
+							$tmp1 = $tmp0 - 3600;
+
+							$dat['time'] = array($tmp1, $tmp0);
+
+							break;
+
+						case '24h':
+
+							$tmp0 = time();
+							$tmp1 = $tmp0 - 86400;
+
+							$dat['time'] = array($tmp1, $tmp0);
+
+							break;
+
+						case '7d':
+
+							$tmp0 = time();
+							$tmp1 = $tmp0 - 604800;
+
+							$dat['time'] = array($tmp1, $tmp0);
+
+							break;
+
+					}
+
+				}
+
+
+			}elseif($_REQUEST['s_date_mode']){
 
 					if($_REQUEST['s_date_mode'] == 'daterange'){
 
@@ -77,10 +116,6 @@ class API_LoginTracker{
 					}
 
 					$dat['time'] = array($tmp0, $tmp1);
-
-			}else{
-
-
 
 			}
 
