@@ -55,6 +55,71 @@ class API_LoginTracker{
 			$pagemode = false;
 
 
+			## CHECK IF WE'RE DOING A CUSTOM SEARCH FROM THE DATA AGGR TABLE
+			if($_REQUEST['data_aggr_search']=='true'){
+
+				if($_REQUEST['data_aggr_range']!='false'){
+
+					switch($_REQUEST['data_aggr_range']){
+
+						case '1h':
+
+							$tmp0 = time();
+							$tmp1 = $tmp0 - 3600;
+
+							$dat['time'] = array($tmp1, $tmp0);
+
+							break;
+
+						case '24h':
+
+							$tmp0 = time();
+							$tmp1 = $tmp0 - 86400;
+
+							$dat['time'] = array($tmp1, $tmp0);
+
+							break;
+
+						case '7d':
+
+							$tmp0 = time();
+							$tmp1 = $tmp0 - 604800;
+
+							$dat['time'] = array($tmp1, $tmp0);
+
+							break;
+
+					}
+
+				}
+
+
+			}elseif($_REQUEST['s_date_mode']){
+
+					if($_REQUEST['s_date_mode'] == 'daterange'){
+
+						$tmp0 = strtotime($_REQUEST['s_date_month'].'/'.$_REQUEST['s_date_day'].'/'.$_REQUEST['s_date_year']);
+						$tmp1 = strtotime($_REQUEST['s_date2_month'].'/'.$_REQUEST['s_date2_day'].'/'.$_REQUEST['s_date2_year']);
+
+
+						$tmp0 = mktime(0,0,0, date("m", $tmp0), date("d", $tmp0), date("Y", $tmp0));
+						$tmp1 = mktime(23,59,59, date("m", $tmp1), date("d", $tmp1), date("Y", $tmp1));
+
+					}else{
+
+						$tmp0 = strtotime($_REQUEST['s_date_month'].'/'.$_REQUEST['s_date_day'].'/'.$_REQUEST['s_date_year']);
+						$tmp0 = mktime(0,0,0, date("m", $tmp0), date("d", $tmp0), date("Y", $tmp0));
+
+						$tmp1 = $tmp0 + 86399;
+
+
+					}
+
+					$dat['time'] = array($tmp0, $tmp1);
+
+			}
+
+
 			## ID SEARCH
 			if($_REQUEST['s_id']){
 
