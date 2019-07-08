@@ -212,13 +212,13 @@ class AnsweringMachines{
 			foreach($arr as $phone=>$rowarr){
 
 
-				if(count($rowarr) >= $this->call_attempts_dnc_limit){
-
-					echo $phone." - PUSH TO THE TIMED DNC HERE, WHEN ITS FINISHED REVAMP.\n";
-
-
-					continue;
-				}
+//				if(count($rowarr) >= $this->call_attempts_dnc_limit){
+//
+//					echo $phone." - PUSH TO THE TIMED DNC HERE, WHEN ITS FINISHED REVAMP.\n";
+//
+//
+//					continue;
+//				}
 
 				echo "Rotating $phone to ".(($timeframe == 'AM')?"PM":"AM")." list\n";
 
@@ -226,6 +226,8 @@ class AnsweringMachines{
 
 					// EACH ROW:
 					//`id`,`lead_id`,`vici_cluster_id`,`time`,`dispo`,`campaign`
+
+//print_r($row);
 
 					if(array_key_exists($row['vici_cluster_id'], $VICIDB)){
 
@@ -247,7 +249,7 @@ class AnsweringMachines{
 					}
 
 
-					// FIGURE OUT WHICH LIST WE'RE PUTTING IT IN, CREATE IT IF NECESSARY
+					// FIGURE OUT  WHICH LIST WE'RE PUTTING IT IN, CREATE IT IF NECESSARY
 
 					// AM LIST - MOVE TO PM LIST
 					if($timeframe == 'AM'){
@@ -262,15 +264,16 @@ class AnsweringMachines{
 					}
 
 					// UPDATE THE LIST ID IN VICIDIAL
-					echo ("UPDATE `vicidial_list` SET list_id='".intval($list_id)."' WHERE lead_id='".intval($row['lead_id'])."'");
+					execSQL("UPDATE `vicidial_list` SET list_id='".intval($list_id)."',status='NEW',called_count=0  WHERE lead_id='".intval($row['lead_id'])."'");
 
+					//echo "\n";
 
 					// UPDATE THE LIST ID IN PX
 					//connectPXDB();
 					$_SESSION['db'] = $PXDB;
-					echo ("UPDATE `lead_tracking` SET list_id='".intval($list_id)."' WHERE id='".mysqli_real_escape_string($_SESSION['db'],$row['id'])."'");
+					execSQL("UPDATE `lead_tracking` SET list_id='".intval($list_id)."' WHERE id='".mysqli_real_escape_string($_SESSION['db'],$row['id'])."'");
 
-
+//					echo "\n";
 				}
 
 
@@ -286,7 +289,7 @@ class AnsweringMachines{
 
 		$campaign = $row['campaign'];
 
-		$base_list_id = intval($row['list_id']);
+		$base_list_id = ($row['list_id']);
 
 		$new_list_id = $type_code. $base_list_id;
 
@@ -328,12 +331,12 @@ class AnsweringMachines{
 
 		$list_id = mysqli_insert_id($_SESSION['db']);
 
-		echo "Created LIST ID $list_id on ".$row['vici_cluster_id'].", copying custom fields...\n";
+		echo "Created LIST ID $new_list_id on ".$row['vici_cluster_id']." (".getClusterName($row['vici_cluster_id'])."), copying custom fields...\n";
 
 
 		execSQL(
 			"INSERT INTO vicidial_lists_fields(`list_id`,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order`) ".
-			"SELECT $list_id,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order` FROM vicidial_lists_fields ".
+			"SELECT $new_list_id,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order` FROM vicidial_lists_fields ".
 				"WHERE list_id='".$base_list_id."' "
 		);
 
