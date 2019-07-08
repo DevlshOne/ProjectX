@@ -296,7 +296,7 @@ class CampaignParents
 		<tr>
 			<th align="left" height="30">Code</th>
 			<td>
-        <input name="code" type="text" title="4 - 16 characters, uppercase and digits only" size="20" pattern="[A-Z0-9]{4,16}" maxlength="16" value="<?=htmlentities($row['code'])?>">
+        <input id="campaign_parent_code" name="code" type="text" onkeyup="this.value = this.value.toUpperCase(); "title="4 - 16 characters, uppercase and digits only" size="20" pattern="[A-Z0-9]{4,16}" maxlength="16" value="<?=htmlentities($row['code'])?>">
 			</td>
 		</tr>
 		<tr>
