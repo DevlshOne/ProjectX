@@ -1,4 +1,4 @@
-<?php
+<?
 /***************************************************************
      *	Campaigns - handles listing and editing campaigns
      *	Written By: Jonathan Will
@@ -37,7 +37,7 @@ class CampaignParents
             $fieldstring.=$names.',';
         }
         $fieldstring	.= $value;
-        $sql = "SELECT $fieldstring FROM ".$this->table." WHERE status='active' ".(($extra_where != null)?$extra_where:'');
+        $sql = "SELECT $fieldstring FROM ".$this->table." WHERE 1 ".(($extra_where != null)?$extra_where:'');
         $DD = new genericDD($sql, $names, $value, $seperator);
         return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
     }
@@ -58,7 +58,7 @@ class CampaignParents
             $fieldstring.=$names.',';
         }
         $fieldstring	.= $value;
-        $sql = "SELECT $fieldstring FROM ".$this->table." WHERE status='active' ".(($extra_where != null)?$extra_where:'');
+        $sql = "SELECT $fieldstring FROM ".$this->table." WHERE 1 ".(($extra_where != null)?$extra_where:'');
         $DD = new genericDD($sql, $names, $value, $seperator);
         return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
     }
@@ -94,8 +94,7 @@ class CampaignParents
 			var CampaignParentsTableFormat = [
 				['id','align_center'],
 				['name','align_left'],
-				['code','align_center'],
-				['[delete]','align_center']
+				['code','align_center']
 			];
 			/**
 			* Build the URL for AJAX to hit, to build the list
@@ -105,9 +104,6 @@ class CampaignParents
 				return 'api/api.php'+
 								"?get=campaign_parents&"+
 								"mode=xml&"+
-								//'s_id='+escape(frm.s_id.value)+"&"+
-								//'s_name='+escape(frm.s_name.value)+"&"+
-								//'s_status='+escape(frm.s_status.value)+"&"+
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
@@ -153,7 +149,7 @@ class CampaignParents
 			}
 			function displayAddCampaignParentDialog(campaignparentid){
 				var objname = 'dialog-modal-add-campaign-parent';
-				if(campaignid > 0){
+				if(campaignparentid > 0){
 					$('#'+objname).dialog( "option", "title", 'Editing Campaign Parent' );
 				}else{
 					$('#'+objname).dialog( "option", "title", 'Adding new Campaign Parent' );
@@ -167,7 +163,6 @@ class CampaignParents
 			function resetCampaignParentForm(frm){
 				frm.s_id.value='';
 				frm.s_name.value = '';
-				frm.s_status.value='active';
 			}
 		</script>
 		<div id="dialog-modal-add-campaign-parent" title="Adding new Campaign Parent" class="nod">
@@ -184,7 +179,7 @@ class CampaignParents
 						&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="button" value="Add" onclick="displayAddCampaignParentDialog(0)">
 					</td>
-					<td align="right"><?php
+					<td align="right"><?
                         /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
 						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
 						<tr>
@@ -219,7 +214,7 @@ class CampaignParents
 			});
 			loadCampaignParents();
 		</script>
-		<?php
+		<?
     }
 
     public function makeAdd($id)
@@ -300,11 +295,7 @@ class CampaignParents
 		<tr>
 			<th align="left" height="30">Code</th>
 			<td>
-				<select name="code">
-					<option value="active">Active</option>
-					<option value="suspended"<?=($row['status'] == 'suspended')?' SELECTED ':''?>>Suspended</option>
-					<option value="deleted"<?=($row['status'] == 'deleted')?' SELECTED ':''?>>Deleted</option>
-				</select>
+        <input name="code" type="text" title="Four characters minimum, uppercase and digits only" size="20" pattern="[A-Z0-9]{4,16}" maxlength="16" value="<?=htmlentities($row['name'])?>">
 			</td>
 		</tr>
 		<tr>
@@ -312,7 +303,7 @@ class CampaignParents
 		</tr>
 		</form>
 		</table>
-		<?php
+		<?
     }
 
     public function getOrderLink($field)

@@ -1,4 +1,4 @@
-<?php
+<?
 class API_CampaignParents
 {
     public $xml_parent_tagname = "CampaignParents";
@@ -8,13 +8,12 @@ class API_CampaignParents
     public function handleAPI()
     {
         if (!checkAccess('campaigns')) {
-            $_SESSION['api']->errorOut('Access denied to Campaigns');
+            $_SESSION['api']->errorOut('Access denied to Campaign Parents');
             return;
         }
         switch ($_REQUEST['action']) {
         case 'delete':
             $id = intval($_REQUEST['id']);
-            //$row = $_SESSION['dbapi']->campaigns->getByID($id);
             $_SESSION['dbapi']->campaign_parents->delete($id);
             logAction('delete', 'campaign_parents', $id, "");
             $_SESSION['api']->outputDeleteSuccess();
@@ -38,11 +37,11 @@ class API_CampaignParents
             $dat['name'] = $name;
             $dat['code'] = $_POST['code'];
             if ($id) {
-                $dat['time_modified'] = time();
+                #$dat['time_modified'] = time();
                 $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->campaign_parents->table);
                 logAction('edit', 'campaign_parents', $id, "Name: $name");
             } else {
-                $dat['time_created'] = time();
+                #$dat['time_created'] = time();
                 $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->campaign_parents->table);
                 $id = mysqli_insert_id($_SESSION['dbapi']->db);
                 logAction('add', 'campaign_parents', $id, "Name: $name");
@@ -70,7 +69,7 @@ class API_CampaignParents
                 $pagemode = true;
                 $cntdat = $dat;
                 $cntdat['fields'] = 'COUNT(id)';
-                list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->campaigns->getResults($cntdat));
+                list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->campaign_parents->getResults($cntdat));
                 $dat['limit'] = array(
                                     "offset"=>intval($_REQUEST['index']),
                                     "count"=>intval($_REQUEST['pagesize'])
@@ -80,7 +79,7 @@ class API_CampaignParents
             if ($_REQUEST['orderby'] && $_REQUEST['orderdir']) {
                 $dat['order'] = array($_REQUEST['orderby']=>$_REQUEST['orderdir']);
             }
-            $res = $_SESSION['dbapi']->campaigns->getResults($dat);
+            $res = $_SESSION['dbapi']->campaign_parents->getResults($dat);
     ## OUTPUT FORMAT TOGGLE
             switch ($_SESSION['api']->mode) {
             default:
