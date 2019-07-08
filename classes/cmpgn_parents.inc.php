@@ -195,7 +195,7 @@ class CampaignParents
 		</tr>
 </form>
 		<tr>
-			<td colspan="2"><table border="0" width="100%" id="campaign_parent_table">
+			<td colspan="2"><table border="0" width="100%" id="campaign_parents_table">
 			<tr>
 				<th class="row2"><?=$this->getOrderLink('id')?>ID</a></th>
 				<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>

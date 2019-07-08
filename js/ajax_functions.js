@@ -12,7 +12,6 @@
  * @return n/a
  */
 function clearTable(obj){
-
 	//alert(obj.rows.length);
 	if(obj.rows.length > 1){
 
