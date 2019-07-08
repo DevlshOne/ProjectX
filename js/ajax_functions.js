@@ -354,14 +354,9 @@ function parseXMLData(area,tableFormat,xmldoc){
 	// GRAB ALL DATA TAGS
 	var dataarr = xmldoc.getElementsByTagName(tagname);
 	if(totalcount <= 0){
-
 		// IF TOTAL COUNT WASNT POPULATED ABOVE, MANUALLY SET TO THE TOTAL RECORD SIZE
 		totalcount = dataarr.length;
 	}
-
-
-
-
 	// REMOVE ALL ROWS BUT THE HEADER
 	clearTable(obj);
 

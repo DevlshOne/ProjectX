@@ -86,7 +86,7 @@ class CampaignParents
     {
         ?>
 		<script>
-			var campaign_parents_delmsg = 'Are you sure you want to delete this campaign parent?';
+			var campaign_parent_delmsg = 'Are you sure you want to delete this campaign parent?';
 			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
 			var <?=$this->index_name?> = 0;
@@ -94,7 +94,8 @@ class CampaignParents
 			var CampaignParentsTableFormat = [
 				['id','align_center'],
 				['name','align_left'],
-				['code','align_center']
+				['code','align_center'],
+  			['[delete]','align_center']
 			];
 			/**
 			* Build the URL for AJAX to hit, to build the list
@@ -111,7 +112,7 @@ class CampaignParents
 			/**
 			* Load the campaign data - make the ajax call, callback to the parse function
 			*/
-			function loadCampaignParents(){
+			function loadCampaign_parents(){
 				// ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
 				var val = null;
 				eval('val = campaign_parents_loading_flag');
@@ -129,7 +130,7 @@ class CampaignParents
 			*/
 			var <?=$this->order_prepend?>totalcount = 0;
 			function parseCampaignParents(xmldoc){
-				<?=$this->order_prepend?>totalcount = parseXMLData('campaign_parents',CampaignParentsTableFormat,xmldoc);
+				<?=$this->order_prepend?>totalcount = parseXMLData('campaign_parent',CampaignParentsTableFormat,xmldoc);
 				// ACTIVATE PAGE SYSTEM!
 				if(<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize){
 					makePageSystem('campaign_parents',
@@ -137,15 +138,15 @@ class CampaignParents
 									<?=$this->order_prepend?>totalcount,
 									<?=$this->index_name?>,
 									<?=$this->order_prepend?>pagesize,
-									'loadCampaignParents()'
+									'loadCampaign_parents()'
 								);
 				}else{
 					hidePageSystem('campaign_parents');
 				}
 				eval('campaign_parents_loading_flag = false');
 			}
-			function handleCampaignParentsListClick(id){
-				displayAddCampaignParentsDialog(id);
+			function handleCampaign_parentListClick(id){
+				displayAddCampaignParentDialog(id);
 			}
 			function displayAddCampaignParentDialog(campaignparentid){
 				var objname = 'dialog-modal-add-campaign-parent';
@@ -167,7 +168,7 @@ class CampaignParents
 		</script>
 		<div id="dialog-modal-add-campaign-parent" title="Adding new Campaign Parent" class="nod">
 		</div>
-		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadCampaignParents();return false">
+		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadCampaign_parents();return false">
 			<input type="hidden" name="searching_campaign_parents">
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
@@ -195,7 +196,7 @@ class CampaignParents
 		</tr>
 </form>
 		<tr>
-			<td colspan="2"><table border="0" width="100%" id="campaign_parents_table">
+			<td colspan="2"><table border="0" width="100%" id="campaign_parent_table">
 			<tr>
 				<th class="row2"><?=$this->getOrderLink('id')?>ID</a></th>
 				<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>
@@ -212,7 +213,7 @@ class CampaignParents
 				draggable:true,
 				resizable: false
 			});
-			loadCampaignParents();
+			loadCampaign_parents();
 		</script>
 		<?
     }
@@ -274,7 +275,7 @@ class CampaignParents
 								alert(result['message']);
 								return;
 							}
-							loadCampaignParents();
+							loadCampaign_parents();
 							displayAddCampaignParentDialog(res);
 							alert(result['message']);
 						}
@@ -295,7 +296,7 @@ class CampaignParents
 		<tr>
 			<th align="left" height="30">Code</th>
 			<td>
-        <input name="code" type="text" title="Four characters minimum, uppercase and digits only" size="20" pattern="[A-Z0-9]{4,16}" maxlength="16" value="<?=htmlentities($row['name'])?>">
+        <input name="code" type="text" title="4 - 16 characters, uppercase and digits only" size="20" pattern="[A-Z0-9]{4,16}" maxlength="16" value="<?=htmlentities($row['code'])?>">
 			</td>
 		</tr>
 		<tr>
@@ -310,7 +311,7 @@ class CampaignParents
     {
         $var = '<a href="#" onclick="setOrder(\''.addslashes($this->order_prepend).'\',\''.addslashes($field).'\',';
         $var .= "((".$this->order_prepend."orderdir == 'DESC')?'ASC':'DESC')";
-        $var.= ");loadCampaignParents();return false;\">";
+        $var.= ");loadCampaign_parents();return false;\">";
         return $var;
     }
 }

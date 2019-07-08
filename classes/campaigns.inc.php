@@ -32,6 +32,11 @@ class Campaigns{
 		$this->handlePOST();
 	}
 
+  function makeCamapignParentDD($inpName, $inpSelected) {
+		$sql = "SELECT id, code FROM 'campaign_parents' WHERE deleted=0";
+		$DD = new genericDD($sql, 'code', 'id');
+		return $DD->makeDD('parent_campaign_id');
+	}
 
 	function makeDD($name,$sel,$class,$onchange,$size, $blank_entry=1, $extra_where=null){
 
@@ -335,7 +340,7 @@ class Campaigns{
 			$("#dialog-modal-add-campaign").dialog({
 				autoOpen: false,
 				width: 480,
-				height: 220,
+				height: 280,
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -510,6 +515,14 @@ function makeAdd($id){
 			<td><input name="vici_campaign_id" type="text" size="50" value="<?=htmlentities($row['vici_campaign_id'])?>"></td>
 		</tr>
 		<tr>
+			<th align="left" height="30">Parent Campaign:</th>
+			<td>
+<?
+				 #echo $this->makeCampaignParentDD('parent_campaign_id', $row['parent_campaign_id']);
+				 ?>
+		</td>
+		</tr>
+		<tr>		<tr>
 			<th align="left" height="30">Manager Transfer:</th>
 			<td><select name="manager_transfer">
 				<option value="no">Disabled</option>

@@ -12,7 +12,7 @@ class CampaignParentsAPI
     public function delete($id)
     {
         unset($dat);
-        $dat['status'] = 'deleted';
+        $dat['deleted'] = '1';
         return $_SESSION['dbapi']->aedit($id, $dat, $this->table);
     }
     /**
@@ -32,13 +32,6 @@ class CampaignParentsAPI
     {
         $campaign_id=intval($campaign_id);
         list($name) = $_SESSION['dbapi']->queryROW("SELECT name FROM `".$this->table."` ".
-                        " WHERE id='".$campaign_id."' ");
-        return $name;
-    }
-    public function getViciID($campaign_id)
-    {
-        $campaign_id=intval($campaign_id);
-        list($name) = $_SESSION['dbapi']->queryROW("SELECT vici_campaign_id FROM `".$this->table."` ".
                         " WHERE id='".$campaign_id."' ");
         return $name;
     }
@@ -63,7 +56,7 @@ class CampaignParentsAPI
     public function getResults($info)
     {
         $fields = ($info['fields'])?$info['fields']:'*';
-        $sql = "SELECT $fields FROM `".$this->table."` WHERE 1 ";
+        $sql = "SELECT $fields FROM `".$this->table."` WHERE deleted='0' ";
         ## ID FIELD SEARCH
         ## ARRAY OF id's SEARCH
         if (is_array($info['id'])) {

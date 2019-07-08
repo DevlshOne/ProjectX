@@ -1,8 +1,8 @@
 <?
 class API_CampaignParents
 {
-    public $xml_parent_tagname = "CampaignParents";
-    public $xml_record_tagname = "CampaignParent";
+    public $xml_parent_tagname = "Campaign_parents";
+    public $xml_record_tagname = "Campaign_parent";
     public $json_parent_tagname = "ResultSet";
     public $json_record_tagname = "Result";
     public function handleAPI()
