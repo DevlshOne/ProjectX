@@ -62,7 +62,7 @@ class CampaignParents
         $res = $_SESSION['dbapi']->query($sql,1);
         $showDD = "<select name='" . $name . "' id='" . $name . "'";
         if(isset($onchange)) {
-            $showDD .= " onchange='" . $onchange . "'";
+            $showDD .= " onchange='" . htmlentities(trim($onchange)) . "'";
         }
         $showDD .= ">";
         if($blank_entry) {
