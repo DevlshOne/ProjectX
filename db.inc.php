@@ -215,10 +215,28 @@
 		}
 	}
 	/***************************************/
-	function execSQL($cmd){
-		mysqli_query($_SESSION['db'],$cmd) or die("Error in execSQL(".$cmd."):".mysqli_error($_SESSION['db']));
-		if(($cnt=mysqli_affected_rows($_SESSION['db'])) > 0)return $cnt;
-		else	return 0;
+	function execSQL($cmd, $ignore_error = false){
+	    
+	    if(!$ignore_error){
+	        mysqli_query($_SESSION['db'],$cmd) or die("Error in execSQL(".$cmd."):".mysqli_error($_SESSION['db']));
+	    }else{
+	        $res = mysqli_query($_SESSION['db'],$cmd);
+	        
+	        if($res === FALSE){
+	            
+	            echo "(Bypassing) Error in execSQL(".$cmd."):".mysqli_error($_SESSION['db']);
+	            return FALSE;
+	        }
+	    }
+	    
+	    if(($cnt=mysqli_affected_rows($_SESSION['db'])) > 0)
+	        return $cnt;
+	    else
+	        return 0;
+	    
+// 		mysqli_query($_SESSION['db'],$cmd) or die("Error in execSQL(".$cmd."):".mysqli_error($_SESSION['db']));
+// 		if(($cnt=mysqli_affected_rows($_SESSION['db'])) > 0)return $cnt;
+// 		else	return 0;
 	}
 	/***************************************/
 	/* Count rows on table $where */
