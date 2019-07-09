@@ -476,6 +476,12 @@ function makeAdd($id){
 			<th align="left" height="30">Name</th>
 			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>"></td>
 		</tr>
+            <tr>
+                <th align="left" height="30">Parent Campaign:</th>
+                <td>
+                    <? echo $_SESSION['cmpgn_parents']->makeDDvalIDtxtCODE($row['parent_campaign_id']);?>
+                </td>
+            </tr>
 		<tr>
 			<th align="left" height="30">Status</th>
 			<td>
@@ -498,12 +504,6 @@ function makeAdd($id){
 			<th align="left" height="30">Vici Campaign ID</th>
 			<td><input name="vici_campaign_id" type="text" size="50" value="<?=htmlentities($row['vici_campaign_id'])?>"></td>
 		</tr>
-		<tr>
-			<th align="left" height="30">Parent Campaign:</th>
-        <td>
-					<? echo $_SESSION['cmpgn_parents']->makeDDvalIDtxtCODE($row['parent_campaign_id']);?>
-				</td>
-					</tr>
 		<tr>
 			<th align="left" height="30">Manager Transfer:</th>
 			<td><select name="manager_transfer">

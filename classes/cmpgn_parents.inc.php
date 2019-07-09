@@ -32,9 +32,9 @@ class CampaignParents
     {
       $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0";
       $res = $_SESSION['dbapi']->query($sql,1);
-      $showDD = '';
+      $showDD = "<select name='parent_campaign_id' id='dd-parent_campaign_id'>";
+      $showDD .= "<option value='0'>None</option>";
       if(mysqli_num_rows($res) > 0){
-        $showDD = "<select name='parent_campaign_id' id='dd-parent_campaign_id'>";
         for($x=0;$row = mysqli_fetch_array($res);$x++){
           $showDD .= "<option value='" . $row['id'] . "'";
           if($row['id'] == $currentSelected) {
@@ -42,8 +42,8 @@ class CampaignParents
           }
           $showDD .= ">" . $row['code'] . "</option>";
         }
-        $showDD .= "</select>";
       }
+      $showDD .= "</select>";
       return $showDD;
     }
 
