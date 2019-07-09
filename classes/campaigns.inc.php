@@ -22,29 +22,19 @@ class Campaigns{
 
 	var $order_prepend = 'cpgn_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
+    function __construct() {
+        require_once("classes/cmpgn_parents.inc.php");
+    }
+
 	function Campaigns(){
-
-
 		## REQURES DB CONNECTION!
-
-
-
 		$this->handlePOST();
 	}
 
-  function makeCamapignParentDD($inpName, $inpSelected) {
-		$sql = "SELECT id, code FROM 'campaign_parents' WHERE deleted=0";
-		$DD = new genericDD($sql, 'code', 'id');
-		return $DD->makeDD('parent_campaign_id');
-	}
-
 	function makeDD($name,$sel,$class,$onchange,$size, $blank_entry=1, $extra_where=null){
-
 		$names		= 'name';	## or Array('field1','field2')
 		$value		= 'id';
 		$seperator	= '';		## If $names == Array, this will be the seperator between fields
-
-
 		$fieldstring='';
 		if(is_array($names)){
 			$x=0;
@@ -53,20 +43,15 @@ class Campaigns{
 			}
 		}else{	$fieldstring.=$names.',';}
 		$fieldstring	.= $value;
-
 		$sql = "SELECT $fieldstring FROM ".$this->table." WHERE status='active' ".(($extra_where != null)?$extra_where:'');
 		$DD = new genericDD($sql,$names,$value,$seperator);
 		return $DD->makeDD($name,$sel,$class,$blank_entry,$onchange,$size);
 	}
 
-
 	function makeDDByCode($name,$sel,$class,$onchange,$size, $blank_entry=1, $extra_where=null){
-
 		$names		= 'vici_campaign_id';	## or Array('field1','field2')
 		$value		= 'id';
 		$seperator	= '';		## If $names == Array, this will be the seperator between fields
-
-
 		$fieldstring='';
 		if(is_array($names)){
 			$x=0;
@@ -75,7 +60,6 @@ class Campaigns{
 			}
 		}else{	$fieldstring.=$names.',';}
 		$fieldstring	.= $value;
-
 		$sql = "SELECT $fieldstring FROM ".$this->table." WHERE status='active' ".(($extra_where != null)?$extra_where:'');
 		$DD = new genericDD($sql,$names,$value,$seperator);
 		return $DD->makeDD($name,$sel,$class,$blank_entry,$onchange,$size);
@@ -516,13 +500,11 @@ function makeAdd($id){
 		</tr>
 		<tr>
 			<th align="left" height="30">Parent Campaign:</th>
-			<td>
-<?
-				 #echo $this->makeCampaignParentDD('parent_campaign_id', $row['parent_campaign_id']);
-				 ?>
-		</td>
-		</tr>
-		<tr>		<tr>
+        <td>
+					<? echo $_SESSION['cmpgn_parents']->makeDDvalIDtxtCODE($row['parent_campaign_id']);?>
+				</td>
+					</tr>
+		<tr>
 			<th align="left" height="30">Manager Transfer:</th>
 			<td><select name="manager_transfer">
 				<option value="no">Disabled</option>

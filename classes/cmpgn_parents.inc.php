@@ -22,46 +22,31 @@ class CampaignParents
         ## REQURES DB CONNECTION!
         $this->handlePOST();
     }
-    public function makeDD($name, $sel, $class, $onchange, $size, $blank_entry=1, $extra_where=null)
+    /**
+    *
+    * @param string $currentSelected
+    * @return string $showDD
+    *
+    **/
+    public function makeDDvalIDtxtCODE($currentSelected)
     {
-        $names		= 'name';	## or Array('field1','field2')
-        $value		= 'id';
-        $seperator	= '';		## If $names == Array, this will be the seperator between fields
-        $fieldstring='';
-        if (is_array($names)) {
-            $x=0;
-            foreach ($names as $name) {
-                $fieldstring.= $name.',';
-            }
-        } else {
-            $fieldstring.=$names.',';
+      $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0";
+      $res = $_SESSION['dbapi']->query($sql,1);
+      $showDD = '';
+      if(mysqli_num_rows($res) > 0){
+        $showDD = "<select name='parent_campaign_id' id='dd-parent_campaign_id'>";
+        for($x=0;$row = mysqli_fetch_array($res);$x++){
+          $showDD .= "<option value='" . $row['id'] . "'";
+          if($row['id'] == $currentSelected) {
+            $showDD .= " selected";
+          }
+          $showDD .= ">" . $row['code'] . "</option>";
         }
-        $fieldstring	.= $value;
-        $sql = "SELECT $fieldstring FROM ".$this->table." WHERE 1 ".(($extra_where != null)?$extra_where:'');
-        $DD = new genericDD($sql, $names, $value, $seperator);
-        return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
+        $showDD .= "</select>";
+      }
+      return $showDD;
     }
-    public function makeDDByCode($name, $sel, $class, $onchange, $size, $blank_entry=1, $extra_where=null)
-    {
-        $names		= 'vici_campaign_id';
-        ## or Array('field1','field2')
-        $value		= 'id';
-        $seperator	= '';
-        ## If $names == Array, this will be the seperator between fields
-        $fieldstring='';
-        if (is_array($names)) {
-            $x=0;
-            foreach ($names as $name) {
-                $fieldstring.= $name.',';
-            }
-        } else {
-            $fieldstring.=$names.',';
-        }
-        $fieldstring	.= $value;
-        $sql = "SELECT $fieldstring FROM ".$this->table." WHERE 1 ".(($extra_where != null)?$extra_where:'');
-        $DD = new genericDD($sql, $names, $value, $seperator);
-        return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
-    }
+
     public function handlePOST()
     {
         // THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
