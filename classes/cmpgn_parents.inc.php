@@ -33,7 +33,7 @@ class CampaignParents
       $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0";
       $res = $_SESSION['dbapi']->query($sql,1);
       $showDD = "<select name='parent_campaign_id' id='dd-parent_campaign_id'>";
-      $showDD .= "<option value='0'>None</option>";
+      $showDD .= "<option value='0'>[None]</option>";
       if(mysqli_num_rows($res) > 0){
         for($x=0;$row = mysqli_fetch_array($res);$x++){
           $showDD .= "<option value='" . $row['id'] . "'";
@@ -151,8 +151,7 @@ class CampaignParents
 				frm.s_name.value = '';
 			}
 		</script>
-		<div id="dialog-modal-add-campaign-parent" title="Adding new Campaign Parent" class="nod">
-		</div>
+		<div id="dialog-modal-add-campaign-parent" title="Adding new Campaign Parent" class="nod"></div>
 		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadCampaign_parents();return false">
 			<input type="hidden" name="searching_campaign_parents">
 		<table border="0" width="100%" class="lb" cellspacing="0">
@@ -193,7 +192,7 @@ class CampaignParents
 			$("#dialog-modal-add-campaign-parent").dialog({
 				autoOpen: false,
 				width: 480,
-				height: 220,
+				height: 145,
 				modal: false,
 				draggable:true,
 				resizable: false
