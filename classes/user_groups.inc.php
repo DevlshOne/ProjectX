@@ -43,15 +43,15 @@ class UserGroupsClass{
 					$this->makeTabInterface();
 				}else{
 					switch($_REQUEST['group_sub']){
-					default:
-					case 'cluster':
-					    $this->table = 'user_groups';
-						$this->listEntrys();
-						break;
-					case 'master':
-					    $this->table = 'user_groups_master';
-					    $this->listMasterEntrys();
-						break;
+                        default:
+                        case 'cluster':
+                            $this->table = 'user_groups';
+                            $this->listEntrys();
+                            break;
+                        case 'master':
+                            $this->table = 'user_groups_master';
+                            $this->listMasterEntrys();
+                            break;
 					}
 				}
 			}
@@ -275,203 +275,6 @@ class UserGroupsClass{
 		</script>
         <?
 	}
-    function listMasterEntrys(){
-        ?>
-        <script>
-            var usergroupmaster_delmsg = "THIS WILL DELETE THE GROUP FROM THE VICIDIAL CLUSTER AS WELL!\nAre you sure you want to delete this user group?";
-            var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
-            var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
-            var <?=$this->index_name?> = 0;
-            var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-            var UserGroupMastersTableFormat = [
-                ['user_group','align_left'],
-                ['name','align_left'],
-                ['[get:cluster_name:vici_cluster_id]','align_center'],
-                ['office','align_center'],
-                ['company_id', 'align_left'],
-                ['time_shift', 'align_center'],
-                ['agent_type', 'align_left']
-            ];
-
-            /**
-             * Build the URL for AJAX to hit, to build the list
-             */
-            function getUserGroupMastersURL(){
-                var frm = getEl('<?=$this->frm_name?>');
-                return 'api/api.php'+
-                    "?get=user_groups&"+
-                    "group_sub=master&"+
-                    "mode=xml&"+
-                    's_name='+encodeURI(frm.s_name.value)+"&"+
-                    's_group_name='+encodeURI(frm.s_group_name.value)+"&"+
-                    's_cluster_id='+encodeURI(frm.s_cluster_id.value)+"&"+
-                    "index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
-                "orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
-            }
-            var usergroupsmaster_loading_flag = false;
-            /**
-             * Load the license data - make the ajax call, callback to the parse function
-             */
-            function loadUsergroupmasters(){
-                // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
-                var val = null;
-                eval('val = usergroupmasters_loading_flag');
-                // CHECK IF WE ARE ALREADY LOADING THIS DATA
-                if(val == true){
-                    //console.log("USERGROUPS ALREADY LOADING (BYPASSED) \n");
-                    return;
-                }else{
-
-                    eval('usergroupmasters_loading_flag = true');
-                }
-                <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-                $('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
-                loadAjaxData(getUserGroupMastersURL(),'parseUserGroupMasters');
-            }
-            /**
-             * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
-             */
-            var <?=$this->order_prepend?>totalcount = 0;
-            function parseUserGroupMasters(xmldoc){
-                <?=$this->order_prepend?>totalcount = parseXMLData('usergroupmaster',UserGroupMastersTableFormat,xmldoc);
-                // ACTIVATE PAGE SYSTEM!
-                if(<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize){
-                    makePageSystem('usergroupmasters',
-                        '<?=$this->index_name?>',
-                        <?=$this->order_prepend?>totalcount,
-                        <?=$this->index_name?>,
-                        <?=$this->order_prepend?>pagesize,
-                        'loadUsergroupmasters()'
-                    );
-                }else{
-                    hidePageSystem('usergroupmasters');
-                }
-                eval('usergroupmasters_loading_flag = false');
-            }
-            function handleUsergroupmasterListClick(id){
-                displayAddUserGroupMasterDialog(id);
-            }
-            function displayAddUserGroupMasterDialog(id){
-                var objname = 'dialog-modal-add-user-group';
-                if(id > 0){
-                    $('#'+objname).dialog( "option", "title", 'Editing User Group Master' );
-                }else{
-                    $('#'+objname).dialog( "option", "title", 'Adding new User Group Master' );
-                }
-                $('#'+objname).dialog("open");
-                $('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                $('#'+objname).load("index.php?area=user_group_masters&add_user_group_master="+id+"&printable=1&no_script=1");
-                $('#'+objname).dialog('option', 'position', 'center');
-            }
-            function resetUserGroupMasterForm(frm){
-                frm.s_name.value = '';
-                frm.s_cluster_id.value = '';
-                frm.s_group_name.value='';
-            }
-        </script>
-        <div id="dialog-modal-add-user-group" title="Adding new User Group Master" class="nod"></div>
-        <form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>#usergroupsarea" onsubmit="loadUsergroupmasters();return false">
-            <input type="hidden" name="searching_usergroupmasters">
-            <input type="hidden" name="<?=$this->order_prepend?>orderby" value="<?=htmlentities($this->orderby)?>">
-            <input type="hidden" name="<?=$this->order_prepend?>orderdir" value="<?=htmlentities($this->orderdir)?>">
-            <a name="usersarea"></a>
-            <table border="0" width="100%" class="lb" cellspacing="0">
-                <tr>
-                    <td height="40" class="pad_left ui-widget-header">
-                        <table border="0" width="100%">
-                            <tr>
-                                <th width="500" align="left">
-                                    User Group Master&nbsp;                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="button" value="Add" onclick="displayAddUserGroupMasterDialog(0);<?/**,'_blank','width=500,height=400,scrollbars=1,resizable=1')**/?>">
-                                </th>
-                                <td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadUsergroups();return false">
-                                        <option value="20">20</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                        <option value="500">500</option>
-                                    </select></td>
-                                <td align="right">
-                                    <?/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-                                    <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-                                        <tr>
-                                            <td id="usergroupmasters_prev_td" class="page_system_prev"></td>
-                                            <td id="usergroupmasters_page_td" class="page_system_page"></td>
-                                            <td id="usergroupmasters_next_td" class="page_system_next"></td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table border="0" id="usrgrpmaster_search_table">
-                            <tr>
-                                <td rowspan="2" width="100" align="center" style="border-right:1px solid #000">
-                                    <span id="total_count_div"></span>
-                                </td>
-                                <th class="row2">Name</th>
-                                <th class="row2">Group</th>
-                                <th class="row2">Cluster</th>
-                                <td>
-                                    <input type="submit" value="Search" onclick="<?=$this->index_name?> = 0;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" name="s_name" size="10" value="<?=htmlentities($_REQUEST['s_name'])?>"></td>
-                                <td><input type="text" name="s_group_name" size="10" value="<?=htmlentities($_REQUEST['s_group_name'])?>"></td>
-                                <td>
-                                    <?
-                                    echo $_SESSION['campaigns']->makeDD('s_campaign_id',$_REQUEST['s_campaign_id'],'',"",'',1);
-                                    ?>
-                                </td>
-                                <td>
-                                    <?
-                                    echo $this->makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", 1);
-                                    ?>
-                                </td>
-                                <td>
-                                    <input type="button" value="Reset" onclick="resetUserGroupForm(this.form);loadUsergroups();">
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-        </form>
-        <tr>
-            <td colspan="2"><table border="0" width="100%" id="usergroup_table">
-                    <tr>
-                        <th class="row2" align="left"><?=$this->getOrderLink('user_group')?>User Group</a></th>
-                        <th class="row2" align="left"><?=$this->getOrderLink('group_name')?>Name</a></th>
-                        <th class="row2" align="center"><?=$this->getOrderLink('company_id')?>Company ID</a></th>
-                        <th class="row2" align="center"><?=$this->getOrderLink('office')?>Office</a></th>
-                        <th class="row2">&nbsp;</th>
-                    </tr>
-                    <tr>
-                        <td colspan="5" align="center">
-                            <i>Loading, please wait...</i>
-                        </td>
-                    </tr>
-
-                </table></td>
-        </tr>
-        </table>
-        <script>
-            $(document).ready(function(){
-                $( "#dialog-modal-add-user-group-master" ).dialog({
-                    autoOpen: false,
-                    width:380,
-                    height: 160,
-                    modal: false,
-                    draggable:true,
-                    resizable: true
-                });
-                loadUsergroupmasters();
-            });
-        </script>
-        <?
-    }
 
 	function makeAdd($id){
 		$id=intval($id);
