@@ -52,225 +52,189 @@ class UserGroupsMaster{
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
 			var <?=$this->index_name?> = 0;
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-
 			var NamesTableFormat = [
-				['name','align_left'],
-				['[get:voice_name:voice_id]','align_center'],
-				['filename','align_center'],
-
-				['[delete]','align_center']
+				['group_name','align_left'],
+				['user_group','align_left'],
+				['office','align_center'],
+				['time_shift','align_center']
 			];
-
 			/**
 			* Build the URL for AJAX to hit, to build the list
 			*/
-			function getNamesURL(){
-
-				var frm = getEl('<?=$this->frm_name?>');
-
+			function getUserGroupsMasterURL(){
+				let frm = getEl('<?=$this->frm_name?>');
 				return 'api/api.php'+
-								"?get=names&"+
-								"mode=xml&"+
-
-								's_id='+escape(frm.s_id.value)+"&"+
-								's_name='+escape(frm.s_name.value)+"&"+
-								's_filename='+escape(frm.s_filename.value)+"&"+
-
-								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
-								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
+                    '?get=user_groups_master&'+
+					'mode=xml&'+
+					's_id='+encodeURI(frm.s_id.value)+'&'+
+                    's_group_name='+encodeURI(frm.s_group_name.value)+'&'+
+					's_office='+encodeURI(frm.s_office.value)+'&'+
+					'index='+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+'&pagesize='+<?=$this->order_prepend?>pagesize+'&'+
+					'orderby='+<?=$this->order_prepend?>orderby+'&orderdir='+<?=$this->order_prepend?>orderdir;
 			}
-
-
-			var names_loading_flag = false;
-
+    			var user_groups_master_loading_flag = false;
 			/**
 			* Load the name data - make the ajax call, callback to the parse function
 			*/
-			function loadNames(){
-
+			function loadUserGroupsMaster(){
 				// ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
-				var val = null;
-				eval('val = names_loading_flag');
-
-
+				let val = null;
+				eval('val = user_groups_master_loading_flag');
 				// CHECK IF WE ARE ALREADY LOADING THIS DATA
 				if(val == true){
-
-					//console.log("NAMES ALREADY LOADING (BYPASSED) \n");
+					//console.log("USER GROUPS MASTER ALREADY LOADING (BYPASSED) \n");
 					return;
 				}else{
-
-					eval('names_loading_flag = true');
+					eval('user_groups_master_loading_flag = true');
 				}
-
 				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-
-				loadAjaxData(getNamesURL(),'parseNames');
-
+				loadAjaxData(getUserGroupsMasterURL(),'parseUserGroupsMaster');
 			}
-
-
 			/**
 			* CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
 			*/
-			var <?=$this->order_prepend?>totalcount = 0;
-			function parseNames(xmldoc){
-
-				<?=$this->order_prepend?>totalcount = parseXMLData('name',NamesTableFormat,xmldoc);
-
-
+			let <?=$this->order_prepend?>totalcount = 0;
+			function parseUserGroupsMaster(xmldoc){
+				<?=$this->order_prepend?>totalcount = parseXMLData('name',UserGroupsTableFormat,xmldoc);
 				// ACTIVATE PAGE SYSTEM!
 				if(<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize){
-
-
-					makePageSystem('names',
-									'<?=$this->index_name?>',
-									<?=$this->order_prepend?>totalcount,
-									<?=$this->index_name?>,
-									<?=$this->order_prepend?>pagesize,
-									'loadNames()'
-								);
-
+					makePageSystem('user_groups_master',
+                        '<?=$this->index_name?>',
+						<?=$this->order_prepend?>totalcount,
+						<?=$this->index_name?>,
+						<?=$this->order_prepend?>pagesize,
+						'loadUserGroupsMaster()'
+                    );
 				}else{
-
-					hidePageSystem('names');
-
+					hidePageSystem('user_groups_master');
 				}
-
-				eval('names_loading_flag = false');
+				eval('user_groups_master_loading_flag = false');
 			}
-
-
-			function handleNameListClick(id){
-
-				displayAddNameDialog(id);
-
+			function handleUserGroupsMasterListClick(id){
+				displayAddUserGroupsMasterDialog(id);
 			}
-
-
-			function displayAddNameDialog(id){
-
-				var objname = 'dialog-modal-add-name';
-
-
+			function displayAddUserGroupsMasterDialog(id){
+				var objname = 'dialog-modal-add-user-groups-master';
 				if(id > 0){
-					$('#'+objname).dialog( "option", "title", 'Editing name' );
+					$('#'+objname).dialog( "option", "title", 'Editing Master User Group' );
 				}else{
-					$('#'+objname).dialog( "option", "title", 'Adding new Name' );
+					$('#'+objname).dialog( "option", "title", 'Adding new Master User Group' );
 				}
-
-
-
 				$('#'+objname).dialog("open");
-
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
-				$('#'+objname).load("index.php?area=names&add_name="+id+"&printable=1&no_script=1");
-
+				$('#'+objname).load("index.php?area=user_groups_master&add_user_group_master="+id+"&printable=1&no_script=1");
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
-
-			function resetNameForm(frm){
-
-				frm.s_id.value = '';
-				frm.s_name.value = '';
-				frm.s_filename.value='';
-
+			function resetUserGroupsMasterForm(frm){
+				frm.s_group_name.value = '';
+				frm.s_user_group.value = '';
+				frm.s_company_id.value = '';
+				frm.s_time_shift.value = '';
+				frm.s_agent_type.value = '';
+				frm.s_office.value = '';
 			}
+			let usrgrpsmstrsrchtog = false;
 
-
-			var namesrchtog = false;
-
-			function toggleNameSearch(){
-				namesrchtog = !namesrchtog;
-				ieDisplay('name_search_table', namesrchtog);
+			function toggleUserGroupsMasterSearch(){
+				usrgrpsmstrsrchtog = !usrgrpsmstrsrchtog;
+				ieDisplay('user_groups_master_search_table', usrgrpsmstrsrchtog);
 			}
-
 		</script>
-		<div id="dialog-modal-add-name" title="Adding new Name" class="nod">
-		<?
-
-		?>
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadNames();return false">
-			<input type="hidden" name="searching_name">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr>
+		<div id="dialog-modal-add-user-groups-master" title="Adding new Master User Group" class="nod">
+		</div>
+        <form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadUserGroupsMaster();return false">
+			<input type="hidden" name="searching_user_groups_master">
+    		<table border="0" width="100%" class="lb" cellspacing="0">
+	    	<tr>
 			<td height="40" class="pad_left ui-widget-header">
-
 				<table border="0" width="100%" >
 				<tr>
-					<td width="500">
-						Names
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddNameDialog(0)">
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Search" onclick="toggleNameSearch()">
+					<td width="500">User Groups Master&nbsp;
+						<input type="button" value="Add" onclick="displayAddUserGroupsMasterDialog(0)">
+						<input type="button" value="Search" onclick="toggleUserGroupsMasterSearch()">
 					</td>
-
-					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadNames();return false">
-						<option value="20">20</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-						<option value="500">500</option>
-					</select></td>
-
-					<td align="right"><?
-						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
+					<td width="150" align="center">PAGE SIZE:&nbsp;
+                        <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadUserGroupsMaster();return false">
+						    <option value="20">20</option>
+						    <option value="50">50</option>
+						    <option value="100">100</option>
+						    <option value="500">500</option>
+					    </select>
+                    </td>
+					<td align="right">
+                        <?
+						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/
+						?>
 						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
 						<tr>
-							<td id="names_prev_td" class="page_system_prev"></td>
-							<td id="names_page_td" class="page_system_page"></td>
-							<td id="names_next_td" class="page_system_next"></td>
+							<td id="usrgrpsmstr_prev_td" class="page_system_prev"></td>
+							<td id="usrgrpsmstr_page_td" class="page_system_page"></td>
+							<td id="usrgrpsmstr_next_td" class="page_system_next"></td>
 						</tr>
 						</table>
-
 					</td>
 				</tr>
-				</table>
-
+			</table>
 			</td>
-
 		</tr>
-
 		<tr>
-			<td colspan="2"><table border="0" width="100%" id="name_search_table" class="nod">
+			<td colspan="2"><table border="0" width="100%" id="user_groups_master_search_table" class="nod">
 			<tr>
-				<td rowspan="2"><font size="+1">SEARCH</font></td>
-				<th class="row2">ID</th>
-				<th class="row2">Name</th>
-				<th class="row2">Filename</th>
+				<td rowspan="2">
+                    <font size="+1">SEARCH</font>
+                </td>
+				<th class="row2">Group Name</th>
+				<th class="row2">User Group</th>
+				<th class="row2">Company ID</th>
+                <th class="row2">Time Shift</th>
+                <th class="row2">Agent Type</th>
+                <th class="row2">Office</th>
 				<td><input type="submit" value="Search" name="the_Search_button"></td>
 			</tr>
 			<tr>
-				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-				<td align="center"><input type="text" name="s_name" size="20" value="<?=htmlentities($_REQUEST['s_name'])?>"></td>
-				<td align="center"><input type="text" name="s_filename" size="20" value="<?=htmlentities($_REQUEST['s_filename'])?>"></td>
-				<td><input type="button" value="Reset" onclick="resetNameForm(this.form);resetPageSystem('<?=$this->index_name?>');loadNames();"></td>
+				<td align="center"><input type="text" name="s_group_name" size="30" value="<?=htmlentities($_REQUEST['s_group_name'])?>"></td>
+				<td align="center"><input type="text" name="s_user_group" size="30" value="<?=htmlentities($_REQUEST['s_nuser_group'])?>"></td>
+				<td align="center"><input type="text" name="s_company_id" size="12" value="<?=htmlentities($_REQUEST['s_company_id'])?>"></td>
+                <td align="center">
+                    <select name="s_time_shift">
+                        <option<?=htmlentities($_REQUEST['s_time_shift']) == 'AM'?' selected':''?>>AM</option>
+                        <option<?=htmlentities($_REQUEST['s_time_shift']) == 'PM'?' selected':''?>>PM</option>
+                    </select>
+                </td>
+                <td align="center">
+                    <select name="s_agent_type">
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'cold'?' selected':''?>>cold</option>
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'taps'?' selected':''?>>taps</option>
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'verifier'?' selected':''?>>verifier</option>
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'manager'?' selected':''?>>manager</option>
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'monitor'?' selected':''?>>monitor</option>
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'coldtaps'?' selected':''?>>coldtaps</option>
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'training'?' selected':''?>>training</option>
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'admin'?' selected':''?>>admin</option>
+                        <option<?=htmlentities($_REQUEST['s_agent_type']) == 'all'?' selected':''?>>all</option>
+                    </select>
+                <td align="center"><input type="text" name="s_office" size="10" value="<?=htmlentities($_REQUEST['s_office'])?>"></td>
+				<td><input type="button" value="Reset" onclick="resetUserGroupsMasterForm(this.form);resetPageSystem('<?=$this->index_name?>');loadUserGroupsMaster();"></td>
 			</tr>
-			</table></td>
-		</tr></form>
+			</table>
+            </td>
+		</tr>
+        </form>
 		<tr>
-			<td colspan="2"><table border="0" width="100%" id="name_table">
-			<tr>
-
-				<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>
-				<th class="row2"><?=$this->getOrderLink('voice_id')?>Voice</a></th>
-				<th class="row2"><?=$this->getOrderLink('filename')?>Filename</a></th>
-				<th class="row2">&nbsp;</th>
-			</tr><?
-
-			?></table></td>
-		</tr></table>
-
+			<td colspan="2">
+                <table border="0" width="100%" id="user_groups_master_table">
+                    <tr>
+                        <th class="row2" align="left"><?=$this->getOrderLink('group_name')?>Group Name</a></th>
+                        <th class="row2"><?=$this->getOrderLink('user_group')?>User Group</a></th>
+                        <th class="row2"><?=$this->getOrderLink('company_id')?>Company ID</a></th>
+                        <th class="row2">&nbsp;</th>
+                    </tr>
+                </table>
+            </td>
+		</tr>
+        </table>
 		<script>
-
-			$("#dialog-modal-add-name").dialog({
+			$("#dialog-modal-add-user-groups-master").dialog({
 				autoOpen: false,
 				width: 500,
 				height: 200,
@@ -278,147 +242,82 @@ class UserGroupsMaster{
 				draggable:true,
 				resizable: false
 			});
-
-			loadNames();
-
-		</script><?
-
+			loadUserGroupsMaster();
+		</script>
+        <?
 	}
-
-
 	function makeAdd($id){
-
 		$id=intval($id);
-
-
 		if($id){
-
-			$row = $_SESSION['dbapi']->names->getByID($id);
-
-
+			$row = $_SESSION['dbapi']->user_groups_master->getByID($id);
 		}
-
-		?><script>
-
+		?>
+        <script>
 			function validateNameField(name,value,frm){
-
 				//alert(name+","+value);
-
-
 				switch(name){
 				default:
-
 					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
 					return true;
 					break;
-
 				case 'filename':
-
-
 					if(!value)return false;
-
 					return true;
-
-
 					break;
-
 				}
 				return true;
 			}
-
-
-
-			function checkNameFrm(frm){
-
-
+			function checkGroupNameFrm(frm){
 				var params = getFormValues(frm,'validateNameField');
-
-
 				// FORM VALIDATION FAILED!
 				// param[0] == field name
 				// param[1] == field value
 				if(typeof params == "object"){
-
 					switch(params[0]){
 					default:
-
 						alert("Error submitting form. Check your values");
-
 						break;
-
 					case 'filename':
-
 						alert("Please enter the filename for this name.");
 						eval('try{frm.'+params[0]+'.select();}catch(e){}');
 						break;
-
 					}
-
 				// SUCCESS - POST AJAX TO SERVER
-				}else{
-
-
+				} else {
 					//alert("Form validated, posting");
-
 					$.ajax({
 						type: "POST",
 						cache: false,
-						url: 'api/api.php?get=names&mode=xml&action=edit',
+						url: 'api/api.php?get=user_groups_master&mode=xml&action=edit',
 						data: params,
 						error: function(){
 							alert("Error saving user form. Please contact an admin.");
 						},
 						success: function(msg){
-
-//alert(msg);
-
-							var result = handleEditXML(msg);
-							var res = result['result'];
-
+                            //alert(msg);
+							let result = handleEditXML(msg);
+							let res = result['result'];
 							if(res <= 0){
-
 								alert(result['message']);
-
 								return;
-
 							}
-
-
-							loadNames();
-
-
-							displayAddNameDialog(res);
-
+							loadUserGroupsMaster();
+							displayAddUserGroupsMasterDialog(res);
 							alert(result['message']);
-
 						}
-
-
 					});
-
 				}
-
 				return false;
-
 			}
-
-
-
-
 			// SET TITLEBAR
-			$('#dialog-modal-add-name').dialog( "option", "title", '<?=($id)?'Editing Name #'.$id.' - '.htmlentities($row['name']):'Adding new Name'?>' );
-
-
-
+			$('#dialog-modal-add-user-groups-master').dialog( "option", "title", '<?=($id)?'Editing Master User Group #' . $id . ' - '.htmlentities($row['group_name']):'Adding new Mater User Group'?>' );
 		</script>
-		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkNameFrm(this); return false">
+		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkGroupNameFrm(this); return false">
 			<input type="hidden" id="adding_name" name="adding_name" value="<?=$id?>" >
-
-
 		<table border="0" align="center">
 		<tr>
 			<th align="left" height="30">Name:</th>
-			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>"></td>
+			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['group_name'])?>"></td>
 		</tr>
 		<tr>
 			<th align="left" height="30">Filename:</th>
@@ -432,22 +331,13 @@ class UserGroupsMaster{
 			<th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
 		</tr>
 		</form>
-		</table><?
-
-
+		</table>
+        <?
 	}
-
-
-
-
 	function getOrderLink($field){
-
 		$var = '<a href="#" onclick="setOrder(\''.addslashes($this->order_prepend).'\',\''.addslashes($field).'\',';
-
-		$var .= "((".$this->order_prepend."orderdir == 'DESC')?'ASC':'DESC')";
-
-		$var.= ");loadNames();return false;\">";
-
+		$var .= "((".$this->order_prepend."orderdir == 'ASC')?'ASC':'DESC')";
+		$var.= ");loadUserGroupsMaster();return false;\">";
 		return $var;
 	}
 }
