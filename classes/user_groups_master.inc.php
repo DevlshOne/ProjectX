@@ -129,7 +129,7 @@
                 }
 
                 function displayAddUserGroupsMasterDialog(id) {
-                    var objname = 'dialog-modal-add-user-groups-master';
+                    let objname = 'dialog-modal-add-user-groups-master';
                     if (id > 0) {
                         $('#' + objname).dialog("option", "title", 'Editing Master User Group');
                     } else {
@@ -137,7 +137,7 @@
                     }
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                    $('#' + objname).load("index.php?area=user_groups_master&add_users_group_master=" + id + "&printable=1&no_script=1");
+                    $('#' + objname).load("index.php?area=user_groups_master&add_user_groups_master=" + id + "&printable=1&no_script=1");
                     $('#' + objname).dialog('option', 'position', 'center');
                 }
 
@@ -290,7 +290,7 @@
                 $("#dialog-modal-add-user-groups-master").dialog({
                     autoOpen: false,
                     width: 500,
-                    height: 200,
+                    height: 260,
                     modal: false,
                     draggable: true,
                     resizable: false
@@ -300,6 +300,9 @@
             <?
         }
 
+        /**
+         * @param $id
+         */
         function makeAdd($id)
         {
             $id = intval($id);
@@ -315,7 +318,27 @@
                             // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
                             return true;
                             break;
-                        case 'filename':
+                        case 'group_name':
+                            if (!value) return false;
+                            return true;
+                            break;
+                        case 'user_group':
+                            if (!value) return false;
+                            return true;
+                            break;
+                        case 'office':
+                            if (!value) return false;
+                            return true;
+                            break;
+                        case 'company_id':
+                            if (!value) return false;
+                            return true;
+                            break;
+                        case 'time_shift':
+                            if (!value) return false;
+                            return true;
+                            break;
+                        case 'agent_type':
                             if (!value) return false;
                             return true;
                             break;
@@ -368,25 +391,61 @@
 
                 // SET TITLEBAR
                 $('#dialog-modal-add-user-groups-master').dialog("option", "title", '<?=($id) ? 'Editing Master User Group #' . $id . ' - ' . htmlentities($row['group_name']) : 'Adding new Mater User Group'?>');
+                $(function() {
+                    $('#group_name').on('keyup', function() {
+                        let gnStr = this.value.toString();
+                        let ugFormal = gnStr.replace(/\s+/g, '-').toUpperCase();
+                        console.log(ugFormal);
+                        $('#user_group').val(ugFormal);
+                    });
+                })
             </script>
-            // This is the edit / add form
             <form method="POST" action="<?= stripurl('') ?>" autocomplete="off"
                   onsubmit="checkGroupNameFrm(this); return false">
                 <input type="hidden" id="adding_user_groups_master" name="adding_user_groups_master" value="<?= $id ?>">
                 <table border="0" align="center">
                     <tr>
                         <th align="left" height="30">Name:</th>
-                        <td><input name="name" type="text" size="50" value="<?= htmlentities($row['group_name']) ?>">
+                        <td><input id="group_name" name="group_name" type="text" size="50" value="<?= htmlentities($row['group_name']) ?>">
                         </td>
+                    </tr>
+                    <tr>
+                        <th align="left" height="30">Group:</th>
+                        <td><input id="user_group" name="user_group" type="text" size="50" value="<?= htmlentities($row['user_group']) ?>" readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th align="left" height="30">Company:</th>
+                        <td><?=makeCompanyDD('company_id', $row['company_id']) ?></td>
                     </tr>
                     <tr>
                         <th align="left" height="30">Office:</th>
-                        <td><input name="office" type="text" size="50" value="<?= htmlentities($row['office']) ?>">
+                        <td><?=makeOfficeDD('office', $row['office'], null, null, null, null) ?></td>
+                    </tr>
+                    <tr>
+                        <th align="left" height="30">Shift:</th>
+                        <td>
+                            <select name="time_shift">
+                                <option>AM</option>
+                                <option>PM</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
-                        <th align="left" height="30">Voice:</th>
-                        <td><?= makeVoiceDD(0, 'voice_id', $row['voice_id']) ?></td>
+                        <th align="left" height="30">Agent Type:</th>
+                        <td>
+                            <select name="agent_type">
+                                <option>cold</option>
+                                <option>taps</option>
+                                <option>verifier</option>
+                                <option>manager</option>
+                                <option>monitor</option>
+                                <option>coldtaps</option>
+                                <option>training</option>
+                                <option>admin</option>
+                                <option>all</option>
+                            </select>
+                        </td>
                     </tr>
                     <tr>
                         <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>

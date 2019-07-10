@@ -34,15 +34,18 @@
                     echo $out;
                     break;
                 case 'edit':
-                    $id = intval($_POST['adding_user_group']);
+                    $id = intval($_POST['adding_user_groups_master']);
                     unset($dat);
-                    $dat['name'] = trim($_POST['name']);
+                    $dat['group_name'] = trim($_POST['group_name']);
                     $dat['office'] = trim($_POST['office']);
+                    $dat['time_shift'] = trim($_POST['time_shift']);
+                    $dat['agent_type'] = trim($_POST['agent_type']);
+                    $dat['company_id'] = intval($_POST['company_id']);
+                    $dat['user_group'] = trim($_POST['user_group']);
                     if ($id) {
                         $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->user_groups_master->table);
                         logAction('edit', 'user_groups_master', $id, "");
                     } else {
-                        $dat['user_group'] = trim($_POST['user_group']);
                         $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->user_groups_master->table);
                         $id = mysqli_insert_id($_SESSION['dbapi']->db);
                         logAction('add', 'user_groups_master', $id, "");
