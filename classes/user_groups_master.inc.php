@@ -395,9 +395,12 @@
                     $('#group_name').on('keyup', function() {
                         let gnStr = this.value.toString();
                         let ugFormal = gnStr.replace(/\s+/g, '-').toUpperCase();
-                        console.log(ugFormal);
-                        $('#user_group').val(ugFormal);
+                        //console.log(ugFormal);
+                        //$('#user_group').val(ugFormal);
                     });
+                    $('#user_group').on('keyup', function() {
+                        this.value = this.value.replace(/\s+/g, '-').toUpperCase();
+                    })
                 })
             </script>
             <form method="POST" action="<?= stripurl('') ?>" autocomplete="off"
@@ -411,7 +414,7 @@
                     </tr>
                     <tr>
                         <th align="left" height="30">Group:</th>
-                        <td><input id="user_group" name="user_group" type="text" size="50" value="<?= htmlentities($row['user_group']) ?>" readonly>
+                        <td><input id="user_group" name="user_group" type="text" size="50" value="<?= htmlentities($row['user_group']) ?>">
                         </td>
                     </tr>
                     <tr>
