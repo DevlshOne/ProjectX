@@ -14,7 +14,6 @@
 function clearTable(obj){
 	//alert(obj.rows.length);
 	if(obj.rows.length > 1){
-
 		for(var x=obj.rows.length; x > 1;x--){
 			obj.tBodies[0].deleteRow(x-1);
 		}
@@ -279,6 +278,11 @@ function loadAjaxData(loadurl,callback_func_name){
  * @return Total count of items (not limited by the limit field, the full total, or if not usign page system, total records returned)
  */
 function parseXMLData(area,tableFormat,xmldoc){
+	/** some debugging if you get hosed
+	 console.log('Area =' + area);
+	 console.log('tableFormat = ' + tableFormat);
+	 console.log('xmldoc = ' + xmldoc);
+ 	 */
 	var obj;
 	var tagname = "";
 	var callback_func_name = "";
@@ -289,30 +293,23 @@ function parseXMLData(area,tableFormat,xmldoc){
 	//var ui_load_panel;
 	delete_message_varname = area+"_delmsg";
 	switch(area){
-	default:
-
-		obj = getEl(area+'_table');
-
-		tagname = area.charAt(0).toUpperCase() + area.substr(1);
-		delete_area = area+"s";
-		callback_func_name = "load"+tagname+"s()";
-
-		break;
-
-
-//	case 'campaign':
-//
-//		obj = getEl(area+'_table');
-//
-//
-//		tagname = "Campaign";
-//		delete_area = area+"s";
-//		callback_func_name = "loadCampaigns()";
-//
-//		break;
+		default:
+			obj = getEl(area + '_table');
+			tagname = area.charAt(0).toUpperCase() + area.substr(1);
+			delete_area = area + "s";
+			callback_func_name = "load"+tagname+"s()";
+			break;
+	//	case 'campaign':
+	//
+	//		obj = getEl(area+'_table');
+	//
+	//
+	//		tagname = "Campaign";
+	//		delete_area = area+"s";
+	//		callback_func_name = "loadCampaigns()";
+	//
+	//		break;
 	}
-
-
 	var totalcount = 0;
 	var special_tag;
 	var special_idx=0; // USED TO KEEP TRACK OF EACH RECORD
@@ -321,116 +318,69 @@ function parseXMLData(area,tableFormat,xmldoc){
 
 	// DETECT AND USE PAGE SYSTEM RELATED INFO (total count)
 	try{
-
 		var tmptags = xmldoc.getElementsByTagName(tagname + "s");
 		totalcount = tmptags[0].getAttribute("totalcount");
-
-	}catch(e){}
-
+	}	catch(e){}
 
 	var errarr = xmldoc.getElementsByTagName("error");
 	if(errarr.length > 0){
-
 		var msg = "Errors detected: ";
 		var tmpcode = 0;
 		for(var i=0;i < errarr.length;i++){
-
 			tmpcode = errarr[i].getAttribute('code');
-
 			if(tmpcode == '-101'){
 				go('index.php');
 				break;
 			}
-
 		//	msg += errarr[i].nodeValue;
 		}
-
-
 		//alert(msg);
 	}
 
-
-
 	// GRAB ALL DATA TAGS
-	var dataarr = xmldoc.getElementsByTagName(tagname);
+	let dataarr = xmldoc.getElementsByTagName(tagname);
+	//console.log(tagname);
+	//console.log(dataarr);
 	if(totalcount <= 0){
 		// IF TOTAL COUNT WASNT POPULATED ABOVE, MANUALLY SET TO THE TOTAL RECORD SIZE
 		totalcount = dataarr.length;
 	}
 	// REMOVE ALL ROWS BUT THE HEADER
 	clearTable(obj);
-
 	//alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
-
 	if(dataarr.length == 0){
-
-
-
 		var colspan = obj.rows.item(0).cells.length;
-
 		var lastRow = obj.rows.length;
 		var row = obj.insertRow(lastRow);
 		var cell = row.insertCell(0);
-
-
 		cell.colSpan = colspan;
 		cell.className = "align_center";
 		cell.innerHTML = "<i>No Records found.</i>";
 	}
-
-	var clsname;
+	let clsname;
 	for(var x=0;x < dataarr.length;x++){
-
-
 		var lastRow = obj.rows.length;
 		var row = obj.insertRow(lastRow);
-
-
 		clsname = 'row'+(x%2);
-
 		// STORE RECORD ID ON THE TR ELEMENT, SO EACH CELL CAN ACCESS IT AS THE PARENT
 		row.setAttribute("record_id",dataarr[x].getAttribute('id'));
-
 		row.setAttribute("color_index", ""+(x%2));
-
 		var cell;
 		var newDate,tmptime,datestring;
 		var cur_name,cur_class,cur_data,priv_name;
-
-
-
 		for(var y=0; y < tableFormat.length;y++){
-
 			//alert("INSERT CELL - "+y+" tableFormat:"+tableFormat[y]);
-
 			if(!tableFormat[y])continue;
-
-
-
-
 			cell = row.insertCell(y);
-
-
 			//alert("Format: "+tableFormat[y][0]+" "+tableFormat[y][1]);
-
 			cur_name = tableFormat[y][0];
 			cur_class= (tableFormat[y][1])?' '+tableFormat[y][1]:'';// INCLUDES THE SPACE FOR CSS CLASSES
-
 			// SPECIAL MODE, currently only delete, but could do other things later
 			if(cur_name.charAt(0) == '['){
-
 				// EXTRACT SPECIAL TAG DETAILS
 				special_tag = cur_name.substring(1,cur_name.length-1);
-
-
-
 				if(special_tag.indexOf("get:") == 0){
-
-
-
-
 					tmparr = special_tag.split(":");
-
 					// PUSH THE SPECIAL TAG TO AN ARRAY, ALONG WITH ADDITIONAL INFO
 					special_stack[special_idx] = 'get:'+tmparr[1];
 
