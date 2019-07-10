@@ -4,7 +4,7 @@
  * WTF HAPPENED? A script to help track down the call flow and see who hung up first/how long shit took/etc
  * Written by: Jonathan Will(PHP) and William G-funk Gisaku (Bash scripting)
  */
-    $basedir = "/var/www/dev/";
+    $basedir = "/var/www/html/dev/";
 
     include_once($basedir."db.inc.php");
     include_once($basedir."util/microtime.php");
@@ -24,6 +24,11 @@
 		$williamvoodoo .= "\nEOF\n";
 
 		$channel = trim(`$williamvoodoo`);
+
+		if(!$channel){
+
+			$channel = "NO CHANNEL FOUND";
+		}
 
 		echo "CHANNEL NAME: ".$channel."\n";
 
@@ -73,8 +78,12 @@
 
 		if(!$carrierlog){
 
-			echo "Phone # ".$phone." : Carrier log not found on ".getClusterName($lead['vici_cluster_id'])." #".$lead['vici_cluster_id']."\n";
-			return null;
+			// not in carrier log? try carrier log archive 
+			$carrierlog = querySQL("SELECT * FROM asterisk.vicidial_carrier_log_archive WHERE channel like '%".$phone."%'");
+			if(!$carrierlog){
+				echo "Phone # ".$phone." : Carrier log not found on ".getClusterName($lead['vici_cluster_id'])." #".$lead['vici_cluster_id']."\n";
+				return null;
+			}
 		}
 
 

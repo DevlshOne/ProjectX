@@ -9,8 +9,25 @@
 	// ENSURE SESSION IS RUNNING, CAUSE WE NEED THAT SHIT
 	session_start();
 
+	$uri = null;
+	// IF /dev2 HIT, KICK TO STAGING
+	if(preg_match('/\/dev2\//', $_SERVER['REQUEST_URI'])){
+
+		$uri = preg_replace("/\/dev2\//", "/staging/", $_SERVER['REQUEST_URI']);
+
+	// IF /dev HIT, KICK TO "reports" AKA PRODUCTION
+	}else if(preg_match('/\/dev\//', $_SERVER['REQUEST_URI'])){
+
+		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
+	}
+
+	if($uri != null){
+		header("Location: ".$uri);
+		exit;
+	}
 
 
+//print_r($_SERVER);
 
 
 	/**
@@ -528,7 +545,22 @@
 
 				}
 
+				break;
 
+			case 'login_tracker':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['login_tracker'] == 'yes') // MANAGERS WITH LOGIN TRACKER ACCESS
+				){
+
+					include_once("classes/login_tracker.inc.php");
+					$_SESSION['login_tracker']->handleFLOW();
+
+				}else{
+
+					accessDenied("LoginTracker");
+
+				}				
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //

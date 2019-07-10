@@ -73,6 +73,7 @@ class InterfaceClass
                     ?><li class="has-children comments">
 						<a href="#0">Campaign Setup</a>
 
+<<<<<<< classes/interface.inc.php
 						<ul><?
 
                             if (checkAccess('campaigns')) {
@@ -109,6 +110,46 @@ class InterfaceClass
                     checkAccess('extensions')
                     ) {
             ?><li class="has-children bookmarks">
+=======
+						<ul><?
+
+							if(checkAccess('campaigns')){
+								?><li><a href="?area=campaigns&no_script=1" onclick="loadSection(this.href);return false">Campaigns</a></li><?
+							}
+
+							if(checkAccess('voices')){
+								?><li><a href="?area=voices&no_script=1" onclick="loadSection(this.href);return false">Voices</a></li><?
+							}
+
+							if(checkAccess('names')){
+								?><li><a href="?area=names&no_script=1" onclick="loadSection(this.href);return false">Names</a></li><?
+							}
+
+							if(checkAccess('scripts')){
+								?><li><a href="?area=scripts&no_script=1" onclick="loadSection(this.href);return false">Scripts</a></li><?
+							}
+
+							if(checkAccess('quiz_questions')){
+								?><li><a href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">Quiz Questions</a></li><?
+							}
+						?></ul>
+					</li><?
+
+				}
+
+
+				if(	checkAccess('lead_management')	||
+					checkAccess('employee_hours')	||
+					checkAccess('ringing_calls')	||
+					checkAccess('messages')			||
+					checkAccess('login_tracker')	||
+					checkAccess('server_status')	||
+					checkAccess('extensions')
+					){
+
+
+					?><li class="has-children bookmarks">
+>>>>>>> classes/interface.inc.php
 						<a href="#0">Management Tools</a>
 
 						<ul><?
@@ -269,6 +310,7 @@ class InterfaceClass
 							<?/**<li><a href="?area=users&add_user&no_script=1" onclick="loadSection(this.href);return false">Add User</a></li>
 							<li><a href="?area=users&bulk_add&no_script=1" onclick="loadSection(this.href);return false">Bulk Add</a></li>**/?>
 
+<<<<<<< classes/interface.inc.php
 							<?
 
                             if (checkAccess('feature_control')) {
@@ -280,6 +322,27 @@ class InterfaceClass
                             } ?></ul>
 					</li><?
         } ?></ul>
+=======
+							<?
+
+							if(checkAccess('feature_control')){
+								?><li><a href="?area=feature_control&no_script=1" onclick="loadSection(this.href);return false">Feature Control</a></li><?
+							}
+
+							if(checkAccess('login_tracker')){
+								?><li><a href="?area=login_tracker&no_script=1" onclick="loadSection(this.href);return false">Login Tracker</a></li><?
+							}
+
+							if(checkAccess('action_log')){//if($_SESSION['user']['priv'] >= 5){
+								?><li><a href="?area=action_log&no_script=1" onclick="loadSection(this.href);return false">Action Log!</a></li><?
+							}
+
+						?></ul>
+					</li><?
+				}
+
+			?></ul>
+>>>>>>> classes/interface.inc.php
 
 
 
