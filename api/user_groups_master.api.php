@@ -4,8 +4,8 @@
 
 class API_UserGroupsMaster{
 
-	var $xml_parent_tagname = "Usergroups";
-	var $xml_record_tagname = "Usergroup";
+	var $xml_parent_tagname = "Usergroupmasters";
+	var $xml_record_tagname = "Usergroupmaster";
 
 	var $json_parent_tagname = "ResultSet";
 	var $json_record_tagname = "Result";
@@ -15,7 +15,7 @@ class API_UserGroupsMaster{
 	function handleAPI(){
 
 
-		if(!checkAccess('users')){
+		if(!checkAccess('users')){+
 
 
 			$_SESSION['api']->errorOut('Access denied to User Groups');
@@ -98,138 +98,68 @@ class API_UserGroupsMaster{
 
 
 			if($id){
-
-
-
 				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->user_groups_master->table);
-
-
 				logAction('edit', 'user_groups_master', $id, "");
-
-
 			}else{
-
 				$dat['user_group'] = trim($_POST['user_group']);
-
 				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->user_groups_master->table);
 				$id = mysqli_insert_id($_SESSION['dbapi']->db);
-
 				logAction('add', 'user_groups_master', $id, "");
-
 			}
-
-
 		//	$this->syncGroupToVici($id);
-
-
-
 			$_SESSION['api']->outputEditSuccess($id);
-
-
-
 			break;
-
 		default:
 		case 'list':
-
-
-
 			$dat = array();
 			$totalcount = 0;
 			$pagemode = false;
-
-
-
 			## AGENT NAME SEARCH
 			if($_REQUEST['s_name']){
-
 				$dat['name'] = trim($_REQUEST['s_name']);
-
 			}
-
-
 			## GROUP NAME
 			if($_REQUEST['s_group_name']){
-
 				$dat['group_name'] = trim($_REQUEST['s_group_name']);
-
 			}
-
-
-
-
-			##
-
-
-
-
-
 			## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
 			if(isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])){
-
 				$pagemode = true;
-
 				$cntdat = $dat;
 				$cntdat['fields'] = 'COUNT(id)';
 				list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->user_groups->getResults($cntdat));
-
 				$dat['limit'] = array(
 									"offset"=>intval($_REQUEST['index']),
 									"count"=>intval($_REQUEST['pagesize'])
 								);
-
 			}
-
-
 			## ORDER BY SYSTEM
 			if($_REQUEST['orderby'] && $_REQUEST['orderdir']){
 				$dat['order'] = array($_REQUEST['orderby']=>$_REQUEST['orderdir']);
 			}
-
-
-
-
-
-
 			$res = $_SESSION['dbapi']->user_groups_master->getResults($dat);
-
-
-
-	## OUTPUT FORMAT TOGGLE
+	        ## OUTPUT FORMAT TOGGLE
 			switch($_SESSION['api']->mode){
-			default:
-			case 'xml':
-
-
-		## GENERATE XML
-
-				if($pagemode){
-
-					$out = '<'.$this->xml_parent_tagname." totalcount=\"".intval($totalcount)."\">\n";
-				}else{
-					$out = '<'.$this->xml_parent_tagname.">\n";
-				}
-
-				$out .= $_SESSION['api']->renderResultSetXML($this->xml_record_tagname,$res);
-
-				$out .= '</'.$this->xml_parent_tagname.">";
-				break;
-
-		## GENERATE JSON
-			case 'json':
-
-				$out = '['."\n";
-
-				$out .= $_SESSION['api']->renderResultSetJSON($this->json_record_tagname,$res);
-
-				$out .= ']'."\n";
-				break;
+			    default:
+			    case 'xml':
+                    ## GENERATE XML
+                    if($pagemode){
+                        $out = '<'.$this->xml_parent_tagname." totalcount=\"".intval($totalcount)."\">\n";
+                    }else{
+                        $out = '<'.$this->xml_parent_tagname.">\n";
+                    }
+                    $out .= $_SESSION['api']->renderResultSetXML($this->xml_record_tagname,$res);
+                    $out .= '</'.$this->xml_parent_tagname.">";
+                    break;
+	    		case 'json':
+                    ## GENERATE JSON
+                    $out = '['."\n";
+                    $out .= $_SESSION['api']->renderResultSetJSON($this->json_record_tagname,$res);
+                    $out .= ']'."\n";
+                    break;
 			}
-
-
-	## OUTPUT DATA!
+        	## OUTPUT DATA!
 			echo $out;
-
 		}
 	}
 

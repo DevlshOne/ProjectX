@@ -4,14 +4,8 @@
  * Written By: Jonathan Will
  *
  */
-
-
 	// ENSURE SESSION IS RUNNING, CAUSE WE NEED THAT SHIT
 	session_start();
-
-
-
-
 
 	/**
 	 * Database connection made here
@@ -23,14 +17,11 @@
 	include_once("utils/microtime.php");
 	include_once("dbapi/dbapi.inc.php");
 
-
 	/**
 	 * Additional includes/requires go here
 	 */
 	include_once("utils/jsfunc.php");
 	include_once("utils/stripurl.php");
-
-
 	include_once("utils/format_phone.php");
 	include_once("utils/rendertime.php");
 	include_once("utils/DropDowns.php");
@@ -38,27 +29,19 @@
 	include_once("utils/feature_functions.php");
 	include_once("utils/db_utils.php");
 
-
+    /**
+     * Loading up module classes
+     */
 	include_once("classes/genericDD.inc.php");
 	include_once("classes/interface.inc.php");
 	include_once("classes/languages.inc.php");
 
-
 	// DESTROY THE SESSION/LOGOUT ?o
 	if(isset($_REQUEST['o'])){
-
 		session_unset();
-
-
 		jsRedirect("index.php");
 		exit;
-
 	}
-
-
-
-
-
 
 	// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
 	if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
@@ -206,24 +189,6 @@
 					$("input:submit, button, input:button").button();
 					$("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
 				}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			</script>
 		</head>
 		<body>
@@ -848,34 +813,21 @@
 				break;
 
 			case 'user_groups':
-
-
 				if(checkAccess('users')){
-
 					include_once("classes/user_groups.inc.php");
 					$_SESSION['user_groups']->handleFLOW();
-
-
 				}else{
 					accessDenied("Users");
 				}
-
 				break;
 
-
 			case 'report_emails':
-
-
 				if(checkAccess('report_emails')){
-
 					include_once("classes/report_emails.inc.php");
 					$_SESSION['report_emails']->handleFLOW();
-
-
 				}else{
 					accessDenied("Report Emails");
 				}
-
 				break;
 
 
