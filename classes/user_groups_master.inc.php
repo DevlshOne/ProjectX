@@ -124,7 +124,7 @@
                     eval('user_groups_master_loading_flag = false');
                 }
 
-                function handleUserGroupsMasterListClick(id) {
+                function handleUser_groups_masterListClick(id) {
                     displayAddUserGroupsMasterDialog(id);
                 }
 
