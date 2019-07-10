@@ -324,7 +324,6 @@
 
 					include_once("classes/campaigns.inc.php");
 					$_SESSION['campaigns']->handleFLOW();
-
 				}else{
 
 					accessDenied("Campaigns");
@@ -332,6 +331,16 @@
 				}
 
 				break;
+
+				case 'campaign_parents':
+						if(	checkAccess('campaigns')) {
+							include_once("classes/cmpgn_parents.inc.php");
+						$_SESSION['cmpgn_parents']->handleFLOW();
+					}else{
+						accessDenied("Campaigns");
+					}
+					break;
+
 			case 'scripts':
 
 

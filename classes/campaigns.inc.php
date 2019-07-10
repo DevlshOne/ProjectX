@@ -22,24 +22,19 @@ class Campaigns{
 
 	var $order_prepend = 'cpgn_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
+    function __construct() {
+        require_once("classes/cmpgn_parents.inc.php");
+    }
+
 	function Campaigns(){
-
-
 		## REQURES DB CONNECTION!
-
-
-
 		$this->handlePOST();
 	}
 
-
 	function makeDD($name,$sel,$class,$onchange,$size, $blank_entry=1, $extra_where=null){
-
 		$names		= 'name';	## or Array('field1','field2')
 		$value		= 'id';
 		$seperator	= '';		## If $names == Array, this will be the seperator between fields
-
-
 		$fieldstring='';
 		if(is_array($names)){
 			$x=0;
@@ -48,20 +43,15 @@ class Campaigns{
 			}
 		}else{	$fieldstring.=$names.',';}
 		$fieldstring	.= $value;
-
 		$sql = "SELECT $fieldstring FROM ".$this->table." WHERE status='active' ".(($extra_where != null)?$extra_where:'');
 		$DD = new genericDD($sql,$names,$value,$seperator);
 		return $DD->makeDD($name,$sel,$class,$blank_entry,$onchange,$size);
 	}
 
-
 	function makeDDByCode($name,$sel,$class,$onchange,$size, $blank_entry=1, $extra_where=null){
-
 		$names		= 'vici_campaign_id';	## or Array('field1','field2')
 		$value		= 'id';
 		$seperator	= '';		## If $names == Array, this will be the seperator between fields
-
-
 		$fieldstring='';
 		if(is_array($names)){
 			$x=0;
@@ -70,7 +60,6 @@ class Campaigns{
 			}
 		}else{	$fieldstring.=$names.',';}
 		$fieldstring	.= $value;
-
 		$sql = "SELECT $fieldstring FROM ".$this->table." WHERE status='active' ".(($extra_where != null)?$extra_where:'');
 		$DD = new genericDD($sql,$names,$value,$seperator);
 		return $DD->makeDD($name,$sel,$class,$blank_entry,$onchange,$size);
@@ -335,7 +324,7 @@ class Campaigns{
 			$("#dialog-modal-add-campaign").dialog({
 				autoOpen: false,
 				width: 480,
-				height: 220,
+				height: 280,
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -487,6 +476,12 @@ function makeAdd($id){
 			<th align="left" height="30">Name</th>
 			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>"></td>
 		</tr>
+            <tr>
+                <th align="left" height="30">Parent Campaign:</th>
+                <td>
+                    <? echo $_SESSION['cmpgn_parents']->makeDDvalIDtxtCODE($row['parent_campaign_id']);?>
+                </td>
+            </tr>
 		<tr>
 			<th align="left" height="30">Status</th>
 			<td>
