@@ -61,7 +61,7 @@
             switch ($_REQUEST['area']) {
                 default:
 
-                    $_SESSION['api']->errorOut("Area not specified.");
+                    $_SESSION['api']->errorOut("SECONDARY AJAX : Area not specified.");
 
                     break;
 
@@ -156,6 +156,12 @@
                     $obj = new API_UserGroups();
                     $obj->handleSecondaryAjax();
 
+                    break;
+
+                case 'user_groups_master':
+                    include_once($basedir . "api/user_groups_master.api.php");
+                    $obj = new API_UserGroupsMaster();
+                    $obj->handleSecondaryAjax();
                     break;
 
                 case 'action_log':

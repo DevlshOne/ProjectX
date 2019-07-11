@@ -124,19 +124,34 @@
         function handleSecondaryAjax()
         {
             $out_stack = array();
-            //print_r($_REQUEST);
+            #print_r($_REQUEST);
             foreach ($_REQUEST['special_stack'] as $idx => $data) {
                 $tmparr = preg_split("/:/", $data);
-                //print_r($tmparr);
+                #print_r($tmparr);
                 switch ($tmparr[1]) {
                     default:
                         ## ERROR
                         $out_stack[$idx] = -1;
                         break;
-                }## END SWITCH
+                    case 'company_name':
+                        if($tmparr[2] <= 0){
+                            $out_stack[$idx] = '-';
+                        }else{
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT `name` FROM `companies` WHERE id='".intval($tmparr[2])."' ");
+                        }
+                        break;
+                    case 'office_name':
+                        if($tmparr[2] <= 0){
+                            $out_stack[$idx] = '-';
+                        }else{
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT `name` FROM `offices` WHERE id='".intval($tmparr[2])."' ");
+                        }
+                        break;
+                }
+                ## END SWITCH
             }
             $out = $_SESSION['api']->renderSecondaryAjaxXML('Data', $out_stack);
-            //print_r($out_stack);
+            #print_r($out_stack);
             echo $out;
         } ## END HANDLE SECONDARY AJAX
     }
