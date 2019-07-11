@@ -336,8 +336,8 @@
                             default:
                                 alert("Error submitting form. Check your values");
                                 break;
-                            case 'filename':
-                                alert("Please enter the filename for this name.");
+                            case 'user_group':
+                                alert("Please enter the name for this group.");
                                 eval('try{frm.' + params[0] + '.select();}catch(e){}');
                                 break;
                         }
