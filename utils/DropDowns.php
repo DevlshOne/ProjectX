@@ -44,7 +44,7 @@
         }
         $showDD .= ">";
         if ($blank_entry) {
-            $showDD .= "<option value='0'>" . $blank_entry . "</option>";
+            $showDD .= "<option value=''>" . $blank_entry . "</option>";
         }
         if (mysqli_num_rows($res) > 0) {
             for ($x = 0; $row = mysqli_fetch_array($res); $x++) {

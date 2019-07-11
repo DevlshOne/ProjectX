@@ -223,15 +223,17 @@
                                     <td align="center"><input type="text" name="s_user_group" size="30"
                                                               value="<?= htmlentities($_REQUEST['s_user_group']) ?>">
                                     </td>
-                                    <td align="center"><?=makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id'])) ?></td>
+                                    <td align="center"><?=makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), null, '[All]') ?></td>
                                     <td align="center">
                                         <select name="s_time_shift">
+                                            <option value="" selected>[All]</option>
                                             <option<?= htmlentities($_REQUEST['s_time_shift']) == 'AM' ? ' selected' : '' ?>>AM</option>
                                             <option<?= htmlentities($_REQUEST['s_time_shift']) == 'PM' ? ' selected' : '' ?>>PM</option>
                                         </select>
                                     </td>
                                     <td align="center">
                                         <select name="s_agent_type">
+                                            <option value="" selected>[All]</option>
                                             <option<?= htmlentities($_REQUEST['s_agent_type']) == 'cold' ? ' selected' : '' ?>>cold</option>
                                             <option<?= htmlentities($_REQUEST['s_agent_type']) == 'taps' ? ' selected' : '' ?>>taps</option>
                                             <option<?= htmlentities($_REQUEST['s_agent_type']) == 'verifier' ? ' selected' : '' ?>>verifier</option>
@@ -242,7 +244,7 @@
                                             <option<?= htmlentities($_REQUEST['s_agent_type']) == 'admin' ? ' selected' : '' ?>>admin</option>
                                             <option<?= htmlentities($_REQUEST['s_agent_type']) == 'all' ? ' selected' : '' ?>>all</option>
                                         </select>
-                                    <td align="center"><?=makeOfficeDD('s_office', htmlentities($_REQUEST['s_office']), null, null, null, null) ?></td>
+                                    <td align="center"><?=makeOfficeDD('s_office', htmlentities($_REQUEST['s_office']), null, null, '[All]', null) ?></td>
                                     <td><input type="button" value="Reset"
                                                onclick="resetUserGroupsMasterForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadUser_groups_master();">
                                     </td>
