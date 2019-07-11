@@ -6,6 +6,7 @@
         var $xml_record_tagname = "User_groups_master";
         var $json_parent_tagname = "ResultSet";
         var $json_record_tagname = "Result";
+
         function handleAPI()
         {
             if (!checkAccess('users')) {
@@ -37,7 +38,7 @@
                     $id = intval($_POST['adding_user_groups_master']);
                     unset($dat);
                     $dat['group_name'] = trim($_POST['group_name']);
-                    $dat['office'] = trim($_POST['office']);
+                    $dat['office'] = intval($_POST['office']);
                     $dat['time_shift'] = trim($_POST['time_shift']);
                     $dat['agent_type'] = trim($_POST['agent_type']);
                     $dat['company_id'] = intval($_POST['company_id']);
@@ -58,13 +59,29 @@
                     $dat = array();
                     $totalcount = 0;
                     $pagemode = false;
-                    ## AGENT NAME SEARCH
+                    ## USER GROUP SEARCH
                     if ($_REQUEST['s_user_group']) {
                         $dat['user_group'] = trim($_REQUEST['s_user_group']);
                     }
-                    ## GROUP NAME
+                    ## GROUP NAME SEARCH
                     if ($_REQUEST['s_group_name']) {
                         $dat['group_name'] = trim($_REQUEST['s_group_name']);
+                    }
+                    ## OFFICE SEARCH
+                    if ($_REQUEST['s_office']) {
+                        $dat['office'] = intval($_REQUEST['s_office']);
+                    }
+                    ## AGENT TYPE SEARCH
+                    if ($_REQUEST['s_agent_type']) {
+                        $dat['agent_type'] = trim($_REQUEST['s_agent_type']);
+                    }
+                    ## SHIFT SEARCH
+                    if ($_REQUEST['s_time_shift']) {
+                        $dat['time_shift'] = trim($_REQUEST['s_time_shift']);
+                    }
+                    ## COMPANY ID SEARCH
+                    if ($_REQUEST['s_company_id']) {
+                        $dat['company_id'] = intval($_REQUEST['s_company_id']);
                     }
                     ## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
                     if (isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])) {
@@ -103,6 +120,7 @@
                     echo $out;
             }
         }
+
         function handleSecondaryAjax()
         {
             $out_stack = array();

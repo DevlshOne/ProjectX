@@ -27,7 +27,7 @@
 
         function handlePOST()
         {
-            // THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
+            // THIS SHIT IS MOTHER-FUCKING AJAX'D TO THE TEETH
             // SEE api/names.api.php FOR POST HANDLING!
             // <3 <3 -Jon
         }
@@ -77,6 +77,9 @@
                         's_user_group=' + encodeURI(frm.s_user_group.value) + '&' +
                         's_group_name=' + encodeURI(frm.s_group_name.value) + '&' +
                         's_office=' + encodeURI(frm.s_office.value) + '&' +
+                        's_company_id=' + encodeURI(frm.s_company_id.value) + '&' +
+                        's_time_shift=' + encodeURI(frm.s_time_shift.value) + '&' +
+                        's_agent_type=' + encodeURI(frm.s_agent_type.value) + '&' +
                         'index=' + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
                 )
                     +'&pagesize=' + <?=$this->order_prepend?>pagesize + '&' +
@@ -200,13 +203,15 @@
                         <td colspan="2">
                             <table border="0" width="100%" id="user_groups_master_search_table" class="nod">
                                 <tr>
-                                    <td rowspan="2">
-                                        <font size="+1">SEARCH</font>
+                                    <td align="left" colspan="7">
+                                        <div class="search">SEARCH</div>
                                     </td>
+                                </tr>
+                                <tr>
                                     <th class="row2">Group Name</th>
                                     <th class="row2">User Group</th>
                                     <th class="row2">Company ID</th>
-                                    <th class="row2">Time Shift</th>
+                                    <th class="row2">Shift</th>
                                     <th class="row2">Agent Type</th>
                                     <th class="row2">Office</th>
                                     <td><input type="submit" value="Search" name="the_Search_button"></td>
@@ -216,53 +221,28 @@
                                                               value="<?= htmlentities($_REQUEST['s_group_name']) ?>">
                                     </td>
                                     <td align="center"><input type="text" name="s_user_group" size="30"
-                                                              value="<?= htmlentities($_REQUEST['s_nuser_group']) ?>">
+                                                              value="<?= htmlentities($_REQUEST['s_user_group']) ?>">
                                     </td>
-                                    <td align="center"><input type="text" name="s_company_id" size="12"
-                                                              value="<?= htmlentities($_REQUEST['s_company_id']) ?>">
-                                    </td>
+                                    <td align="center"><?=makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id'])) ?></td>
                                     <td align="center">
                                         <select name="s_time_shift">
-                                            <option<?= htmlentities($_REQUEST['s_time_shift']) == 'AM' ? ' selected' : '' ?>>
-                                                AM
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_time_shift']) == 'PM' ? ' selected' : '' ?>>
-                                                PM
-                                            </option>
+                                            <option<?= htmlentities($_REQUEST['s_time_shift']) == 'AM' ? ' selected' : '' ?>>AM</option>
+                                            <option<?= htmlentities($_REQUEST['s_time_shift']) == 'PM' ? ' selected' : '' ?>>PM</option>
                                         </select>
                                     </td>
                                     <td align="center">
                                         <select name="s_agent_type">
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'cold' ? ' selected' : '' ?>>
-                                                cold
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'taps' ? ' selected' : '' ?>>
-                                                taps
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'verifier' ? ' selected' : '' ?>>
-                                                verifier
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'manager' ? ' selected' : '' ?>>
-                                                manager
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'monitor' ? ' selected' : '' ?>>
-                                                monitor
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'coldtaps' ? ' selected' : '' ?>>
-                                                coldtaps
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'training' ? ' selected' : '' ?>>
-                                                training
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'admin' ? ' selected' : '' ?>>
-                                                admin
-                                            </option>
-                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'all' ? ' selected' : '' ?>>
-                                                all
-                                            </option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'cold' ? ' selected' : '' ?>>cold</option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'taps' ? ' selected' : '' ?>>taps</option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'verifier' ? ' selected' : '' ?>>verifier</option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'manager' ? ' selected' : '' ?>>manager</option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'monitor' ? ' selected' : '' ?>>monitor</option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'coldtaps' ? ' selected' : '' ?>>coldtaps</option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'training' ? ' selected' : '' ?>>training</option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'admin' ? ' selected' : '' ?>>admin</option>
+                                            <option<?= htmlentities($_REQUEST['s_agent_type']) == 'all' ? ' selected' : '' ?>>all</option>
                                         </select>
-                                    <td align="center"><input type="text" name="s_office" size="10"
-                                                              value="<?= htmlentities($_REQUEST['s_office']) ?>"></td>
+                                    <td align="center"><?=makeOfficeDD('s_office', htmlentities($_REQUEST['s_office']), null, null, null, null) ?></td>
                                     <td><input type="button" value="Reset"
                                                onclick="resetUserGroupsMasterForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadUser_groups_master();">
                                     </td>
