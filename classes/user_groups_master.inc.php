@@ -10,7 +10,7 @@
     class UserGroupsMaster
     {
         var $table = 'user_groups_master';            ## Classes main table to operate on
-        var $orderby = 'group_name';                ## Default Order field
+        var $orderby = 'user_group';                ## Default Order field
         var $orderdir = 'ASC';                    ## Default order direction
         ## Page  Configuration
         var $pagesize = 100;                        ## Adjusts how many items will appear on each page
@@ -58,12 +58,13 @@
                 0;
                 var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
                 var UserGroupsMasterTableFormat = [
-                    ['group_name', 'align_left'],
                     ['user_group', 'align_left'],
+                    ['group_name', 'align_left'],
                     ['[get:company_name:company_id]', 'align_center'],
+               //     ['office', 'align_center'],
                     ['[get:office_name:office]', 'align_center'],
                     ['time_shift', 'align_center'],
-                    ['agent_type', 'align_left'],
+                    ['agent_type', 'align_center'],
                 ];
 
                 /**
@@ -208,8 +209,8 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th class="row2">Group Name</th>
                                     <th class="row2">User Group</th>
+                                    <th class="row2">Group Name</th>
                                     <th class="row2">Company ID</th>
                                     <th class="row2">Shift</th>
                                     <th class="row2">Agent Type</th>
@@ -217,11 +218,11 @@
                                     <td><input type="submit" value="Search" name="the_Search_button"></td>
                                 </tr>
                                 <tr>
-                                    <td align="center"><input type="text" name="s_group_name" size="30"
-                                                              value="<?= htmlentities($_REQUEST['s_group_name']) ?>">
-                                    </td>
                                     <td align="center"><input type="text" name="s_user_group" size="30"
                                                               value="<?= htmlentities($_REQUEST['s_user_group']) ?>">
+                                    </td>
+                                    <td align="center"><input type="text" name="s_group_name" size="30"
+                                                              value="<?= htmlentities($_REQUEST['s_group_name']) ?>">
                                     </td>
                                     <td align="center"><?=makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), null, '[All]') ?></td>
                                     <td align="center">
@@ -257,12 +258,12 @@
                 <td colspan="2">
                     <table border="0" width="100%" id="user_groups_master_table">
                         <tr>
+                            <th class="row2" align="left"><?= $this->getOrderLink('user_group') ?>User Group</a></th>
                             <th class="row2" align="left"><?= $this->getOrderLink('group_name') ?>Group Name</a></th>
-                            <th class="row2"><?= $this->getOrderLink('user_group') ?>User Group</a></th>
                             <th class="row2"><?= $this->getOrderLink('company_id') ?>Company ID</a></th>
                             <th class="row2"><?= $this->getOrderLink('office') ?>Office</a></th>
                             <th class="row2"><?= $this->getOrderLink('time_shift') ?>Shift</a></th>
-                            <th class="row2"><?= $this->getOrderLink('agent_type') ?>Agent Type</a></th>
+                            <th class="row2" align="center"><?= $this->getOrderLink('agent_type') ?>Agent Type</a></th>
                         </tr>
                     </table>
                 </td>

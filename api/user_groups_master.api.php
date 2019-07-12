@@ -144,7 +144,7 @@
                         if($tmparr[2] <= 0){
                             $out_stack[$idx] = '-';
                         }else{
-                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT `name` FROM `offices` WHERE id='".intval($tmparr[2])."' ");
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT CONCAT(`id`,' - ',`name`) AS `office` FROM `offices` WHERE id='".intval($tmparr[2])."' ");
                         }
                         break;
                 }
