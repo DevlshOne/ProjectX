@@ -280,6 +280,15 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
                     }
                     break;
 
+                case 'form_builder':
+                    if (checkAccess('campaigns')) {
+                        include_once("classes/form_builder.inc.php");
+                        $_SESSION['form_builder']->handleFLOW();
+                    } else {
+                        accessDenied("Campaigns");
+                    }
+                    break;
+
                 case 'scripts':
 
                     if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
