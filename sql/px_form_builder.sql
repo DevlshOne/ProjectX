@@ -1,0 +1,1 @@
+ALTER TABLE `campaign_settings` ADD `max_screens` INT(2) NOT NULL DEFAULT '5' AFTER `campaign_code`, ADD `use_snapgrid` TINYINT(1) NOT NULL DEFAULT '1' AFTER `max_screens`, ADD `snapgrid_radius` SMALLINT(3) NOT NULL DEFAULT '5' AFTER `use_snapgrid`;
