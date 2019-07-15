@@ -5,107 +5,76 @@
 
 $_SESSION['form_builder'] = new FormBuilder;
 
+/* @TODO:
+ * - list campaigns / # of screens for selection
+ * - generate droppable area
+ * - draggable / sortable fields
+ * - database dump on save
+ *
+ */
 
 class FormBuilder{
 
-	var $table	= 'names';			## Classes main table to operate on
-	var $orderby	= 'name';		## Default Order field
-	var $orderdir	= 'DESC';	## Default order direction
-
+	var $table	= 'custom_fields';			## Classes main table to operate on
+	var $orderby	= 'campaign_id';		## Default Order field
+	var $orderdir	= 'ASC';	            ## Default order direction
 
 	## Page  Configuration
 	var $pagesize	= 20;	## Adjusts how many items will appear on each page
 	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
-
 	var $index_name = 'name_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
 	var $frm_name = 'namenextfrm';
-
 	var $order_prepend = 'name_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
-	function Names(){
-
-
+	function FormBuilder(){
 		## REQURES DB CONNECTION!
-
-
-
 		$this->handlePOST();
 	}
 
-
 	function handlePOST(){
-
-		// THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
+		// THIS SHIT IS MOTHER FUCKING AJAX'D TO THE TEETH
 		// SEE api/names.api.php FOR POST HANDLING!
 		// <3 <3 -Jon
-
 	}
 
 	function handleFLOW(){
 		# Handle flow, based on query string
-
-		if(!checkAccess('names')){
-
-
-			accessDenied("Names");
-
+		if(!checkAccess('campaigns')){
+			accessDenied("Campaigns");
 			return;
-
 		}else{
 			if(isset($_REQUEST['add_name'])){
-
-				$this->makeAdd($_REQUEST['add_name']);
-
+				$this->makeAdd($_REQUEST['add_form']);
 			}else{
-				$this->listEntrys();
+				$this->listCampaigns();
 			}
-
 		}
-
 	}
 
-
-
-
-
-
-	function listEntrys(){
-
-
-		?><script>
-
+	function listCampaigns(){
+		?>
+        <script>
 			var name_delmsg = 'Are you sure you want to delete this name?';
-
 			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
-
-
 			var <?=$this->index_name?> = 0;
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-
 			var NamesTableFormat = [
-				['name','align_left'],
-				['[get:voice_name:voice_id]','align_center'],
-				['filename','align_center'],
-
-				['[delete]','align_center']
+			    ['[get:campaign_name:campaign_id]','align-left'],
+				['[get:num_screens:screen_count','align_center'],
+				['[get:num_fields:field_count]','align_center']
 			];
-
 			/**
 			* Build the URL for AJAX to hit, to build the list
 			*/
-			function getNamesURL(){
-
+			function getCampaignsURL(){
 				var frm = getEl('<?=$this->frm_name?>');
-
 				return 'api/api.php'+
-								"?get=names&"+
+								"?get=campaigns&"+
 								"mode=xml&"+
-
 								's_id='+escape(frm.s_id.value)+"&"+
 								's_name='+escape(frm.s_name.value)+"&"+
 								's_filename='+escape(frm.s_filename.value)+"&"+
-
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
@@ -217,18 +186,11 @@ class FormBuilder{
 			}
 
 		</script>
+        <script type="text/javascript" src="js/form_builder.js"></script>
 		<div id="dialog-modal-add-name" title="Adding new Name" class="nod">
-		<?
-
-		?>
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadNames();return false">
+		</div>
+        <form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadNames();return false">
 			<input type="hidden" name="searching_name">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
 			<td height="40" class="pad_left ui-widget-header">
@@ -236,20 +198,16 @@ class FormBuilder{
 				<table border="0" width="100%" >
 				<tr>
 					<td width="500">
-						Names
-						&nbsp;&nbsp;&nbsp;&nbsp;
+						Form Builder&nbsp;
 						<input type="button" value="Add" onclick="displayAddNameDialog(0)">
-						&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="button" value="Search" onclick="toggleNameSearch()">
 					</td>
-
 					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadNames();return false">
 						<option value="20">20</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
 						<option value="500">500</option>
 					</select></td>
-
 					<td align="right"><?
 						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
 						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">

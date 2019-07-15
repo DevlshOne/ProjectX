@@ -46,7 +46,8 @@ if (isset($_REQUEST['o'])) {
 // NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
 if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
 
-?><!DOCTYPE HTML>
+?>
+    <!DOCTYPE HTML>
 <html>
 <head>
     <title>Project X - Management Tools and Reports</title>

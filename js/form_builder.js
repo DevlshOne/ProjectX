@@ -1,4 +1,5 @@
-var _formBuilder = {
+console.log('Form Builder script loaded');
+let _formBuilder = {
     doInit: function() {
 
     },
@@ -8,4 +9,4 @@ var _formBuilder = {
     renderTopNav: function() {
 
     }
-};
+}
