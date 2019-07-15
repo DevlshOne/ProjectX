@@ -54,7 +54,7 @@ class FormBuilder{
 	function listCampaigns(){
 		?>
         <script>
-			var name_delmsg = 'Are you sure you want to delete this name?';
+			var form_builder_copymsg = 'Are you sure you want to delete this name?';
 			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
 			var <?=$this->index_name?> = 0;
@@ -62,7 +62,8 @@ class FormBuilder{
 			var NamesTableFormat = [
 			    ['[get:campaign_name:campaign_id]','align-left'],
 				['[get:num_screens:screen_count','align_center'],
-				['[get:num_fields:field_count]','align_center']
+				['[get:num_fields:field_count]','align_center'],
+                ['[copy]', 'align_center']
 			];
 			/**
 			* Build the URL for AJAX to hit, to build the list
