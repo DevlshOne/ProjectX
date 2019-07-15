@@ -24,7 +24,6 @@ class FormBuilderAPI{
 	 * @param 	$id		The database ID of the record
 	 * @return	assoc-array of the database record
 	 */
-
 	function getByID($id){
 		$id = intval($id);
 		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->table."` ".
@@ -40,7 +39,7 @@ class FormBuilderAPI{
 	}
 
 	function getByName($name){
-		$id=intval($id);
+		$id = intval($id);
 		list($filename) = $_SESSION['dbapi']->queryROW("SELECT filename FROM `".$this->table."` ".
 						" WHERE name LIKE '".mysqli_real_escape_string($_SESSION['dbapi']->db,$name)."' ");
 		return $filename;

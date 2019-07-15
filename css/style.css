@@ -156,3 +156,21 @@ a:hover {
 	font-size: large;
 	font-weight: bolder;
 }
+.lefty {
+	text-align: left;
+	align-content: baseline;
+}
+.righty {
+	text-align: right;
+	align-content: baseline;
+}
+.centery {
+	text-align: center;
+	align-content: baseline;
+}
+.pct50 {
+	width: 50%;
+}
+.ht30 {
+	height: 30px;
+}

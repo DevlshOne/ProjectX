@@ -46,9 +46,10 @@
                 accessDenied("Campaigns");
                 return;
             } else {
-
                 if (isset($_REQUEST['add_form'])) {
                     $this->makeAdd($_REQUEST['add_form']);
+                } elseif (isset($_REQUEST['copy_form_builder'])) {
+                    $this->makeCopy($_REQUEST['copy_form_builder']);
                 } else {
                     $this->listForms();
                 }
@@ -166,7 +167,7 @@
             </script>
             <script type="text/javascript" src="js/form_builder.js"></script>
             <div id="dialog-modal-add-form" title="Adding new Name" class="nod"></div>
-            <div id="dialog-modal-copy-form-builder" title="Copy form to another campaign" class="nod"></div>
+            <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
                   action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForm_builders();return false">
                 <input type="hidden" name="searching_name">
@@ -243,6 +244,24 @@
 
         }
 
+        function makeCopy($id) {
+            $id = intval($id);
+            $row = $_SESSION['dbapi']->form_builder->getByID($id);
+            ?>
+            <form method=""POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkTargetCampaign(this); return false;">
+            <table border="0" align="center">
+                <tr>
+                    <th class="lefty pct50 ht30" height="30">Copy all to campaign :</th>
+                    <td class=""righty pct50 ht30"><?=makeCampaignDD('targetCampaign', null, null, null, null);?></td>
+                </tr>
+                <tr>
+                    <th colspan="2" class="centery"><input type="submit" value="Copy"></th>
+                </tr>
+            </table>
+            </form>
+<?
+            }
+
         function makeAdd($id)
         {
             $id = intval($id);
@@ -307,7 +326,6 @@
                     }
                     return false;
                 }
-                // SET TITLEBAR
             </script>
             <form method="POST" action="<?= stripurl('') ?>" autocomplete="off"
                   onsubmit="checkNameFrm(this); return false">
