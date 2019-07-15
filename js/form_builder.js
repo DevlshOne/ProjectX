@@ -1,4 +1,4 @@
-console.log('Form Builder script loaded');
+// console.log('Form Builder script loaded');
 let _formBuilder = {
     doInit: function() {
 

@@ -61,7 +61,6 @@
                     ['user_group', 'align_left'],
                     ['group_name', 'align_left'],
                     ['[get:company_name:company_id]', 'align_center'],
-               //     ['office', 'align_center'],
                     ['[get:office_name:office]', 'align_center'],
                     ['time_shift', 'align_center'],
                     ['agent_type', 'align_center'],

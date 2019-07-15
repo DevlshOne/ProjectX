@@ -46,6 +46,7 @@
                 accessDenied("Campaigns");
                 return;
             } else {
+
                 if (isset($_REQUEST['add_form'])) {
                     $this->makeAdd($_REQUEST['add_form']);
                 } else {
@@ -59,6 +60,7 @@
             ?>
             <script>
                 var form_builder_delmsg = 'Are you sure you want to delete this form?';
+                var form_builder_copymsg = 'Copying form to another campaign';
                 var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
                 var <?=$this->index_name?> = 0;
@@ -78,13 +80,9 @@
                     return 'api/api.php' +
                         "?get=form_builder&" +
                         "mode=xml&" +
-                        's_id=' + escape(frm.s_id.value) + "&" +
-                        's_name=' + escape(frm.s_name.value) + "&" +
-                        's_filename=' + escape(frm.s_filename.value) + "&" +
-                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
-                )
-                    +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
-                    "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) +
+                        "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
+                        "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
 
                 let forms_loading_flag = false;
@@ -92,7 +90,7 @@
                 /**
                  * Load the name data - make the ajax call, callback to the parse function
                  */
-                function loadForms() {
+                function loadForm_builders() {
                     // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
                     var val = null;
                     eval('val = forms_loading_flag');
@@ -104,15 +102,14 @@
                         eval('forms_loading_flag = true');
                     }
                     <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-                    loadAjaxData(getFormsURL(), 'parseForms');
+                    loadAjaxData(getFormsURL(), 'parseFormBuilders');
                 }
 
                 /**
                  * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
                  */
                 var <?=$this->order_prepend?>totalcount = 0;
-
-                function parseForms(xmldoc) {
+                function parseFormBuilders(xmldoc) {
                     <?=$this->order_prepend?>totalcount = parseXMLData('form_builder', FormBuildersTableFormat, xmldoc);
                     // ACTIVATE PAGE SYSTEM!
                     if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
@@ -121,7 +118,7 @@
                             <?=$this->order_prepend?>totalcount,
                             <?=$this->index_name?>,
                             <?=$this->order_prepend?>pagesize,
-                            'loadForms()'
+                            'loadForm_builders()'
                         );
                     } else {
                         hidePageSystem('form_builder');
@@ -146,12 +143,6 @@
                     $('#' + objname).dialog('option', 'position', 'center');
                 }
 
-                function resetNameForm(frm) {
-                    frm.s_id.value = '';
-                    frm.s_name.value = '';
-                    frm.s_filename.value = '';
-                }
-
                 var namesrchtog = false;
 
                 function toggleNameSearch() {
@@ -164,7 +155,7 @@
             <div id="dialog-modal-add-form" title="Adding new Name" class="nod">
             </div>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
-                  action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForms();return false">
+                  action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForm_builders();return false">
                 <input type="hidden" name="searching_name">
                 <table border="0" width="100%" class="lb" cellspacing="0">
                     <tr>
@@ -183,7 +174,7 @@
                                     <td width="150" align="center">PAGE SIZE: <select
                                                 name="<?= $this->order_prepend ?>pagesizeDD"
                                                 id="<?= $this->order_prepend ?>pagesizeDD"
-                                                onchange="<?= $this->index_name ?>=0; loadForms();return false">
+                                                onchange="<?= $this->index_name ?>=0; loadForm_builders();return false">
                                             <option value="20">20</option>
                                             <option value="50">50</option>
                                             <option value="100">100</option>
@@ -193,39 +184,11 @@
                                             /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/ ?>
                                         <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
                                             <tr>
-                                                <td id="forms_prev_td" class="page_system_prev"></td>
-                                                <td id="forms_page_td" class="page_system_page"></td>
-                                                <td id="forms_next_td" class="page_system_next"></td>
+                                                <td id="form_builder_prev_td" class="page_system_prev"></td>
+                                                <td id="form_builder_page_td" class="page_system_page"></td>
+                                                <td id="form_builder_next_td" class="page_system_next"></td>
                                             </tr>
                                         </table>
-
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <table border="0" width="100%" id="name_search_table" class="nod">
-                                <tr>
-                                    <td rowspan="2"><font size="+1">SEARCH</font></td>
-                                    <th class="row2">ID</th>
-                                    <th class="row2">Name</th>
-                                    <th class="row2">Filename</th>
-                                    <td><input type="submit" value="Search" name="the_Search_button"></td>
-                                </tr>
-                                <tr>
-                                    <td align="center">
-                                        <input type="text" name="s_id" size="5" value="<?= htmlentities($_REQUEST['s_id']) ?>">
-                                    </td>
-                                    <td align="center">
-                                        <input type="text" name="s_name" size="20" value="<?= htmlentities($_REQUEST['s_name']) ?>">
-                                    </td>
-                                    <td align="center">
-                                        <input type="text" name="s_filename" size="20" value="<?= htmlentities($_REQUEST['s_filename']) ?>">
-                                    </td>
-                                    <td>
-                                        <input type="button" value="Reset" onclick="resetNameForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadForms();">
                                     </td>
                                 </tr>
                             </table>
@@ -254,7 +217,7 @@
                     draggable: true,
                     resizable: false
                 });
-                loadForms();
+                loadForm_builders();
             </script><?
 
         }
@@ -263,7 +226,7 @@
         {
             $id = intval($id);
             if ($id) {
-                $row = $_SESSION['dbapi']->names->getByID($id);
+                $row = $_SESSION['dbapi']->form_builder->getByID($id);
             }
             ?>
             <script>
@@ -302,7 +265,7 @@
                         $.ajax({
                             type: "POST",
                             cache: false,
-                            url: 'api/api.php?get=names&mode=xml&action=edit',
+                            url: 'api/api.php?get=form_builder&mode=xml&action=edit',
                             data: params,
                             error: function () {
                                 alert("Error saving user form. Please contact an admin.");
@@ -315,7 +278,7 @@
                                     alert(result['message']);
                                     return;
                                 }
-                                loadForms();
+                                loadForm_builders();
                                 displayAddNameDialog(res);
                                 alert(result['message']);
                             }
