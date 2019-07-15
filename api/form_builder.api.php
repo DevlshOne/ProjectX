@@ -59,22 +59,11 @@
                     $dat = array();
                     $totalcount = 0;
                     $pagemode = false;
-                    ## ID SEARCH
-                    if ($_REQUEST['s_id']) {
-                        $dat['id'] = intval($_REQUEST['s_id']);
-                    }
-                    ## USERNAME SEARCH
-                    if ($_REQUEST['s_name']) {
-                        $dat['name'] = trim($_REQUEST['s_name']);
-                    }
-                    if ($_REQUEST['s_filename']) {
-                        $dat['filename'] = trim($_REQUEST['s_filename']);
-                    }
                     ## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
                     if (isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])) {
                         $pagemode = true;
                         $cntdat = $dat;
-                        $cntdat['fields'] = 'COUNT(id)';
+                        $cntdat['fields'] = 'COUNT(DISTINCT `campaign_id`)';
                         list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->form_builder->getResults($cntdat));
                         $dat['limit'] = array("offset" => intval($_REQUEST['index']), "count" => intval($_REQUEST['pagesize']));
                     }
@@ -111,28 +100,37 @@
         function handleSecondaryAjax()
         {
             $out_stack = array();
-            //print_r($_REQUEST);
             foreach ($_REQUEST['special_stack'] as $idx => $data) {
                 $tmparr = preg_split("/:/", $data);
-                //print_r($tmparr);
                 switch ($tmparr[1]) {
                     default:
                         ## ERROR
                         $out_stack[$idx] = -1;
                         break;
-                    case 'voice_name':
-                        // COULD BE REPLACED LATER WITH A CUSOMIZABLE SCREEN DB TABLE
+                    case 'num_screens':
                         if ($tmparr[2] <= 0) {
                             $out_stack[$idx] = '-';
                         } else {
-                            //echo "ID#".$tmparr[2];
-                            $out_stack[$idx] = $_SESSION['dbapi']->voices->getName($tmparr[2]);
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT COUNT(DISTINCT `screen_num`) FROM `custom_fields` WHERE `id` = '".intval($tmparr[2])."' ");
                         }
                         break;
-                }## END SWITCH
+                    case 'num_fields':
+                        if ($tmparr[2] <= 0) {
+                            $out_stack[$idx] = '-';
+                        } else {
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT COUNT(`screen_num`) FROM `custom_fields` WHERE `id` = '".intval($tmparr[2])."' ");
+                        }
+                        break;
+                    case 'campaign_name':
+                        if ($tmparr[2] <= 0) {
+                            $out_stack[$idx] = '-';
+                        } else {
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT `name` FROM `campaigns` WHERE `id` = '".intval($tmparr[2])."' ");
+                        }
+                        break;
+                }
             }
             $out = $_SESSION['api']->renderSecondaryAjaxXML('Data', $out_stack);
-            //print_r($out_stack);
             echo $out;
         } ## END HANDLE SECONDARY AJAX
     }

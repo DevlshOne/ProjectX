@@ -38,15 +38,11 @@
     }
 
 ## START MAIN FLOW
-
     ## BASE INCLUDES - SITE CONFIG + DATABASE CONNECTION
     include_once($basedir . "site_config.php");
     include_once($basedir . "dbapi/dbapi.inc.php");
-
     include_once($basedir . "db.inc.php");
-
     include_once($basedir . 'utils/db_utils.php');
-
 ## SELECT THE DATA TYPES TO RETRIEVE
     switch ($_REQUEST['get']) {
         default:
@@ -161,6 +157,12 @@
                 case 'user_groups_master':
                     include_once($basedir . "api/user_groups_master.api.php");
                     $obj = new API_UserGroupsMaster();
+                    $obj->handleSecondaryAjax();
+                    break;
+
+                case 'form_builder':
+                    include_once($basedir . "api/form_builder.api.php");
+                    $obj = new API_FormBuilder();
                     $obj->handleSecondaryAjax();
                     break;
 
@@ -368,6 +370,12 @@
         case 'user_groups_master':
             include_once($basedir . "api/user_groups_master.api.php");
             $obj = new API_UserGroupsMaster();
+            $obj->handleAPI();
+            break;
+
+        case 'form_builder':
+            include_once($basedir . "api/form_builder.api.php");
+            $obj = new API_FormBuilder();
             $obj->handleAPI();
             break;
 
