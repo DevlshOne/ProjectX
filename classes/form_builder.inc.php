@@ -65,9 +65,9 @@
                 0;
                 var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
                 var FormBuildersTableFormat = [
-                    ['[get:campaign_name:campaign_name]', 'align-left'],
-                    ['[get:num_screens:screen_count]', 'align_center'],
-                    ['[get:num_fields:field_count]', 'align_center'],
+                    ['[get:campaign_name:campaign_id]', 'align-left'],
+                    ['[get:num_screens:campaign_id]', 'align_center'],
+                    ['[get:num_fields:campaign_id]', 'align_center'],
                     ['[copy]', 'align_center']
                 ];
 
@@ -242,8 +242,8 @@
                     <table border="0" width="100%" id="form_builder_table">
                         <tr>
                             <th class="row2" align="left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                            <th class="row2"><?= $this->getOrderLink('screen_count') ?>Screens</a></th>
-                            <th class="row2"><?= $this->getOrderLink('field_count') ?>Fields</a></th>
+                            <th class="row2"><?= $this->getOrderLink('screen_count') ?>Total Screens</a></th>
+                            <th class="row2"><?= $this->getOrderLink('field_count') ?>Total Fields</a></th>
                             <th class="row2">&nbsp;</th>
                         </tr>
                     </table>

@@ -111,14 +111,14 @@
                         if ($tmparr[2] <= 0) {
                             $out_stack[$idx] = '-';
                         } else {
-                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT COUNT(DISTINCT `screen_num`) FROM `custom_fields` WHERE `id` = '".intval($tmparr[2])."' ");
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT COUNT(DISTINCT `screen_num`) FROM `custom_fields` WHERE `campaign_id` = '".intval($tmparr[2])."' ");
                         }
                         break;
                     case 'num_fields':
                         if ($tmparr[2] <= 0) {
                             $out_stack[$idx] = '-';
                         } else {
-                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT COUNT(`screen_num`) FROM `custom_fields` WHERE `id` = '".intval($tmparr[2])."' ");
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT COUNT(`id`) FROM `custom_fields` WHERE `campaign_id` = '".intval($tmparr[2])."' ");
                         }
                         break;
                     case 'campaign_name':
