@@ -15,7 +15,7 @@
             }
             switch ($_REQUEST['action']) {
                 case 'copy':
-                    $id = intvale($_REQUEST['id']);
+                    $id = intval($_REQUEST['id']);
                     $tgtCampaign = $_SESSION['dbapi']->form_builder->copy($id);
                     logAction('copy', 'form_builder', $id, "Copied form to campaign" . $tgtCampaign);
                     $_SESSION['api']->outputCopySuccess();

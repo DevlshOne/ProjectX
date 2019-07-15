@@ -2,10 +2,6 @@
  * A collection of common functions, used in the Ajax/API processing
  */
 
-
-
-
-
 /**
  * Clears all rows but the first (the header row)
  * @param obj	The table object to clear
@@ -20,7 +16,6 @@ function clearTable(obj){
 	}
 }
 
-
 /**
  * Ajax/API interface to delete a database record
  * @param area	Area to delete from, aka table name (usually)
@@ -28,69 +23,90 @@ function clearTable(obj){
  * @param callback_func_name	 Function to call on success, ex: "myCallBack('myarg')"
  * @return n/a
  */
-function deleteItem(confirmmsg, area,id,callback_func_name){
-
+function deleteItem(confirmmsg, area, id, callback_func_name){
 	if(confirm(confirmmsg)){
-
-
 		var loadurl =	'api/api.php'+
 							"?get="+area+"&"+
 							"mode=xml&"+
 							"action=delete&"+
 							"id="+id;
-
 		//alert($('#'+area+'-delete-img-'+id).attr("src"));
 		//alert(loadurl+" "+callback_func_name);
 		$('#'+area+'-delete-img-'+id).attr("src", "images/ajax-loader.gif");
-
-
 		$.ajax({
 			url: loadurl,
 			type: "POST",
 			success: function(data){
-
-
 				$('#'+area+'-delete-img-'+id).attr("src", "images/delete.png");
-
 				//alert("Response: "+data);
 				try{
 					var xmldoc = getXMLDoc(data);
-
 					var tag = xmldoc.getElementsByTagName("Error");
-
 					// LOWERCASE BUG PATCH
 					if(tag.length == 0){
-
 						tag = xmldoc.getElementsByTagName("error");
 					}
-
 					if(tag.length > 0){
-
 						// GET THE FIRST TAG
 						tag = tag[0];
 						var resultcode = tag.getAttribute("code");
-
-
 						//tmparr[x].textContent
-
 						alert("ERROR("+resultcode+"): "+tag.textContent);
-
 						return
 					// SUCCESS
 					}
 				}catch(ex){}
-
-
 				eval(callback_func_name);
-
-
 			}
-
 		});
-
 	}
 }
 
+/**
+ * Ajax/API interface to copy a campaign's forms to another campaign
+ * @param area	Area to delete from, aka table name (usually)
+ * @param id	ID of the record to delete
+ * @param callback_func_name	 Function to call on success, ex: "myCallBack('myarg')"
+ * @return n/a
+ */
+function copyFormBuilder(confirmmsg, area, id, callback_func_name){
+	if(confirm(confirmmsg)){
+		var loadurl =	'api/api.php'+
+			"?get="+area+"&"+
+			"mode=xml&"+
+			"action=delete&"+
+			"id="+id;
+		//alert($('#'+area+'-delete-img-'+id).attr("src"));
+		//alert(loadurl+" "+callback_func_name);
+		$('#'+area+'-delete-img-'+id).attr("src", "images/ajax-loader.gif");
+		$.ajax({
+			url: loadurl,
+			type: "POST",
+			success: function(data){
+				$('#'+area+'-delete-img-'+id).attr("src", "images/delete.png");
+				//alert("Response: "+data);
+				try{
+					var xmldoc = getXMLDoc(data);
+					var tag = xmldoc.getElementsByTagName("Error");
+					// LOWERCASE BUG PATCH
+					if(tag.length == 0){
+						tag = xmldoc.getElementsByTagName("error");
+					}
+					if(tag.length > 0){
+						// GET THE FIRST TAG
+						tag = tag[0];
+						var resultcode = tag.getAttribute("code");
+						//tmparr[x].textContent
+						alert("ERROR("+resultcode+"): "+tag.textContent);
+						return
+						// SUCCESS
+					}
+				}catch(ex){}
+				eval(callback_func_name);
+			}
+		});
+	}
+}
 
 function getInternetExplorerVersion()
 // Returns the version of Internet Explorer or a -1
@@ -108,26 +124,17 @@ function getInternetExplorerVersion()
 }
 
 function getXMLDoc(xml_data){
-
-
 	var ver = getInternetExplorerVersion();
-
-
 	if(ver < 0 && window.DOMParser){
 		parser=new DOMParser();
 		xmlDoc=parser.parseFromString(xml_data,"text/xml");
 	}else{ // Internet Explorer
-
 		xmlDoc=new ActiveXObject("Microsoft.XMLDOM");
 		xmlDoc.async="false";
 		xmlDoc.loadXML(xml_data);
 	}
-
 	return xmlDoc;
 }
-
-
-
 
 /**
  * handleEditXML - Parses API's XML response to editing data

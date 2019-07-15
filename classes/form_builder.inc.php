@@ -61,8 +61,7 @@
                 var form_builder_delmsg = 'Are you sure you want to delete this form?';
                 var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-                var <?=$this->index_name?> =
-                0;
+                var <?=$this->index_name?> = 0;
                 var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
                 var FormBuildersTableFormat = [
                     ['[get:campaign_name:campaign_id]', 'align-left'],
@@ -137,9 +136,9 @@
                 function displayAddFormBuilderDialog(id) {
                     var objname = 'dialog-modal-add-name';
                     if (id > 0) {
-                        $('#' + objname).dialog("option", "title", 'Editing name');
+                        $('#' + objname).dialog("option", "title", 'Editing form');
                     } else {
-                        $('#' + objname).dialog("option", "title", 'Adding new Name');
+                        $('#' + objname).dialog("option", "title", 'Adding new form');
                     }
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
@@ -170,7 +169,6 @@
                 <table border="0" width="100%" class="lb" cellspacing="0">
                     <tr>
                         <td height="40" class="pad_left ui-widget-header">
-
                             <table border="0" width="100%">
                                 <tr>
                                     <td width="500">
@@ -204,11 +202,8 @@
                                     </td>
                                 </tr>
                             </table>
-
                         </td>
-
                     </tr>
-
                     <tr>
                         <td colspan="2">
                             <table border="0" width="100%" id="name_search_table" class="nod">
@@ -266,77 +261,44 @@
 
         function makeAdd($id)
         {
-
             $id = intval($id);
-
             if ($id) {
-
                 $row = $_SESSION['dbapi']->names->getByID($id);
-
             }
-
             ?>
             <script>
-
                 function validateNameField(name, value, frm) {
-
                     //alert(name+","+value);
-
-
                     switch (name) {
                         default:
-
                             // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
                             return true;
                             break;
-
                         case 'filename':
-
-
                             if (!value) return false;
-
                             return true;
-
-
                             break;
-
                     }
                     return true;
                 }
-
-
                 function checkNameFrm(frm) {
-
-
                     var params = getFormValues(frm, 'validateNameField');
-
-
                     // FORM VALIDATION FAILED!
                     // param[0] == field name
                     // param[1] == field value
                     if (typeof params == "object") {
-
                         switch (params[0]) {
                             default:
-
                                 alert("Error submitting form. Check your values");
-
                                 break;
-
                             case 'filename':
-
                                 alert("Please enter the filename for this name.");
                                 eval('try{frm.' + params[0] + '.select();}catch(e){}');
                                 break;
-
                         }
-
                         // SUCCESS - POST AJAX TO SERVER
                     } else {
-
-
                         //alert("Form validated, posting");
-
                         $.ajax({
                             type: "POST",
                             cache: false,
@@ -346,50 +308,27 @@
                                 alert("Error saving user form. Please contact an admin.");
                             },
                             success: function (msg) {
-
 //alert(msg);
-
                                 var result = handleEditXML(msg);
                                 var res = result['result'];
-
                                 if (res <= 0) {
-
                                     alert(result['message']);
-
                                     return;
-
                                 }
-
-
-                                loadNames();
-
-
+                                loadForms();
                                 displayAddNameDialog(res);
-
                                 alert(result['message']);
-
                             }
-
-
                         });
-
                     }
-
                     return false;
-
                 }
-
-
                 // SET TITLEBAR
                 $('#dialog-modal-add-name').dialog("option", "title", '<?=($id) ? 'Editing Name #' . $id . ' - ' . htmlentities($row['name']) : 'Adding new Name'?>');
-
-
             </script>
             <form method="POST" action="<?= stripurl('') ?>" autocomplete="off"
                   onsubmit="checkNameFrm(this); return false">
                 <input type="hidden" id="adding_name" name="adding_name" value="<?= $id ?>">
-
-
                 <table border="0" align="center">
                     <tr>
                         <th align="left" height="30">Name:</th>
@@ -409,18 +348,12 @@
                     </tr>
             </form>
             </table><?
-
         }
-
         function getOrderLink($field)
         {
-
             $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
-
             $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-
             $var .= ");loadNames();return false;\">";
-
             return $var;
         }
     }
