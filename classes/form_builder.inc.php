@@ -59,7 +59,7 @@ class FormBuilder{
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
 			var <?=$this->index_name?> = 0;
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-			var NamesTableFormat = [
+			var FormBuildersTableFormat = [
 			    ['[get:campaign_name:campaign_id]','align-left'],
 				['[get:num_screens:screen_count','align_center'],
 				['[get:num_fields:field_count]','align_center'],

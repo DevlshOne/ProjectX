@@ -2,8 +2,8 @@
 
     class API_FormBuilder
     {
-        var $xml_parent_tagname = "Formbuilders";
-        var $xml_record_tagname = "Formbuilder";
+        var $xml_parent_tagname = "Form_builders";
+        var $xml_record_tagname = "Form_builder";
         var $json_parent_tagname = "ResultSet";
         var $json_record_tagname = "Result";
 
