@@ -246,6 +246,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
     var tagname = "";
     var callback_func_name = "";
     var delete_area = "";
+    var copy_area = "";
     var delete_message_varname = "delmsg";
     ///var ui_load_panel = (ui_override)?ui_override:account_uiobj;
     //alert(ui_load_panel.panel);
@@ -724,7 +725,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     }
                     // DELETE IS DEFAULT OPTION
                 } else if (special_tag.indexOf("copy") == 0) {
-                    cell.innerHTML = '<a href="#" onclick="copyFormBuilder(' + copy_message_varname + ',\'' + copy_area + '\',' + dataarr[x].getAttribute('campaign_id') + ', \'' + callback_func_name + '\' );return false;">' +
+                    cell.innerHTML = '<a href="#" onclick="handleFormBuilderCopyClick(' + copy_message_varname + ', \'' + copy_area + '\',' + dataarr[x].getAttribute('campaign_id') + ', \'' + callback_func_name + '\' );return false;">' +
                         '<img title="Copy form to another campaign" id="' + copy_area + '-formcopy-img-' + dataarr[x].getAttribute('id') + '" src="images/data_copy_icon.png" width="24" height="24" onmouseover="this.src=\'images/data_copy_icon.png\'" onmouseout="this.src=\'images/data_copy_icon.png\'" border="0" />' +
                         '</a>';
                     cell.className = '' + cur_class;

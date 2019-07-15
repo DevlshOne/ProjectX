@@ -126,8 +126,21 @@
                     eval('forms_loading_flag = false');
                 }
 
+                function handleFormBuilderCopyClick(id) {
+                    displayCopyFormBuilderDialog(id);
+                }
+
                 function handleFormBuilderListClick(id) {
                     displayAddFormBuilderDialog(id);
+                }
+
+                function displayCopyFormBuilderDialog(id) {
+                    var objname = 'dialog-modal-copy-form-builder';
+                    $('#' + objname).dialog("option", "title", 'Copying form to another campaign');
+                    $('#' + objname).dialog("open");
+                    $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    $('#' + objname).load("index.php?area=form_builder&copy_form_builder=" + id + "&printable=1&no_script=1");
+                    $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 function displayAddFormBuilderDialog(id) {
@@ -152,8 +165,8 @@
 
             </script>
             <script type="text/javascript" src="js/form_builder.js"></script>
-            <div id="dialog-modal-add-form" title="Adding new Name" class="nod">
-            </div>
+            <div id="dialog-modal-add-form" title="Adding new Name" class="nod"></div>
+            <div id="dialog-modal-copy-form-builder" title="Copy form to another campaign" class="nod"></div>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
                   action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForm_builders();return false">
                 <input type="hidden" name="searching_name">
@@ -213,6 +226,14 @@
                     autoOpen: false,
                     width: 500,
                     height: 200,
+                    modal: false,
+                    draggable: true,
+                    resizable: false
+                });
+                $("#dialog-modal-copy-form-builder").dialog({
+                    autoOpen: false,
+                    width: 500,
+                    height: 120,
                     modal: false,
                     draggable: true,
                     resizable: false
@@ -287,11 +308,9 @@
                     return false;
                 }
                 // SET TITLEBAR
-                $('#dialog-modal-add-name').dialog("option", "title", '<?=($id) ? 'Editing Name #' . $id . ' - ' . htmlentities($row['name']) : 'Adding new Name'?>');
             </script>
             <form method="POST" action="<?= stripurl('') ?>" autocomplete="off"
                   onsubmit="checkNameFrm(this); return false">
-                <input type="hidden" id="adding_name" name="adding_name" value="<?= $id ?>">
                 <table border="0" align="center">
                     <tr>
                         <th align="left" height="30">Name:</th>
@@ -309,8 +328,9 @@
                     <tr>
                         <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
                     </tr>
+                </table>
             </form>
-            </table><?
+            <?
         }
         function getOrderLink($field)
         {
