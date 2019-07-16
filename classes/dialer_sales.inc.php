@@ -64,20 +64,20 @@
                         if ($x++ > 0) {
                             $sql .= " OR ";
                         }
-                        $sql .= " `agent_cluster_id`='" . $_SESSION['site_config']['db'][$cidx]['cluster_id'] . "' ";
+                        $sql .= " `s`.`agent_cluster_id` = " . $agent_cluster_id;
                     }
                     $sql .= ") ";
                     if ($x == 0) {
                         $sql .= "";
                     }
                 } else {
-                    $sql .= " AND `agent_cluster_id`='" . $_SESSION['site_config']['db'][$agent_cluster_id]['cluster_id'] . "' ";
+                    $sql .= " AND `s`.`agent_cluster_id` = " . $agent_cluster_id;
                 }
             }
             if ($area_code > 0) {
-                $sql .= " AND `phone` LIKE '" . $area_code . "%'";
+                $sql .= " AND `s`.`phone` LIKE '" . $area_code . "%'";
             }
-            $sql .= " GROUP BY `agent_cluster_id`, `area_code`";
+            $sql .= " GROUP BY `s`.`agent_cluster_id`, `area_code`";
             #echo PHP_EOL . var_dump($sql) . PHP_EOL;
             return array($_SESSION['dbapi']->getResult($sql));
         }
