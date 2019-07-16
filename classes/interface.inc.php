@@ -238,6 +238,9 @@ class InterfaceClass
             if (checkAccess('sales_analysis')) {
                 ?><li><a href="?area=sales_analysis&no_script=1" onclick="loadSection(this.href);return false">Sales Analysis</a></li><?
             }
+                                if (checkAccess('dialer_sales')) {
+                                    ?><li><a href="?area=dialer_sales&no_script=1" onclick="loadSection(this.href);return false">Dialer Sales</a></li><?
+                                }
 
 
             if (checkAccess('agent_call_stats')) {

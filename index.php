@@ -560,7 +560,7 @@
 
 					accessDenied("LoginTracker");
 
-				}				
+				}
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //
@@ -701,6 +701,11 @@
 
 
 				break;
+
+                case 'dialer_sales':
+                    include_once("classes/dialer_sales.inc.php");
+                    $_SESSION['dialer_sales']->handleFlow();
+                    break;
 
 			case 'employee_hours':
 
