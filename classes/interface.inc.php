@@ -312,20 +312,6 @@ class InterfaceClass
 
 							<?/**<li><a href="?area=users&add_user&no_script=1" onclick="loadSection(this.href);return false">Add User</a></li>
 							<li><a href="?area=users&bulk_add&no_script=1" onclick="loadSection(this.href);return false">Bulk Add</a></li>**/?>
-
-<<<<<<< classes/interface.inc.php
-							<?
-
-                            if (checkAccess('feature_control')) {
-                                ?><li><a href="?area=feature_control&no_script=1" onclick="loadSection(this.href);return false">Feature Control</a></li><?
-                            }
-
-            if (checkAccess('action_log')) {//if($_SESSION['user']['priv'] >= 5){
-                                ?><li><a href="?area=action_log&no_script=1" onclick="loadSection(this.href);return false">Action Log!</a></li><?
-                            } ?></ul>
-					</li><?
-        } ?></ul>
-=======
 							<?
 
 							if(checkAccess('feature_control')){
@@ -345,7 +331,6 @@ class InterfaceClass
 				}
 
 			?></ul>
->>>>>>> classes/interface.inc.php
 
 
 

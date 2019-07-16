@@ -72,6 +72,7 @@ class DBAPI
     public $quiz_results;
     public $quiz_questions;
     public $list_tool_tasks;
+    public $dialer_sales;
 
 
     /**
@@ -159,9 +160,8 @@ class DBAPI
         include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
 
         ## ACTIVITY LOG
-        include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
+        require_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
         $this->activitys = new ActivitysAPI();
-
 
         ## ACTION LOG
         include_once($_SESSION['site_config']['basedir']."dbapi/action_log.db.php");
@@ -206,11 +206,6 @@ class DBAPI
         include_once($_SESSION['site_config']['basedir']."dbapi/voices.db.php");
         $this->voices = new VoicesAPI();
 
-
-
-
-
-
         // MERGED FROM REPORT SYSTEM
         ## RINGING CALLS
         include_once($_SESSION['site_config']['basedir']."dbapi/ringing_calls.db.php");
@@ -237,7 +232,9 @@ class DBAPI
         include_once($_SESSION['site_config']['basedir']."dbapi/feature_control.db.php");
         $this->features = new FeaturesAPI();
 
-
+        ## DIALER SALES
+        include_once($_SESSION['site_config']['basedir']."dbapi/dialer_sales.db.php");
+        $this->dialer_sales = new DialerSalesAPI();
 
         ## User Groups
         include_once($_SESSION['site_config']['basedir']."dbapi/user_groups.db.php");

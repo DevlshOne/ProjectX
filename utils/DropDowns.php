@@ -393,6 +393,41 @@
         return $out;
     }
 
+    function makeDialerDD($name, $selected, $css, $onchange, $blank_option = 1)
+    {
+        $res = query("SELECT DISTINCT `agent_cluster_id` AS `dialer` FROM `sales` WHERE 1");
+        $out = '<select name="'.$name.'" id="'.$name.'" ';
+        $out .= ($css)?' class="'.$css.'" ':'';
+        $out .= ($onchange)?' onchange="'.$onchange.'" ':'';
+        $out .= '>';
+        if ($blank_option) {
+            $out .= '<option value="" '.(($selected == '')?' SELECTED ':'').'>'.((!is_numeric($blank_option))?$blank_option:"[All]").'</option>';
+        }
+        while ($row = mysqli_fetch_array($res)) {
+            $out .= '<option value="'.$row['dialer'].'" ';
+            $out .= ($selected == $row['dialer'])?' SELECTED ':'';
+            $out .= '>'.htmlentities($row['dialer']).'</option>';
+        }
+        $out .= '</select>';
+        return $out;
+    }
+
+    function makeAreaCodeDD($name, $selected, $css, $onchange, $blank_option = 1) {
+        $res = query("SELECT DISTINCT LEFT(`phone`, 3) AS `area_code` FROM `sales` WHERE 1");
+        $out = '<select name="'.$name.'" id="'.$name.'" ';
+        $out .= ($css)?' class="'.$css.'" ':'';
+        $out .= ($onchange)?' onchange="'.$onchange.'" ':'';
+        $out .= '>';
+        if ($blank_option) {
+            $out .= '<option value="" '.(($selected == '')?' SELECTED ':'').'>'.((!is_numeric($blank_option))?$blank_option:"[All]").'</option>';
+        }
+        while ($row = mysqli_fetch_array($res)) {
+            $out .= '<option value="'.$row['area_code'].'" ';
+            $out .= ($selected == $row['area_code'])?' SELECTED ':'';
+            $out .= '>'.htmlentities($row['area_code']).'</option>';
+        }
+        $out .= '</select>';
+        return $out;    }
 
     function makeTimebar($basename="time_", $mode=0, $selarr=null, $stack=false, $timestamp=0, $extra_attr="")
     {
