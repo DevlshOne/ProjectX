@@ -61,7 +61,7 @@
             ?>
             <script>
                 var form_builder_delmsg = 'Are you sure you want to delete this form?';
-                var form_builder_copymsg = 'Copying form to another campaign';
+                var form_builder_copymsg = 'Copying forms and custom fields';
                 var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
                 var <?=$this->index_name?> = 0;
@@ -70,7 +70,7 @@
                     ['[get:campaign_name:campaign_id]', 'align-left'],
                     ['[get:num_screens:campaign_id]', 'align_center'],
                     ['[get:num_fields:campaign_id]', 'align_center'],
-                    ['[copy]', 'align_center']
+                    ['[copy:campaign_id]', 'align_center']
                 ];
 
                 /**
@@ -137,7 +137,7 @@
 
                 function displayCopyFormBuilderDialog(id) {
                     var objname = 'dialog-modal-copy-form-builder';
-                    $('#' + objname).dialog("option", "title", 'Copying form to another campaign');
+                    $('#' + objname).dialog("option", "title", 'Copying forms and custom fields');
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=form_builder&copy_form_builder=" + id + "&printable=1&no_script=1");
@@ -234,7 +234,7 @@
                 $("#dialog-modal-copy-form-builder").dialog({
                     autoOpen: false,
                     width: 500,
-                    height: 120,
+                    height: 160,
                     modal: false,
                     draggable: true,
                     resizable: false
@@ -246,13 +246,17 @@
 
         function makeCopy($id) {
             $id = intval($id);
-            $row = $_SESSION['dbapi']->form_builder->getByID($id);
+            $sourceName = $_SESSION['dbapi']->campaigns->getName($id);
             ?>
             <form method=""POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkTargetCampaign(this); return false;">
             <table border="0" align="center">
                 <tr>
-                    <th class="lefty pct50 ht30" height="30">Copy all to campaign :</th>
-                    <td class=""righty pct50 ht30"><?=makeCampaignDD('targetCampaign', null, null, null, null);?></td>
+                    <th class="lefty pct50 ht30">Copying from : </th>
+                    <td class="righty pct50 ht30" style="font-weight:700;"><?=$sourceName;?></td>
+                </tr>
+                <tr>
+                    <th class="lefty pct50 ht30" height="30">To campaign :</th>
+                    <td class="righty pct50 ht30"><?=makeCampaignDD('targetCampaign', null, null, null, null);?></td>
                 </tr>
                 <tr>
                     <th colspan="2" class="centery"><input type="submit" value="Copy"></th>

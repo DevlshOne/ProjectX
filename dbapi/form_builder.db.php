@@ -56,21 +56,8 @@ class FormBuilderAPI{
 				$sql .= "`id`='".intval($sid)."' ";
 			}
 			$sql .= ") ";
-		}else if($info['id']){
-			$sql .= " AND `id`='".intval($info['id'])."' ";
-		}
-		if(is_array($info['name'])){
-			$sql .= " AND (";
-			$x=0;
-			foreach($info['name'] as $idx=>$n){
-				if($x++ > 0)$sql .= " OR ";
-
-				$sql .= "`name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
-			}
-			$sql .= ") ";
-		## SINGLE NAME SEARCH
-		}else if($info['name']){
-			$sql .= " AND `name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['name'])."%' ";
+		}else if($info['campaign_id']){
+			$sql .= " AND `campaign_id`='" . intval($info['id']) . "' ";
 		}
 	### ORDER BY
 		if(is_array($info['order'])){

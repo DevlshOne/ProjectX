@@ -726,7 +726,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     // DELETE IS DEFAULT OPTION
                 } else if (special_tag.indexOf("copy") == 0) {
                     if(area === 'form_builder') {
-                        cell.innerHTML = '<a href="#" onclick="handleFormBuilderCopyClick(null, \'' + copy_area + '\', ' + dataarr[x].getAttribute('campaign_id') + ', \'' + callback_func_name + '\' );return false;">' +
+                        cell.innerHTML = '<a href="#" onclick="handleFormBuilderCopyClick(' + dataarr[x].getAttribute('campaign_id') + ');return false;">' +
                             '<img title="Copy form to another campaign" id="' + copy_area + '-formcopy-img-' + dataarr[x].getAttribute('id') + '" src="images/data_copy_icon.png" width="24" height="24" onmouseover="this.src=\'images/data_copy_icon.png\'" onmouseout="this.src=\'images/data_copy_icon.png\'" border="0" />' +
                             '</a>';
                         cell.className = '' + cur_class;
