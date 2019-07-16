@@ -148,7 +148,7 @@
                                 <tr>
                                     <th>Agent Cluster [Dialer] :</th>
                                     <td><?php
-                                            echo makeDialerDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0) ? -1 : $_REQUEST['agent_cluster_id'], '', ""); ?></td>
+                                            echo makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0) ? -1 : $_REQUEST['agent_cluster_id'], '', ""); ?></td>
                                 </tr>
                                 <tr>
                                     <th>Area Code :</th>
@@ -271,7 +271,7 @@
                 foreach ($sales_data_arr as $dialer_data) {
                     ?>
                     <tr>
-                    <td class="centery"><?= $dialer_data['name'] . " - " . $dialer_data['agent_cluster_id'] ?></td>
+                    <td class="centery"><?= $dialer_data['name'] ?></td>
                     <td class="centery">(<?= $dialer_data['area_code'] ?>)</td>
                     <td class="righty">$<?= number_format($dialer_data['total_sales'], 2) ?></td>
                     </tr><?php

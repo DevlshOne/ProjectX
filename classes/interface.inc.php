@@ -242,7 +242,7 @@
                                             </li><?
                                         }
 
-                                        if (checkAccess('admin')) {
+                                        if ($_SESSION['user']['priv'] >= 5) {
                                             ?>
                                             <li><a href="?area=dialer_sales&no_script=1"
                                                    onclick="loadSection(this.href);return false">Area Code Sales By
