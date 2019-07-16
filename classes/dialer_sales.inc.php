@@ -31,6 +31,14 @@
 
         public function generateData($stime, $etime, $agent_cluster_id, $area_code)
         {
+            unset($agent_cluster_id);
+            unset($area_code);
+            if(isset($_REQUEST['agent_cluster_id'])) {
+                $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
+            }
+            if(isset($_REQUEST['area_code'])) {
+                $area_code = $_REQUEST['area_code'];
+            }
             if (php_sapi_name() != "cli") {
                 // Not in cli-mode
                 // OFFICE RESTRICTION/SEARCH ABILITY
@@ -47,8 +55,8 @@
                 } else {
                 }
             }
-            $sql = "SELECT `agent_cluster_id`, LEFT(`phone`,3) AS `area_code`, SUM(`amount`) AS `total_sales` FROM `sales` WHERE `sale_time` BETWEEN '" . $stime . "' AND '" . $etime . "' ";
-            if ($agent_cluster_id > -1) {
+            $sql = "SELECT `s`.`agent_cluster_id`, `v`.`name`, LEFT(`s`.`phone`,3) AS `area_code`, SUM(`s`.`amount`) AS `total_sales` FROM `sales` AS `s` JOIN `vici_clusters` AS `v` ON `s`.`agent_cluster_id` = `v`.`id` WHERE `sale_time` BETWEEN '" . $stime . "' AND '" . $etime . "' ";
+            if ($agent_cluster_id > 0) {
                 if (is_array($agent_cluster_id)) {
                     $sql .= " AND ( ";
                     $x = 0;
@@ -70,7 +78,7 @@
                 $sql .= " AND `phone` LIKE '" . $area_code . "%'";
             }
             $sql .= " GROUP BY `agent_cluster_id`, `area_code`";
-            #echo var_dump($sql);
+            #echo PHP_EOL . var_dump($sql) . PHP_EOL;
             return array($_SESSION['dbapi']->getResult($sql));
         }
 
@@ -242,7 +250,7 @@
             ob_start();
             ob_clean();
             echo "<h1>" . PHP_EOL;
-           echo "Sales By Dialer / Area Code - ";
+           echo "Area Code Sales By Dialer - ";
             if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
                 echo date("m-d-Y", $stime);
             } else {
@@ -263,8 +271,8 @@
                 foreach ($sales_data_arr as $dialer_data) {
                     ?>
                     <tr>
-                    <td class="centery"><?= $dialer_data['agent_cluster_id'] ?></td>
-                    <td class="centery"><?= $dialer_data['area_code'] ?></td>
+                    <td class="centery"><?= $dialer_data['name'] . " - " . $dialer_data['agent_cluster_id'] ?></td>
+                    <td class="centery">(<?= $dialer_data['area_code'] ?>)</td>
                     <td class="righty">$<?= number_format($dialer_data['total_sales'], 2) ?></td>
                     </tr><?php
                 } ?></tbody>
