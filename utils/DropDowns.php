@@ -395,7 +395,7 @@
 
     function makeDialerDD($name, $selected, $css, $onchange, $blank_option = 1)
     {
-        $res = query("SELECT DISTINCT `agent_cluster_id` AS `dialer` FROM `sales` WHERE 1");
+        $res = query("SELECT DISTINCT `agent_cluster_id` AS `dialer` FROM `sales` WHERE `agent_cluster_id` > 0");
         $out = '<select name="'.$name.'" id="'.$name.'" ';
         $out .= ($css)?' class="'.$css.'" ':'';
         $out .= ($onchange)?' onchange="'.$onchange.'" ':'';
@@ -413,7 +413,7 @@
     }
 
     function makeAreaCodeDD($name, $selected, $css, $onchange, $blank_option = 1) {
-        $res = query("SELECT DISTINCT LEFT(`phone`, 3) AS `area_code` FROM `sales` WHERE 1");
+        $res = query("SELECT DISTINCT LEFT(`phone`, 3) AS `area_code` FROM `sales` WHERE `phone` <> ''");
         $out = '<select name="'.$name.'" id="'.$name.'" ';
         $out .= ($css)?' class="'.$css.'" ':'';
         $out .= ($onchange)?' onchange="'.$onchange.'" ':'';

@@ -160,13 +160,12 @@ class DBAPI
         include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
 
         ## ACTIVITY LOG
-        require_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
+        include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
         $this->activitys = new ActivitysAPI();
 
         ## ACTION LOG
         include_once($_SESSION['site_config']['basedir']."dbapi/action_log.db.php");
         $this->action_log = new ActionLogAPI();
-
 
         ## CAMPAIGNS
         include_once($_SESSION['site_config']['basedir']."dbapi/campaigns.db.php");
@@ -222,19 +221,17 @@ class DBAPI
         include_once($_SESSION['site_config']['basedir']."dbapi/script_statistics.db.php");
         $this->scriptstats = new ScriptStatisticsAPI();
 
-
         ## DISPO LOG
         include_once($_SESSION['site_config']['basedir']."dbapi/dispo_log.db.php");
         $this->dispo_log = new DispoLogAPI();
-
 
         ## FEATURE CONTROL
         include_once($_SESSION['site_config']['basedir']."dbapi/feature_control.db.php");
         $this->features = new FeaturesAPI();
 
         ## DIALER SALES
-        include_once($_SESSION['site_config']['basedir']."dbapi/dialer_sales.db.php");
-        $this->dialer_sales = new DialerSalesAPI();
+        #include_once($_SESSION['site_config']['basedir']."dbapi/dialer_sales.db.php");
+        #$this->dialer_sales = new DialerSalesAPI();
 
         ## User Groups
         include_once($_SESSION['site_config']['basedir']."dbapi/user_groups.db.php");

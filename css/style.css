@@ -152,3 +152,15 @@ a:hover {
 	float: right;
 	padding-left: 6px;
 }
+.lefty {
+	text-align: left;
+	align-content: baseline;
+}
+.righty {
+	text-align: right;
+	align-content: baseline;
+}
+.centery {
+	text-align: center;
+	align-content: baseline;
+}
