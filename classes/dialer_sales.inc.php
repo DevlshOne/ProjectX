@@ -31,23 +31,14 @@
         {
             unset($agent_cluster_id);
             unset($area_code);
-            unset($shift_hours);
+//            unset($shift_hours);
             if (isset($_REQUEST['agent_cluster_id'])) {
                 $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
             }
             if (isset($_REQUEST['area_code'])) {
                 $area_code = $_REQUEST['area_code'];
             }
-            if (isset($_REQUEST['shift_hours'])) {
-                $shift_hours = intval($_REQUEST['shift_hours']);
-                $sql = "SELECT `s`.`agent_cluster_id`, `v`.`name`, LEFT(`s`.`phone`,3) AS `area_code`, SUM(`s`.`amount`) AS `total_sales`, (SUM(`s`.`amount`) / " . $shift_hours . ") AS `sales_per_shift` FROM `sales` AS `s` JOIN `vici_clusters` AS `v` ON `s`.`agent_cluster_id` = `v`.`id` WHERE `sale_time` BETWEEN '" . $stime . "' AND '" . $etime . "' ";
-            } else {
-                $sql = "SELECT `s`.`agent_cluster_id`, `v`.`name`, LEFT(`s`.`phone`,3) AS `area_code`, SUM(`s`.`amount`) AS `total_sales` FROM `sales` AS `s` JOIN `vici_clusters` AS `v` ON `s`.`agent_cluster_id` = `v`.`id` WHERE `sale_time` BETWEEN '" . $stime . "' AND '" . $etime . "' ";
-                if ($_REQUEST['timeFilter'] == "on") {
-                    $shift_hours = calculateDuration($stime, $etime, '%H');
-                    $sql = "SELECT `s`.`agent_cluster_id`, `v`.`name`, LEFT(`s`.`phone`,3) AS `area_code`, SUM(`s`.`amount`) AS `total_sales`, (SUM(`s`.`amount`) / " . $shift_hours . ") AS `sales_per_shift` FROM `sales` AS `s` JOIN `vici_clusters` AS `v` ON `s`.`agent_cluster_id` = `v`.`id` WHERE `sale_time` BETWEEN '" . $stime . "' AND '" . $etime . "' ";
-                }
-            }
+            $sql = "SELECT `s`.`agent_cluster_id`, `v`.`name`, LEFT(`s`.`phone`,3) AS `area_code`, SUM(`s`.`amount`) AS `total_sales`, (SUM(`s`.`amount`) / " . $shift_hours . ") AS `sales_per_shift` FROM `sales` AS `s` JOIN `vici_clusters` AS `v` ON `s`.`agent_cluster_id` = `v`.`id` WHERE `sale_time` BETWEEN '" . $stime . "' AND '" . $etime . "' ";
             if (php_sapi_name() != "cli") {
                 // Not in cli-mode
                 // OFFICE RESTRICTION/SEARCH ABILITY
@@ -86,20 +77,33 @@
                 $sql .= " AND `s`.`phone` LIKE '" . $area_code . "%'";
             }
             $sql .= " GROUP BY `s`.`agent_cluster_id`, `area_code`";
-            #echo PHP_EOL . var_dump($sql) . PHP_EOL;
+            #echo "<br /><div style='font-weight:800;font-size:larger;color:red;'>" . $sql . "</div><br />";
             return array($_SESSION['dbapi']->getResult($sql));
         }
 
         public function makeReport()
         {
-            //echo $this->makeHTMLReport('1430377200', '1430463599', 'BCSFC', -1, 1,null , array("SYSTEM-TRNG-SOUTH", "SYSTEM-TRNG","SYS-TRNG-SOUTH-AM")) ;
+            $timeOptionMode = (isset($_REQUEST['timeOptions']) ? intval($_REQUEST['timeOptions']) : 1);
             if (isset($_POST['generate_report'])) {
-                $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['strt_time_hour'] . ":" . $_REQUEST['strt_time_min'] . $_REQUEST['strt_time_timemode']);
-                $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " " . $_REQUEST['end_time_hour'] . ":" . $_REQUEST['end_time_min'] . $_REQUEST['end_time_timemode']);
+                switch($timeOptionMode) {
+                    case '1' :
+                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 00:00:00");
+                        $timestamp2 = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 23:59:59");
+                        break;
+                    case '2' :
+                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 00:00:00");
+                        $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " 23:59:59");
+                        break;
+                    case '3' :
+                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['strt_time_hour'] . ":" . $_REQUEST['strt_time_min'] . $_REQUEST['strt_time_timemode']);
+                        $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " " . $_REQUEST['end_time_hour'] . ":" . $_REQUEST['end_time_min'] . $_REQUEST['end_time_timemode']);
+                        break;
+                }
             } else {
                 $timestamp = mktime(0, 0, 0);
                 $timestamp2 = mktime(23, 59, 59);
             }
+            //echo $this->makeHTMLReport('1430377200', '1430463599', 'BCSFC', -1, 1,null , array("SYSTEM-TRNG-SOUTH", "SYSTEM-TRNG","SYS-TRNG-SOUTH-AM")) ;
             if (!isset($_REQUEST['no_nav'])) {
                 ?>
                 <form id="dialersales_report" method="POST"
@@ -150,10 +154,9 @@
                                             ' id="endTimeFilter"> <?php echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>\n' +
                                             '<input type="hidden" name="timeFilter" id="timeFilter" value="on" />\n' +
                                             '</td>\n';
-                                        $('#timeFilterModeR1').empty().html(singleDateMode);
                                         function changeDateFilters(t) {
                                             console.log('Changing date/time mode : ' + t);
-                                            switch(t) {
+                                            switch (t) {
                                                 case '1' :
                                                     $('#timeFilterModeR1').empty().html(singleDateMode);
                                                     $('#timeFilterModeR2').empty();
@@ -172,6 +175,7 @@
                                                     break;
                                             }
                                         }
+                                        //changeDateFilters(<? echo $timeOptionMode?>);
                                         if (retainTime) {
                                             $(timeFields).show();
                                             $('#timeFilter').prop('checked', true);
@@ -182,11 +186,11 @@
                                             $('#timeFilter').prop('checked', false);
                                             $('#shiftHours').show();
                                         }
-                                        $('#timeFilter').on('click', function() {
+                                        $('#timeFilter').on('click', function () {
                                             $(timeFields).toggle();
                                             $('#shiftHours').toggle();
                                         });
-                                        $('#timeOptions').on('change', function() {
+                                        $('#timeOptions').on('change', function () {
                                             let newMode = $('#timeOptions option:selected').val();
                                             changeDateFilters(newMode);
                                         });
@@ -198,9 +202,9 @@
                                         <td>
                                             <div class="lefty" id="timeOptions">
                                                 <select id="timeOptions" name="timeOptions">
-                                                    <option value="1">Single Date</option>
-                                                    <option value="2">Date Range</option>
-                                                    <option value="3">Date & Time Range</option>
+                                                    <option value="1" <? echo ($timeOptionMode == 1) ? ' selected' : ''?>>Single Date</option>
+                                                    <option value="2" <? echo ($timeOptionMode == 2) ? ' selected' : ''?>>Date Range</option>
+                                                    <option value="3" <? echo ($timeOptionMode == 3) ? ' selected' : ''?>>Date & Time Range</option>
                                                 </select>
                                             </div>
                                         </td>
@@ -230,10 +234,11 @@
                                                         src="images/ajax-loader.gif" border="0"/> Loading, Please
                                                 wait...
                                             </div>
-                                            <div id="sales_submit_report_button">
+                                            <div id="dialersales_submit_report_button">
                                                 <input type="button" value="Generate PRINTABLE"
                                                        onclick="genReport(getEl('dialersales_report'), 'sales', 1)">
-                                                <input type="button" value="Download CSV" oncllick="genCSV(getEl('dialersale_report'), sales, 1)">
+                                                <input type="button" value="Download CSV"
+                                                       oncllick="genCSV(getEl('dialersales_report'), sales, 1)">
                                                 <input type="submit" value="Generate">
                                             </div>
                                         </th>
@@ -252,51 +257,51 @@
             }
 
             if (isset($_POST['generate_report'])) {
+                #echo var_dump($_REQUEST) . "<br />";
                 $time_started = microtime_float();
-
-                ## TIME
-                $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['strt_time_hour'] . ":" . $_REQUEST['strt_time_min'] . $_REQUEST['strt_time_timemode']);
-                $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " " . $_REQUEST['end_time_hour'] . ":" . $_REQUEST['end_time_min'] . $_REQUEST['end_time_timemode']);
-
-                ## TIMEFRAMES
-                if (!isset($_REQUEST['strt_time_hour'])) {
-                    $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-                    $etime = mktime(23, 59, 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
-                    #echo "Human Start : " . date("r", $stime) . PHP_EOL;
-                    #echo "Human End : " . date("r", $etime) . PHP_EOL;
-                } else {
-                    $stime = mktime(date("H", $timestamp), date("i", $timestamp), 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-                    $etime = mktime(date("H", $timestamp2), date("i", $timestamp2), 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
-                    #echo "Human Start : " . date("r", $stime) . PHP_EOL;
-                    #echo "Human End : " . date("r", $etime) . PHP_EOL;
-                }
-
                 ## AGENT CLUSTER
                 $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
-
                 ## AREA CODE
                 $area_code = intval($_REQUEST['area_code']);
-
                 ## SHIFT HOURS
                 $shift_hours = intval($_REQUEST['shift_hours']);
-
+                $timeOptionMode = intval($_REQUEST['timeOptions']);
+                switch($timeOptionMode) {
+                    case '1' :
+                        $timestamp = strtotime($_POST['strt_date_month'] . "/" . $_POST['strt_date_day'] . "/" . $_POST['strt_date_year'] . " 00:00:00");
+                        $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+                        $etime = mktime(23, 59, 59, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+                        break;
+                    case '2' :
+                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 00:00:00");
+                        $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " 23:59:59");
+                        $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+                        $etime = mktime(23, 59, 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+                        break;
+                    case '3' :
+                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['strt_time_hour'] . ":" . $_REQUEST['strt_time_min'] . $_REQUEST['strt_time_timemode']);
+                        $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " " . $_REQUEST['end_time_hour'] . ":" . $_REQUEST['end_time_min'] . $_REQUEST['end_time_timemode']);
+                        $stime = mktime(date("H", $timestamp), date("i", $timestamp), 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+                        $etime = mktime(date("H", $timestamp2), date("i", $timestamp2), 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+                        $shift_hours = round(($timestamp2 - $timestamp) / 3600, 4);
+                        #$shift_hours = calculateDuration($timestamp, $timestamp2, '%H');
+                        #echo __METHOD__ . "::POST PROCESSING:: shiftHours calculated = " . $shift_hours . "<br />" . PHP_EOL;
+                        break;
+                }
                 ## GENERATE AND DISPLAY REPORT
+                #echo __METHOD__ . "::POST PROCESSING:: timeOptionMode = " . $timeOptionMode . "<br />" . PHP_EOL;
+                #echo "Start Time (timestamp) = " . var_dump($timestamp) . "<br />" . PHP_EOL;
+                #echo "End Time (timestamp2) = " . var_dump($timestamp2) . "<br />" . PHP_EOL;
+                #echo __METHOD__ . "::POST PROCESSING:: about to call makeHTMLReport(" . $stime . ", " . $etime . ", " . $agent_cluster_id . ", " . $area_code . ", " . $shift_hours . ");<br />" . PHP_EOL;
                 $html = $this->makeHTMLReport($stime, $etime, $agent_cluster_id, $area_code, $shift_hours);
-
                 if ($html == NULL) {
                     echo '<span style="font-size:14px;font-style:italic;">No results found, for the specified values.</span><br />';
                 } else {
                     echo $html;
                 }
-
-                /*?></div><?*/
-
                 $time_ended = microtime_float();
-
                 $time_taken = $time_ended - $time_started;
-
                 echo '<br /><span style="float:bottom;color:#fff">Load time: ' . $time_taken . '</span>';
-
                 if (!isset($_REQUEST['no_nav'])) {
                     ?>
                     <script>
@@ -312,9 +317,11 @@
 
         public function makeHTMLReport($stime, $etime, $agent_cluster_id, $area_code, $shift_hours)
         {
+            #echo __METHOD__ . ":: inside makeHTMLReport(" . $stime . ", " . $etime . ", " . $agent_cluster_id . ", " . $area_code . ", " . $shift_hours . ");<br />" . PHP_EOL;
             echo '<span style="font-size:9px">makeHTMLReport(' . "$stime, $etime, $agent_cluster_id, $area_code, $shift_hours) called</span><br /><br />\n";
-            list($sales_data_arr) = $this->generateData($stime, $etime, $agent_cluster_id, $area_code, $shift_hours);
-            if (sizeof($sales_data_arr) < 1) {
+            $dataResults = $this->generateData($stime, $etime, $agent_cluster_id, $area_code, $shift_hours);
+            list($sales_data_arr) = $dataResults;
+            if (sizeof($dataResults) < 1) {
                 return NULL;
             }
             // ACTIVATE OUTPUT BUFFERING
@@ -322,12 +329,6 @@
             ob_clean();
             echo "<h1>" . PHP_EOL;
             echo "Area Code Sales By Dialer - ";
-            if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
-                echo date("m-d-Y", $stime);
-            } else {
-                echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
-                $total_hours = calculateDuration($stime, $etime, '%H');
-            }
             echo "</h1>" . PHP_EOL;
             ?>
             <table id="dialer_sales_table" style="width:100%" border="0" cellspacing="1">
@@ -336,7 +337,7 @@
                 <th class="centery">Agent Cluster</th>
                 <th class="centery" title="Area code">Area Code</th>
                 <th class="righty" title="Total sales for period">Total Sales</th>
-                <th class="righty" title="Total sales per shift (as specified)">Sales [per <?= $shift_hours;?>hr Shift]</th>
+                <th class="righty" title="Sales per hour (as specified)">Sales / Hour</th>
             </tr>
             </thead>
             <tbody>

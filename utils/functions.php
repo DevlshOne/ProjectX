@@ -267,8 +267,11 @@
      * @param $f string format of output (see date->format for options)
      */
 	function calculateDuration($s, $e, $f) {
-        $d1 = new DateTime("@$s");
-        $d2 = new DateTime("@$e");
+        $d1 = new DateTime();
+        $d2 = new DateTime();
+        $d1->setTimestamp($s);
+        $d2->setTimestamp($e);
         $i = $d1->diff($d2);
+        #echo __METHOD__ . var_dump($d1, $d2, $i) . "<br />";
         return $i->format($f);
     }
