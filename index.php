@@ -125,62 +125,34 @@
 			<script src="js/ajax_functions.js"></script>
 			<script src="js/functions.js"></script>
 			<script src="js/page_system.js"></script>
-
-
-
 			<?/** NEW NAVIGATION STUFF
 
 			*
 			***/?>
-
-
-
-
 			<script src="js/modernizr.js"></script> <!-- Modernizr -->
 			<script src="js/jquery.menu-aim.js"></script>
 			<script src="js/main.js"></script> <!-- Resource jQuery -->
-
-
-
-
 			<script>
-
 				function genReport(frm, area, printable){
-
-
 					if(area){
-
 						$('#'+area+'_submit_report_button').hide();
 						$('#'+area+'_loading_plx_wait_span').show();
 					}
-
 					var url = frm.action;
-
 					if(printable){
 						url += "&no_nav=1";
 					}
-
 					$.post(url, $('#'+frm.id).serialize()).done(function(data){
-
 						if(printable){
-
 							//$('#main_content').html(data);
-
 							var win = window.open("about:blank");
 							$(win.document.body).html(data);
-
 							win.focus();
 							//alert("open window here");
-
 						}else{
-
 							$('#main_content').html(data);
-
 						}
-
-
 						if(area){
-
 							$('#'+area+'_submit_report_button').show();
 							$('#'+area+'_loading_plx_wait_span').hide();
 						}
@@ -188,7 +160,6 @@
 					});
 					return false;
 				}
-
 
 				function loadSection(url){
 

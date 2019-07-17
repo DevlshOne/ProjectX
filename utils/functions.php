@@ -260,3 +260,15 @@
 
 		return $out;
 	}
+
+    /**
+     * @param $s integer Start time as timestamp
+     * @param $e integer End time as timestamp
+     * @param $f string format of output (see date->format for options)
+     */
+	function calculateDuration($s, $e, $f) {
+        $d1 = new DateTime("@$s");
+        $d2 = new DateTime("@$e");
+        $i = $d1->diff($d2);
+        return $i->format($f);
+    }
