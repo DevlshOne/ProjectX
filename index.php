@@ -173,7 +173,7 @@
                 function genCSV(tableElement) {
                     $(tableElement).each(function () {
                         let $table = $(this);
-                        let dFile = $table.attr('id') + "_" + Date.now() + '.csv';
+                        let dFile = $('#reportTitle').val() + '.csv';
                         let csv = $table.table2CSV({
                             delivery: 'value',
                             filename: dFile
