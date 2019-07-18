@@ -85,7 +85,7 @@
         {
             $timeOptionMode = (isset($_REQUEST['timeOptions']) ? intval($_REQUEST['timeOptions']) : 1);
             if (isset($_POST['generate_report'])) {
-                switch($timeOptionMode) {
+                switch ($timeOptionMode) {
                     case '1' :
                         $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 00:00:00");
                         $timestamp2 = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 23:59:59");
@@ -106,6 +106,7 @@
             //echo $this->makeHTMLReport('1430377200', '1430463599', 'BCSFC', -1, 1,null , array("SYSTEM-TRNG-SOUTH", "SYSTEM-TRNG","SYS-TRNG-SOUTH-AM")) ;
             if (!isset($_REQUEST['no_nav'])) {
                 ?>
+                <script type="text/javascript" src="js/table2CSV.js"></script>
                 <form id="dialersales_report" method="POST"
                       action="<?= $_SERVER['PHP_SELF'] ?>?area=dialer_sales&no_script=1"
                       onsubmit="return genReport(this, 'sales')">
@@ -155,7 +156,7 @@
                                             '<input type="hidden" name="timeFilter" id="timeFilter" value="on" />\n' +
                                             '</td>\n';
                                         function changeDateFilters(t) {
-                                            console.log('Changing date/time mode : ' + t);
+                                            //console.log('Changing date/time mode : ' + t);
                                             switch (t) {
                                                 case '1' :
                                                     $('#timeFilterModeR1').empty().html(singleDateMode);
@@ -175,7 +176,6 @@
                                                     break;
                                             }
                                         }
-                                        //changeDateFilters(<? echo $timeOptionMode?>);
                                         if (retainTime) {
                                             $(timeFields).show();
                                             $('#timeFilter').prop('checked', true);
@@ -193,7 +193,7 @@
                                         $('#timeOptions').on('change', function () {
                                             let newMode = $('#timeOptions option:selected').val();
                                             changeDateFilters(newMode);
-                                        });
+                                        }).change();
                                     });
                                 </script>
                                 <table border="0" id="filterTable">
@@ -202,9 +202,15 @@
                                         <td>
                                             <div class="lefty" id="timeOptions">
                                                 <select id="timeOptions" name="timeOptions">
-                                                    <option value="1" <? echo ($timeOptionMode == 1) ? ' selected' : ''?>>Single Date</option>
-                                                    <option value="2" <? echo ($timeOptionMode == 2) ? ' selected' : ''?>>Date Range</option>
-                                                    <option value="3" <? echo ($timeOptionMode == 3) ? ' selected' : ''?>>Date & Time Range</option>
+                                                    <option value="1" <? echo ($timeOptionMode == 1) ? ' selected' : '' ?>>
+                                                        Single Date
+                                                    </option>
+                                                    <option value="2" <? echo ($timeOptionMode == 2) ? ' selected' : '' ?>>
+                                                        Date Range
+                                                    </option>
+                                                    <option value="3" <? echo ($timeOptionMode == 3) ? ' selected' : '' ?>>
+                                                        Date & Time Range
+                                                    </option>
                                                 </select>
                                             </div>
                                         </td>
@@ -237,8 +243,8 @@
                                             <div id="dialersales_submit_report_button">
                                                 <input type="button" value="Generate PRINTABLE"
                                                        onclick="genReport(getEl('dialersales_report'), 'sales', 1)">
-                                                <input type="button" value="Download CSV"
-                                                       oncllick="genCSV(getEl('dialersales_report'), sales, 1)">
+                                                <input type="button" id="btnGenCSV" value="Download CSV"
+                                                       onclick="genCSV(getEl('dialer_sales_table'))" disabled aria-disabled="true">
                                                 <input type="submit" value="Generate">
                                             </div>
                                         </th>
@@ -257,6 +263,12 @@
             }
 
             if (isset($_POST['generate_report'])) {
+                ?>
+                <script>
+                    $('#timeOptions').val(<?=$timeOptionMode?>).change();
+                    $('#btnGenCSV').prop('disabled', false).prop('aria-disabled', false);
+                </script>
+                <?
                 #echo var_dump($_REQUEST) . "<br />";
                 $time_started = microtime_float();
                 ## AGENT CLUSTER
@@ -266,7 +278,7 @@
                 ## SHIFT HOURS
                 $shift_hours = intval($_REQUEST['shift_hours']);
                 $timeOptionMode = intval($_REQUEST['timeOptions']);
-                switch($timeOptionMode) {
+                switch ($timeOptionMode) {
                     case '1' :
                         $timestamp = strtotime($_POST['strt_date_month'] . "/" . $_POST['strt_date_day'] . "/" . $_POST['strt_date_year'] . " 00:00:00");
                         $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
@@ -327,8 +339,13 @@
             // ACTIVATE OUTPUT BUFFERING
             ob_start();
             ob_clean();
+            if (($etime - $stime) > (24 * 60 * 60)) {
+                $dateDisp = gmdate('m/d/Y', $stime) . " - " . gmdate('m/d/Y', $etime);
+            } else {
+                $dateDisp = gmdate('m/d/Y', $stime);
+            }
             echo "<h1>" . PHP_EOL;
-            echo "Area Code Sales By Dialer - ";
+            echo "Area Code Sales By Dialer - " . $dateDisp;
             echo "</h1>" . PHP_EOL;
             ?>
             <table id="dialer_sales_table" style="width:100%" border="0" cellspacing="1">

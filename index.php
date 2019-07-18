@@ -156,10 +156,20 @@
 							$('#'+area+'_submit_report_button').show();
 							$('#'+area+'_loading_plx_wait_span').hide();
 						}
-
 					});
 					return false;
 				}
+
+                function genCSV(tableElement) {
+                    $(tableElement).each(function () {
+                        let $table = $(this);
+                        let csv = $table.table2CSV({
+                            delivery: 'value'
+                        });
+                        window.location.href = 'data:text/csv;charset=UTF-8,'
+                            + encodeURIComponent(csv);
+                    });
+                }
 
 				function loadSection(url){
 
