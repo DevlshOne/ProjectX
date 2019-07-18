@@ -160,14 +160,28 @@
 					return false;
 				}
 
+                function download(type, filename, text) {
+                    let element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/' + type + ';charset=utf-8,' + encodeURIComponent(text));
+                    element.setAttribute('download', filename);
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                }
+
                 function genCSV(tableElement) {
                     $(tableElement).each(function () {
                         let $table = $(this);
+                        let dFile = $table.attr('id') + "_" + Date.now() + '.csv';
                         let csv = $table.table2CSV({
-                            delivery: 'value'
+                            delivery: 'value',
+                            filename: dFile
                         });
-                        window.location.href = 'data:text/csv;charset=UTF-8,'
-                            + encodeURIComponent(csv);
+                        download('csv', dFile, csv);
+                        // let hdrs = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(csv);
+                        // window.location.download = dFile;
+                        // window.location.href = hdrs;
                     });
                 }
 

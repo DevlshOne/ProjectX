@@ -4,8 +4,8 @@ jQuery.fn.table2CSV = function(options) {
         header: [],
         headerSelector: 'th',
         columnSelector: 'td',
-        delivery: 'popup', // popup, value, download
-        // filename: 'powered_by_sinri.csv', // filename to download
+        delivery: 'download', // popup, value, download
+        filename: 'powered_by_sinri.csv', // filename to download
         transform_gt_lt: true // make &gt; and &lt; to > and <
     },
     options);
@@ -53,7 +53,7 @@ jQuery.fn.table2CSV = function(options) {
         var url='data:text/csv;charset=utf8,' + encodeURIComponent(mydata);
         window.open(url);
         return true;
-    } 
+    }
     else {
         var mydata = csvData.join('\n');
         if(options.transform_gt_lt){
