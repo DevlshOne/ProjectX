@@ -161,13 +161,16 @@
 			$ofcsql = " AND `office` IN (";
 			$x=0;
 			foreach($_SESSION['assigned_offices'] as $ofc){
-				if($x++ > 0)$ofcsql .= ",";
+                if ($x++ > 0) {
+                    $ofcsql .= ",";
+                }
 
 				$ofcsql .= intval($ofc);
 
 			}
-			if($x > 0)$ofcsql .= ") ";
-
+            if ($x > 0) {
+                $ofcsql .= ") ";
+            }
 		}
 
 
@@ -561,9 +564,4 @@
 		$out .='</select>';
 		return $out;
 	}
-
-
-
-
-
-?>
+	

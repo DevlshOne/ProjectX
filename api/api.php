@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * API Gateway - XML interface between front end and database
  * Written by: Jonathan Will, Digital Node LLC.
@@ -271,7 +271,12 @@
 		include_once($basedir."api/campaigns.api.php");
 		$campaigns = new API_Campaigns();
 		$campaigns->handleAPI();
+        break;
 
+        case 'campaign_parents':
+            include_once($basedir."api/cmpgn_parents.api.php");
+            $campaign_parents = new API_CampaignParents();
+            $campaign_parents->handleAPI();
 		break;
 
 	case 'extensions':

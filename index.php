@@ -332,6 +332,16 @@
 				}
 
 				break;
+
+				case 'campaign_parents':
+						if(	checkAccess('campaigns')) {
+							include_once("classes/cmpgn_parents.inc.php");
+						$_SESSION['cmpgn_parents']->handleFLOW();
+					}else{
+						accessDenied("Campaigns");
+					}
+					break;
+
 			case 'scripts':
 
 
@@ -551,8 +561,8 @@
 
 					accessDenied("LoginTracker");
 
-				}				
-
+				}		
+				
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //
 //					echo "You lack the ability to access this section. Access to advanced config is denied.";

@@ -87,6 +87,7 @@ class API_Campaigns{
 
 
 			$dat['name'] = $name;
+			$dat['parent_campaign_id'] = $_POST['parent_campaign_id'];
 			$dat['status'] = $_POST['status'];
 
 			if($_POST['px_hidden']){
