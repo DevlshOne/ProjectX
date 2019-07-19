@@ -10,10 +10,13 @@
 
 	$dispo_code = "NI";
 
-	$ignore_dispo_codes = "'SALE','SALECC','PAIDCC'";
+	$ignore_dispo_codes = "'SALE','SALECC','PAIDCC','XFER','DNC','VDNC','VOID'";
 
 
+	$use_log_file = true;
+	$log_file_path = "/var/log/px-call-in-not-interested.log";
 
+	
 
 	if(!isset($_REQUEST['phone'])){
 		die("Error: number not provided.");
@@ -36,6 +39,8 @@
 	include_once($base_dir."utils/db_utils.php");
 
 
+	
+	
 
 
 
@@ -51,6 +56,8 @@
 		$clusters[$row['id']] = $row;
 
 	}
+
+	
 
 
 	echo date("g:i:sa m/d/Y")." - Marking Phone # ".$phone." as ".$dispo_code." on ALL clusters.<br />\n";
@@ -78,6 +85,13 @@
 	}
 
 
+	if($use_log_file){
+		
+		$str = date("g:i:sa m/d/Y")."\t".time()."\t".$phone."\t".$cnt."\n";
+		
+		file_put_contents($log_file_path, $str, FILE_APPEND);
+	}
+	
 	echo date("g:i:sa m/d/Y")." - DONE, updated $cnt Leads<br />\n";
 
 
