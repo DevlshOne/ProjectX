@@ -4,20 +4,8 @@
  * Written By: Jonathan Will
  *
  */
-// ENSURE SESSION IS RUNNING, CAUSE WE NEED THAT SHIT
-session_start();
 
-/**
- * Database connection made here
- */
-include_once("site_config.php");
 
-<<<<<<< index.php
-// GENERIC DB FUNCTIONS
-include_once("db.inc.php");
-include_once("utils/microtime.php");
-include_once("dbapi/dbapi.inc.php");
-=======
 	// ENSURE SESSION IS RUNNING, CAUSE WE NEED THAT SHIT
 	session_start();
 
@@ -154,285 +142,222 @@ include_once("dbapi/dbapi.inc.php");
 
 
 
->>>>>>> index.php
 
-/**
- * Additional includes/requires go here
- */
-include_once("utils/jsfunc.php");
-include_once("utils/stripurl.php");
-include_once("utils/format_phone.php");
-include_once("utils/rendertime.php");
-include_once("utils/DropDowns.php");
-include_once("utils/functions.php");
-include_once("utils/feature_functions.php");
-include_once("utils/db_utils.php");
+			<script>
 
-/**
- * Loading up module classes
- */
-include_once("classes/genericDD.inc.php");
-include_once("classes/interface.inc.php");
-include_once("classes/languages.inc.php");
+				function genReport(frm, area, printable){
 
-// DESTROY THE SESSION/LOGOUT ?o
-if (isset($_REQUEST['o'])) {
-    session_unset();
-    jsRedirect("index.php");
-    exit;
-}
 
-// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
-if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
+					if(area){
 
-?><!DOCTYPE HTML>
-<html>
-<head>
-    <title>Project X - Management Tools and Reports</title>
+						$('#'+area+'_submit_report_button').hide();
+						$('#'+area+'_loading_plx_wait_span').show();
+					}
 
+					var url = frm.action;
 
-    <script src="js/functions.js"></script>
+					if(printable){
+						url += "&no_nav=1";
+					}
 
-    <link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
+					$.post(url, $('#'+frm.id).serialize()).done(function(data){
 
-    <META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
+						if(printable){
 
+							//$('#main_content').html(data);
 
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+							var win = window.open("about:blank");
+							$(win.document.body).html(data);
 
-    <link rel="stylesheet" type="text/css" href="css/style.css"/>
-    <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
-    <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/>
+							win.focus();
+							//alert("open window here");
 
-    <link rel="stylesheet" href="themes/default/css/uniform.default.css" media="screen"/>
+						}else{
 
-    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+							$('#main_content').html(data);
 
-    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css"/>
+						}
 
-    <?/*			<script src="js/jquery-1.9.1.js"></script>**/
-    ?>
 
-    <script src="js/jquery-1.10.2.min.js"></script>
+						if(area){
 
-    <?/*<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>*/
-    ?>
+							$('#'+area+'_submit_report_button').show();
+							$('#'+area+'_loading_plx_wait_span').hide();
+						}
 
-    <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
-    <script src="js/jquery.uniform.min.js"></script>
+					});
+					return false;
+				}
 
 
-    <?/*<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>*/
-    ?>
+				function loadSection(url){
 
-    <script src="js/jquery.dataTables.min.js"></script>
+					$('#main_content').load(url);
 
 
-    <script src="js/ajax_functions.js"></script>
-    <script src="js/functions.js"></script>
-    <script src="js/page_system.js"></script>
+					$('.cd-side-nav').find('.hover').removeClass('hover');
+					$('.cd-side-nav').find('.selected').removeClass('selected');
+					$('.cd-side-nav').removeClass('nav-is-visible');
+					$('.cd-main-header').find('.nav-is-visible').removeClass('nav-is-visible');
+					 //$("#menu").mouseleaveMenu();
 
+				}
 
-    <?
-        /** NEW NAVIGATION STUFF
-         *
-         ***/
-    ?>
 
+				function viewChangeHistory(area, areaid){
+					var objname = 'dialog-modal-view_change_history';
 
-    <script src="js/modernizr.js"></script> <!-- Modernizr -->
-    <script src="js/jquery.menu-aim.js"></script>
-    <script src="js/main.js"></script> <!-- Resource jQuery -->
 
 
-    <script>
+					$('#'+objname).dialog("open");
 
-        function genReport(frm, area, printable) {
+					$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
 
+					$('#'+objname).load("index.php?area=action_log&view_change_history=1&view_area="+encodeURI(area)+"&view_area_id="+areaid+"&printable=1&no_script=1");
 
-            if (area) {
+					$('#'+objname).dialog('option', 'position', 'center');
 
-                $('#' + area + '_submit_report_button').hide();
-                $('#' + area + '_loading_plx_wait_span').show();
-            }
+				}
 
-            var url = frm.action;
+				function applyUniformity(){
+					$("input:submit, button, input:button").button();
+					$("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
+				}
 
-            if (printable) {
-                url += "&no_nav=1";
-            }
 
-            $.post(url, $('#' + frm.id).serialize()).done(function (data) {
 
-                if (printable) {
 
-                    //$('#main_content').html(data);
 
-                    var win = window.open("about:blank");
-                    $(win.document.body).html(data);
 
-                    win.focus();
-                    //alert("open window here");
 
-                } else {
 
-                    $('#main_content').html(data);
 
-                }
 
 
-                if (area) {
 
-                    $('#' + area + '_submit_report_button').show();
-                    $('#' + area + '_loading_plx_wait_span').hide();
-                }
 
-            });
-            return false;
-        }
 
 
-        function loadSection(url) {
 
-            $('#main_content').load(url);
 
 
-            $('.cd-side-nav').find('.hover').removeClass('hover');
-            $('.cd-side-nav').find('.selected').removeClass('selected');
-            $('.cd-side-nav').removeClass('nav-is-visible');
-            $('.cd-main-header').find('.nav-is-visible').removeClass('nav-is-visible');
-            //$("#menu").mouseleaveMenu();
+			</script>
+		</head>
+		<body>
+		<?
+	}
 
-        }
 
+	// USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
+	if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
 
-        function viewChangeHistory(area, areaid) {
-            var objname = 'dialog-modal-view_change_history';
+		// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
+		if(!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])){
 
+			//$_SESSION['interface']->makeHeader();
+			$_SESSION['interface']->makeNewHeader();
 
-            $('#' + objname).dialog("open");
+			if($_REQUEST['area']){
 
-            $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+				?><script>
+					loadSection('<?=stripurl('no_script')?>&no_script=1');
+				</script><?
+			}
 
-            $('#' + objname).load("index.php?area=action_log&view_change_history=1&view_area=" + encodeURI(area) + "&view_area_id=" + areaid + "&printable=1&no_script=1");
 
-            $('#' + objname).dialog('option', 'position', 'center');
+		}else{
 
-        }
+			if(isset($_REQUEST['no_nav'])){
+				?><div class="content-wrapper" id="main_content"><?
+			}
 
-        function applyUniformity() {
-            $("input:submit, button, input:button").button();
-            $("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
-        }
-    </script>
-</head>
-<body>
-<?
-    }
+			switch($_REQUEST['area']){
+			case 'home':
+			default:
 
-    // USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
-    if (isset($_SESSION['user']) && $_SESSION['user']['id'] > 0) {
+				include_once("classes/home.inc.php");
+				$_SESSION['home']->handleFLOW();
 
-        // NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
-        if (!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])) {
 
-            //$_SESSION['interface']->makeHeader();
-            $_SESSION['interface']->makeNewHeader();
+				break;
+			case 'activity_log':
 
-            if ($_REQUEST['area']) {
 
-                ?>
-                <script>
-                    loadSection('<?=stripurl('no_script')?>&no_script=1');
-                </script><?
-            }
+				if($_SESSION['user']['priv'] < 5){
 
-        } else {
+					accessDenied("ADMIN ONLY");
 
-            if (isset($_REQUEST['no_nav'])) {
-                ?><div class="content-wrapper" id="main_content"><?
-            }
+				}else{
 
-            switch ($_REQUEST['area']) {
-                case 'home':
-                default:
+					include_once("classes/activity_log.inc.php");
+					$_SESSION['activity_log']->handleFLOW();
 
-                    include_once("classes/home.inc.php");
-                    $_SESSION['home']->handleFLOW();
+				}
 
-                    break;
-                case 'activity_log':
+				break;
 
-                    if ($_SESSION['user']['priv'] < 5) {
 
-                        accessDenied("ADMIN ONLY");
+			case 'action_log':
 
-                    } else {
 
-                        include_once("classes/activity_log.inc.php");
-                        $_SESSION['activity_log']->handleFLOW();
+				if(!checkAccess('action_log')){
 
-                    }
+					accessDenied("Action Log");
 
-                    break;
+				}else{
 
-                case 'action_log':
+					include_once("classes/action_log.inc.php");
+					$_SESSION['action_log']->handleFLOW();
 
-                    if (!checkAccess('action_log')) {
+				}
 
-                        accessDenied("Action Log");
+				break;
 
-                    } else {
+			case 'campaigns':
 
-                        include_once("classes/action_log.inc.php");
-                        $_SESSION['action_log']->handleFLOW();
+				if(
+					checkAccess('campaigns')
+				//	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+				//	($_SESSION['user']['priv'] == 4 && $_SESSION['features']['campaigns'] == 'yes') // MANAGERS WITH CAMPAIGN ACCESS
+				){
 
-                    }
 
-                    break;
+					include_once("classes/campaigns.inc.php");
+					$_SESSION['campaigns']->handleFLOW();
+				}else{
 
-                case 'campaigns':
+					accessDenied("Campaigns");
 
-                    if (
-                    checkAccess('campaigns')
-                        //	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
-                        //	($_SESSION['user']['priv'] == 4 && $_SESSION['features']['campaigns'] == 'yes') // MANAGERS WITH CAMPAIGN ACCESS
-                    ) {
+				}
 
-                        include_once("classes/campaigns.inc.php");
-                        $_SESSION['campaigns']->handleFLOW();
-                    } else {
+				break;
 
-                        accessDenied("Campaigns");
+				case 'campaign_parents':
+						if(	checkAccess('campaigns')) {
+							include_once("classes/cmpgn_parents.inc.php");
+						$_SESSION['cmpgn_parents']->handleFLOW();
+					}else{
+						accessDenied("Campaigns");
+					}
+					break;
 
-                    }
+			case 'scripts':
 
-                    break;
 
-                case 'campaign_parents':
-                    if (checkAccess('campaigns')) {
-                        include_once("classes/cmpgn_parents.inc.php");
-                        $_SESSION['cmpgn_parents']->handleFLOW();
-                    } else {
-                        accessDenied("Campaigns");
-                    }
-                    break;
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['scripts'] == 'yes') // MANAGERS WITH SCRIPT ACCESS
+				){
 
-                case 'scripts':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['scripts'] == 'yes') // MANAGERS WITH SCRIPT ACCESS
-                    ) {
+					include_once("classes/scripts.inc.php");
+					$_SESSION['scripts']->handleFLOW();
 
-                        include_once("classes/scripts.inc.php");
-                        $_SESSION['scripts']->handleFLOW();
+				}else{
 
-                    } else {
+					accessDenied("Scripts");
 
-                        accessDenied("Scripts");
+				}
 
-                    }
 
 //				if($_SESSION['user']['priv'] == 4 && ($_SESSION['user']['feat_config'] != 'yes' && $_SESSION['feat_advanced'] != 'yes')){
 //
@@ -444,22 +369,27 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //					$_SESSION['scripts']->handleFLOW();
 //				}
 
-                    break;
 
-                case 'server_status':
+				break;
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['server_status'] == 'yes') // MANAGERS WITH SERVER STATUS ACCESS
-                    ) {
+			case 'server_status':
 
-                        include_once("classes/server_status.inc.php");
-                        $_SESSION['server_status']->handleFLOW();
 
-                    } else {
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['server_status'] == 'yes') // MANAGERS WITH SERVER STATUS ACCESS
+				){
 
-                        accessDenied("Server Status");
 
-                    }
+					include_once("classes/server_status.inc.php");
+					$_SESSION['server_status']->handleFLOW();
+
+
+				}else{
+
+					accessDenied("Server Status");
+
+				}
+
 
 //				if($_SESSION['user']['priv'] < 5){
 //
@@ -472,22 +402,24 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //
 //				}
 
-                    break;
+				break;
 
-                case 'users':
+			case 'users':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['users'] == 'yes') // MANAGERS WITH USERS ACCESS
-                    ) {
 
-                        include_once("classes/users.inc.php");
-                        $_SESSION['users']->handleFLOW();
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['users'] == 'yes') // MANAGERS WITH USERS ACCESS
+				){
 
-                    } else {
+					include_once("classes/users.inc.php");
+					$_SESSION['users']->handleFLOW();
 
-                        accessDenied("Users");
+				}else{
 
-                    }
+					accessDenied("Users");
+
+				}
+
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
 //
@@ -500,21 +432,22 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //
 //				}
 
-                    break;
-                case 'extensions':
+				break;
+			case 'extensions':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['extensions'] == 'yes') // MANAGERS WITH Extensions ACCESS
-                    ) {
 
-                        include_once("classes/extensions.inc.php");
-                        $_SESSION['extensions']->handleFLOW();
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['extensions'] == 'yes') // MANAGERS WITH Extensions ACCESS
+				){
 
-                    } else {
+					include_once("classes/extensions.inc.php");
+					$_SESSION['extensions']->handleFLOW();
 
-                        accessDenied("Extensions");
+				}else{
 
-                    }
+					accessDenied("Extensions");
+
+				}
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
 //
@@ -526,7 +459,7 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //
 //				}
 
-                    break;
+				break;
 //			case 'reports':
 //
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_reports'] != 'yes'){
@@ -540,20 +473,21 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //				}
 //
 //				break;
-                case 'voices':
+			case 'voices':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['voices'] == 'yes') // MANAGERS WITH VOICES ACCESS
-                    ) {
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['voices'] == 'yes') // MANAGERS WITH VOICES ACCESS
+				){
 
-                        include_once("classes/voices.inc.php");
-                        $_SESSION['voices']->handleFLOW();
+					include_once("classes/voices.inc.php");
+					$_SESSION['voices']->handleFLOW();
 
-                    } else {
+				}else{
 
-                        accessDenied("Voices");
+					accessDenied("Voices");
 
-                    }
+				}
+
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
 //
@@ -565,21 +499,26 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //					$_SESSION['voices']->handleFLOW();
 //				}
 
-                    break;
-                case 'messages':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['messages'] == 'yes') // MANAGERS WITH MESSAGES ACCESS
-                    ) {
+				break;
+			case 'messages':
 
-                        include_once("classes/messages.inc.php");
-                        $_SESSION['messages']->handleFLOW();
 
-                    } else {
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['messages'] == 'yes') // MANAGERS WITH MESSAGES ACCESS
+				){
 
-                        accessDenied("Messages");
+					include_once("classes/messages.inc.php");
+					$_SESSION['messages']->handleFLOW();
 
-                    }
+				}else{
+
+					accessDenied("Messages");
+
+				}
+
+
+
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_messages'] != 'yes'){
 //
@@ -590,23 +529,22 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //					$_SESSION['messages']->handleFLOW();
 //				}
 
-                    break;
-                case 'names':
+				break;
+			case 'names':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['names'] == 'yes') // MANAGERS WITH NAMES ACCESS
-                    ) {
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['names'] == 'yes') // MANAGERS WITH NAMES ACCESS
+				){
 
-                        include_once("classes/names.inc.php");
-                        $_SESSION['names']->handleFLOW();
+					include_once("classes/names.inc.php");
+					$_SESSION['names']->handleFLOW();
 
-                    } else {
+				}else{
 
-<<<<<<< index.php
-                        accessDenied("Names");
+					accessDenied("Names");
 
-                    }
-=======
+				}
+
 				break;
 
 			case 'login_tracker':
@@ -623,7 +561,6 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 					accessDenied("LoginTracker");
 
 				}				
->>>>>>> index.php
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //
@@ -635,22 +572,24 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //					$_SESSION['names']->handleFLOW();
 //
 //				}
-                    break;
+				break;
 
-                case 'problems':
+			case 'problems':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['problems'] == 'yes') // MANAGERS WITH PROBLEMS ACCESS
-                    ) {
 
-                        include_once("classes/problems.inc.php");
-                        $_SESSION['problems']->handleFLOW();
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['problems'] == 'yes') // MANAGERS WITH PROBLEMS ACCESS
+				){
 
-                    } else {
+					include_once("classes/problems.inc.php");
+					$_SESSION['problems']->handleFLOW();
 
-                        accessDenied("Problems");
+				}else{
 
-                    }
+					accessDenied("Problems");
+
+				}
+
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_problems'] != 'yes'){
 //
@@ -662,291 +601,351 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //					$_SESSION['problems']->handleFLOW();
 //				}
 
-                    break;
+				break;
 
-                case 'ringing_calls':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['ringing_calls'] == 'yes') // MANAGERS WITH ringing_calls ACCESS
-                    ) {
 
-                        include_once("classes/ringing_calls.inc.php");
-                        $_SESSION['ringing_calls']->handleFLOW();
 
-                    } else {
 
-                        accessDenied("Ring Report");
+			case 'ringing_calls':
 
-                    }
 
-                    break;
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['ringing_calls'] == 'yes') // MANAGERS WITH ringing_calls ACCESS
+				){
 
-                case 'fronter_closer':
+					include_once("classes/ringing_calls.inc.php");
+					$_SESSION['ringing_calls']->handleFLOW();
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['fronter_closer'] == 'yes') // MANAGERS WITH FRONTER/CLOSER ACCESS
-                    ) {
 
-                        include_once("classes/fronter_closer.inc.php");
-                        $_SESSION['fronter_closer']->handleFLOW();
 
-                    } else {
+				}else{
 
-                        accessDenied("Fronter/Closer");
+					accessDenied("Ring Report");
 
-                    }
+				}
 
-                    break;
-                case 'lead_management':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['lead_management'] == 'yes') // MANAGERS WITH LEAD MANAGEMENT ACCESS
-                    ) {
 
-                        include_once("classes/lead_management.inc.php");
 
-                        $_SESSION['lead_management']->handleFLOW();
 
-                    } else {
+				break;
 
-                        accessDenied("Lead Management");
+			case 'fronter_closer':
 
-                    }
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['fronter_closer'] == 'yes') // MANAGERS WITH FRONTER/CLOSER ACCESS
+				){
 
-                    break;
+					include_once("classes/fronter_closer.inc.php");
+					$_SESSION['fronter_closer']->handleFLOW();
 
-                case 'sales_analysis':
+				}else{
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['sales_analysis'] == 'yes') // MANAGERS WITH SALES ANAL. ACCESS
-                    ) {
+					accessDenied("Fronter/Closer");
 
-                        include_once("classes/sales_analysis.inc.php");
-                        $_SESSION['sales_analysis']->handleFLOW();
+				}
 
-                    } else {
 
-                        accessDenied("Sales Analysis");
 
-                    }
 
-                    break;
+				break;
+			case 'lead_management':
 
-                case 'summary_report':
 
-                    include_once("classes/summary_report.inc.php");
-                    $_SESSION['summary_report']->handleFLOW();
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['lead_management'] == 'yes') // MANAGERS WITH LEAD MANAGEMENT ACCESS
+				){
 
-                    break;
 
-                case 'employee_hours':
+					include_once("classes/lead_management.inc.php");
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['employee_hours'] == 'yes') // MANAGERS WITH EMPLOYEE HOURS ACCESS
-                    ) {
+					$_SESSION['lead_management']->handleFLOW();
 
-                        include_once("classes/employee_hours.inc.php");
 
-                        $_SESSION['employee_hours']->handleFLOW();
 
-                    } else {
+				}else{
 
-                        accessDenied("Employee Hours");
+					accessDenied("Lead Management");
 
-                    }
+				}
 
-                    break;
+				break;
 
-                case 'recent_hangups':
+			case 'sales_analysis':
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['recent_hangups'] == 'yes') // MANAGERS WITH RECENT HANGUPS ACCESS
-                    ) {
 
-                        include_once("classes/recent_hangups.inc.php");
-                        $_SESSION['recent_hangups']->handleFLOW();
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['sales_analysis'] == 'yes') // MANAGERS WITH SALES ANAL. ACCESS
+				){
 
-                    } else {
 
-                        accessDenied("Recent Hangups");
+					include_once("classes/sales_analysis.inc.php");
+					$_SESSION['sales_analysis']->handleFLOW();
 
-                    }
+				}else{
 
-                    break;
+					accessDenied("Sales Analysis");
 
-                case 'script_statistics':
+				}
 
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['script_statistics'] == 'yes') // MANAGERS WITH SCRIPT STATS ACCESS
-                    ) {
 
-                        include_once("classes/script_statistics.inc.php");
-                        $_SESSION['script_statistics']->handleFLOW();
+				break;
 
-                    } else {
 
-                        accessDenied("Script Statistics");
+			case 'summary_report':
 
-                    }
 
-                    break;
+				include_once("classes/summary_report.inc.php");
+				$_SESSION['summary_report']->handleFLOW();
 
-                case 'rouster_report':
 
-                    if (checkAccess('rouster_report')) {
+				break;
+
+			case 'employee_hours':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['employee_hours'] == 'yes') // MANAGERS WITH EMPLOYEE HOURS ACCESS
+				){
+
+					include_once("classes/employee_hours.inc.php");
+
+					$_SESSION['employee_hours']->handleFLOW();
+
+
+
+				}else{
+
+					accessDenied("Employee Hours");
+
+				}
+
+
+
+				break;
+
+
+			case 'recent_hangups':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['recent_hangups'] == 'yes') // MANAGERS WITH RECENT HANGUPS ACCESS
+				){
+
+					include_once("classes/recent_hangups.inc.php");
+					$_SESSION['recent_hangups']->handleFLOW();
+
+
+				}else{
+
+					accessDenied("Recent Hangups");
+
+				}
+
+
+
+
+				break;
+
+			case 'script_statistics':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['script_statistics'] == 'yes') // MANAGERS WITH SCRIPT STATS ACCESS
+				){
+
+
+
+					include_once("classes/script_statistics.inc.php");
+					$_SESSION['script_statistics']->handleFLOW();
+
+
+				}else{
+
+					accessDenied("Script Statistics");
+
+				}
+
+
+				break;
+
+			case 'rouster_report':
+
+				if(checkAccess('rouster_report')){
 
 //				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 //					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['agent_call_stats'] == 'yes') // MANAGERS WITH AGENT CALL STATS ACCESS
 //				){
 
-                        include_once("classes/rouster_report.inc.php");
 
-                        $_SESSION['rouster_report']->handleFLOW();
+					include_once("classes/rouster_report.inc.php");
 
-                    } else {
+					$_SESSION['rouster_report']->handleFLOW();
 
-                        accessDenied("Rouster Report");
+				}else{
 
-                    }
+					accessDenied("Rouster Report");
 
-                    break;
+				}
 
-                case 'agent_call_stats':
+
+
+				break;
+
+			case 'agent_call_stats':
 
 //error_reporting(E_ALL);
 //ini_set("display_errors", 1);
 
-                    if (checkAccess('agent_call_stats')) {
+
+
+
+				if(checkAccess('agent_call_stats')){
 
 //				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 //					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['agent_call_stats'] == 'yes') // MANAGERS WITH AGENT CALL STATS ACCESS
 //				){
 
-                        include_once("classes/agent_call_stats.inc.php");
 
-                        $_SESSION['agent_call_stats']->handleFLOW();
+					include_once("classes/agent_call_stats.inc.php");
 
-                    } else {
+					$_SESSION['agent_call_stats']->handleFLOW();
 
-                        accessDenied("Agent Call Stats");
+				}else{
 
-                    }
+					accessDenied("Agent Call Stats");
 
-                    break;
+				}
 
-                case 'dispo_log':
+
+
+				break;
+
+			case 'dispo_log':
+
+
 
 //				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 //					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['dispo_log'] == 'yes') // MANAGERS WITH DISPO LOG ACCESS
 //				){
 
-                    if (checkAccess('dispo_log')) {
+				if(checkAccess('dispo_log')){
 
-                        include_once("classes/dispo_log.inc.php");
-                        $_SESSION['dispo_log']->handleFLOW();
+					include_once("classes/dispo_log.inc.php");
+					$_SESSION['dispo_log']->handleFLOW();
 
-                    } else {
+				}else{
 
-                        accessDenied("Dispo Log");
+					accessDenied("Dispo Log");
 
-                    }
+				}
 
-                    break;
 
-                case 'user_charts':
+
+				break;
+
+
+			case 'user_charts':
 
 //				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 //					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['user_charts'] == 'yes') // MANAGERS WITH USER CHARTS ACCESS
 //				){
 
-                    if (checkAccess('user_charts')) {
+				if(checkAccess('user_charts')){
 
-                        include_once("classes/user_charts.inc.php");
-                        $_SESSION['user_charts']->handleFLOW();
+					include_once("classes/user_charts.inc.php");
+					$_SESSION['user_charts']->handleFLOW();
 
-                    } else {
+				}else{
 
-                        accessDenied("User Charts");
+					accessDenied("User Charts");
 
-                    }
+				}
 
-                    break;
 
-                case 'feature_control':
 
-                    if (checkAccess('feature_control')) {
+				break;
 
-                        include_once("classes/feature_control.inc.php");
-                        $_SESSION['feature_control']->handleFLOW();
+			case 'feature_control':
 
-                    } else {
-                        accessDenied("Feature Control");
-                    }
 
-                    break;
+				if(checkAccess('feature_control')){
 
-                case 'user_groups':
-                    if (checkAccess('users')) {
-                        include_once("classes/user_groups.inc.php");
-                        $_SESSION['user_groups']->handleFLOW();
-                    } else {
-                        accessDenied("Users");
-                    }
-                    break;
+					include_once("classes/feature_control.inc.php");
+					$_SESSION['feature_control']->handleFLOW();
 
-                case 'user_groups_master':
-                    if (checkAccess('users')) {
-                        include_once("classes/user_groups_master.inc.php");
-                        $_SESSION['user_groups_master']->handleFLOW();
-                    } else {
-                        accessDenied("Users");
-                    }
-                    break;
 
-                case 'report_emails':
-                    if (checkAccess('report_emails')) {
-                        include_once("classes/report_emails.inc.php");
-                        $_SESSION['report_emails']->handleFLOW();
-                    } else {
-                        accessDenied("Report Emails");
-                    }
-                    break;
+				}else{
+					accessDenied("Feature Control");
+				}
 
-                case 'list_tools':
+				break;
 
-                    include_once("classes/campaigns.inc.php");
-                    include_once("classes/list_tools.inc.php");
-                    $_SESSION['list_tools']->handleFLOW();
+			case 'user_groups':
 
-                    break;
 
-                case 'pac_reports':
+				if(checkAccess('users')){
 
-                    include_once("classes/pac_reports.inc.php");
-                    $_SESSION['pac_reports']->handleFLOW();
+					include_once("classes/user_groups.inc.php");
+					$_SESSION['user_groups']->handleFLOW();
 
-                    break;
 
-                case 'quiz_results':
+				}else{
+					accessDenied("Users");
+				}
 
-                    include_once("classes/quiz_results.inc.php");
-                    $_SESSION['quiz_results']->handleFLOW();
+				break;
 
-                    break;
 
-                case 'quiz_questions':
+			case 'report_emails':
 
-                    include_once("classes/quiz_questions.inc.php");
-                    $_SESSION['quiz_questions']->handleFLOW();
 
-                    break;
+				if(checkAccess('report_emails')){
 
-                case 'phone_lookup':
+					include_once("classes/report_emails.inc.php");
+					$_SESSION['report_emails']->handleFLOW();
 
-                    include_once("classes/phone_lookup.inc.php");
-                    $_SESSION['phone_lookup']->handleFLOW();
 
-                    break;
+				}else{
+					accessDenied("Report Emails");
+				}
+
+				break;
+
+
+			case 'list_tools':
+
+				include_once("classes/campaigns.inc.php");
+				include_once("classes/list_tools.inc.php");
+				$_SESSION['list_tools']->handleFLOW();
+
+				break;
+
+			case 'pac_reports':
+
+				include_once("classes/pac_reports.inc.php");
+				$_SESSION['pac_reports']->handleFLOW();
+
+				break;
+
+			case 'quiz_results':
+
+				include_once("classes/quiz_results.inc.php");
+				$_SESSION['quiz_results']->handleFLOW();
+
+				break;
+
+			case 'quiz_questions':
+
+				include_once("classes/quiz_questions.inc.php");
+				$_SESSION['quiz_questions']->handleFLOW();
+
+				break;
+
+			case 'phone_lookup':
+
+				include_once("classes/phone_lookup.inc.php");
+				$_SESSION['phone_lookup']->handleFLOW();
+
+				break;
 
 //			case 'fec_filer':
 //
@@ -955,40 +954,43 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 //
 //				break;
 
-                case 'change_password':
+			case 'change_password':
 
-                    include_once("classes/change_password.inc.php");
-                    $_SESSION['change_password']->handleFLOW();
+				include_once("classes/change_password.inc.php");
+				$_SESSION['change_password']->handleFLOW();
 
-                    break;
-            }
 
-            if (isset($_REQUEST['no_nav'])) {
-                ?></div><?
-            }
+				break;
+			}
 
-        }
+			if(isset($_REQUEST['no_nav'])){
+				?></div><?
+			}
 
-        // USER NOT LOGGED IN, SHOW LOGIN SCREEN
-    } else {
+		}
 
-        include_once("classes/login.inc.php");
+	// USER NOT LOGGED IN, SHOW LOGIN SCREEN
+	}else{
 
-        $_SESSION['login'] = new LoginClass();
+		include_once("classes/login.inc.php");
 
-        $_SESSION['login']->makeLoginForm();
+		$_SESSION['login'] = new LoginClass();
 
-    }
+		$_SESSION['login']->makeLoginForm();
 
-?>
-<script>
 
-    applyUniformity();
+	}
 
-</script><?
 
-    // NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
-    if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
-?></body>
-</html><?
-    }
+
+	?><script>
+
+		applyUniformity();
+
+	</script><?
+
+
+	// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
+	if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
+		?></body></html><?
+	}
