@@ -16,6 +16,9 @@ class AnsweringMachines{
 	var $dnc_default_duration = 15768000; // (15768000 = Half a year)
 
 
+	var $AM_type_code = "700";
+	var $PM_type_code = "710";
+
 	function AnsweringMachines(){
 
 
@@ -77,7 +80,7 @@ class AnsweringMachines{
 
 			// GRAB EVERY CALL WE'VE MADE TO THEM IN THE LAST 30 DAYS
 			$re2 = query(
-					"SELECT `id`,`lead_id`,`vici_cluster_id`,`time`,`dispo`,`campaign` FROM `lead_tracking` ".
+					"SELECT `id`,`lead_id`,`list_id`,`vici_cluster_id`,`time`,`dispo`,`campaign` FROM `lead_tracking` ".
 					" WHERE `phone_num`='".mysqli_real_escape_string($_SESSION['db'], $phone)."' ".
 					(($timeframe == 'AM' || $timeframe == 'PM')?" AND FROM_UNIXTIME(time,'%p')='".$timeframe."'":'').
 					"",1);
@@ -193,22 +196,142 @@ class AnsweringMachines{
 			$stime = $stime - 86400;
 			$etime = $etime - 86400;
 
-			$ignore_list_sql = '';
+			$ignore_list_sql = " AND `list_id` NOT LIKE '7%'";
 
+			connectPXDB();
 
+			$PXDB = $_SESSION['db'];
 
+			$VICIDB = array();
 
 			$arr = $this->generateLeadStack('A', $this->call_attempts_move_limit, $stime, $etime, $timeframe, $ignore_list_sql);
 
-
-
 			echo date("h:i:s m/d/Y")." - Successfully extracted ".count($arr)." leads.\n";
+
+			// GO THROUGH EACH PHONE NUMBER
+			foreach($arr as $phone=>$rowarr){
+
+
+				if(count($rowarr) >= $this->call_attempts_dnc_limit){
+
+					echo $phone." - PUSH TO THE TIMED DNC HERE, WHEN ITS FINISHED REVAMP.\n";
+
+
+					continue;
+				}
+
+				echo "Rotating $phone to ".(($timeframe == 'AM')?"PM":"AM")." list\n";
+
+				foreach($rowarr as $row){
+
+					// EACH ROW:
+					//`id`,`lead_id`,`vici_cluster_id`,`time`,`dispo`,`campaign`
+
+					if(array_key_exists($row['vici_cluster_id'], $VICIDB)){
+
+						$_SESSION['db'] = $VICIDB[$row['vici_cluster_id']];
+
+					}else{
+
+						$vidx = getClusterIndex($row['vici_cluster_id']);
+
+						if($vidx < 0){
+							echo "ERROR LOCATING VICI CLUSTER ID# ".$row['vici_cluster_id']."\n";
+							continue;
+						}
+
+						// CONNECT TO VICI TO MAKE THE CHANGE
+						connectViciDB($vidx);
+						$VICIDB[$row['vici_cluster_id']] = $_SESSION['db'];
+
+					}
+
+
+					// FIGURE OUT WHICH LIST WE'RE PUTTING IT IN, CREATE IT IF NECESSARY
+
+					// AM LIST - MOVE TO PM LIST
+					if($timeframe == 'AM'){
+
+						$list_id = $this->findOrAddViciListID($this->PM_type_code, $row);
+
+					// PM - MOVE THEM TO THE AM LIST
+					}else{
+
+						$list_id = $this->findOrAddViciListID($this->AM_type_code, $row);
+
+					}
+
+					// UPDATE THE LIST ID IN VICIDIAL
+					echo ("UPDATE `vicidial_list` SET list_id='".intval($list_id)."' WHERE lead_id='".intval($row['lead_id'])."'");
+
+
+					// UPDATE THE LIST ID IN PX
+					//connectPXDB();
+					$_SESSION['db'] = $PXDB;
+					echo ("UPDATE `lead_tracking` SET list_id='".intval($list_id)."' WHERE id='".mysqli_real_escape_string($_SESSION['db'],$row['id'])."'");
+
+
+				}
+
+
+			}
 
 
 
 	}
 
 
+
+	function findOrAddViciListID($type_code, $row){
+
+		$campaign = $row['campaign'];
+
+		$base_list_id = $row['list_id'];
+
+		$new_list_id = $type_code. $base_list_id;
+
+		if($type_code == $this->AM_type_code){
+			$time_mode = "AM";
+		}else{
+			$time_mode = "PM";
+		}
+
+		list($list_id) = queryROW("SELECT list_id FROM `vicidial_lists` ".
+							" WHERE `list_id`='".mysqli_real_escape_string($_SESSION['db'], $new_list_id)."'"); // AND campaign_id='".mysqli_real_escape_string($_SESSION['db'],$campaign)."'
+
+		if($list_id)return $list_id;
+
+
+		// FIND THE NEXT OPEN ID IN OUR RANGE
+//		list($last_id) = queryROW("SELECT MAX(list_id) FROM vicidial_lists ".
+//								" WHERE list_id REGEXP '^".mysqli_real_escape_string($_SESSION['db'], $type_code)."[[:digit:]]{2}".mysqli_real_escape_string($_SESSION['db'],$base_list_id)."$' ");
+//
+//		echo "Highest List ID in use: ".$last_id."\n";
+//
+//		$new_list_id = $last_id;
+//		$new_list_id[2] = intval($new_list_id[2])+1;
+//
+//		// CREATE THE LIST ID
+//		echo "New List ID to create: ".$new_list_id."\n";
+
+		// RETURN THE NEW LIST ID
+
+		$dat['list_id'] = $new_list_id;
+		$dat['list_name'] = "AnsMach-".$campaign.'-'.$time_mode;
+		$dat['campaign_id'] = $campaign;
+		$dat['active'] = 'N';
+		$dat['list_description'] = "Answering Machine generated ".$time_mode." rotation list";
+		$dat['list_changedate'] = date("Y-m-d H:i:s");
+
+
+		aadd($dat, "vicidial_lists");
+
+		$list_id = mysqli_insert_id($_SESSION['db']);
+
+		echo "Created LIST ID $list_id on ".$row['vici_cluster_id']."\n";
+
+		return $list_id;
+	}
 
 
 	function handlePOST(){

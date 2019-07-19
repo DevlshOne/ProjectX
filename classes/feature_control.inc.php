@@ -515,6 +515,7 @@ class FeatureControl{
 
 						$this->renderFeatureRow('ringing_calls', 'Ring Report', ($row['ringing_calls'] == 'yes')?true:false );
 						$this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes')?true:false );
+						$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
 						$this->renderFeatureRow('server_status', 'Server Status', ($row['server_status'] == 'yes')?true:false );
 						$this->renderFeatureRow('extensions', 'Extensions', ($row['extensions'] == 'yes')?true:false );
 

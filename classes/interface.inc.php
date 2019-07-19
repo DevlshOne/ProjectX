@@ -7,9 +7,145 @@
 
     class InterfaceClass
     {
-        public function InterfaceClass()
-        {
-        }
+        ?><header class="cd-main-header">
+
+
+		<a href="index.php" class="cd-logo"><img src="images/cci-logo-200-2.png" height="55" border="0"></a>
+		<?
+
+
+            if ($_SESSION['user']['username'] == 'phreak') {
+                echo '<a href="px_status.php">UBERSTATUS</a>';
+            } ?>
+
+		<!--<a href="#0" class="cd-logo"><img src="http://10.100.0.65/reports/graph.php?area=user_charts&max_mode=1&time_frame=day&width=650&height=100" border="0" height="100" width="650"></a>-->
+
+		<a href="#0" class="cd-nav-trigger">Menu<span></span></a>
+
+
+
+
+		<nav class="cd-nav">
+
+
+
+			<ul class="cd-top-nav">
+
+
+
+				<li><a href="#0">Support</a></li>
+				<li class="has-children account">
+					<a href="#0">
+
+						Account
+					</a>
+
+					<ul>
+
+						<li><a href="#0">My Account</a></li>
+						<li><a href="#" onclick="loadChangePassword();return false">Change Password</a></li>
+						<li><a href="?o">Logout</a></li>
+					</ul>
+				</li>
+			</ul>
+		</nav>
+	</header> <!-- .cd-main-header -->
+
+	<main class="cd-main-content">
+		<nav class="cd-side-nav">
+			<ul>
+				<li class="cd-label">Navigation</li>
+<?
+
+                if (checkAccess('campaigns') ||
+                    checkAccess('voices') ||
+                    checkAccess('names') ||
+                    checkAccess('scripts')
+                    ) {
+                    ?><li class="has-children comments">
+						<a href="#0">Campaign Setup</a>
+
+<<<<<<< classes/interface.inc.php
+						<ul><?
+
+                            if (checkAccess('campaigns')) {
+                                ?>
+								<li><a href="?area=campaigns&no_script=1" onclick="loadSection(this.href);return false">Campaigns</a></li>
+								<li><a href="?area=campaign_parents&no_script=1" onclick="loadSection(this.href);return false">Campaign Parents</a></li>
+								<?
+                            }
+
+                    if (checkAccess('voices')) {
+                        ?><li><a href="?area=voices&no_script=1" onclick="loadSection(this.href);return false">Voices</a></li><?
+                    }
+
+                    if (checkAccess('names')) {
+                        ?><li><a href="?area=names&no_script=1" onclick="loadSection(this.href);return false">Names</a></li><?
+                    }
+
+                    if (checkAccess('scripts')) {
+                        ?><li><a href="?area=scripts&no_script=1" onclick="loadSection(this.href);return false">Scripts</a></li><?
+                    }
+
+                    if (checkAccess('quiz_questions')) {
+                        ?><li><a href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">Quiz Questions</a></li><?
+                    } ?></ul>
+					</li><?
+                }
+
+
+        if (checkAccess('lead_management')	||
+                    checkAccess('employee_hours')	||
+                    checkAccess('ringing_calls')	||
+                    checkAccess('messages')			||
+                    checkAccess('server_status')	||
+                    checkAccess('extensions')
+                    ) {
+            ?><li class="has-children bookmarks">
+=======
+						<ul><?
+
+							if(checkAccess('campaigns')){
+								?><li><a href="?area=campaigns&no_script=1" onclick="loadSection(this.href);return false">Campaigns</a></li><?
+							}
+
+							if(checkAccess('voices')){
+								?><li><a href="?area=voices&no_script=1" onclick="loadSection(this.href);return false">Voices</a></li><?
+							}
+
+							if(checkAccess('names')){
+								?><li><a href="?area=names&no_script=1" onclick="loadSection(this.href);return false">Names</a></li><?
+							}
+
+							if(checkAccess('scripts')){
+								?><li><a href="?area=scripts&no_script=1" onclick="loadSection(this.href);return false">Scripts</a></li><?
+							}
+
+							if(checkAccess('quiz_questions')){
+								?><li><a href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">Quiz Questions</a></li><?
+							}
+						?></ul>
+					</li><?
+
+				}
+
+
+				if(	checkAccess('lead_management')	||
+					checkAccess('employee_hours')	||
+					checkAccess('ringing_calls')	||
+					checkAccess('messages')			||
+					checkAccess('login_tracker')	||
+					checkAccess('server_status')	||
+					checkAccess('extensions')
+					){
+
+
+					?><li class="has-children bookmarks">
+>>>>>>> classes/interface.inc.php
+						<a href="#0">Management Tools</a>
+
+						<ul><?
+
 
         public function makeNewHeader()
         {
@@ -501,14 +637,148 @@
                             ?>
                             <li><a href="?area=server_status&no_script">Server Status</a></li><?
 
-                            ?>
-                            <li><a href="?area=activity_log&no_script">Activity Log</a></li><?
-                        } ?></ul>
+        if (checkAccess('users')) {
+            ?><li class="has-children users">
+						<a href="#0">Users</a>
+
+						<ul>
+							<li><a href="?area=users&no_script=1" onclick="loadSection(this.href);return false">Search/List Users</a></li>
+							<li><a href="?area=user_groups&no_script=1" onclick="loadSection(this.href);return false">Group Manager</a></li>
+
+							<?/**<li><a href="?area=users&add_user&no_script=1" onclick="loadSection(this.href);return false">Add User</a></li>
+							<li><a href="?area=users&bulk_add&no_script=1" onclick="loadSection(this.href);return false">Bulk Add</a></li>**/?>
+
+<<<<<<< classes/interface.inc.php
+							<?
 
             </div>
             <script>
                 <?
 
+            if (checkAccess('action_log')) {//if($_SESSION['user']['priv'] >= 5){
+                                ?><li><a href="?area=action_log&no_script=1" onclick="loadSection(this.href);return false">Action Log!</a></li><?
+                            } ?></ul>
+					</li><?
+        } ?></ul>
+=======
+							<?
+
+							if(checkAccess('feature_control')){
+								?><li><a href="?area=feature_control&no_script=1" onclick="loadSection(this.href);return false">Feature Control</a></li><?
+							}
+
+							if(checkAccess('login_tracker')){
+								?><li><a href="?area=login_tracker&no_script=1" onclick="loadSection(this.href);return false">Login Tracker</a></li><?
+							}
+
+							if(checkAccess('action_log')){//if($_SESSION['user']['priv'] >= 5){
+								?><li><a href="?area=action_log&no_script=1" onclick="loadSection(this.href);return false">Action Log!</a></li><?
+							}
+
+						?></ul>
+					</li><?
+				}
+
+			?></ul>
+>>>>>>> classes/interface.inc.php
+
+
+
+<!--
+			<ul>
+				<li class="cd-label">Secondary</li>
+				<li class="has-children bookmarks">
+					<a href="#0">Bookmarks</a>
+
+					<ul>
+						<li><a href="#0">All Bookmarks</a></li>
+						<li><a href="#0">Edit Bookmark</a></li>
+						<li><a href="#0">Import Bookmark</a></li>
+					</ul>
+				</li>
+				<li class="has-children images">
+					<a href="#0">Images</a>
+
+					<ul>
+						<li><a href="#0">All Images</a></li>
+						<li><a href="#0">Edit Image</a></li>
+					</ul>
+				</li>
+
+				<li class="has-children users">
+					<a href="#0">Users</a>
+
+					<ul>
+						<li><a href="#0">All Users</a></li>
+						<li><a href="#0">Edit User</a></li>
+						<li><a href="#0">Add User</a></li>
+					</ul>
+				</li>
+			</ul>
+
+			<ul>
+				<li class="cd-label">Action</li>
+				<li class="action-btn"><a href="#0">+ Button</a></li>
+			</ul>
+
+-->
+
+		</nav>
+
+
+
+		<div class="content-wrapper" id="main_content">
+
+			<center>
+				<img src="graph.php?area=user_charts&max_mode=1&time_frame=day&width=650&height=300" border="0" height="300" width="650">
+				<br />
+				<br />
+				<img src="graph.php?area=user_charts&max_mode=1&time_frame=week&start_time=<?=(time()-604800)?>&width=650&height=300" border="0" height="300" width="650">
+			</center>
+
+		</div> <!-- .content-wrapper -->
+	</main> <!-- .cd-main-content -->
+
+	<div id="dialog-modal-view_change_history" title="View Change History" class="nod"></div>
+	<div id="change-password-div" title="Change Password" ></div>
+	<script>
+
+
+
+
+		$('#change-password-div').dialog({
+			autoOpen: false,
+			width:370,
+			height: 220,
+			modal: false,
+			draggable:true,
+			resizable: true
+		});
+
+		$("#dialog-modal-view_change_history").dialog({
+				autoOpen: false,
+				width: 560,
+				height: 360,
+				modal: false,
+				draggable:true,
+				resizable: true
+			});
+
+
+
+		function loadChangePassword(){
+			$('#change-password-div').dialog("open");
+
+			$('#change-password-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+
+
+			$('#change-password-div').load("index.php?area=change_password&printable=1&no_script=1");
+
+		}
+
+
+	</script><?
+    }
 
 
                 ?>

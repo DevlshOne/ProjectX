@@ -12,10 +12,149 @@ session_start();
  */
 include_once("site_config.php");
 
+<<<<<<< index.php
 // GENERIC DB FUNCTIONS
 include_once("db.inc.php");
 include_once("utils/microtime.php");
 include_once("dbapi/dbapi.inc.php");
+=======
+	// ENSURE SESSION IS RUNNING, CAUSE WE NEED THAT SHIT
+	session_start();
+
+	$uri = null;
+	// IF /dev2 HIT, KICK TO STAGING
+	if(preg_match('/\/dev2\//', $_SERVER['REQUEST_URI'])){
+
+		$uri = preg_replace("/\/dev2\//", "/staging/", $_SERVER['REQUEST_URI']);
+
+	// IF /dev HIT, KICK TO "reports" AKA PRODUCTION
+	}else if(preg_match('/\/dev\//', $_SERVER['REQUEST_URI'])){
+
+		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
+	}
+
+	if($uri != null){
+		header("Location: ".$uri);
+		exit;
+	}
+
+
+//print_r($_SERVER);
+
+
+	/**
+	 * Database connection made here
+	 */
+	include_once("site_config.php");
+
+	// GENERIC DB FUNCTIONS
+	include_once("db.inc.php");
+	include_once("utils/microtime.php");
+	include_once("dbapi/dbapi.inc.php");
+
+
+	/**
+	 * Additional includes/requires go here
+	 */
+	include_once("utils/jsfunc.php");
+	include_once("utils/stripurl.php");
+
+
+	include_once("utils/format_phone.php");
+	include_once("utils/rendertime.php");
+	include_once("utils/DropDowns.php");
+	include_once("utils/functions.php");
+	include_once("utils/feature_functions.php");
+	include_once("utils/db_utils.php");
+
+
+	include_once("classes/genericDD.inc.php");
+	include_once("classes/interface.inc.php");
+	include_once("classes/languages.inc.php");
+
+
+	// DESTROY THE SESSION/LOGOUT ?o
+	if(isset($_REQUEST['o'])){
+
+		session_unset();
+
+
+		jsRedirect("index.php");
+		exit;
+
+	}
+
+
+
+
+
+
+	// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
+	if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
+
+		?><!DOCTYPE HTML>
+		<html>
+		<head>
+			<title>Project X - Management Tools and Reports</title>
+
+
+			<script src="js/functions.js"></script>
+
+			<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
+
+<META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
+
+
+<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+
+			<link rel="stylesheet" type="text/css" href="css/style.css" />
+			<link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
+			<link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css" />
+
+			<link rel="stylesheet" href="themes/default/css/uniform.default.css" media="screen" />
+
+			<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+			<link rel="icon" type="image/x-icon"  href="favicon.ico">
+
+			<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />
+
+<?/*			<script src="js/jquery-1.9.1.js"></script>**/?>
+
+			<script src="js/jquery-1.10.2.min.js"></script>
+
+			<?/*<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>*/?>
+
+			<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+			<script src="js/jquery.uniform.min.js"></script>
+
+
+			<?/*<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>*/?>
+
+			<script src="js/jquery.dataTables.min.js"></script>
+
+
+
+			<script src="js/ajax_functions.js"></script>
+			<script src="js/functions.js"></script>
+			<script src="js/page_system.js"></script>
+
+
+
+			<?/** NEW NAVIGATION STUFF
+
+			*
+			***/?>
+
+
+
+
+			<script src="js/modernizr.js"></script> <!-- Modernizr -->
+			<script src="js/jquery.menu-aim.js"></script>
+			<script src="js/main.js"></script> <!-- Resource jQuery -->
+
+
+
+>>>>>>> index.php
 
 /**
  * Additional includes/requires go here
@@ -463,9 +602,28 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 
                     } else {
 
+<<<<<<< index.php
                         accessDenied("Names");
 
                     }
+=======
+				break;
+
+			case 'login_tracker':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['login_tracker'] == 'yes') // MANAGERS WITH LOGIN TRACKER ACCESS
+				){
+
+					include_once("classes/login_tracker.inc.php");
+					$_SESSION['login_tracker']->handleFLOW();
+
+				}else{
+
+					accessDenied("LoginTracker");
+
+				}				
+>>>>>>> index.php
 
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //

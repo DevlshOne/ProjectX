@@ -47,6 +47,40 @@ class CampaignParents
       return $showDD;
     }
 
+    /**
+     *
+     * @param string $name name and id property of select statement being generated
+     * @param string $sel current value for this record
+     * @param string $onchange script to assign to onchange event
+     * @param boolean|string $blank_entry option text to use for blank entry
+     * @return string $showDD the complete select statement to be rendered
+     *
+     **/
+    public function makeCampaignParentDD($name, $sel, $onchange=NULL, $blank_entry=false)
+    {
+        $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0";
+        $res = $_SESSION['dbapi']->query($sql,1);
+        $showDD = "<select name='" . $name . "' id='" . $name . "'";
+        if(isset($onchange)) {
+            $showDD .= " onchange='" . htmlentities(trim($onchange)) . "'";
+        }
+        $showDD .= ">";
+        if($blank_entry) {
+            $showDD .= "<option value='0'>" . $blank_entry . "</option>";
+        }
+        if(mysqli_num_rows($res) > 0){
+            for($x=0;$row = mysqli_fetch_array($res);$x++){
+                $showDD .= "<option value='" . $row['id'] . "'";
+                if($row['id'] == $sel) {
+                    $showDD .= " selected";
+                }
+                $showDD .= ">" . $row['code'] . "</option>";
+            }
+        }
+        $showDD .= "</select>";
+        return $showDD;
+    }
+
     public function handlePOST()
     {
         // THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
