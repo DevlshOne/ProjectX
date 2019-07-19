@@ -910,7 +910,7 @@ class LeadManagement{
 
 				}
 
-				if(frm.dispo.value != "SALE" && frm.dispo.value != "PAIDCC" && '<?=$row['verifier_dispo']?>' == "SALE"){
+				if((frm.dispo.value != "SALE" && frm.dispo.value != "PAIDCC" && frm.dispo.value != "SALECC") && '<?=$row['verifier_dispo']?>' == "SALE"){
 
 					if(!confirm('CHANGING A SALE TO NON-SALE WILL DELETE THE SALE RECORD.\nAre you sure you want to do this?')){
 						return false;
@@ -919,7 +919,7 @@ class LeadManagement{
 				}
 
 
-				if(frm.dispo.value != "SALE" && frm.dispo.value != "REVIEW" && '<?=$row['verifier_dispo']?>' == "REVIEW"){
+				if((frm.dispo.value != "SALE" && frm.dispo.value != "PAIDCC" && frm.dispo.value != "SALECC") && frm.dispo.value != "REVIEW" && '<?=$row['verifier_dispo']?>' == "REVIEW"){
 
 					if(!confirm('CHANGING A REVIEW TO NON-SALE WILL DELETE THE SALE RECORD.\nAre you sure you want to do this?')){
 						return false;
@@ -990,7 +990,7 @@ class LeadManagement{
 
 			function toggleDispo(val){
 
-				if(val != 'SALE' && val != 'PAIDCC'){
+				if(val != 'SALE' && val != 'PAIDCC' && val != 'SALECC'){
 
 					$('#salerow').hide();
 					$('#officerow').hide();
@@ -1292,7 +1292,7 @@ class LeadManagement{
 
 
 
-				if(frm.dispo.value != "SALE" && (frm.change_dispo.value == "SALE" || frm.change_dispo.value == "PAIDCC")){
+				if((frm.dispo.value != "SALE" && frm.dispo.value != 'PAIDCC' && frm.dispo.value != 'SALECC') && (frm.change_dispo.value == "SALE" || frm.change_dispo.value == "PAIDCC" || frm.change_dispo.value == "SALECC")){
 
 					if(!confirm("CHANGING A SALE TO NON-SALE WILL DELETE THE SALE RECORD.\nAre you sure you want to do this?"))return false;
 				}
@@ -1575,7 +1575,7 @@ class LeadManagement{
 		<center>
 			<input type="button" value="Change Dispo" onclick="loadDispoSection()">
 
-			<input type="button" value="Create new Sale" onclick="loadSaleSection(0)">
+			<input type="button" value="Create new XFER and Sale" onclick="loadSaleSection(0)">
 		</center>
 
 		<br />
