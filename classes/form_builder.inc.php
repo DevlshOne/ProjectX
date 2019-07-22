@@ -223,7 +223,7 @@
                 $("#dialog-modal-add-form-builder").dialog({
                     autoOpen: false,
                     width: 800,
-                    height: 800,
+                    height: 'auto',
                     modal: false,
                     draggable: true,
                     resizable: true
@@ -281,44 +281,106 @@
                 });
                 $(".fldMaker").draggable({
                     connectToSortable: "#dropZone",
-                    helper: "clone",
+                    helper: 'clone',
+                    cursor: 'move',
+                    cursorAt: {
+                        top: 25,
+                        left: 25
+                    },
                     snap: true,
-                    grid: [25, 25],
-                    revert: "invalid"
+                    stop: function(e, ui) {
+                        console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
+                    },
+                    revert: 'invalid'
                 });
                 $("ul, li").disableSelection();
             </script>
             <form method="POST" action="<?= stripurl('') ?>" autocomplete="off">
-                <div style="width:100%;">
-                    <div class="lefty pct75">
-                        <ul id="dropZone">
+                <div class="pct100">
+                    <label for="screeNumber">Select screen : </label>
+                    <select name="screenNumber" id="screenNumber">
+                        <option value="0">0</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                </div>
+                <div class="pct100">
+                        <ul id="dropZone" class="lefty pct75">
                             <li class="ui-state-default fldHolder">
-                                <div class="fldTitle">Screen 0 - Field 1</div>
+                                <div class="fldHeader">
+                                    <div class="fldTitle">Screen 0 - Field 1</div>
+                                    <div class="fldActions">
+                                        <input type="button" value="Remove" onclick="removeField(this); return false;"
+                                               class="fldActionButton"/>
+                                        <input type="button" value="Edit" onclick="editField(this); return false;"
+                                               class="fldActionButton"/>
+                                    </div>
+                                </div>
                             </li>
                             <li class="ui-state-default fldHolder">
-                                <div class="fldTitle">Screen 0 - Field 2</div>
+                                <div class="fldHeader">
+                                    <div class="fldTitle">Screen 0 - Field 2</div>
+                                    <div class="fldActions">
+                                        <input type="button" value="Remove" onclick="removeField(this); return false;"
+                                               class="fldActionButton"/>
+                                        <input type="button" value="Edit" onclick="editField(this); return false;"
+                                               class="fldActionButton"/>
+                                    </div>
+                                </div>
                             </li>
                             <li class="ui-state-default fldHolder">
-                                <div class="fldTitle">Screen 0 - Field 3</div>
+                                <div class="fldHeader">
+                                    <div class="fldTitle">Screen 0 - Field 3</div>
+                                    <div class="fldActions">
+                                        <input type="button" value="Remove" onclick="removeField(this); return false;"
+                                               class="fldActionButton"/>
+                                        <input type="button" value="Edit" onclick="editField(this); return false;"
+                                               class="fldActionButton"/>
+                                    </div>
+                                </div>
                             </li>
                             <li class="ui-state-default fldHolder">
-                                <div class="fldTitle">Screen 0 - Field 4</div>
+                                <div class="fldHeader">
+                                    <div class="fldTitle">Screen 0 - Field 4</div>
+                                    <div class="fldActions">
+                                        <input type="button" value="Remove" onclick="removeField(this); return false;"
+                                               class="fldActionButton"/>
+                                        <input type="button" value="Edit" onclick="editField(this); return false;"
+                                               class="fldActionButton"/>
+                                    </div>
+                                </div>
                             </li>
                             <li class="ui-state-default fldHolder">
-                                <div class="fldTitle">Screen 0 - Field 5</div>
+                                <div class="fldHeader">
+                                    <div class="fldTitle">Screen 0 - Field 5</div>
+                                    <div class="fldActions">
+                                        <input type="button" value="Remove" onclick="removeField(this); return false;"
+                                               class="fldActionButton"/>
+                                        <input type="button" value="Edit" onclick="editField(this); return false;"
+                                               class="fldActionButton"/>
+                                    </div>
+                                </div>
                             </li>
                             <li class="ui-state-default fldHolder">
-                                <div class="fldTitle">Screen 0 - Field 6</div>
+                                <div class="fldHeader">
+                                    <div class="fldTitle">Screen 0 - Field 6</div>
+                                    <div class="fldActions">
+                                        <input type="button" value="Remove" onclick="removeField(this); return false;"
+                                               class="fldActionButton"/>
+                                        <input type="button" value="Edit" onclick="editField(this); return false;"
+                                               class="fldActionButton"/>
+                                    </div>
+                                </div>
                             </li>
                         </ul>
-                    </div>
-                    <div id="dragZone" class="lefty pct25">
-                        <ul>
+                        <ul id="dragZone" class="lefty pct20">
                             <li class="ui-state-highlight ui-widget-content fldMaker">Text Field Draggable</li>
                             <li class="ui-state-highlight ui-widget-content fldMaker">DropDown Field Draggable</li>
                             <li class="ui-state-highlight ui-widget-content fldMaker">Textarea Field Draggable</li>
                         </ul>
-                    </div>
                 </div>
             </form>
             <?
