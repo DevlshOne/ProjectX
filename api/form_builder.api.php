@@ -54,6 +54,11 @@
                     }
                     $_SESSION['api']->outputEditSuccess($id);
                     break;
+                case 'getScreen':
+                    $campaign_id = intval($_REQUEST['campaign_id']);
+                    $screen_number = intval($_REQUEST['screen_number']);
+                    $_SESSION['dbapi']->form_builder->getFieldsByScreen($campaign_id, $screen_number);
+                    break;
                 default:
                 case 'list':
                     $dat = array();

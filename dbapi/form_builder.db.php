@@ -38,12 +38,13 @@ class FormBuilderAPI{
 		return $name;
 	}
 
-	function getByName($name){
-		$id = intval($id);
-		list($filename) = $_SESSION['dbapi']->queryROW("SELECT filename FROM `".$this->table."` ".
-						" WHERE name LIKE '".mysqli_real_escape_string($_SESSION['dbapi']->db,$name)."' ");
-		return $filename;
-	}
+	function getFieldsByScreen($id, $scr) {
+	    $campaign_id = intval($id);
+	    $screen_id = intval($scr);
+	    $sql = "SELECT * FROM `" . $this->table . "` WHERE `campaign_id` = " . $campaign_id . " AND `screen_num` = " . $screen_id . " AND `deleted` = 'no'";
+	    $fields = $_SESSION['dbapi']->query($sql);
+	    return $fields;
+    }
 
 	function getResults($info){
 		$fields = ($info['fields'])?$info['fields']:'*';

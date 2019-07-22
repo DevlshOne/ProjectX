@@ -77,11 +77,15 @@
                     return 'api/api.php' +
                         "?get=form_builder&" +
                         "mode=xml&" +
-                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
-                )
-                    +
+                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) +
                         "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
-                    "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+                        "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+                }
+                function getFieldsURL(c, s) {
+                    return 'api/api.php' +
+                            '?get=form_builder&action=getScreen' +
+                            '&campaign_id=' + c + '&screen_number=' + s +
+                            '&mode=json';
                 }
 
                 let forms_loading_flag = false;
@@ -153,7 +157,7 @@
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=form_builder&add=" + id + "&printable=1&no_script=1");
-                    $('#' + objname).dialog('option', 'position', 'center');
+                    // $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 var namesrchtog = false;
@@ -222,8 +226,12 @@
             <script>
                 $("#dialog-modal-add-form-builder").dialog({
                     autoOpen: false,
-                    width: 800,
+                    width: 960,
                     height: 'auto',
+                    position: {
+                        my: 'left top',
+                        at: 'left+50 top+50'
+                    },
                     modal: false,
                     draggable: true,
                     resizable: true
@@ -272,7 +280,7 @@
             ?>
             <script type="text/javascript" src="js/form_builder.js"></script>
             <script>
-                let formID = '<?=$id;?>';
+                var formID = '<?=$id;?>';
                 console.log('Editing form id = ' + formID);
                 // let formBuilder = new _formBuilder(formID);
                 $('#dropZone').droppable();
@@ -294,11 +302,29 @@
                     revert: 'invalid'
                 });
                 $("ul, li").disableSelection();
+                function loadNewScreen(jsondata) {
+
+                }
+                function changeScreen(c, s) {
+                    // is existing screen saved?
+                    // load new screen fields
+                    // console.log('Changing screen to ' + c + ':' + s);
+                    loadAjaxData(getFieldsURL(c, s), 'loadNewScreen');
+                }
+                function removeField(el) {
+
+                }
+                function editField(el) {
+
+                }
+                function previewField(el) {
+
+                }
             </script>
             <form method="POST" action="<?= stripurl('') ?>" autocomplete="off">
                 <div class="pct100">
                     <label for="screeNumber">Select screen : </label>
-                    <select name="screenNumber" id="screenNumber">
+                    <select name="screenNumber" id="screenNumber" onchange="changeScreen(formID, this.value); return false;">
                         <option value="0">0</option>
                         <option value="1">1</option>
                         <option value="2">2</option>
@@ -317,6 +343,7 @@
                                                class="fldActionButton"/>
                                         <input type="button" value="Edit" onclick="editField(this); return false;"
                                                class="fldActionButton"/>
+                                        <input type="button" value="Preview" onclick="previewField(this); return false;" class="fldActionButton" />
                                     </div>
                                 </div>
                             </li>
@@ -328,6 +355,7 @@
                                                class="fldActionButton"/>
                                         <input type="button" value="Edit" onclick="editField(this); return false;"
                                                class="fldActionButton"/>
+                                        <input type="button" value="Preview" onclick="previewField(this); return false;" class="fldActionButton" />
                                     </div>
                                 </div>
                             </li>
@@ -339,6 +367,7 @@
                                                class="fldActionButton"/>
                                         <input type="button" value="Edit" onclick="editField(this); return false;"
                                                class="fldActionButton"/>
+                                        <input type="button" value="Preview" onclick="previewField(this); return false;" class="fldActionButton" />
                                     </div>
                                 </div>
                             </li>
@@ -350,6 +379,7 @@
                                                class="fldActionButton"/>
                                         <input type="button" value="Edit" onclick="editField(this); return false;"
                                                class="fldActionButton"/>
+                                        <input type="button" value="Preview" onclick="previewField(this); return false;" class="fldActionButton" />
                                     </div>
                                 </div>
                             </li>
@@ -361,6 +391,7 @@
                                                class="fldActionButton"/>
                                         <input type="button" value="Edit" onclick="editField(this); return false;"
                                                class="fldActionButton"/>
+                                        <input type="button" value="Preview" onclick="previewField(this); return false;" class="fldActionButton" />
                                     </div>
                                 </div>
                             </li>
@@ -372,6 +403,7 @@
                                                class="fldActionButton"/>
                                         <input type="button" value="Edit" onclick="editField(this); return false;"
                                                class="fldActionButton"/>
+                                        <input type="button" value="Preview" onclick="previewField(this); return false;" class="fldActionButton" />
                                     </div>
                                 </div>
                             </li>

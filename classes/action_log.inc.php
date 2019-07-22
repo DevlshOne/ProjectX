@@ -97,27 +97,19 @@ class ActionLog{
 			* Build the URL for AJAX to hit, to build the list
 			*/
 			function getActionsURL(){
-
 				var frm = getEl('<?=$this->frm_name?>');
-
 				return 'api/api.php'+
 								"?get=action_log&"+
 								"mode=xml&"+
-
 								's_user_id='+escape(frm.s_user_id.value)+"&"+
 								's_username='+escape(frm.s_username.value)+"&"+
 								's_action='+escape(frm.s_action.value)+"&"+
 								's_area='+escape(frm.s_area.value)+"&"+
 								's_record_id='+escape(frm.s_record_id.value)+"&"+
 								's_desc='+escape(frm.s_desc.value)+"&"+
-
 								's_date_month='+escape(frm.s_date_month.value)+"&"+'s_date_day='+escape(frm.s_date_day.value)+"&"+'s_date_year='+escape(frm.s_date_year.value)+"&"+
 								's_date2_month='+escape(frm.s_date2_month.value)+"&"+'s_date2_day='+escape(frm.s_date2_day.value)+"&"+'s_date2_year='+escape(frm.s_date2_year.value)+"&"+
-
 								's_date_mode='+escape(frm.s_date_mode.value)+"&"+
-
-
-
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
