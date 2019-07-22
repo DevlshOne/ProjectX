@@ -171,6 +171,37 @@ a:hover {
 .pct50 {
 	width: 50%;
 }
+.pct75 {
+	width: 75%;
+}
+.pct25 {
+	width: 25%;
+}
 .ht30 {
 	height: 30px;
+}
+#dragZone, #dropZone {
+	border: 1px solid #eee;
+	list-style-type: none;
+	margin: 0;
+	padding: 5px 0 0 0;
+	margin-right: 10px;
+	width: 100%;
+}
+#dropZone {
+	float:left;
+}
+#fldHolder, #fldMaker {
+	margin: 0 5px 5px 5px;
+	padding: 5px;
+	font-size: 1.2em;
+	width: 120px;
+}
+.fldTitle {
+	position: relative;
+	top: 2px;
+	font-size: smaller;
+	color: orangered;
+	text-decoration: underline;
+	margin-bottom: 4px;
 }

@@ -12,8 +12,7 @@
      * - database dump on save
      *
      */
-    class FormBuilder
-    {
+    class FormBuilder {
 
         var $table = 'custom_fields';            ## Classes main table to operate on
         var $orderby = 'campaign_id';        ## Default Order field
@@ -26,45 +25,42 @@
         var $frm_name = 'formnextfrm';
         var $order_prepend = 'form_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
-        function FormBuilder()
-        {
+        function FormBuilder() {
             ## REQURES DB CONNECTION!
             $this->handlePOST();
         }
 
-        function handlePOST()
-        {
+        function handlePOST() {
             // THIS SHIT IS MOTHER FUCKING AJAX'D TO THE TEETH
             // SEE api/names.api.php FOR POST HANDLING!
             // <3 <3 -Jon
         }
 
-        function handleFLOW()
-        {
+        function handleFLOW() {
             # Handle flow, based on query string
             if (!checkAccess('campaigns')) {
                 accessDenied("Campaigns");
                 return;
             } else {
-                if (isset($_REQUEST['add_form'])) {
-                    $this->makeAdd($_REQUEST['add_form']);
-                } elseif (isset($_REQUEST['copy_form_builder'])) {
-                    $this->makeCopy($_REQUEST['copy_form_builder']);
+                if (isset($_REQUEST['add'])) {
+                    $this->makeAdd($_REQUEST['add']);
+                } elseif (isset($_REQUEST['copy'])) {
+                    $this->makeCopy($_REQUEST['copy']);
                 } else {
                     $this->listForms();
                 }
             }
         }
 
-        function listForms()
-        {
+        function listForms() {
             ?>
             <script>
                 var form_builder_delmsg = 'Are you sure you want to delete this form?';
                 var form_builder_copymsg = 'Copying forms and custom fields';
                 var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-                var <?=$this->index_name?> = 0;
+                var <?=$this->index_name?> =
+                0;
                 var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
                 var FormBuildersTableFormat = [
                     ['[get:campaign_name:campaign_id]', 'align-left'],
@@ -81,9 +77,11 @@
                     return 'api/api.php' +
                         "?get=form_builder&" +
                         "mode=xml&" +
-                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) +
+                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
+                )
+                    +
                         "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
-                        "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+                    "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
 
                 let forms_loading_flag = false;
@@ -110,6 +108,7 @@
                  * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
                  */
                 var <?=$this->order_prepend?>totalcount = 0;
+
                 function parseFormBuilders(xmldoc) {
                     <?=$this->order_prepend?>totalcount = parseXMLData('form_builder', FormBuildersTableFormat, xmldoc);
                     // ACTIVATE PAGE SYSTEM!
@@ -127,11 +126,11 @@
                     eval('forms_loading_flag = false');
                 }
 
-                function handleFormBuilderCopyClick(id) {
+                function handleForm_builderCopyClick(id) {
                     displayCopyFormBuilderDialog(id);
                 }
 
-                function handleFormBuilderListClick(id) {
+                function handleForm_builderListClick(id) {
                     displayAddFormBuilderDialog(id);
                 }
 
@@ -140,12 +139,12 @@
                     $('#' + objname).dialog("option", "title", 'Copying forms and custom fields');
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                    $('#' + objname).load("index.php?area=form_builder&copy_form_builder=" + id + "&printable=1&no_script=1");
+                    $('#' + objname).load("index.php?area=form_builder&copy=" + id + "&printable=1&no_script=1");
                     $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 function displayAddFormBuilderDialog(id) {
-                    var objname = 'dialog-modal-add-name';
+                    let objname = 'dialog-modal-add-form-builder';
                     if (id > 0) {
                         $('#' + objname).dialog("option", "title", 'Editing form');
                     } else {
@@ -153,7 +152,7 @@
                     }
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                    $('#' + objname).load("index.php?area=form_builder&add_form=" + id + "&printable=1&no_script=1");
+                    $('#' + objname).load("index.php?area=form_builder&add=" + id + "&printable=1&no_script=1");
                     $('#' + objname).dialog('option', 'position', 'center');
                 }
 
@@ -165,9 +164,6 @@
                 }
 
             </script>
-            <script type="text/javascript" src="js/form_builder.js"></script>
-            <div id="dialog-modal-add-form" title="Adding new Name" class="nod"></div>
-            <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
                   action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForm_builders();return false">
                 <input type="hidden" name="searching_name">
@@ -180,10 +176,9 @@
                                         Form Builder&nbsp;
                                         <?
                                             /**
-                                        <input type="button" value="Add" onclick="displayAddNameDialog(0)">
-                                        <input type="button" value="Search" onclick="toggleFormSearch()">
-                                         **/
-                                        ?>
+                                             * <input type="button" value="Add" onclick="displayAddNameDialog(0)">
+                                             * <input type="button" value="Search" onclick="toggleFormSearch()">
+                                             **/ ?>
                                     </td>
                                     <td width="150" align="center">PAGE SIZE: <select
                                                 name="<?= $this->order_prepend ?>pagesizeDD"
@@ -222,14 +217,16 @@
                 </td>
             </tr>
             </table>
+            <div id="dialog-modal-add-form-builder" title="Editing form" class="nod"></div>
+            <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <script>
-                $("#dialog-modal-add-form").dialog({
+                $("#dialog-modal-add-form-builder").dialog({
                     autoOpen: false,
-                    width: 500,
-                    height: 200,
+                    width: 800,
+                    height: 800,
                     modal: false,
                     draggable: true,
-                    resizable: false
+                    resizable: true
                 });
                 $("#dialog-modal-copy-form-builder").dialog({
                     autoOpen: false,
@@ -248,114 +245,86 @@
             $id = intval($id);
             $sourceName = $_SESSION['dbapi']->campaigns->getName($id);
             ?>
-            <form method=""POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkTargetCampaign(this); return false;">
+            <form method=""
+                  POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkTargetCampaign(this); return false;">
             <table border="0" align="center">
                 <tr>
-                    <th class="lefty pct50 ht30">Copying from : </th>
-                    <td class="righty pct50 ht30" style="font-weight:700;"><?=$sourceName;?></td>
+                    <th class="lefty pct50 ht30">Copying from :</th>
+                    <td class="righty pct50 ht30" style="font-weight:700;"><?= $sourceName; ?></td>
                 </tr>
                 <tr>
                     <th class="lefty pct50 ht30" height="30">To campaign :</th>
-                    <td class="righty pct50 ht30"><?=makeCampaignDD('targetCampaign', null, null, null, null);?></td>
+                    <td class="righty pct50 ht30"><?= makeCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
                 </tr>
                 <tr>
                     <th colspan="2" class="centery"><input type="submit" value="Copy"></th>
                 </tr>
             </table>
             </form>
-<?
-            }
+            <?
+        }
 
-        function makeAdd($id)
-        {
+        function makeAdd($id) {
             $id = intval($id);
             if ($id) {
                 $row = $_SESSION['dbapi']->form_builder->getByID($id);
             }
             ?>
+            <script type="text/javascript" src="js/form_builder.js"></script>
             <script>
-                function validateNameField(name, value, frm) {
-                    //alert(name+","+value);
-                    switch (name) {
-                        default:
-                            // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-                            return true;
-                            break;
-                        case 'filename':
-                            if (!value) return false;
-                            return true;
-                            break;
-                    }
-                    return true;
-                }
-                function checkNameFrm(frm) {
-                    var params = getFormValues(frm, 'validateNameField');
-                    // FORM VALIDATION FAILED!
-                    // param[0] == field name
-                    // param[1] == field value
-                    if (typeof params == "object") {
-                        switch (params[0]) {
-                            default:
-                                alert("Error submitting form. Check your values");
-                                break;
-                            case 'filename':
-                                alert("Please enter the filename for this name.");
-                                eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                break;
-                        }
-                        // SUCCESS - POST AJAX TO SERVER
-                    } else {
-                        //alert("Form validated, posting");
-                        $.ajax({
-                            type: "POST",
-                            cache: false,
-                            url: 'api/api.php?get=form_builder&mode=xml&action=edit',
-                            data: params,
-                            error: function () {
-                                alert("Error saving user form. Please contact an admin.");
-                            },
-                            success: function (msg) {
-//alert(msg);
-                                var result = handleEditXML(msg);
-                                var res = result['result'];
-                                if (res <= 0) {
-                                    alert(result['message']);
-                                    return;
-                                }
-                                loadForm_builders();
-                                displayAddNameDialog(res);
-                                alert(result['message']);
-                            }
-                        });
-                    }
-                    return false;
-                }
+                let formID = '<?=$id;?>';
+                console.log('Editing form id = ' + formID);
+                // let formBuilder = new _formBuilder(formID);
+                $('#dropZone').droppable();
+                $("#dropZone").sortable({
+                    revert: true
+                });
+                $(".fldMaker").draggable({
+                    connectToSortable: "#dropZone",
+                    helper: "clone",
+                    snap: true,
+                    grid: [25, 25],
+                    revert: "invalid"
+                });
+                $("ul, li").disableSelection();
             </script>
-            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off"
-                  onsubmit="checkNameFrm(this); return false">
-                <table border="0" align="center">
-                    <tr>
-                        <th align="left" height="30">Name:</th>
-                        <td><input name="name" type="text" size="50" value="<?= htmlentities($row['name']) ?>"></td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Filename:</th>
-                        <td><input name="filename" type="text" size="50" value="<?= htmlentities($row['filename']) ?>">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Voice:</th>
-                        <td><?= makeVoiceDD(0, 'voice_id', $row['voice_id']) ?></td>
-                    </tr>
-                    <tr>
-                        <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
-                    </tr>
-                </table>
+            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off">
+                <div style="width:100%;">
+                    <div class="lefty pct75">
+                        <ul id="dropZone">
+                            <li class="ui-state-default fldHolder">
+                                <div class="fldTitle">Screen 0 - Field 1</div>
+                            </li>
+                            <li class="ui-state-default fldHolder">
+                                <div class="fldTitle">Screen 0 - Field 2</div>
+                            </li>
+                            <li class="ui-state-default fldHolder">
+                                <div class="fldTitle">Screen 0 - Field 3</div>
+                            </li>
+                            <li class="ui-state-default fldHolder">
+                                <div class="fldTitle">Screen 0 - Field 4</div>
+                            </li>
+                            <li class="ui-state-default fldHolder">
+                                <div class="fldTitle">Screen 0 - Field 5</div>
+                            </li>
+                            <li class="ui-state-default fldHolder">
+                                <div class="fldTitle">Screen 0 - Field 6</div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="dragZone" class="lefty pct25">
+                        <ul>
+                            <li class="ui-state-highlight ui-widget-content fldMaker">Text Field Draggable</li>
+                            <li class="ui-state-highlight ui-widget-content fldMaker">DropDown Field Draggable</li>
+                            <li class="ui-state-highlight ui-widget-content fldMaker">Textarea Field Draggable</li>
+                        </ul>
+                    </div>
+                </div>
             </form>
             <?
         }
-        function getOrderLink($field)
-        {
+
+        function getOrderLink($field) {
             $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
             $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
             $var .= ");loadNames();return false;\">";
