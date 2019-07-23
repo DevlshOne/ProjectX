@@ -225,3 +225,7 @@ a:hover {
 	width: 100%;
 	min-height: 36px;
 }
+.field > label, .field > input, .field > select, .field > select option{
+	font-size: 0.8em;
+	font-weight: 600;
+}
