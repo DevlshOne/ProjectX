@@ -47,22 +47,25 @@ frmField.prototype = {
     saveToDB: function() {
 
     },
-    create: function(i) {
+    create: function() {
         let newLI = '<li class="ui-state-default fldHolder">\n' +
             '<div class="fldHeader">\n' +
-            '<div class="fldTitle">Screen - ' + this.screenNum + ' - Field ' + i + '</div>\n' +
+            '<div class="fldTitle">Screen - ' + this.screenNum + ' - Field ' + this.idx + '</div>\n' +
             '<div class="fldActions">\n' +
-            '<input type="button" value="Remove" onclick="removeField($(this).closest(\'li div.field\')); return false;" class="fldActionButton"/>\n' +
-            '<input type="button" value="Edit" onclick="editField($(this).closest(\'li div.field\')); return false;" class="fldActionButton"/>\n' +
-            '<input type="button" value="Preview" onclick="previewField($(this).closest(\'li div.field\')); return false;" class="fldActionButton" />\n' +
+            '<input type="button" value="Remove" onclick="removeField(' + this.idx + '); return false;" class="fldActionButton"/>\n' +
+            '<input type="button" value="Edit" onclick="editField(' + this.idx + '); return false;" class="fldActionButton"/>\n' +
+            '<input type="button" value="Preview" onclick="previewField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
             '</div>\n' +
             '</div>\n' +
             '<div class="field"></div>\n' +
             '</li>\n';
         $('ul#dropZone').append(newLI);
     },
-    populate: function(i) {
-        let fldRendering = $('ul#dropZone li').eq(i).children('div.field');
+    edit: function() {
+
+    },
+    populate: function() {
+        let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
         // fldRendering.hide();
         let fldFormat = '';
         let lblFormat = '';
@@ -75,6 +78,7 @@ frmField.prototype = {
                 lblFormat = '<label></label>';
                 fldObj = $(fldFormat);
                 lblObj = $(lblFormat);
+                fldObj.attr('tabindex', this.idx);
                 fldObj.attr('required', this.isRequired);
                 lblObj.attr('value', this.txtLabel);
                 lblObj.text(this.txtLabel);
@@ -108,6 +112,7 @@ frmField.prototype = {
                 lblFormat = '<label></label>';
                 fldObj = $(fldFormat);
                 lblObj = $(lblFormat);
+                fldObj.attr('tabindex', this.idx);
                 fldObj.attr('required', this.isRequired);
                 lblObj.attr('value', this.txtLabel);
                 lblObj.text(this.txtLabel);
