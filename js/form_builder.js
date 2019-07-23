@@ -63,7 +63,6 @@ frmField.prototype = {
     },
     populate: function(i) {
         let fldRendering = $('ul#dropZone li').eq(i).children('div.field');
-        let fldTitle = $('ul#dropZone li').eq(i).children('div.fldTitle');
         // fldRendering.hide();
         let fldFormat = '';
         let lblFormat = '';

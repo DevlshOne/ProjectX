@@ -364,13 +364,13 @@
                     <input type="button" style="float:right;" value="Preview Form" onclick="previewForm(); return false;" class="fldActionButton" />
                 </div>
                 <div class="pct100">
-                        <ul id="dropZone" class="lefty pct75">
+                    <ul id="dragZone" class="lefty pct100">
+                        <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">Text Field Draggable</li>
+                        <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">DropDown Field Draggable</li>
+                        <li class="ui-state-highlight ui-widget-content fldMaker">Textarea Field Draggable</li>
+                    </ul>
+                        <ul id="dropZone" class="lefty pct100">
                             <li class="ui-state-default fldHolder"></li>
-                        </ul>
-                        <ul id="dragZone" class="lefty pct20">
-                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">Text Field Draggable</li>
-                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">DropDown Field Draggable</li>
-                            <li class="ui-state-highlight ui-widget-content fldMaker">Textarea Field Draggable</li>
                         </ul>
                 </div>
             </form>

@@ -180,21 +180,30 @@ a:hover {
 .pct75 {
 	width: 75%;
 }
+.pct100 {
+	width: 100%;
+}
 .ht30 {
 	height: 30px;
 }
 #dragZone, #dropZone {
 	border: 1px solid #eee;
-	list-style-type: none;
 	margin: 0;
 	padding: 5px 0 0 0;
 	margin-right: 10px;
-	/*width: 100%;*/
+}
+#dragZone {
+	list-style-type: none;
+	overflow: hidden;
+	display: block;
+}
+#dragZone li {
 	float: left;
+	display: block;
 }
 #dropZone {
 	float:left;
-	width: 75%;
+	width: 100%;
 }
 .fldMaker {
 	margin: 0 5px 5px 5px;
