@@ -13,34 +13,35 @@ let _formBuilder = {
 
     },
 };
-function frmField(index, isRequired, txtLabel, lblWidth, lblHeight, toolTip, placeHolder, cssName, varName, fldValue, fldType, fldMaxLength, fldWidth, fldHeight, fldSpecial, fldOptions, dbTable, dbField, fldVariables, callStep, fldPosX, fldPosY, lblPosX, lblPosY, isHidden, isLocked, screenNum) {
-    this.isRequired = isRequired;
-    this.txtLabel = txtLabel;
-    this.lblWidth = lblWidth;
-    this.lblHeight = lblHeight;
-    this.toolTip = toolTip;
-    this.placeHolder = placeHolder;
-    this.cssName = cssName;
-    this.fldName = varName;
-    this.fldValue = fldValue;
-    this.fldType = fldType;
-    this.fldMaxLength = fldMaxLength;
-    this.fldWidth = fldWidth;
-    this.fldHeight = fldHeight;
-    this.fldSpecial = fldSpecial;
-    this.fldOptions = fldOptions;
-    this.dbTable = dbTable;
-    this.dbField = dbField;
-    this.fldVariables = fldVariables;
-    this.callStep = callStep;
-    this.lblPosX = lblPosX;
-    this.lblPosY = lblPosY;
-    this.fldPosX = fldPosX;
-    this.fldPosY = fldPosY;
-    this.isHidden = isHidden;
-    this.isLocked = isLocked;
+function frmField(index, o) {
+    this.isRequired = o.is_required;
+    this.txtLabel = o.name;
+    this.lblWidth = o.label_width;
+    this.lblHeight = o.label_height;
+    this.toolTip = o.tool_tip;
+    this.placeHolder = o.place_holder;
+    this.cssName = o.css_class;
+    this.fldName = o.db_field;
+    this.fldValue = o.value;
+    this.fldType = o.field_type;
+    this.fldMaxLength = o.max_length;
+    this.fldWidth = o.field_width;
+    this.fldHeight = o.field_height;
+    this.fldSpecial = o.special_mode;
+    this.fldOptions = o.options;
+    this.dbTable = o.db_table;
+    this.dbField = o.db_field;
+    this.fldVariables = o.variables;
+    this.callStep = o.field_step;
+    this.lblPosX = o.label_x;
+    this.lblPosY = o.label_y;
+    this.fldPosX = o.field_x;
+    this.fldPosY = o.field_y;
+    this.isHidden = o.is_hidden;
+    this.isLocked = o.is_locked;
     this.idx = index;
-    this.screenNum = screenNum;
+    this.screenNum = o.screen_num;
+    this.dbID = o.id;
 }
 frmField.prototype = {
     constructor: frmField,
@@ -50,10 +51,10 @@ frmField.prototype = {
     create: function() {
         let newLI = '<li class="ui-state-default fldHolder">\n' +
             '<div class="fldHeader">\n' +
-            '<div class="fldTitle">Screen - ' + this.screenNum + ' - Field ' + this.idx + '</div>\n' +
+            '<div class="fldTitle">[' + this.screenNum + ':' + this.idx + '] - ' + this.txtLabel + '</div>\n' +
             '<div class="fldActions">\n' +
-            '<input type="button" value="Remove" onclick="removeField(' + this.idx + '); return false;" class="fldActionButton"/>\n' +
-            '<input type="button" value="Edit" onclick="editField(' + this.idx + '); return false;" class="fldActionButton"/>\n' +
+            '<input type="button" value="Remove" onclick="removeField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
+            '<input type="button" value="Edit" onclick="editField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
             '<input type="button" value="Preview" onclick="previewField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
             '</div>\n' +
             '</div>\n' +
@@ -62,6 +63,32 @@ frmField.prototype = {
         $('ul#dropZone').append(newLI);
     },
     edit: function() {
+        let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
+        let fieldAsForm = '<form class="pct100">' +
+            '<label for="is_required">Required : </label><input name="is_required" type="checkbox" value="' + this.isRequired + '" />' +
+            '<label for="field_step">Step : </label><select id="field_step" name="field_step"><option>-1</option><option>0</option></select>' +
+            '<label for="name">Label : </label><input name="name" type="text" value="' + this.txtLabel + '" />' +
+            '<label for="tool_tip">Tooltip : </label><input name="tool_tip" type="text" value="' + this.toolTip + '" />' +
+            '<label for="place_holder">Placeholder : </label><input name="place_holder" type="text" value="' + this.placeHolder + '" />' +
+            '<label for="css_class">Class : </label><input name="css_class" type="text" value="' + this.cssName + '" />' +
+            '<label for="db_field">Name : </label><input name="db_field" type="text" value="' + this.dbField + '" />' +
+            '<label for="value">Value : </label><input name="value" type="text" value="' + this.fldValue + '" />' +
+            '<label for="field_type">Type : </label><select id="field_type" name="field_type"><option value="0">Text</option><option value="1">Dropdown</option><option value="2">Textarea</option></select>' +
+            '<label for="max_length">Max Length : </label><input name="max_length" type="text" value="' + this.fldMaxLength + '" />' +
+            '<label for="field_width">Width : </label><input name="field_width" type="text" value="' + this.fldWidth + '" />' +
+            '<label for="field_height">Height : </label><input name="field_height" type="text" value="' + this.fldHeight + '" />' +
+            '<label for="special_mode">Special : </label><input name="special_mode" type="text" value="' + this.fldSpecial + '" />' +
+            '<label for="options">Options : </label><input name="options" type="text" value="' + this.fldOptions + '" />' +
+            '<label for="db_table">DB Table : </label><input name="db_table" type="text" value="' + this.dbTable + '" />' +
+            '<label for="db_field">DB Field : </label><input name="tool_tip" type="text" value="' + this.dbField + '" />' +
+            '<label for="variables">Variables : </label><input name="variables" type="text" value="' + this.fldVariables + '" />' +
+
+            '<script>$(function(){$("#field_type").val(' + this.fldType + ');$("#field_step").val(' + this.callStep + ');});</script>' +
+            '</form>';
+        $(fldRendering).empty().append(fieldAsForm);
+
+    },
+    reposition: function() {
 
     },
     populate: function() {

@@ -214,7 +214,7 @@ a:hover {
 	position: relative;
 	font-size: 0.8em;
 	color: orangered;
-	text-decoration: underline;
+	/*text-decoration: underline;*/
 	float: left;
 }
 .fldHolder {
@@ -226,6 +226,9 @@ a:hover {
 .fldActions {
 	float: right;
 	font-size: 0.6em;
+}
+.frmActionButton {
+    float: right;
 }
 .fldHeader {
 	position: relative;
