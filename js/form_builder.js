@@ -64,26 +64,60 @@ frmField.prototype = {
     },
     edit: function() {
         let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
-        let fieldAsForm = '<form class="pct100">' +
-            '<label for="is_required">Required : </label><input name="is_required" type="checkbox" value="' + this.isRequired + '" />' +
-            '<label for="field_step">Step : </label><select id="field_step" name="field_step"><option>-1</option><option>0</option></select>' +
-            '<label for="name">Label : </label><input name="name" type="text" value="' + this.txtLabel + '" />' +
-            '<label for="tool_tip">Tooltip : </label><input name="tool_tip" type="text" value="' + this.toolTip + '" />' +
-            '<label for="place_holder">Placeholder : </label><input name="place_holder" type="text" value="' + this.placeHolder + '" />' +
-            '<label for="css_class">Class : </label><input name="css_class" type="text" value="' + this.cssName + '" />' +
-            '<label for="db_field">Name : </label><input name="db_field" type="text" value="' + this.dbField + '" />' +
-            '<label for="value">Value : </label><input name="value" type="text" value="' + this.fldValue + '" />' +
-            '<label for="field_type">Type : </label><select id="field_type" name="field_type"><option value="0">Text</option><option value="1">Dropdown</option><option value="2">Textarea</option></select>' +
-            '<label for="max_length">Max Length : </label><input name="max_length" type="text" value="' + this.fldMaxLength + '" />' +
-            '<label for="field_width">Width : </label><input name="field_width" type="text" value="' + this.fldWidth + '" />' +
-            '<label for="field_height">Height : </label><input name="field_height" type="text" value="' + this.fldHeight + '" />' +
-            '<label for="special_mode">Special : </label><input name="special_mode" type="text" value="' + this.fldSpecial + '" />' +
-            '<label for="options">Options : </label><input name="options" type="text" value="' + this.fldOptions + '" />' +
-            '<label for="db_table">DB Table : </label><input name="db_table" type="text" value="' + this.dbTable + '" />' +
-            '<label for="db_field">DB Field : </label><input name="tool_tip" type="text" value="' + this.dbField + '" />' +
-            '<label for="variables">Variables : </label><input name="variables" type="text" value="' + this.fldVariables + '" />' +
+        let fieldAsForm = '<form id="fieldAsForm' + this.idx + '">' +
+            '<table class="pct100 tightTable">' +
+            '<tr>' +
+            '<td><label class="fafLabel" for="is_required">Required : </label><input id="is_required' + this.idx + '" name="is_required" type="checkbox" value="' + this.isRequired + '" /></td>' +
+            '<td><label class="fafLabel" for="field_step">Step : </label><select id="field_step' + this.idx + '" name="field_step"><option>-1</option><option>0</option></select></td>' +
+            '<td><label class="fafLabel" for="field_type">Type : </label><select id="field_type' + this.idx + '" name="field_type"><option value="0">Text</option><option value="1">Dropdown</option><option value="2">Textarea</option></select></td>' +
+            '<td>&nbsp;</td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="name">Label : </label><input class="pct75" id="name' + this.idx + '"  name="name" type="text" value="' + this.txtLabel + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="tool_tip">Tooltip : </label><input class="pct75" id="tool_tip' + this.idx + '" name="tool_tip" type="text" value="' + this.toolTip + '" />' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="place_holder">Placeholder : </label><input class="pct75" id="place_holder' + this.idx + '" name="place_holder" type="text" value="' + this.placeHolder + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="css_class">Class : </label><input class="pct75" id="css_class' + this.idx + '" name="css_class" type="text" value="' + this.cssName + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="db_field">Name : </label><input class="pct75" id="db_field' + this.idx + '" name="db_field" type="text" value="' + this.dbField + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="value">Value : </label><input class="pct75" id="value' + this.idx + '" name="value" type="text" value="' + this.fldValue + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="max_length">Max Length : </label><input class="pct75" id="max_length' + this.idx + '" name="max_length" type="text" value="' + this.fldMaxLength + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="field_width">Width : </label><input class="pct75" name="field_width" type="text" value="' + this.fldWidth + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="field_height">Height : </label><input class="pct75" name="field_height" type="text" value="' + this.fldHeight + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="special_mode">Special : </label><input class="pct75" name="special_mode" type="text" value="' + this.fldSpecial + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="options">Options : </label><input class="pct75" name="options" type="text" value="' + this.fldOptions + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="db_table">DB Table : </label><input class="pct75" name="db_table" type="text" value="' + this.dbTable + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="db_field">DB Field : </label><input class="pct75" name="tool_tip" type="text" value="' + this.dbField + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td colspan="4"><label class="fafLabel" for="variables">Variables : </label><input class="pct75" name="variables" type="text" value="' + this.fldVariables + '" /></td>' +
+            '</tr>' +
 
-            '<script>$(function(){$("#field_type").val(' + this.fldType + ');$("#field_step").val(' + this.callStep + ');});</script>' +
+            '</table>' +
+
+            '<script>$(function(){$("#field_type' + this.idx + '").val(' + this.fldType + ');$("#field_step' + this.idx + '").val(' + this.callStep + ');});</script>' +
             '</form>';
         $(fldRendering).empty().append(fieldAsForm);
 

@@ -23,8 +23,8 @@ table{
 .align_left{	text-align: left;}
 .align_right{	text-align: right;}
 
-.underline{ text-decoration:underline; }
-.italic{ text-decoration:italic; }
+.underline{ text-decoration: underline; }
+.italic{ font-style: italic; }
 
 .bl{	border-bottom:1px solid #000000;}
 .lb{	border:1px dotted #ccc;}
@@ -240,4 +240,11 @@ a:hover {
 .field > label, .field > input, .field > select, .field > select option{
 	font-size: 0.8em;
 	font-weight: 600;
+}
+.fafLabel {
+    min-width: 8%;
+    display: inline-block;
+}
+.tightTable {
+    padding: 4px;
 }
