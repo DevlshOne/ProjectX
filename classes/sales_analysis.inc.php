@@ -12,6 +12,10 @@ class AgentInfo
     public $username;
     public $cluster_array;
 
+    
+    // FALSE by default, for nightly reports
+    var $skip_answeringmachines = false;
+    
 
     public function AgentInfo($user, $cluster_id)
     {
@@ -499,7 +503,10 @@ class SalesAnalysis
 
 
             // ANSWERING MACHINE STATS
-            $sql = "SELECT COUNT(id) FROM lead_tracking ".
+            
+            
+            if($this->skip_answeringmachines == false){
+                $sql = "SELECT COUNT(id) FROM lead_tracking ".
 
 //									" FORCE INDEX (time) ".
                                     //" USE INDEX (time) ".
@@ -523,10 +530,12 @@ class SalesAnalysis
                                     " AND (`dispo`='A' OR `dispo`='a') ".
                                     $ofcsql.
                                     (($campaign_id)?" AND campaign_id='".$campaign_id."' ":"");
-            //echo "\n".$sql."\n";
-            // ANSWERING MACHINE STATS
-            list($num_AnswerMachines) = $_SESSION['dbapi']->queryROW($sql);
-
+                //echo "\n".$sql."\n";
+                // ANSWERING MACHINE STATS
+                list($num_AnswerMachines) = $_SESSION['dbapi']->queryROW($sql);
+            }else{
+                $num_AnswerMachines = -1;
+            }
 
             $sql = "SELECT COUNT(id) FROM transfers ".
                     " WHERE xfer_time BETWEEN '$stime' AND '$etime' ".
@@ -889,6 +898,12 @@ $(function() {
 						</td>
 					</tr>
 					<tr>
+						<th>Include Answering Machine stats</th>
+						<td>
+							<input type="checkbox" name="include_answer_machines" value="1" <?=($_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
+						</td>
+					</tr>
+					<tr>
 						<th colspan="2">
 
 							<span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0" /> Loading, Please wait...</span>
@@ -962,6 +977,17 @@ $(function() {
 
             $vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
 
+            
+            
+            
+            if($_REQUEST['include_answer_machines']){
+                $this->skip_answeringmachines = false;
+            }else{
+                $this->skip_answeringmachines = true;
+            }
+            
+            
+            
             ## GENERATE AND DISPLAY REPORT
             $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code);
 
@@ -1084,8 +1110,13 @@ $(function() {
 			<th title="Total number of calls for the day">Total Calls</th>
 			<th title="Number of Calls that were NOT INTERESTED">NI</th>
 			<th title="Number of Transfers">XFERS</th>
-			<th title="Number of Answering Machine calls">A</th>
-			<th title="Percentage of calls that are Answering Machines">%ANS</th>
+			<?php 
+			
+			if($this->skip_answeringmachines == false){
+			     ?><th title="Number of Answering Machine calls">A</th>
+				<th title="Percentage of calls that are Answering Machines">%ANS</th><?php 
+			}
+			?>
 			<th title="Contacts per Worked hour, and Calls per Worked hour">Con&amp;Calls/hr</th>
 
 
@@ -1120,12 +1151,15 @@ $(function() {
 				<td align="center"><?=number_format($agent_data['activity_wrkd'], 2)?></td>
 				<td align="center"><?=number_format($agent_data['calls_today'])?></td>
 				<td align="center"><?=number_format($agent_data['num_NI'])?></td>
-				<td align="center"><?=number_format($agent_data['num_XFER'])?></td>
-				<td align="center"><?=number_format($agent_data['num_AnswerMachines'])?></td>
+				<td align="center"><?=number_format($agent_data['num_XFER'])?></td><?
+				
+				if($this->skip_answeringmachines == false){
+				    ?><td align="center"><?=number_format($agent_data['num_AnswerMachines'])?></td>
+					<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/?>
 
-				<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/?>
-
-				<td align="center"><?=$ans_percent?>%</td>
+					<td align="center"><?=$ans_percent?>%</td><?
+				}
+				?>
 
 				<td align="center"><?=number_format($agent_data['contacts_per_worked_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_worked_hour'], 2)?></td>
 
@@ -1174,8 +1208,13 @@ $(function() {
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_calls'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_NI'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_XFER'])?></th>
-			<th style="border-top:1px solid #000"><?=number_format($totals['total_AnswerMachines'])?></th>
-			<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th>
+			<?
+				
+				if($this->skip_answeringmachines == false){
+				    ?><th style="border-top:1px solid #000"><?=number_format($totals['total_AnswerMachines'])?></th>
+					<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th><?
+				}
+			?>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_contacts_per_worked_hour'], 2).' - '.number_format($totals['total_calls_per_worked_hour'], 2)?></th>
 
 
