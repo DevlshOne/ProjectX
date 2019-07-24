@@ -925,7 +925,8 @@
                 }
 
                 function previewField(i) {
-                    expandField(i);
+                    let f = formFields[i];
+                    f.preview();
                 }
 
                 function previewForm() {

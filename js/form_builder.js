@@ -135,9 +135,7 @@ frmField.prototype = {
             '<tr>' +
             '<td><label class="fafLabel" for="variables">Variables : </label><input class="pct75" id="variables' + this.idx + '" name="variables" type="text" value="' + this.fldVariables + '" /></td>' +
             '</tr>' +
-
             '</table>' +
-
             '<script>$(function(){$("#field_type' + this.idx + '").val(' + this.fldType + ');$("#field_step' + this.idx + '").val(' + this.callStep + ');});</script>' +
             '</form>';
         $(fldRendering).empty().append(fieldAsForm);
@@ -146,9 +144,11 @@ frmField.prototype = {
     reposition: function() {
 
     },
+    preview: function() {
+
+    },
     populate: function() {
         let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
-        // fldRendering.hide();
         let fldFormat = '';
         let lblFormat = '';
         let fldObj = {};
@@ -177,15 +177,6 @@ frmField.prototype = {
                 fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
-                // fldObj.data('dbTable', this.dbTable);
-                // fldObj.data('dbField', this.dbField);
-                // fldObj.data('callStep', this.callStep);
-                // lblObj.data('posX', this.lblPosX);
-                // lblObj.data('posY', this.lblPosY);
-                // fldObj.data('posX', this.fldPosX);
-                // fldObj.data('posY', this.fldPosY);
-                // fldObj.data('isHidden', this.isHidden);
-                // fldObj.data('isLocked', this.isLocked);
                 $(fldRendering).empty().append(lblObj, fldObj);
                 break;
             case '1' :
@@ -215,15 +206,6 @@ frmField.prototype = {
                 jQuery.each(arrOptions, function(i, v) {
                     fldObj.append('<option>' + v + '</option>');
                 });
-                // fldObj.data('dbTable', this.dbTable);
-                // fldObj.data('dbField', this.dbField);
-                // fldObj.data('callStep', this.callStep);
-                // lblObj.data('posX', this.lblPosX);
-                // lblObj.data('posY', this.lblPosY);
-                // fldObj.data('posX', this.fldPosX);
-                // fldObj.data('posY', this.fldPosY);
-                // fldObj.data('isHidden', this.isHidden);
-                // fldObj.data('isLocked', this.isLocked);
                 $(fldRendering).empty().append(lblObj, fldObj);
                 break;
         }
