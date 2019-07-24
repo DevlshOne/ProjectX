@@ -232,10 +232,9 @@ a:hover {
 }
 .fldHeader {
 	position: relative;
-	top: 2px;
-	margin-bottom: 4px;
+	padding-bottom: 4px;
 	width: 100%;
-	min-height: 36px;
+	min-height: 24px;
 }
 .field > label, .field > input, .field > select, .field > select option{
 	font-size: 0.8em;

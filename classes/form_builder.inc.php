@@ -152,23 +152,9 @@
 
                 function displayAddFormBuilderDialog(id) {
                     let objname = 'main_content';
-                    // if (id > 0) {
-                    //     $('#' + objname).dialog("option", "title", 'Editing form');
-                    // } else {
-                    //     $('#' + objname).dialog("option", "title", 'Adding new form');
-                    // }
-                    // $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=form_builder&add=" + id + "&printable=1&no_script=1");
                 }
-
-                var namesrchtog = false;
-
-                function toggleNameSearch() {
-                    namesrchtog = !namesrchtog;
-                    ieDisplay('form_search_table', namesrchtog);
-                }
-
             </script>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
                   action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForm_builders();return false">
@@ -226,18 +212,6 @@
             <!--            <div id="dialog-modal-add-form-builder" title="Editing form" class="nod"></div>-->
             <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <script>
-                // $("#dialog-modal-add-form-builder").dialog({
-                //     autoOpen: false,
-                //     width: 990,
-                //     height: 'auto',
-                //     position: {
-                //         my: 'left top',
-                //         at: 'left+50 top+50'
-                //     },
-                //     modal: false,
-                //     draggable: true,
-                //     resizable: true
-                // });
                 $("#dialog-modal-copy-form-builder").dialog({
                     autoOpen: false,
                     width: 500,
@@ -284,6 +258,14 @@
             <script>
                 var formID = '<?=$id;?>';
                 var formFields = [];
+                $("#dialog-modal-preview-form-builder").dialog({
+                    autoOpen: false,
+                    width: 1024,
+                    height: 'auto',
+                    modal: true,
+                    draggable: true,
+                    resizable: true
+                });
                 // console.log('Editing form id = ' + formID);
                 // let formBuilder = new _formBuilder(formID);
                 $('#dropZone').droppable();
@@ -927,8 +909,31 @@
                     f.edit();
                 }
 
+                function changeFieldType(i, v) {
+                    switch(v) {
+                        default :
+                        case '0' :
+                            $('#options' + i).closest('tr').hide();
+                            break;
+                        case '1' :
+                            $('#options' + i).closest('tr').show();
+                            break;
+                        case '2' :
+                            $('#options' + i).closest('tr').hide();
+                            break;
+                    }
+                }
+
                 function previewField(i) {
                     expandField(i);
+                }
+
+                function previewForm() {
+                    var objname = 'dialog-modal-preview-form-builder';
+                    $('#' + objname).dialog("open");
+                    $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    // $('#' + objname).load("index.php?area=form_builder&preview=" + id + "&printable=1&no_script=1");
+                    $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 $(function () {
@@ -961,6 +966,7 @@
                         <li class="ui-state-default fldHolder"></li>
                     </ul>
                 </div>
+            <div id="dialog-modal-preview-form-builder" title="Previewing Form" class="nod"></div>
             <?
         }
 
