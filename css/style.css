@@ -247,3 +247,12 @@ a:hover {
 .tightTable {
     padding: 4px;
 }
+.fieldPreview {
+	position: relative;
+	display: inline-block;
+}
+.labelPreview {
+	position: relative;
+	display: inline-block;
+	margin-right: 10px;
+}

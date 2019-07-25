@@ -145,7 +145,77 @@ frmField.prototype = {
 
     },
     preview: function() {
-
+        let fldPreview = $('#previewBox');
+        let fldFormat = '';
+        let lblFormat = '';
+        let fldObj = {};
+        let lblObj = {};
+        switch(this.fldType) {
+            case '0' :
+                // This is a text field, so let's create it and then populate it
+                fldFormat = '<input type="text" />';
+                lblFormat = '<label></label>';
+                fldObj = $(fldFormat);
+                lblObj = $(lblFormat);
+                fldObj.addClass('fieldPreview');
+                lblObj.addClass('labelPreview');
+                fldObj.attr('required', this.isRequired);
+                lblObj.attr('value', this.txtLabel);
+                lblObj.text(this.txtLabel);
+                lblObj.css('width', this.lblWidth);
+                lblObj.css('height', this.lblHeight);
+                lblObj.css('top', this.lblPosY);
+                lblObj.css('left', this.lblPosY)
+                lblObj.attr('title', this.toolTip);
+                fldObj.attr('placeholder', this.placeHolder);
+                fldObj.addClass(this.cssName);
+                fldObj.attr('name', this.fldName);
+                lblObj.attr('for', this.fldName);
+                fldObj.attr('id', this.fldName);
+                fldObj.attr('value', this.fldValue);
+                fldObj.attr('maxlength', this.fldMaxLength);
+                fldObj.css('width', this.fldWidth);
+                fldObj.css('height', this.fldHeight);
+                fldObj.css('top', this.fldPosY);
+                fldObj.css('left', this.fldPosY)
+                // somewhere in here, there has to be some figuring done on where to place these - even with 0,0s and funky offset labels
+                // how many rows do we create? how many columns? what fields span more than one column? how do we know when to move to the next row?
+                // how far should we allow the offset of a label? is this really the smart way to perform this task?
+                // do we even render the ones that are "hidden"?
+                // lots of questions - not a whole lot of answers
+                $(fldPreview).append(lblObj, fldObj);
+                break;
+            case '1' :
+                // This is a dropdown field, so let's create it and then populate it
+                fldFormat = '<select></select>';
+                lblFormat = '<label></label>';
+                fldObj = $(fldFormat);
+                lblObj = $(lblFormat);
+                fldObj.addClass('fieldPreview');
+                lblObj.addClass('labelPreview');
+                fldObj.attr('required', this.isRequired);
+                lblObj.attr('value', this.txtLabel);
+                lblObj.text(this.txtLabel);
+                lblObj.css('width', this.lblWidth);
+                lblObj.css('height', this.lblHeight);
+                lblObj.attr('title', this.toolTip);
+                fldObj.attr('placeholder', this.placeHolder);
+                fldObj.addClass(this.cssName);
+                fldObj.attr('name', this.fldName);
+                lblObj.attr('for', this.fldName);
+                fldObj.attr('id', this.fldName);
+                fldObj.attr('value', this.fldValue);
+                fldObj.attr('maxlength', this.fldMaxLength);
+                fldObj.css('width', this.fldWidth);
+                fldObj.css('height', this.fldHeight);
+                let arrOptions = this.fldOptions.split(';');
+                jQuery.each(arrOptions, function(i, v) {
+                    fldObj.append('<option>' + v + '</option>');
+                });
+                // somewhere in here, there has to be some figuring done on where to place these - even with 0,0s and funky offset labels
+                $(fldPreview).append(lblObj, fldObj);
+                break;
+        }
     },
     populate: function() {
         let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');

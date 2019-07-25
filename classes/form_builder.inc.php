@@ -932,9 +932,12 @@
                 function previewForm() {
                     var objname = 'dialog-modal-preview-form-builder';
                     $('#' + objname).dialog("open");
-                    $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    $('#' + objname).html('<div id="previewBox" class="pct100"></div>');
                     // $('#' + objname).load("index.php?area=form_builder&preview=" + id + "&printable=1&no_script=1");
-                    $('#' + objname).dialog('option', 'position', 'center');
+                    // $('#' + objname).dialog('option', 'position', 'center');
+                    formFields.forEach((ff) => {
+                        ff.preview();
+                    });
                 }
 
                 $(function () {
