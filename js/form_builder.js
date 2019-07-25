@@ -61,6 +61,13 @@ frmField.prototype = {
             '<div class="field"></div>\n' +
             '</li>\n';
         $('ul#dropZone').append(newLI);
+        // $('li.fldHolder').resizable({
+        //     containment: '#dropZone',
+        //     helper: 'resizable-helper',
+        //     ghost: true,
+        //     grid: 10,
+        //     minHeight: 66
+        // });
     },
     edit: function() {
         let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
@@ -162,10 +169,6 @@ frmField.prototype = {
                 fldObj.attr('required', this.isRequired);
                 lblObj.attr('value', this.txtLabel);
                 lblObj.text(this.txtLabel);
-                lblObj.css('width', this.lblWidth);
-                lblObj.css('height', this.lblHeight);
-                lblObj.css('top', this.lblPosY);
-                lblObj.css('left', this.lblPosY)
                 lblObj.attr('title', this.toolTip);
                 fldObj.attr('placeholder', this.placeHolder);
                 fldObj.addClass(this.cssName);
@@ -174,16 +177,29 @@ frmField.prototype = {
                 fldObj.attr('id', this.fldName);
                 fldObj.attr('value', this.fldValue);
                 fldObj.attr('maxlength', this.fldMaxLength);
-                fldObj.css('width', this.fldWidth);
-                fldObj.css('height', this.fldHeight);
-                fldObj.css('top', this.fldPosY);
-                fldObj.css('left', this.fldPosY)
+                // console.log('Placing label wrapper ' + this.txtLabel + ' at ' + this.lblPosY + 'px from top, ' + this.lblPosX + 'px from left.');
+                // console.log('Placing field wrapper ' + this.txtLabel + ' at ' + this.fldPosY + 'px from top, ' + this.fldPosX + 'px from left.');
                 // somewhere in here, there has to be some figuring done on where to place these - even with 0,0s and funky offset labels
                 // how many rows do we create? how many columns? what fields span more than one column? how do we know when to move to the next row?
                 // how far should we allow the offset of a label? is this really the smart way to perform this task?
                 // do we even render the ones that are "hidden"?
-                // lots of questions - not a whole lot of answers
+                // lots of questions
                 $(fldPreview).append(lblObj, fldObj);
+                lblObj.css({
+                    width: this.lblWidth,
+                    height: this.lblHeight,
+                    top: this.lblPosY + 'px',
+                    left: this.lblPosX + 'px',
+                    position: 'absolute'
+                });
+                fldObj.css({
+                    width: this.fldWidth,
+                    height: this.fldHeight,
+                    top: this.fldPosY + 'px',
+                    left: this.fldPosX + 'px',
+                    position: 'absolute'
+                });
+                // debugger;
                 break;
             case '1' :
                 // This is a dropdown field, so let's create it and then populate it
@@ -196,8 +212,6 @@ frmField.prototype = {
                 fldObj.attr('required', this.isRequired);
                 lblObj.attr('value', this.txtLabel);
                 lblObj.text(this.txtLabel);
-                lblObj.css('width', this.lblWidth);
-                lblObj.css('height', this.lblHeight);
                 lblObj.attr('title', this.toolTip);
                 fldObj.attr('placeholder', this.placeHolder);
                 fldObj.addClass(this.cssName);
@@ -206,14 +220,29 @@ frmField.prototype = {
                 fldObj.attr('id', this.fldName);
                 fldObj.attr('value', this.fldValue);
                 fldObj.attr('maxlength', this.fldMaxLength);
-                fldObj.css('width', this.fldWidth);
-                fldObj.css('height', this.fldHeight);
                 let arrOptions = this.fldOptions.split(';');
                 jQuery.each(arrOptions, function(i, v) {
                     fldObj.append('<option>' + v + '</option>');
                 });
+                // console.log('Placing label wrapper ' + this.txtLabel + ' at ' + this.lblPosY + 'px from top, ' + this.lblPosX + 'px from left.');
+                // console.log('Placing field wrapper ' + this.txtLabel + ' at ' + this.fldPosY + 'px from top, ' + this.fldPosX + 'px from left.');
                 // somewhere in here, there has to be some figuring done on where to place these - even with 0,0s and funky offset labels
                 $(fldPreview).append(lblObj, fldObj);
+                lblObj.css({
+                    width: this.lblWidth,
+                    height: this.lblHeight,
+                    top: this.lblPosY + 'px',
+                    left: this.lblPosX + 'px',
+                    position: 'absolute'
+                });
+                fldObj.css({
+                    width: this.fldWidth,
+                    height: this.fldHeight,
+                    top: this.fldPosY + 'px',
+                    left: this.fldPosX + 'px',
+                    position: 'absolute'
+                });
+                // debugger;
                 break;
         }
     },

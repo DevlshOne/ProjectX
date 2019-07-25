@@ -260,7 +260,7 @@
                 var formFields = [];
                 $("#dialog-modal-preview-form-builder").dialog({
                     autoOpen: false,
-                    width: 1024,
+                    width: 600,
                     height: 'auto',
                     modal: true,
                     draggable: true,
@@ -281,8 +281,10 @@
                         left: 25
                     },
                     snap: true,
+                    snapMode: 'inner',
                     stop: function (e, ui) {
                         console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
+                        ui.disable();
                     },
                     revert: 'invalid'
                 });
@@ -930,7 +932,9 @@
                 }
 
                 function previewForm() {
-                    var objname = 'dialog-modal-preview-form-builder';
+                    let objname = 'dialog-modal-preview-form-builder';
+                    let currXPos = 0;
+                    let currYPos = 0;
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<div id="previewBox" class="pct100"></div>');
                     // $('#' + objname).load("index.php?area=form_builder&preview=" + id + "&printable=1&no_script=1");

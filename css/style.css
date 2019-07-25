@@ -222,6 +222,7 @@ a:hover {
 	padding: 5px;
 	font-size: 1.2em;
 	min-height: 36px;
+    box-sizing: border-box;
 }
 .fldActions {
 	float: right;
@@ -248,11 +249,16 @@ a:hover {
     padding: 4px;
 }
 .fieldPreview {
-	position: relative;
-	display: inline-block;
+	position: absolute;
+	display: block;
 }
 .labelPreview {
+	position: absolute;
+	display: block;
+	/*margin-right: 10px;*/
+}
+#previewBox {
 	position: relative;
-	display: inline-block;
-	margin-right: 10px;
+    /*overflow-y: visible;*/
+    /*height: auto;*/
 }
