@@ -898,9 +898,11 @@ $(function() {
 						</td>
 					</tr>
 					<tr>
-						<th>Include Answering Machine stats</th>
+						<td>&nbsp;</td>
 						<td>
+						
 							<input type="checkbox" name="include_answer_machines" value="1" <?=($_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
+							Include Answering Machine stats
 						</td>
 					</tr>
 					<tr>
