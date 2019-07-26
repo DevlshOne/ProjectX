@@ -260,8 +260,8 @@
                 var formFields = [];
                 $("#dialog-modal-preview-form-builder").dialog({
                     autoOpen: false,
-                    width: 600,
-                    height: 'auto',
+                    width: 660,
+                    height: 600,
                     modal: true,
                     draggable: true,
                     resizable: true
@@ -912,7 +912,7 @@
                 }
 
                 function changeFieldType(i, v) {
-                    switch(v) {
+                    switch (v) {
                         default :
                         case '0' :
                             $('#options' + i).closest('tr').hide();
@@ -928,6 +928,9 @@
 
                 function previewField(i) {
                     let f = formFields[i];
+                    let objname = 'dialog-modal-preview-form-builder';
+                    $('#' + objname).dialog("open");
+                    $('#' + objname).html('<div id="previewBox" class="pct100"></div>');
                     f.preview();
                 }
 
@@ -945,36 +948,51 @@
                 }
 
                 $(function () {
+                    $('#screenTabs').tabs({
+                        heightStyle: 'content'
+                    }).css({
+                        'min-height': '400px',
+                        'overflow': 'auto'
+                    });
                     changeScreen(formID, $('#screenNumber option:selected').val());
                 });
             </script>
-                <div class="pct100">
-                    <div class="ui-widget-header">Editing Form for Campaign :</div>
-                    <label for="screeNumber">Select screen : </label>
-                    <select name="screenNumber" id="screenNumber" onchange="changeScreen(formID, this.value); return false;">
-                        <option value="0">0</option>
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                    </select>
-                    <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
-                    <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
-                </div>
-                <div class="pct100">
-                    <ul id="dragZone" class="lefty pct100">
-                        <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">Text Field Draggable</li>
-                        <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">DropDown Field
-                            Draggable
-                        </li>
-                        <li class="ui-state-highlight ui-widget-content fldMaker">Textarea Field Draggable</li>
+            <div class="pct100">
+                <div class="ui-widget-header">Editing Form for Campaign :</div>
+                <div id="screenTabs">
+                    <ul>
+                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 0); return false;">Screen 0</a></li>
+                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 1); return false;">Screen 1</a></li>
+                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 2); return false;">Screen 2</a></li>
+                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 3); return false;">Screen 3</a></li>
+                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 4); return false;">Screen 4</a></li>
+                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
                     </ul>
-                    <ul id="dropZone" class="lefty pct100">
-                        <li class="ui-state-default fldHolder"></li>
-                    </ul>
+                    <!--                <label for="screeNumber">Select screen : </label>-->
+                    <!--                <select name="screenNumber" id="screenNumber" onchange="changeScreen(formID, this.value); return false;">-->
+                    <!--                    <option value="0">0</option>-->
+                    <!--                    <option value="1">1</option>-->
+                    <!--                    <option value="2">2</option>-->
+                    <!--                    <option value="3">3</option>-->
+                    <!--                    <option value="4">4</option>-->
+                    <!--                    <option value="5">5</option>-->
+                    <!--                </select>-->
+                    <div id="mainPanel" class="pct100">
+                        <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
+                        <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
+                        <ul id="dragZone" class="lefty pct100">
+                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>
+                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">SELECT Field</li>
+                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="2">TEXTAREA Field</li>
+                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="99">EMPTY Filler</li>
+                        </ul>
+                        <ul id="dropZone" class="lefty pct100">
+                            <li class="ui-state-default fldHolder"></li>
+                        </ul>
+                    </div>
+                    <div id="dialog-modal-preview-form-builder" title="Previewing Form" class="nod"></div>
                 </div>
-            <div id="dialog-modal-preview-form-builder" title="Previewing Form" class="nod"></div>
+            </div>
             <?
         }
 

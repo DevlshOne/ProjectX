@@ -61,13 +61,6 @@ frmField.prototype = {
             '<div class="field"></div>\n' +
             '</li>\n';
         $('ul#dropZone').append(newLI);
-        // $('li.fldHolder').resizable({
-        //     containment: '#dropZone',
-        //     helper: 'resizable-helper',
-        //     ghost: true,
-        //     grid: 10,
-        //     minHeight: 66
-        // });
     },
     edit: function() {
         let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
