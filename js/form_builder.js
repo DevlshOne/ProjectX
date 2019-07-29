@@ -170,6 +170,11 @@ frmField.prototype = {
                 fldObj.attr('id', this.fldName);
                 fldObj.attr('value', this.fldValue);
                 fldObj.attr('maxlength', this.fldMaxLength);
+                if(this.lblPosX < 0 && this.lblPosY < 0) {
+                    lblObj.css('display','none');
+                    this.isHidden = 1;
+                }
+                fldObj.css('display')
                 // console.log('Placing label wrapper ' + this.txtLabel + ' at ' + this.lblPosY + 'px from top, ' + this.lblPosX + 'px from left.');
                 // console.log('Placing field wrapper ' + this.txtLabel + ' at ' + this.fldPosY + 'px from top, ' + this.fldPosX + 'px from left.');
                 // somewhere in here, there has to be some figuring done on where to place these - even with 0,0s and funky offset labels
@@ -213,6 +218,10 @@ frmField.prototype = {
                 fldObj.attr('id', this.fldName);
                 fldObj.attr('value', this.fldValue);
                 fldObj.attr('maxlength', this.fldMaxLength);
+                if(this.lblPosX < 0 && this.lblPosY < 0) {
+                    lblObj.css('display','none');
+                    this.isHidden = 1;
+                }
                 let arrOptions = this.fldOptions.split(';');
                 jQuery.each(arrOptions, function(i, v) {
                     fldObj.append('<option>' + v + '</option>');
@@ -269,6 +278,9 @@ frmField.prototype = {
                 fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
+                if(this.isHidden) {
+                    lblObj.css('display', 'none');
+                }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 break;
             case '1' :
@@ -294,6 +306,9 @@ frmField.prototype = {
                 fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
+                if(this.isHidden) {
+                    lblObj.css('display', 'none');
+                }
                 let arrOptions = this.fldOptions.split(';');
                 jQuery.each(arrOptions, function(i, v) {
                     fldObj.append('<option>' + v + '</option>');
@@ -302,4 +317,4 @@ frmField.prototype = {
                 break;
         }
     }
-}
+};

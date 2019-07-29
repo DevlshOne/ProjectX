@@ -168,14 +168,23 @@ a:hover {
 	text-align: center;
 	align-content: baseline;
 }
+.pct16 {
+    width: 16%
+}
 .pct20 {
 	width: 20%;
 }
 .pct25 {
 	width: 25%;
 }
+.pct33 {
+    width: 33%;
+}
 .pct50 {
 	width: 50%;
+}
+.pct66 {
+    width: 66%;
 }
 .pct75 {
 	width: 75%;
@@ -203,12 +212,14 @@ a:hover {
 }
 #dropZone {
 	float:left;
+    display: inline-grid;
 	width: 100%;
 }
 .fldMaker {
 	margin: 0 5px 5px 5px;
 	padding: 5px;
 	font-size: 1.2em;
+    max-width: 150px;
 }
 .fldTitle {
 	position: relative;
@@ -261,4 +272,21 @@ a:hover {
 	position: relative;
     /*overflow-y: visible;*/
     /*height: auto;*/
+}
+.labelDIV {
+    border: 1px solid firebrick;
+    display: block;
+    float: left;
+    min-height: 80px;
+}
+.fieldDIV {
+    border: 1px solid coral;
+    display: block;
+    float: left;
+    min-height: 80px;
+}
+.dzRow {
+    width: 100%;
+    margin: 2px;
+    display: inline-block;
 }
