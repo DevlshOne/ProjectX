@@ -88,7 +88,7 @@
                     return 'api/api.php' +
                         '?get=form_builder&action=getScreen' +
                         '&campaign_id=' + c + '&screen_number=' + s +
-                        '&mode=json';
+                        '&mode=xml';
                 }
 
                 let forms_loading_flag = false;
@@ -319,225 +319,12 @@
                 }
 
                 function loadNewScreen(jsondata) {
-                    let testData = [{
-                        "id": "87",
-                        "deleted": "no",
-                        "campaign_id": "315",
-                        "screen_num": "0",
-                        "field_step": "0",
-                        "field_type": "1",
-                        "label_x": "0",
-                        "label_y": "0",
-                        "label_width": "150",
-                        "label_height": "30",
-                        "field_x": "150",
-                        "field_y": "0",
-                        "field_width": "200",
-                        "field_height": "30",
-                        "max_length": "0",
-                        "name": "Amount",
-                        "value": null,
-                        "special_mode": "update_amount",
-                        "options": "$1000;$950;$900;$850;$800;$750;$700;$650;$600;$550;$500;$450;$400;$350;$300;$250;$200;$190;$180;$170;$160;$150;$140;$130;$120;$110;$100;$95;$90;$85;$80;$75;$70;$65;$60;$55;$50;$45;$40;$35;$30;$25;$20;$15;$0",
-                        "db_table": "lead_tracking",
-                        "db_field": "amount",
-                        "variables": "validation_options=nonzero",
-                        "is_required": "0",
-                        "tool_tip": null,
-                        "place_holder": null,
-                        "css_class": null,
-                        "is_hidden": "0",
-                        "is_locked": "0",
-                        "field_name": null
-                    }, {
-                        "id": "89",
-                        "deleted": "no",
-                        "campaign_id": "315",
-                        "screen_num": "0",
-                        "field_step": "2",
-                        "field_type": "0",
-                        "label_x": "0",
-                        "label_y": "30",
-                        "label_width": "150",
-                        "label_height": "30",
-                        "field_x": "150",
-                        "field_y": "30",
-                        "field_width": "140",
-                        "field_height": "30",
-                        "max_length": "0",
-                        "name": "Last Name",
-                        "value": null,
-                        "special_mode": null,
-                        "options": null,
-                        "db_table": "lead_tracking",
-                        "db_field": "last_name",
-                        "variables": "validation_options=nonempty;force_lookup_key=2",
-                        "is_required": "0",
-                        "tool_tip": null,
-                        "place_holder": null,
-                        "css_class": null,
-                        "is_hidden": "0",
-                        "is_locked": "0",
-                        "field_name": null
-                    }, {
-                        "id": "91",
-                        "deleted": "no",
-                        "campaign_id": "315",
-                        "screen_num": "0",
-                        "field_step": "3",
-                        "field_type": "0",
-                        "label_x": "320",
-                        "label_y": "30",
-                        "label_width": "100",
-                        "label_height": "30",
-                        "field_x": "410",
-                        "field_y": "30",
-                        "field_width": "140",
-                        "field_height": "30",
-                        "max_length": "0",
-                        "name": "First Name",
-                        "value": null,
-                        "special_mode": null,
-                        "options": null,
-                        "db_table": "lead_tracking",
-                        "db_field": "first_name",
-                        "variables": "validation_options=nonempty;force_lookup_key=2",
-                        "is_required": "0",
-                        "tool_tip": null,
-                        "place_holder": null,
-                        "css_class": null,
-                        "is_hidden": "0",
-                        "is_locked": "0",
-                        "field_name": null
-                    }, {
-                        "id": "93",
-                        "deleted": "no",
-                        "campaign_id": "315",
-                        "screen_num": "0",
-                        "field_step": "5",
-                        "field_type": "0",
-                        "label_x": "0",
-                        "label_y": "120",
-                        "label_width": "150",
-                        "label_height": "30",
-                        "field_x": "150",
-                        "field_y": "120",
-                        "field_width": "400",
-                        "field_height": "30",
-                        "max_length": "0",
-                        "name": "Address",
-                        "value": null,
-                        "special_mode": null,
-                        "options": null,
-                        "db_table": "lead_tracking",
-                        "db_field": "address1",
-                        "variables": "filter_options=letters,numbers,symbols;validation_options=nonempty",
-                        "is_required": "0",
-                        "tool_tip": null,
-                        "place_holder": null,
-                        "css_class": null,
-                        "is_hidden": "0",
-                        "is_locked": "0",
-                        "field_name": null
-                    }, {
-                        "id": "95",
-                        "deleted": "no",
-                        "campaign_id": "315",
-                        "screen_num": "0",
-                        "field_step": "-1",
-                        "field_type": "0",
-                        "label_x": "0",
-                        "label_y": "150",
-                        "label_width": "150",
-                        "label_height": "30",
-                        "field_x": "150",
-                        "field_y": "150",
-                        "field_width": "400",
-                        "field_height": "30",
-                        "max_length": "0",
-                        "name": "Address 2",
-                        "value": null,
-                        "special_mode": null,
-                        "options": null,
-                        "db_table": "lead_tracking",
-                        "db_field": "address2",
-                        "variables": "filter_options=letters,numbers,symbols",
-                        "is_required": "0",
-                        "tool_tip": null,
-                        "place_holder": null,
-                        "css_class": null,
-                        "is_hidden": "0",
-                        "is_locked": "0",
-                        "field_name": null
-                    }, {
-                        "id": "97",
-                        "deleted": "no",
-                        "campaign_id": "315",
-                        "screen_num": "0",
-                        "field_step": "-1",
-                        "field_type": "0",
-                        "label_x": "0",
-                        "label_y": "180",
-                        "label_width": "150",
-                        "label_height": "30",
-                        "field_x": "150",
-                        "field_y": "180",
-                        "field_width": "400",
-                        "field_height": "30",
-                        "max_length": "0",
-                        "name": "Address 3",
-                        "value": null,
-                        "special_mode": null,
-                        "options": null,
-                        "db_table": "lead_tracking",
-                        "db_field": "address3",
-                        "variables": "filter_options=letters,numbers,symbols",
-                        "is_required": "0",
-                        "tool_tip": null,
-                        "place_holder": null,
-                        "css_class": null,
-                        "is_hidden": "0",
-                        "is_locked": "0",
-                        "field_name": null
-                    }, {
-                        "id": "99",
-                        "deleted": "no",
-                        "campaign_id": "315",
-                        "screen_num": "0",
-                        "field_step": "6",
-                        "field_type": "0",
-                        "label_x": "0",
-                        "label_y": "210",
-                        "label_width": "150",
-                        "label_height": "30",
-                        "field_x": "150",
-                        "field_y": "210",
-                        "field_width": "140",
-                        "field_height": "30",
-                        "max_length": "12",
-                        "name": "Zipcode",
-                        "value": null,
-                        "special_mode": "zip_autolookup",
-                        "options": null,
-                        "db_table": "lead_tracking",
-                        "db_field": "zip_code",
-                        "variables": "filter_options=numbers;validation_options=nonzero,minlength:5",
-                        "is_required": "0",
-                        "tool_tip": null,
-                        "place_holder": null,
-                        "css_class": null,
-                        "is_hidden": "0",
-                        "is_locked": "0",
-                        "field_name": null
-                    }];
-                    // jsondata = testData;
                     console.log(jsondata);
                     if (jsondata.length == 0 || jsondata === undefined) {
                         console.log('No data found');
                     } else {
                         // console.log(jsondata);
                         jQuery.each(jsondata, function (i, v) {
-                            // console.log('Rendering field # ' + i + ' with value ' + v);
                             let formField = new frmField(i, v);
                             formFields.push(formField);
                             renderField(formField);
@@ -558,7 +345,10 @@
                     // load new screen fields
                     // console.log('Changing screen to ' + c + ':' + s);
                     clearDropZone();
-                    loadAjaxData(getFieldsURL(c, s), 'loadNewScreen');
+                    $.getJSON('api/api.php?get=form_builder&action=getScreen&campaign_id=' + c + '&screen_number=' + s, function(data) {
+                        loadNewScreen(data);
+                    });
+                    // loadAjaxData(getFieldsURL(c, s), 'loadNewScreen', 'json');
                 }
 
                 function removeField(i) {

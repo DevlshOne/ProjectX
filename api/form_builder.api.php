@@ -56,15 +56,9 @@
                 case 'getScreen':
                     $campaign_id = intval($_REQUEST['campaign_id']);
                     $screen_number = intval($_REQUEST['screen_number']);
-                    $sql = "SELECT * FROM `custom_fields` WHERE `campaign_id` = " . $campaign_id . " AND `screen_num` = " . $screen_number . " AND `deleted` = 'no'";
-                    $res = mysqli_query($_SESSION['dbapi']->db, $sql);
-                    if($res) {
-//                        $data = $_SESSION['dbapi']->query($sql);
-                        $data = mysqli_fetch_all($res, MYSQLI_ASSOC);
-//                        echo var_dump($data);
-                        $out = json_encode($data, JSON_PRETTY_PRINT);
-                        echo $out;
-                    }
+                    $data = $_SESSION['dbapi']->form_builder->getFieldsByScreen($campaign_id, $screen_number);
+                    $j = json_encode($data);
+                    echo $j;
                     break;
                 default:
                 case 'list':

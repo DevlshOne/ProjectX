@@ -5,8 +5,7 @@
 
     $_SESSION['dbapi'] = new DBAPI();
 
-    class DBAPI
-    {
+    class DBAPI {
         /**
          * CONTROL VARIABLES (EDITABLE)
          */
@@ -62,8 +61,7 @@
          * DBAPI Constructor
          * Initialize the class, connect, etc
          */
-        public function __construct()
-        {
+        public function __construct() {
             ## INCLUDE ALL THE REQUIRED FILES
             $this->initIncludes();
             $this->page_start_time = microtime_float();
@@ -76,8 +74,7 @@
         /**
          * Destructor - Cleanup Time
          */
-        public function __destruct()
-        {
+        public function __destruct() {
             if ($this->query_debugging == true) {
                 $page_end_time = microtime_float();
                 $time_taken = $page_end_time - $this->page_start_time;
@@ -89,8 +86,7 @@
             $this->disconnect();
         }
 
-        public function logPageLoad($time_taken)
-        {
+        public function logPageLoad($time_taken) {
 
             // WRITE TO THE LOG FILE
             $output = date("H:i:s m/d/Y") . ' End Page - ' . $_SESSION['user']['username'] . '(#' . $_SESSION['user']['id'] . ") - Total Queries: " . $this->page_query_count . " - Page Run Time: " . round($time_taken, 3) . " sec - " . $_SERVER['REQUEST_URI'] . " from " . $_SERVER['REMOTE_ADDR'] . "\n";
@@ -116,8 +112,7 @@
         /**
          * Include all the required files
          */
-        public function initIncludes()
-        {
+        public function initIncludes() {
             ## INCLUDE DATABASE CONNECTION INFO AND OTHER SITE DATA
             //include_once($_SERVER["DOCUMENT_ROOT"]."/site_config.php");
             //include_once("./site_config.php");
@@ -227,8 +222,7 @@
         /**
          * Loads site config data from the "prefs" table
          */
-        public function initSiteConfig()
-        {
+        public function initSiteConfig() {
             $res = $this->query("SELECT * FROM prefs ORDER BY `key` ASC");
             while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
                 if (!isset($_SESSION['site_config'][$row['key']])) {
@@ -240,8 +234,7 @@
         /**
          * Use the info in site_config and connect to database
          */
-        public function connect()
-        {
+        public function connect() {
 
             # CREATE MYSQL DATABASE CONNECTION
             $this->db = mysqli_connect($_SESSION['site_config']['pxdb']['sqlhost'], $_SESSION['site_config']['pxdb']['sqllogin'], $_SESSION['site_config']['pxdb']['sqlpass'], $_SESSION['site_config']['pxdb']['sqldb']) or die(mysqli_error($this->db) . "Connection to MySQL Failed.");
@@ -253,8 +246,7 @@
         /**
          * Disconnect from database and cleanup variables
          */
-        public function disconnect()
-        {
+        public function disconnect() {
             mysqli_close($this->db);
 
             unset($this->db);
@@ -270,8 +262,7 @@
          * Adds a record to the database, using the keys=>values from the provided associative array
          * (It escapes the keys and values automatically)
          */
-        public function aadd($assoarray, $table)
-        {
+        public function aadd($assoarray, $table) {
             $startsql = "INSERT INTO `$table`(";
             $midsql = ") VALUES (";
             $endsql = ")";
@@ -307,8 +298,7 @@
          *
          * @param $extra_where    Can be used to provide extra sql such as (" AND account_id='$accountid' ") to add security/restrictions/etc
          */
-        public function aedit($id, $assoarray, $table, $extra_where = "")
-        {
+        public function aedit($id, $assoarray, $table, $extra_where = "") {
             $startsql = "UPDATE `$table` SET ";
             $endsql = " WHERE id='$id'";
 
@@ -336,14 +326,12 @@
         /**
          * Deletes a record, that has the $id provided
          */
-        public function adelete($id, $table)
-        {
+        public function adelete($id, $table) {
             $id = intval($id);
             return $this->execSQL("DELETE FROM `$table` WHERE id='$id'");
         }
 
-        public function explainSQL($cmd)
-        {
+        public function explainSQL($cmd) {
             $sql = "EXPLAIN " . $cmd;
 
             // IGNORE DEBUG HERE, sO WE DONT LOOP FOREVER
@@ -361,8 +349,7 @@
          * The primary execute SQL function
          * (Used for Inserts/Updates)
          */
-        public function execSQL($cmd, $ignore_error = false, $no_debug = false)
-        {
+        public function execSQL($cmd, $ignore_error = false, $no_debug = false) {
             //echo $cmd;
 
             if ($this->query_debugging == true && !$no_debug) {
@@ -422,48 +409,44 @@
         /**
          * Returns the COUNT(id) of the specified table, using the specified where clause
          */
-        public function getCount($table, $whereclause)
-        {
+        public function getCount($table, $whereclause) {
             $cmd = "SELECT COUNT('" . $table . ".id') FROM $table $whereclause";
             $row = mysqli_fetch_row(mysqli_query($this->db, $cmd));
             return $row[0];
         }
 
-        public function getResult($cmd)
-        {
+        public function getResult($cmd) {
             return $this->query($cmd, 1);
         }    # Returns all the records returned.
 
-        public function queryROW($cmd)
-        {
+        public function queryROW($cmd) {
             return $this->query($cmd, 2);
         }    # Returns an array of 1 result
 
-        public function queryOBJ($cmd)
-        {
+        public function queryOBJ($cmd) {
             return $this->query($cmd, 3);
         }    # Returns an object of first result
 
-        public function querySQL($cmd)
-        {
+        public function querySQL($cmd) {
             return $this->query($cmd, 4);
         }    # Returns as associative-array(hash) of 1 result
 
-        public function queryROWS($cmd)
-        {
+        public function queryROWS($cmd) {
             return $this->query($cmd, 5);
         }    # Returns the number of rows in a result set
 
-        public function fetchROW($cmd)
-        {
+        public function fetchROW($cmd) {
             return $this->query($cmd, 6);
         }    # Returns an associative array that corresponds to the fetched row, or FALSE if there are no more rows.
+
+        public function fetchAllAssoc($cmd) {
+            return $this->query($cmd, 8);
+        }
 
         /**
          * The primary query function, used by most other functions that use a resultset (selects)
          */
-        public function query($cmd, $mode = 0, $no_debug = false)
-        {            # with mode = 0 or 1, it will return the result set, all the records returned.
+        public function query($cmd, $mode = 0, $no_debug = false) {            # with mode = 0 or 1, it will return the result set, all the records returned.
             //print $cmd."<br>";
 
             if ($this->query_debugging == true && !$no_debug) {
@@ -512,6 +495,8 @@
                 return mysqli_num_rows($res);
             } elseif ($mode == 6) {
                 return mysqli_fetch_assoc($res);
+            } elseif ($mode == 8) {
+                return mysqli_fetch_all($res, MYSQLI_ASSOC);
             }
         }
     }

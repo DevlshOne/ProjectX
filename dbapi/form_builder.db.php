@@ -42,10 +42,9 @@ class FormBuilderAPI{
 	    $campaign_id = intval($id);
 	    $screen_id = intval($scr);
 	    $sql = "SELECT * FROM `" . $this->table . "` WHERE `campaign_id` = " . $campaign_id . " AND `screen_num` = " . $screen_id . " AND `deleted` = 'no'";
-	    $data = $_SESSION['dbapi']->query($sql);
-//	    echo __METHOD__ . var_dump($fields) . PHP_EOL;
-//        echo json_encode($data);
-	    return json_encode($data);
+	    $data = $_SESSION['dbapi']->fetchAllAssoc($sql);
+//        echo var_dump($data);
+        return $data;
     }
 
 	function getResults($info){
@@ -59,7 +58,7 @@ class FormBuilderAPI{
 				$sql .= "`id`='".intval($sid)."' ";
 			}
 			$sql .= ") ";
-		}else if($info['campaign_id']){
+		} else if(isset($info['campaign_id'])) {
 			$sql .= " AND `campaign_id`='" . intval($info['id']) . "' ";
 		}
 	### ORDER BY
@@ -72,8 +71,6 @@ class FormBuilderAPI{
 				$sql .= "`$k` ".mysqli_real_escape_string($_SESSION['dbapi']->db,$v)." ";
 			}
 		}
-        ## GROUP BY
-        #$sql .= " GROUP BY `campaign_id` ";
         ## LIMITS
 		if(is_array($info['limit'])){
 			$sql .= " LIMIT ".

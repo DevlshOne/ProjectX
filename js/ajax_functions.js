@@ -216,14 +216,19 @@ function handleEditXML(xmldata, success_callback_func) {
  *                                Example: function named parseXMLStuff(xmldoc), you would pass in "parseXMLStuff"
  * @return Nothing! Call back should handle everything you need!
  */
-function loadAjaxData(loadurl, callback_func_name) {
+function loadAjaxData(loadurl, callback_func_name, mode) {
     // console.log('loadAjaxData :: ' + loadurl + ' :: ' + callback_func_name);
     $.ajax({
         url: loadurl,
         type: "POST",
         success: function (data) {
-            var xmldoc = getXMLDoc(data);////(new DOMParser()).parseFromString(data, "text/xml");
-            eval(callback_func_name + '(xmldoc)');
+            if(mode === 'json') {
+                eval(callback_func_name + '(data)');
+            } else {
+                let xmldoc = getXMLDoc(data);
+                ////(new DOMParser()).parseFromString(data, "text/xml");
+                eval(callback_func_name + '(xmldoc)');
+            }
         }
     });
 }
