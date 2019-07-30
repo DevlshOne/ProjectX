@@ -35,7 +35,6 @@
                         $out .= $key . '="' . htmlentities($val) . '" ';
                     }
                     $out .= " />\n";
-                    ///$out .= "</".$this->xml_record_tagname.">";
                     echo $out;
                     break;
                 case 'edit':
@@ -57,7 +56,15 @@
                 case 'getScreen':
                     $campaign_id = intval($_REQUEST['campaign_id']);
                     $screen_number = intval($_REQUEST['screen_number']);
-                    $_SESSION['dbapi']->form_builder->getFieldsByScreen($campaign_id, $screen_number);
+                    $sql = "SELECT * FROM `custom_fields` WHERE `campaign_id` = " . $campaign_id . " AND `screen_num` = " . $screen_number . " AND `deleted` = 'no'";
+                    $res = mysqli_query($_SESSION['dbapi']->db, $sql);
+                    if($res) {
+//                        $data = $_SESSION['dbapi']->query($sql);
+                        $data = mysqli_fetch_all($res, MYSQLI_ASSOC);
+//                        echo var_dump($data);
+                        $out = json_encode($data, JSON_PRETTY_PRINT);
+                        echo $out;
+                    }
                     break;
                 default:
                 case 'list':
@@ -68,7 +75,7 @@
                     if (isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])) {
                         $pagemode = true;
                         $cntdat = $dat;
-                        $cntdat['fields'] = 'COUNT(DISTINCT `campaign_id`)';
+                        $cntdat['fields'] = 'COUNT(DISTINCT `campaign_id`) AS id';
                         list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->form_builder->getResults($cntdat));
                         $dat['limit'] = array("offset" => intval($_REQUEST['index']), "count" => intval($_REQUEST['pagesize']));
                     }
@@ -76,6 +83,7 @@
                     if ($_REQUEST['orderby'] && $_REQUEST['orderdir']) {
                         $dat['order'] = array($_REQUEST['orderby'] => $_REQUEST['orderdir']);
                     }
+                    $dat['fields'] = "DISTINCT(campaign_id) as id, campaign_id";
                     $res = $_SESSION['dbapi']->form_builder->getResults($dat);
                     ## OUTPUT FORMAT TOGGLE
                     switch ($_SESSION['api']->mode) {

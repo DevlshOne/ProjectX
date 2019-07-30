@@ -42,9 +42,10 @@ class FormBuilderAPI{
 	    $campaign_id = intval($id);
 	    $screen_id = intval($scr);
 	    $sql = "SELECT * FROM `" . $this->table . "` WHERE `campaign_id` = " . $campaign_id . " AND `screen_num` = " . $screen_id . " AND `deleted` = 'no'";
-//	    echo $sql;
-	    $fields = $_SESSION['dbapi']->query($sql);
-	    return $fields;
+	    $data = $_SESSION['dbapi']->query($sql);
+//	    echo __METHOD__ . var_dump($fields) . PHP_EOL;
+//        echo json_encode($data);
+	    return json_encode($data);
     }
 
 	function getResults($info){

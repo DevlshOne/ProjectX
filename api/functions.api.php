@@ -117,21 +117,14 @@ class API_Functions{
 		}
 	}
 
-
-
-	function renderResultSetJSON($tagname,$res){
-
+	function renderResultSetJSON($tagname, $res){
+//	    echo __METHOD__ . $res . PHP_EOL;
 		$out = '';
-
 		$newline = "\n";
-
 		$y=0;
 		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
-
 			//$out .= '"'.mysqli_real_escape_string($_SESSION['dbapi']->db,$tagname).'":['.$newline;
-
 			if($y++ > 0)$out .= ",";
-
 			$out .= '['.$newline;
 			$x=0;
 			foreach($row as $key=>$val){
@@ -140,82 +133,49 @@ class API_Functions{
 				}else{
 					$out .= ",";
 				}
-
 				$out .= '"'.mysqli_real_escape_string($_SESSION['dbapi']->db,$key).'":"'.mysqli_real_escape_string($_SESSION['dbapi']->db,$val).'"';
 			}
 			if($x > 0){
 				$out .= '}'.$newline;
 			}
-
 			$out .= ']'.$newline;
 		}
-
+//		$out = json_encode($res);
+//		echo var_dump($out);
 		return $out;
-
 	}
-
 
 	function renderSecondaryAjaxXML($tagname,$out_stack){
 		$out = '<'.$tagname.' ';
-
-
-
 		foreach($out_stack as $idx=>$data){
-
-
-
 			$out .= ' data_'.intval($idx).'="'.htmlentities($data).'" ';
-
 		}
-
 		$out .= ' />'."\n";
-
 		return $out;
 	}
 
 	function renderResultSetXML($tagname,$res){
-
-
 		$_SESSION['API_CACHE_STORAGE'][$tagname] = array();
-
-
 		$out = '';
-
 		$taghead = '<'.$tagname.' ';
 		$tagfoot = ' />'."\n";
 		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
-
 			## STORE IN SESSION CACHE, SO THAT SECONDARY AJAX POSTS CAN USE IT, TO SPEED THINGS UP
 			if($row['id'] > 0){
 				$_SESSION['API_CACHE_STORAGE'][$tagname][$row['id']] = $row;
 			}
-
-
 			$out .= $taghead;
-
 			foreach($row as $key=>$val){
-
-
 				$val = preg_replace('/[^a-zA-Z0-9.,-=_ $@#^&:;\'"\n\?]/','', $val);
-
-
 				if($tagname == 'Account' && $key == 'name'){
 					// SOME NINJA SHIT I HAD TO DO, FOR THE NEW TAB SYSTEM
 					// ( TO POPULATE THE TABS NAME CONTENT )
 					$val = '<span id="accnt_hiddenninja_namespan_'.$row['id'].'">'.htmlentities($val).'</span>';
 				}
-
-
-
 				$out .= $key.'="'.htmlentities($val).'" ';
-
 			}
-
 			$out .= $tagfoot;
 		}
-
-
 		return $out;
 	}
-
 }

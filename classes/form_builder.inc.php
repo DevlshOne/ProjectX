@@ -271,17 +271,22 @@
                 }).droppable({
                     drop: function(e, ui) {
                         let el = $(ui.draggable);
-                        el.resizable({
-                            containment: 'parent',
-                            maxHeight: 65,
-                            minHeight: 65,
-                            minWidth: 200,
-                            maxWidth: 600,
-                            helper: 'ui-resizable-helper',
-                            grid: 200,
-                            ghost: true,
-                            handles: 'e'
-                        });
+                        // el.resizable({
+                        //     containment: '#dropZone',
+                        //     maxHeight: 65,
+                        //     minHeight: 65,
+                        //     minWidth: 200,
+                        //     maxWidth: 600,
+                        //     helper: 'ui-resizable-helper',
+                        //     grid: 200,
+                        //     ghost: false,
+                        //     handles: 'e',
+                        //     stop: function(e2, ui2) {
+                        //         ui2.position.left = 0;
+                        //         ui2.size.height = 65;
+                        //         ui2.size.width = Math.round( ui2.size.width / 200 ) * 200;
+                        //     }
+                        // });
                         $(this).append(el);
                     }
                 });
@@ -310,7 +315,7 @@
                     // console.log(f);
                     f.create();
                     f.populate();
-                    f.reposition();
+                    // f.reposition();
                 }
 
                 function loadNewScreen(jsondata) {
@@ -525,7 +530,8 @@
                         "is_locked": "0",
                         "field_name": null
                     }];
-                    jsondata = testData;
+                    // jsondata = testData;
+                    console.log(jsondata);
                     if (jsondata.length == 0 || jsondata === undefined) {
                         console.log('No data found');
                     } else {
@@ -559,8 +565,44 @@
 
                 }
 
+                function saveField(i) {
+                    let f = formFields[i];
+                    f.save();
+                }
+
+
+                // [
+                //     {
+                //         text: "Ok",
+                //         icon: "ui-icon-heart",
+                //         click: function() {
+                //             $( this ).dialog( "close" );
+                //         }
+                //
+
                 function editField(i) {
                     let f = formFields[i];
+                    let objname = 'dialog-modal-preview-form-builder';
+                    $('#' + objname).dialog("open");
+                    $('#' + objname).html('<div id="editBox" class="pct100"></div>');
+                    $('#' + objname).dialog('option', 'title', 'Editing field');
+                    $('#' + objname).dialog('option', 'buttons', [
+                        {
+                            text: 'Save',
+                            icon: 'ui-icon-disk',
+                            click: function() {
+                                saveField(i);
+                                $(this).dialog('close');
+                            }
+                        },
+                        {
+                            text: 'Cancel',
+                            icon: 'ui-icon-cancel',
+                            click: function() {
+                                $(this).dialog('close');
+                            }
+                        }
+                    ]);
                     f.edit();
                 }
 
@@ -607,7 +649,7 @@
                         'min-height': '400px',
                         'overflow': 'auto'
                     });
-                    changeScreen(formID, $('#screenNumber option:selected').val());
+                    changeScreen(formID, 0);
                 });
             </script>
             <div class="pct100">
@@ -628,7 +670,7 @@
                             <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>
                             <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">SELECT Field</li>
                             <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="2">TEXTAREA Field</li>
-                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="99">EMPTY Filler</li>
+<!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="99">EMPTY Filler</li>-->
                         </ul>
                         <ul id="dropZone" class="lefty pct100">
                             <li class="ui-state-default fldHolder"></li>

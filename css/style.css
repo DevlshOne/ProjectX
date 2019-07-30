@@ -212,7 +212,7 @@ a:hover {
 }
 #dropZone {
 	float:left;
-    display: inline-grid;
+    display: inline-block;
 	width: 100%;
 }
 .fldMaker {

@@ -48,22 +48,28 @@ frmField.prototype = {
     saveToDB: function() {
 
     },
+    save: function() {
+        console.log('Saving');
+      this.populate();
+    },
     create: function() {
-        let newLI = '<li class="ui-state-default fldHolder">\n' +
-            '<div class="fldHeader">\n' +
-            '<div class="fldTitle">[' + this.screenNum + ':' + this.idx + '] - ' + this.txtLabel + '</div>\n' +
-            '<div class="fldActions">\n' +
-            '<input type="button" value="Remove" onclick="removeField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
-            '<input type="button" value="Edit" onclick="editField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
-            '<input type="button" value="Preview" onclick="previewField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
-            '</div>\n' +
-            '</div>\n' +
+        let newLI = '<li style="width:' + parseInt(parseInt(this.lblWidth) + parseInt(this.fldWidth)) + 'px;" title="Double-Click to Edit" ondblclick="editField(' + this.idx + '); return false;" class="ui-state-default fldHolder">\n' +
+            // '<div class="fldHeader">\n' +
+            // '<div class="fldActions">\n' +
+            // '<div class="fldTitle">[' + this.screenNum + ':' + this.idx + '] - ' + this.txtLabel + '</div>\n' +
+            // '<input type="button" value="Remove" onclick="removeField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
+            // '<input type="button" value="Edit" onclick="editField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
+            // '<input type="button" value="Save" onclick="saveField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
+            // '</div>\n' +
+            // '</div>\n' +
+            // '<div class="fldTitle">' + this.txtLabel + '</div>\n' +
             '<div class="field"></div>\n' +
             '</li>\n';
         $('ul#dropZone').append(newLI);
     },
     edit: function() {
-        let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
+        // let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
+        let fldRendering = $('#editBox');
         let fieldAsForm = '<form id="fieldAsForm' + this.idx + '">' +
             '<table class="pct100 tightTable">' +
             '<tr>' +
@@ -279,7 +285,7 @@ frmField.prototype = {
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
                 if(this.isHidden) {
-                    lblObj.css('display', 'none');
+                    // lblObj.css('display', 'none');
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 break;
@@ -307,7 +313,7 @@ frmField.prototype = {
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
                 if(this.isHidden) {
-                    lblObj.css('display', 'none');
+                    // lblObj.css('display', 'none');
                 }
                 let arrOptions = this.fldOptions.split(';');
                 jQuery.each(arrOptions, function(i, v) {

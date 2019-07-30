@@ -61,7 +61,6 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 
 
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
-
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
     <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
     <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/>
