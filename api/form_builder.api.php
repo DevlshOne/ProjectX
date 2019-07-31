@@ -56,6 +56,9 @@
                 case 'getScreen':
                     $campaign_id = intval($_REQUEST['campaign_id']);
                     $screen_number = intval($_REQUEST['screen_number']);
+                    /*
+                     * nowhere in here am I adding any XML or creating an XML doc - so where the hell is it coming from?
+                     */
                     $data = $_SESSION['dbapi']->form_builder->getFieldsByScreen($campaign_id, $screen_number);
                     $j = json_encode($data);
                     echo $j;

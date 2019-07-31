@@ -345,7 +345,7 @@
                     // load new screen fields
                     // console.log('Changing screen to ' + c + ':' + s);
                     clearDropZone();
-                    $.getJSON('api/api.php?get=form_builder&action=getScreen&campaign_id=' + c + '&screen_number=' + s, function(data) {
+                    $.getJSON('api/api.php?get=form_builder&mode=json&action=getScreen&campaign_id=' + c + '&screen_number=' + s, function(data) {
                         loadNewScreen(data);
                     });
                     // loadAjaxData(getFieldsURL(c, s), 'loadNewScreen', 'json');
@@ -357,18 +357,8 @@
 
                 function saveField(i) {
                     let f = formFields[i];
-                    f.save();
+                    f.saveToDB();
                 }
-
-
-                // [
-                //     {
-                //         text: "Ok",
-                //         icon: "ui-icon-heart",
-                //         click: function() {
-                //             $( this ).dialog( "close" );
-                //         }
-                //
 
                 function editField(i) {
                     let f = formFields[i];

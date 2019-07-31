@@ -46,11 +46,8 @@ function frmField(index, o) {
 frmField.prototype = {
     constructor: frmField,
     saveToDB: function() {
-
-    },
-    save: function() {
-        console.log('Saving');
-      this.populate();
+        console.log('Saving field ' + this.idx);
+        this.populate();
     },
     create: function() {
         let newLI = '<li style="width:' + parseInt(parseInt(this.lblWidth) + parseInt(this.fldWidth)) + 'px;" title="Double-Click to Edit" ondblclick="editField(' + this.idx + '); return false;" class="ui-state-default fldHolder">\n' +
