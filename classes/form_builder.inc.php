@@ -358,6 +358,12 @@
                 function saveField(i) {
                     let f = formFields[i];
                     f.saveToDB();
+                    f.populate();
+                }
+
+                function deleteField(i) {
+                    let f = formFields[i];
+                    f.markDeleted();
                 }
 
                 function editField(i) {
@@ -368,7 +374,17 @@
                     $('#' + objname).dialog('option', 'title', 'Editing field');
                     $('#' + objname).dialog('option', 'buttons', [
                         {
-                            text: 'Save',
+                            text: 'Delete',
+                            title: 'Remove field from this form',
+                            icon: 'ui-icon-trash',
+                            click: function() {
+                                deleteField(i);
+                                $(this).dialog('close');
+                            }
+                        },
+                        {
+                            text: 'Done',
+                            title: 'Finish editing and save',
                             icon: 'ui-icon-disk',
                             click: function() {
                                 saveField(i);
@@ -377,6 +393,7 @@
                         },
                         {
                             text: 'Cancel',
+                            text: 'Cancel editing',
                             icon: 'ui-icon-cancel',
                             click: function() {
                                 $(this).dialog('close');

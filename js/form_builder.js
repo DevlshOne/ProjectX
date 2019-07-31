@@ -64,11 +64,17 @@ frmField.prototype = {
             '</li>\n';
         $('ul#dropZone').append(newLI);
     },
+    markDeleted: function() {
+
+    },
     edit: function() {
         // let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
         let fldRendering = $('#editBox');
         let fieldAsForm = '<form id="fieldAsForm' + this.idx + '">' +
             '<table class="pct100 tightTable">' +
+            // '<tr>' +
+            // '<td><input type="button" value="Delete" onclick="deleteField(' + this.idx + '); return false;" />&nbsp<input type="button" value="Done" title="Finish editing and save" onclick="doneEditing(' + this.idx + '); return false;" /></td>' +
+            // '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="field_step">Step : </label><select id="field_step' + this.idx + '" name="field_step"><option>-1</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></td>' +
             '</tr>' +
