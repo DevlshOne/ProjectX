@@ -125,70 +125,65 @@
 			<script src="js/ajax_functions.js"></script>
 			<script src="js/functions.js"></script>
 			<script src="js/page_system.js"></script>
-
-
-
 			<?/** NEW NAVIGATION STUFF
 
 			*
 			***/?>
-
-
-
-
 			<script src="js/modernizr.js"></script> <!-- Modernizr -->
 			<script src="js/jquery.menu-aim.js"></script>
 			<script src="js/main.js"></script> <!-- Resource jQuery -->
-
-
-
-
 			<script>
-
 				function genReport(frm, area, printable){
-
-
 					if(area){
-
 						$('#'+area+'_submit_report_button').hide();
 						$('#'+area+'_loading_plx_wait_span').show();
 					}
-
 					var url = frm.action;
-
 					if(printable){
 						url += "&no_nav=1";
 					}
-
 					$.post(url, $('#'+frm.id).serialize()).done(function(data){
-
 						if(printable){
-
 							//$('#main_content').html(data);
-
 							var win = window.open("about:blank");
 							$(win.document.body).html(data);
-
 							win.focus();
 							//alert("open window here");
-
 						}else{
-
 							$('#main_content').html(data);
-
 						}
-
-
 						if(area){
-
 							$('#'+area+'_submit_report_button').show();
 							$('#'+area+'_loading_plx_wait_span').hide();
 						}
-
 					});
 					return false;
 				}
 
+                function download(type, filename, text) {
+                    let element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/' + type + ';charset=utf-8,' + encodeURIComponent(text));
+                    element.setAttribute('download', filename);
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                }
+
+                function genCSV(tableElement) {
+                    $(tableElement).each(function () {
+                        let $table = $(this);
+                        let dFile = $('#reportTitle').val() + '.csv';
+                        let csv = $table.table2CSV({
+                            delivery: 'value',
+                            filename: dFile
+                        });
+                        download('csv', dFile, csv);
+                        // let hdrs = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(csv);
+                        // window.location.download = dFile;
+                        // window.location.href = hdrs;
+                    });
+                }
 
 				function loadSection(url){
 
@@ -324,7 +319,6 @@
 
 					include_once("classes/campaigns.inc.php");
 					$_SESSION['campaigns']->handleFLOW();
-
 				}else{
 
 					accessDenied("Campaigns");
@@ -556,6 +550,14 @@
 
 					include_once("classes/login_tracker.inc.php");
 					$_SESSION['login_tracker']->handleFLOW();
+<<<<<<< index.php
+
+				}else{
+
+					accessDenied("LoginTracker");
+
+				}
+=======
 
 				}else{
 <<<<<<< index.php
@@ -566,6 +568,7 @@
 					accessDenied("LoginTracker");
 
 				}		
+>>>>>>> index.php
 >>>>>>> index.php
 
 				}		
@@ -709,6 +712,11 @@
 
 
 				break;
+
+                case 'dialer_sales':
+                    include_once("classes/dialer_sales.inc.php");
+                    $_SESSION['dialer_sales']->handleFlow();
+                    break;
 
 			case 'employee_hours':
 

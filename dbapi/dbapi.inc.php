@@ -76,115 +76,104 @@ class DBAPI {
     public $quiz_results;
     public $quiz_questions;
     public $list_tool_tasks;
+    public $dialer_sales;
 
 
-	/**
-	 * DBAPI Constructor
-	 * Initialize the class, connect, etc
-	 */
-	function __construct(){
+    /**
+     * DBAPI Constructor
+     * Initialize the class, connect, etc
+     */
+    public function __construct()
+    {
 
-		## INCLUDE ALL THE REQUIRED FILES
-		$this->initIncludes();
+        ## INCLUDE ALL THE REQUIRED FILES
+        $this->initIncludes();
 
-		$this->page_start_time = microtime_float();
+        $this->page_start_time = microtime_float();
 
-		## CONNECT TO THE DATABASE
-		$this->connect();
-
-
-		## INIT THE SESSION SITE CONFIG DATA FROM PREFS TABLE
-		$this->initSiteConfig();
-	}
+        ## CONNECT TO THE DATABASE
+        $this->connect();
 
 
-	/**
-	 * Destructor - Cleanup Time
-	 */
-	function __destruct(){
-
-		if($this->query_debugging == true){
-
-			$page_end_time = microtime_float();
-
-			$time_taken = $page_end_time - $this->page_start_time;
+        ## INIT THE SESSION SITE CONFIG DATA FROM PREFS TABLE
+        $this->initSiteConfig();
+    }
 
 
-			if(!$this->slow_page_debugging_only || ($this->slow_page_debugging_only == true && $time_taken > $this->slow_page_time_limit) ){
+    /**
+     * Destructor - Cleanup Time
+     */
+    public function __destruct()
+    {
+        if ($this->query_debugging == true) {
+            $page_end_time = microtime_float();
 
-				$this->logPageLoad($time_taken);
-
-
-
-			}
-
-		}
-
-		## DISCONNECT ON DESTRUCTION
-		$this->disconnect();
+            $time_taken = $page_end_time - $this->page_start_time;
 
 
+            if (!$this->slow_page_debugging_only || ($this->slow_page_debugging_only == true && $time_taken > $this->slow_page_time_limit)) {
+                $this->logPageLoad($time_taken);
+            }
+        }
 
-	}
+        ## DISCONNECT ON DESTRUCTION
+        $this->disconnect();
+    }
 
-	function logPageLoad($time_taken){
+    public function logPageLoad($time_taken)
+    {
 
-		// WRITE TO THE LOG FILE
-		$output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.$_SESSION['user']['id'].") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken,3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
-		file_put_contents($this->query_log_file, $output, FILE_APPEND);
-
-
-		// WRITE TO THE DATABASE
-		try{
-
-			$dat = array();
-			$dat['time'] = time();
-			$dat['user'] = $_SESSION['user']['username'];
-			$dat['user_id'] = $_SESSION['user']['id'];
-			$dat['total_queries'] = $this->page_query_count;
-			$dat['total_load_time'] = round($time_taken,3);
-			$dat['ip_address'] = $_SERVER['REMOTE_ADDR'];
-			$dat['url'] = $_SERVER['REQUEST_URI'];
-
-			$dat['post_values'] = print_r($_POST, 1);
+        // WRITE TO THE LOG FILE
+        $output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.$_SESSION['user']['id'].") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
+        file_put_contents($this->query_log_file, $output, FILE_APPEND);
 
 
-			$_SESSION['dbapi']->aadd($dat,'analysis_page_loads');
+        // WRITE TO THE DATABASE
+        try {
+            $dat = array();
+            $dat['time'] = time();
+            $dat['user'] = $_SESSION['user']['username'];
+            $dat['user_id'] = $_SESSION['user']['id'];
+            $dat['total_queries'] = $this->page_query_count;
+            $dat['total_load_time'] = round($time_taken, 3);
+            $dat['ip_address'] = $_SERVER['REMOTE_ADDR'];
+            $dat['url'] = $_SERVER['REQUEST_URI'];
 
-		} catch (Exception $e) {
+            $dat['post_values'] = print_r($_POST, 1);
+
+
+            $_SESSION['dbapi']->aadd($dat, 'analysis_page_loads');
+        } catch (Exception $e) {
 
 //echo "Caught Exception ".$e->getMessage()."\n";
-
-		}
-
-	}
+        }
+    }
 
 
-	/**
-	 * Include all the required files
-	 */
-	function initIncludes(){
+    /**
+     * Include all the required files
+     */
+    public function initIncludes()
+    {
 
-		## INCLUDE DATABASE CONNECTION INFO AND OTHER SITE DATA
-		//include_once($_SERVER["DOCUMENT_ROOT"]."/site_config.php");
-		//include_once("./site_config.php");
-
-
-		include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
-
-		## ACTIVITY LOG
-		include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
-		$this->activitys = new ActivitysAPI();
+        ## INCLUDE DATABASE CONNECTION INFO AND OTHER SITE DATA
+        //include_once($_SERVER["DOCUMENT_ROOT"]."/site_config.php");
+        //include_once("./site_config.php");
 
 
-		## ACTION LOG
-		include_once($_SESSION['site_config']['basedir']."dbapi/action_log.db.php");
-		$this->action_log = new ActionLogAPI();
+        include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
 
+        ## ACTIVITY LOG
+        include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
+        $this->activitys = new ActivitysAPI();
 
-		## CAMPAIGNS
-		include_once($_SESSION['site_config']['basedir']."dbapi/campaigns.db.php");
-		$this->campaigns = new CampaignsAPI();
+        ## ACTION LOG
+        include_once($_SESSION['site_config']['basedir']."dbapi/action_log.db.php");
+        $this->action_log = new ActionLogAPI();
+
+        ## CAMPAIGNS
+        include_once($_SESSION['site_config']['basedir']."dbapi/campaigns.db.php");
+        $this->campaigns = new CampaignsAPI();
 
         ## CAMPAIGN PARENTS
         include_once($_SESSION['site_config']['basedir']."dbapi/cmpgn_parents.db.php");

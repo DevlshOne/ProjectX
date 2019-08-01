@@ -90,6 +90,7 @@ class API_Campaigns{
 			$dat['parent_campaign_id'] = $_POST['parent_campaign_id'];
 			$dat['status'] = $_POST['status'];
 
+
 			if($_POST['px_hidden']){
 
 				$dat['px_hidden'] = ($_POST['px_hidden'] == 'yes')?'yes':'no';
@@ -248,4 +249,3 @@ class API_Campaigns{
 
 
 }
-

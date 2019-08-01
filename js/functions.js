@@ -16,8 +16,8 @@ saf = ( nua.indexOf( 'Safari' ) != -1 );
 moz = ( nua.indexOf( 'Gecko' ) != -1 && !saf && !konq);
 ie = ( d.all && !op );
 ie4 = ( ie && !dom );
-			
-			
+
+
 
 
 function hasCheckedCheckboxes(baseobj){
@@ -27,7 +27,7 @@ function hasCheckedCheckboxes(baseobj){
 	for(var x=0, y=0;(obj=getEl(baseobj+x)) != null;x++){
 
 		if(obj.checked == true)return true;
-		
+
 	}
 
 	return false;
@@ -84,13 +84,13 @@ function toggleAllChecks(baseobj, way){
 
 
 function makeHourDD(name,sel,classname){
-	
+
 	var out = '<select name="'+name+'" id="'+name+'" ';
 	out += (classname)?' class="'+classname+'"':'';
 	out += '>';
 
 	for(var x=1;x < 25;x++){
-		
+
 		out += '<option value="'+x+'"';
 		out += (sel == x)?' SELECTED':'';
 		out += '>';
@@ -113,12 +113,12 @@ function makeNumberDD(name,sel,start,end,inc,zeropad,tag_inject,blankfield){
 	out += (blankfield)?'<option value=""></option>':'';
 
 	for(var x=start;x <= end;x += inc){
-		
+
 		out+= '<option value="'+((zeropad && x < 10)?'0'+x:x)+'"';
 		out+= (sel == x)?' SELECTED ':'';
 		out+= '>'+((zeropad && x < 10)?('0'+x):x);
 	}
-	
+
 	out += '</select>';
 
 	return out;
@@ -128,15 +128,15 @@ function makeNumberDD(name,sel,start,end,inc,zeropad,tag_inject,blankfield){
 function getMonthDD(name,sel,extra_attr){
 	var out = '<select name="'+name+'"  id="'+name+'" '+extra_attr+' >';
 	for(var x=1;x <= 12;x++){
-		
+
 		out +='<option value="'+x+'"';
-		
+
 		if(x == sel)out += ' selected ';
-		
+
 		out +='>'+x+'</option>';
 	}
 	out +='</select>';
-	
+
 	return out;
 }
 
@@ -144,24 +144,24 @@ function getMonthDD(name,sel,extra_attr){
 function getDayDD(name,sel,extra_attr){
 	var out = '<select name="'+name+'"  id="'+name+'" '+extra_attr+' >';
 	for(var x=1;x <= 31;x++){
-		
+
 		out +='<option value="'+x+'"';
 		if(x == sel)out += ' selected ';
 		out +='>'+x+'</option>';
 	}
-	
+
 	out +='</select>';
 	return out;
 }
 
 function getYearDD(name,sel,extra_attr){
-	
+
 	var today = new Date();
 	var year = today.getFullYear();
-	
+
 	var out = '<select name="'+name+'" id="'+name+'" '+extra_attr+' >';
 	for(var x=1970;x < (year+1);x++){
-		
+
 		out +='<option value="'+x+'"';
 		if(x == sel)out += ' selected ';
 		out +='>'+x+'</option>';
@@ -200,7 +200,7 @@ function renderTimeFormatted(input){
 
 	var tmptime = parseInt(input);
 	var tmphours = Math.floor(tmptime/3600);
-	
+
 	// REMOVE HOURS
 	tmptime -= (tmphours * 3600);
 
@@ -221,7 +221,7 @@ function renderTimeFormatted(input){
 
 function recheck(msg,obj){
 	if(msg)alert(msg);
-	
+
 	if(!document.layers)try{obj.select();}catch(e){ }
 	return false;
 }
@@ -238,30 +238,30 @@ function go(url){ window.location=url;}
  * @return		array of name/value on form validation failure,
  * 				or Returns the string of name/value combos on success
  */
-function getFormValues(fobj,valFunc){ 
+function getFormValues(fobj,valFunc){
 
-   var str = ""; 
-   var valueArr = null; 
-   var val = ""; 
-   var cmd = ""; 
+   var str = "";
+   var valueArr = null;
+   var val = "";
+   var cmd = "";
 
-   for(var i = 0;i < fobj.elements.length;i++){ 
+   for(var i = 0;i < fobj.elements.length;i++){
 
-	   
+
 	   //alert(fobj.elements[i].type+' '+fobj.elements[i].name+" "+fobj.elements[i].value);
 	   if(!fobj.elements[i].name)continue;
-	   
-	   
-       switch(fobj.elements[i].type){ 
-       case "text": 
+
+
+       switch(fobj.elements[i].type){
+       case "text":
        case "textarea":
        case "password":
-            if(valFunc){ 
+            if(valFunc){
 
-            	// use single quotes for argument so that the value of 
-            	// fobj.elements[i].value is treated as a string not a literal 
+            	// use single quotes for argument so that the value of
+            	// fobj.elements[i].value is treated as a string not a literal
 
-            	cmd = valFunc + "("+'fobj.elements[i].name'+"," + 'fobj.elements[i].value' + ","+'fobj'+")"; 
+            	cmd = valFunc + "("+'fobj.elements[i].name'+"," + 'fobj.elements[i].value' + ","+'fobj'+")";
 
             	val = eval(cmd);
 
@@ -270,32 +270,32 @@ function getFormValues(fobj,valFunc){
                 	var outarr = new Array();
                 	outarr[0] = fobj.elements[i].name;
                 	outarr[1] = fobj.elements[i].value;
-                	
+
                 	return outarr;
                 }
-            } 
+            }
 
             // NAME = VALUE &
-            str += fobj.elements[i].name+"="+escape(fobj.elements[i].value)+"&"; 
+            str += fobj.elements[i].name+"="+escape(fobj.elements[i].value)+"&";
 
-            break; 
+            break;
 
 
        case "hidden":
-    	   
-    	   
+
+
     	   // NAME = VALUE &
-    	   str += fobj.elements[i].name + "=" + escape(fobj.elements[i].value) + "&"; 
+    	   str += fobj.elements[i].name + "=" + escape(fobj.elements[i].value) + "&";
     	   break;
        case "checkbox":
-    	   
+
     	   //alert(fobj.elements[i].name + " "+fobj.elements[i].value)
-    	   
+
     	   // NAME = VALUE &
     	   if(fobj.elements[i].checked){
     		   str += fobj.elements[i].name + "=" + escape(fobj.elements[i].value) + "&";
     	   }
-    	   
+
     	   break;
        case "radio":
 
@@ -303,20 +303,20 @@ function getFormValues(fobj,valFunc){
     	   if(fobj.elements[i].checked){
     		   str += fobj.elements[i].name + "=" + escape(fobj.elements[i].value) + "&";
     	   }
-    	   
+
     	   break;
-       case "select-one": 
+       case "select-one":
 
-    	   if(valFunc){ 
+    	   if(valFunc){
 
-               //use single quotes for argument so that the value of 
+               //use single quotes for argument so that the value of
 
-               //fobj.elements[i].value is treated as a string not a literal 
+               //fobj.elements[i].value is treated as a string not a literal
 
                cmd = valFunc + "("+'fobj.elements[i].name'+"," + 'fobj.elements[i].value' +","+'fobj'+")";
 
-               val = eval(cmd); 
-               
+               val = eval(cmd);
+
                if(!val){
 
             	   var outarr = new Array();
@@ -324,38 +324,38 @@ function getFormValues(fobj,valFunc){
             	   outarr[1] = fobj.elements[i].value;
             	  return outarr;
                }
-           } 
-    	   
-    	   
-    	   //alert()
-    	   
-            str += fobj.elements[i].name+ "=" +fobj.elements[i].value + "&"; 
+           }
 
-            break; 
+
+    	   //alert()
+
+            str += fobj.elements[i].name+ "=" +fobj.elements[i].value + "&";
+
+            break;
        case "select-multiple":
-    	   
+
     	   //alert(fobj.elements[i].value);
-    	   
+
     	   var valarr = getSelectValues(fobj.elements[i]);
-    	   
+
     	   for(var x=0;x < valarr.length;x++){
-    	   
-    	   
+
+
     		   str += fobj.elements[i].name+ "=" +valarr[x]+ "&";
-    		   
+
     	   }
 
-           break;  
-       } 
+           break;
+       }
 
-   } 
+   }
 
-   
-   str = str.substr(0,(str.length - 1)); 
+
+   str = str.substr(0,(str.length - 1));
 
   // alert(str);
-   
-   return str; 
+
+   return str;
 
 }
 
@@ -377,53 +377,53 @@ function getSelectValues(select){
 
 
 function ieDisplay(objid,way){
-	
-	
+
+
 	var obj = document.getElementById(objid);
-	
+
 	try{
-		
+
 		obj.style.display = (way)?'inline':'none';
-		
+
 	}catch(e){
-		
-		window.status='JS Exception ('+e+')';	
+
+		window.status='JS Exception ('+e+')';
 
 	}
 }
 
 
-function zeroFill( number, width ){ 
+function zeroFill( number, width ){
   width -= number.toString().length;
-  
-  if ( width > 0 ){ 
-	  return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number; 
-  } 
-  return number; 
-} 
+
+  if ( width > 0 ){
+	  return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
+  }
+  return number;
+}
 
 
 
 
 
 function makeTimebar(basename,mode=0, curDate,stack, extra_attr){
-	
-	
-	
+
+
+
 	// Mode 0 = full
 	// Mode 1 = date
 	// mode 2 = hour
 
 	var output = "";
-	
+
 	var hour = curDate.getHours() + 1;
 	var min = curDate.getMinutes();
 	var month = curDate.getMonth() + 1;
 	var day = curDate.getDate();
 	var year = curDate.getFullYear();
-	
+
 	var ampm = (hour > 11)?"pm":"am";
-	
+
 	if(mode == 0 || mode == 2){
 
 		/// makeNumberDD($name,$sel,$start,$end,$inc,$zeropad,$tag_inject)
@@ -439,6 +439,6 @@ function makeTimebar(basename,mode=0, curDate,stack, extra_attr){
 							getDayDD(basename+'day',day,extra_attr)+'/'+
 							getYearDD(basename+'year',year,extra_attr);
 	}
-	
+
 	return output;
 }

@@ -899,6 +899,11 @@ $(function() {
 <<<<<<< classes/sales_analysis.inc.php
 					</tr>
 					<tr>
+						<th colspan="2">
+=======
+<<<<<<< classes/sales_analysis.inc.php
+					</tr>
+					<tr>
 						<td>&nbsp;</td>
 						<td>
 						
@@ -991,6 +996,7 @@ $(function() {
 
 
 			/*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
+>>>>>>> classes/sales_analysis.inc.php
 >>>>>>> classes/sales_analysis.inc.php
 
 							<span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0" /> Loading, Please wait...</span>
@@ -1244,10 +1250,17 @@ $(function() {
 				    ?><td align="center"><?=number_format($agent_data['num_AnswerMachines'])?></td>
 					<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/?>
 
+<<<<<<< classes/sales_analysis.inc.php
+				<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/?>
+
+				<td align="center"><?=$ans_percent?>%</td>
+
+=======
 					<td align="center"><?=$ans_percent?>%</td><?
 				}
 				?>
 
+>>>>>>> classes/sales_analysis.inc.php
 				<td align="center"><?=number_format($agent_data['contacts_per_worked_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_worked_hour'], 2)?></td>
 
 
@@ -1277,6 +1290,9 @@ $(function() {
 				<td align="right">$<?=number_format($agent_data['sales_total'])?></td>
 
 <<<<<<< classes/sales_analysis.inc.php
+=======
+<<<<<<< classes/sales_analysis.inc.php
+>>>>>>> classes/sales_analysis.inc.php
 				<td align="right">$<?=number_format($agent_data['avg_sale'], 2)?></td>
 				<td align="right">$<?=number_format($agent_data['paid_hr'], 2)?></td>
 				<td align="right">$<?=number_format($agent_data['wrkd_hr'], 2)?></td>
@@ -1309,6 +1325,10 @@ $(function() {
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_calls'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_NI'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_XFER'])?></th>
+<<<<<<< classes/sales_analysis.inc.php
+			<th style="border-top:1px solid #000"><?=number_format($totals['total_AnswerMachines'])?></th>
+			<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th>
+=======
 			<?
 				
 				if($this->skip_answeringmachines == false){
@@ -1316,6 +1336,7 @@ $(function() {
 					<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th><?
 				}
 			?>
+>>>>>>> classes/sales_analysis.inc.php
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_contacts_per_worked_hour'], 2).' - '.number_format($totals['total_calls_per_worked_hour'], 2)?></th>
 
 

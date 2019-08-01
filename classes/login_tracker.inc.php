@@ -102,6 +102,14 @@ class LoginTracker{
 								's_section='+escape(frm.s_section.value)+"&"+
 								's_ip='+escape(frm.s_ip.value)+"&"+
 
+								's_date_month='+escape(frm.s_date_month.value)+"&"+'s_date_day='+escape(frm.s_date_day.value)+"&"+'s_date_year='+escape(frm.s_date_year.value)+"&"+
+								's_date2_month='+escape(frm.s_date2_month.value)+"&"+'s_date2_day='+escape(frm.s_date2_day.value)+"&"+'s_date2_year='+escape(frm.s_date2_year.value)+"&"+
+
+								's_date_mode='+escape(frm.s_date_mode.value)+"&"+
+								
+								'data_aggr_search='+escape(frm.data_aggr_search.value)+"&"+	
+								'data_aggr_range='+escape(frm.data_aggr_range.value)+"&"+	
+
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
@@ -202,11 +210,62 @@ class LoginTracker{
 
 			function resetLoginForm(frm){
 
+				// SET FORM VALUES TO BLANK
 				frm.s_id.value = '';
 				frm.s_username.value = '';
 				frm.s_result.value='';
 				frm.s_section.value='';
 				frm.s_ip.value = '';
+
+				// SET DATE RANGE SEARCH MODE TO DATE ONLY
+				frm.s_date_mode.value = 'date';
+
+				// CLEAR CUSTOMER SEARCH FIELDS
+				frm.data_aggr_search.value = 'false';
+				frm.data_aggr_range.value = 'false';
+
+				// GET CURRENT DATE AND GRAB DAY + MONTH
+				var d = new Date();
+				var n = d.getDay();
+				var m = d.getMonth();
+
+				// SET DATE SEARCH INPUTS TO CURRENT DAY + MONTH
+				frm.s_date_day.value = n;
+				frm.s_date_month.value = m+1;
+
+				// RESET DATE RANGE FIELDS
+				$('#nodate_span').hide();
+				$('#s_date_mode').show();
+				$('#date1_span').show();
+				$('#date2_span').hide();
+
+			}
+
+			function toggleDateMode(way){
+
+				if(way == 'daterange'){
+					$('#nodate_span').hide();
+					$('#date1_span').show();
+
+					// SHOW EXTRA DATE FIELD
+					$('#date2_span').show();
+
+				} else if(way == 'hide'){
+				
+					// HIDE ALL INPUTS AND DISPLAY CUSTOM SPAN
+					$('#nodate_span').show();
+					$('#s_date_mode').hide();
+					$('#date1_span').hide();
+					$('#date2_span').hide();
+				
+				} else {
+
+					$('#nodate_span').hide();
+					$('#date1_span').show();
+
+					// HIDE IT
+					$('#date2_span').hide();
+				}
 
 			}
 
@@ -224,6 +283,8 @@ class LoginTracker{
 		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadLogins();return false">
 		
 		<input type="hidden" name="searching_login">
+		<input type="hidden" name="data_aggr_search" value="false" id="data_aggr_search">
+		<input type="hidden" name="data_aggr_range" value="false" id="data_aggr_range">
 
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
@@ -264,12 +325,18 @@ class LoginTracker{
 						<th class="row2">Result</th>
 						<th class="row2">Section</th>
 						<th class="row2">IP</th>
+						<th class="row2">
+						<select name="s_date_mode" onchange="toggleDateMode(this.value);loadLogins();" id="s_date_mode">
+							<option value="date">Date</option>
+							<option value="daterange"<?=($_REQUEST['s_date_mode']=='daterange')?' SELECTED ':''?>>Date Range</option>
+						</select>
+					</th>
 						<td><input type="submit" value="Search" name="the_Search_button"></td>
 					</tr>
 					<tr>
 						<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
 						<td align="center"><input type="text" name="s_username" size="20" value="<?=htmlentities($_REQUEST['s_username'])?>"></td>
-						<td align="center"><select name="s_result">
+						<td align="center"><select name="s_result" id="s_result">
 								<option value="">[All]</option>
 
 								<option value="success">success</option>
@@ -279,7 +346,7 @@ class LoginTracker{
 								<option value="success-api">success-api</option>
 								<option value="failure-api">failure-api</option>
 							</select></td>
-						<td align="center"><select name="s_section">
+						<td align="center"><select name="s_section" id="s_section">
 								<option value="">[All]</option>
 
 								<option value="admin">admin</option>
@@ -292,6 +359,19 @@ class LoginTracker{
 								<option value="API">API</option>
 							</select></td>
 						<td align="center"><input type="text" name="s_ip" size="20" value="<?=htmlentities($_REQUEST['s_ip'])?>"></td>
+						<td align="center"><span id="date1_span"><?
+
+							echo makeTimebar("s_date_",1,null,false,time()," onchange=\"".$this->index_name." = 0;loadLogins()\" ");
+
+						?></span><span id="date2_span" class="nod"><br /><?
+							
+							echo makeTimebar("s_date2_",1,null,false,time()," onchange=\"".$this->index_name." = 0;loadLogins()\" ");
+
+						?></span>
+						<span id="nodate_span" class="nod">
+						CUSTOM RANGE
+						</span>
+						</td>
 						<td><input type="button" value="Reset" onclick="resetLoginForm(this.form);resetPageSystem('<?=$this->index_name?>');loadLogins();"></td>
 					</tr>
 				</table>
@@ -326,6 +406,8 @@ class LoginTracker{
 				resizable: false
 			});
 
+
+
 			loadLogins();
 
 		</script>
@@ -339,6 +421,7 @@ class LoginTracker{
 					## GRAB DISTINCT SECTIONS AND BUILD DATA AGGREGATION TABLE
 					$sections = $_SESSION['dbapi']->login_tracker->getLoginSections();
 
+					## BUILD HEADERS
 					foreach($sections as $value){
 
 						?><td align="center"><?=ucfirst($value['0'])?></td><?
@@ -352,11 +435,12 @@ class LoginTracker{
 				<td align="right" height="35">1 hour</td>
 				<?
 
+					## BUILD SECTIONS AND RESULTS FOR 1HOUR
 					foreach($sections as $value){
 
-						?><td align="center"><font size="1px" color="green">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('1h',$value['0'],'success')?></font>
+						?><td align="center"><font size="1px" color="green"><span class="hand" onclick="document.getElementById('s_section').value = '<?=$value['0']?>'; document.getElementById('s_result').value = 'success';document.getElementById('data_aggr_search').value = 'true';document.getElementById('data_aggr_range').value = '1h';toggleDateMode('hide');loadLogins();">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('1h',$value['0'],'success')?></span></font>
 						<br>
-						<font size="1px" color="red">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('1h',$value['0'],'failure')?></font></td><?
+						<font size="1px" color="red"><span class="hand" onclick="document.getElementById('s_section').value = '<?=$value['0']?>'; document.getElementById('s_result').value = 'failure';document.getElementById('data_aggr_search').value = 'true';document.getElementById('data_aggr_range').value = '1h';toggleDateMode('hide');loadLogins();">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('1h',$value['0'],'failure')?></span></font></td><?
 
 					}
 
@@ -366,11 +450,12 @@ class LoginTracker{
 				<td align="right" height="35">24 hour</td>
 				<?
 
+					## BUILD SECTIONS AND RESULTS FOR 24HOUR
 					foreach($sections as $value){
 
-						?><td align="center"><font size="1px" color="green">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('24h',$value['0'],'success')?></font>
+						?><td align="center"><font size="1px" color="green"><span class="hand" onclick="document.getElementById('s_section').value = '<?=$value['0']?>'; document.getElementById('s_result').value = 'success';document.getElementById('data_aggr_search').value = 'true';document.getElementById('data_aggr_range').value = '24h';toggleDateMode('hide');loadLogins();">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('24h',$value['0'],'success')?></span></font>
 						<br>
-						<font size="1px" color="red">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('24h',$value['0'],'failure')?></font></td><?
+						<font size="1px" color="red"><span class="hand" onclick="document.getElementById('s_section').value = '<?=$value['0']?>'; document.getElementById('s_result').value = 'failure';document.getElementById('data_aggr_search').value = 'true';document.getElementById('data_aggr_range').value = '24h';toggleDateMode('hide');loadLogins();">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('24h',$value['0'],'failure')?></span></font></td><?
 
 					}
 
@@ -380,11 +465,12 @@ class LoginTracker{
 				<td align="right" height="35">7 day</td>
 				<?
 
+					## BUILD SECTIONS AND RESULTS FOR 7DAYS
 					foreach($sections as $value){
 
-						?><td align="center"><font size="1px" color="green">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('7d',$value['0'],'success')?></font>
+						?><td align="center"><font size="1px" color="green"><span class="hand" onclick="document.getElementById('s_section').value = '<?=$value['0']?>'; document.getElementById('s_result').value = 'success';document.getElementById('data_aggr_search').value = 'true';document.getElementById('data_aggr_range').value = '7d';toggleDateMode('hide');loadLogins();">Success: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('7d',$value['0'],'success')?></span></font>
 						<br>
-						<font size="1px" color="red">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('7d',$value['0'],'failure')?></font></td><?
+						<font size="1px" color="red"><span class="hand" onclick="document.getElementById('s_section').value = '<?=$value['0']?>'; document.getElementById('s_result').value = 'failure';document.getElementById('data_aggr_search').value = 'true';document.getElementById('data_aggr_range').value = '7d';toggleDateMode('hide');loadLogins();">Failure: <?=$_SESSION['dbapi']->login_tracker->getDataAggrCount('7d',$value['0'],'failure')?></span></font></td><?
 
 					}
 
