@@ -11,6 +11,64 @@ class API_Lead_Management{
 	var $json_record_tagname = "Result";
 
 
+
+	function deleteSale($lead_tracking_id){
+
+		$lead_tracking_id = intval($lead_tracking_id);
+
+		list($sale_time) = queryROW("SELECT `sale_time` FROM `sales` WHERE transfer_id='$transfer_id' AND lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
+
+		$this->removeSaleFromCCIData($lead_tracking_id, $sale_time);
+
+		execSQL("DELETE FROM `sales` WHERE lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
+	}
+
+	function deleteSaleByXFER($lead_tracking_id,$transfer_id){
+
+
+		$lead_tracking_id = intval($lead_tracking_id);
+		$transfer_id = intval($transfer_id);
+
+		list($sale_time) = queryROW("SELECT `sale_time` FROM `sales` WHERE transfer_id='$transfer_id' AND lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
+
+		$this->removeSaleFromCCIData($lead_tracking_id, $sale_time);
+
+		execSQL("DELETE FROM `sales` WHERE transfer_id='$transfer_id' AND lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
+	}
+
+	function removeSaleFromCCIData($lead_tracking_id, $sale_time){
+
+		// LOAD THE LEAD INFORMATION
+		$row = $_SESSION['dbapi']->lead_management->getByID($lead_tracking_id);
+
+
+		// FALL BACK TO LEAD TIME, JUST IN CASE
+		if(!$sale_time){
+			$sale_time = $row['time'];
+		}
+
+		// CONNECT TO CCI DB
+		connectCCIDB();
+
+		// REMOVE THE SALE RECORD
+
+		$sql = "DELETE FROM `leads` ".
+			" WHERE `phone`='".mysqli_real_escape_string($_SESSION['db'], $row['phone_num'])."' ".
+			" AND `lead_id`='".intval($row['lead_id'])."' ".
+			" AND `sales_date`='".date("m/d/Y", $sale_time)."' ".
+			" AND `campaign`='".mysqli_real_escape_string($_SESSION['db'], $row['campaign'])."' ".
+			" AND `office`='".intval($row['office'])."' ".
+			" LIMIT 1"; //mysqli_real_escape_string($_SESSION['db'], $row['phone_num'])
+
+//		echo $sql."\n";exit;
+
+		execSQL($sql);
+
+
+		// CONNECT BACK TO PX WHEN WE'RE DONE
+		connectPXDB();
+	}
+
 	function getCallGroup($user_id, $cluster_id){
 
 		$user_id = intval($user_id);
@@ -162,8 +220,7 @@ class API_Lead_Management{
 		$dat['postal_code'] = $row['zip_code'];
 
 
-		// YOU SNEAKY FUCK
-		//$dat['status'] = $row['dispo'];
+
 
 
 
@@ -181,7 +238,10 @@ class API_Lead_Management{
 			// EDIT "vicidial_list" TABLE	$field,$id,$assoarray,$table)
 			$affected = aeditByField('lead_id',$row['lead_id'], $dat, "vicidial_list");
 
-
+			
+			// YOU SNEAKY FUCK
+			// RE-ENABLING 7/18/2019
+			$dat['status'] = $row['dispo'];
 
 
 		// UPDATE BOTH
@@ -206,6 +266,9 @@ class API_Lead_Management{
 			/// CONNECT TO VICI
 			connectViciDB($cluster_idx);
 
+			// YOU SNEAKY FUCK
+			// RE-ENABLING 7/18/2019
+			$dat['status'] = $row['dispo'];
 
 			// EDIT "vicidial_list" TABLE	$field,$id,$assoarray,$table)
 			$affected = aeditByField('lead_id',$row['verifier_lead_id'], $dat, "vicidial_list");
@@ -378,7 +441,7 @@ class API_Lead_Management{
 
 			$id = intval($_POST['editing_lead']);
 
-			$row = $_SESSION['dbapi']->lead_management->getByID($id);
+//			$row = $_SESSION['dbapi']->lead_management->getByID($id);
 
 
 			$dat = array();
@@ -389,7 +452,7 @@ class API_Lead_Management{
 
 
 			// MUST'VE BEEN A SALE, BUT IS OVVVERRRR NOWWWW
-			if(($row['dispo'] == 'SALE' || $row['dispo'] == 'PAIDCC') || $row['dispo'] == 'SALECC' && $dat['dispo'] != $row['dispo']){
+			if(($row['dispo'] == 'SALE' || $row['dispo'] == 'PAIDCC' || $row['dispo'] == 'SALECC') && $dat['dispo'] != $row['dispo']){
 
 
 				// CHANGING FROM SALE TO PAIDCC
@@ -410,7 +473,8 @@ class API_Lead_Management{
 				}else{
 
 					// BEELETED - FIND THE SALE AND AXE IT ( NO AXIN QUESTIONS )
-					execSQL("DELETE FROM `sales` WHERE lead_tracking_id='$id' ORDER BY id DESC LIMIT 1");
+					$this->deleteSale($id);
+
 
 				}
 
@@ -753,7 +817,8 @@ class API_Lead_Management{
 
 
 				// DELETE SALE RECORD
-				$_SESSION['dbapi']->execSQL("DELETE FROM sales WHERE transfer_id='".$xfer['id']."'");
+				$this->deleteSaleByXFER($row['id'], $xfer['id']);
+//				$_SESSION['dbapi']->execSQL("DELETE FROM sales WHERE transfer_id='".$xfer['id']."'");
 
 
 
@@ -802,7 +867,7 @@ class API_Lead_Management{
 
 				$xfer_id = $xfer['id'];
 
-				if($dispo == 'SALE' || $dispo == 'PAIDCC'){
+				if($dispo == 'SALE' || $dispo == 'PAIDCC' || $dispo == 'SALECC'){
 
 
 					if(intval($sale['id']) > 0){
