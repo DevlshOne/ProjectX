@@ -564,9 +564,4 @@
 		$out .='</select>';
 		return $out;
 	}
-
-
-
-
-
-?>
+	

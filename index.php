@@ -558,11 +558,18 @@
 					$_SESSION['login_tracker']->handleFLOW();
 
 				}else{
+<<<<<<< index.php
+
+					accessDenied("LoginTracker");
+=======
 
 					accessDenied("LoginTracker");
 
 				}		
+>>>>>>> index.php
 
+				}		
+				
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //
 //					echo "You lack the ability to access this section. Access to advanced config is denied.";

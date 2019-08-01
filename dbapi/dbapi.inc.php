@@ -42,7 +42,11 @@ class DBAPI {
     public $page_query_count = 0;
 
 
+<<<<<<< dbapi/dbapi.inc.php
+    // API OBJECTS
+=======
 	// API OBJECTS
+>>>>>>> dbapi/dbapi.inc.php
     public $accounts;
     public $activitys;
     public $action_log;
@@ -59,10 +63,10 @@ class DBAPI {
     public $user_groups_master;
     public $voices;
     public $report_emails;
-		// FEATURE CONTROL
+    // FEATURE CONTROL
     public $features;
     public $imports;
-		// MERGED FROM REPORT SYSTEM
+    // MERGED FROM REPORT SYSTEM
     public $ringing_calls;
     public $lead_management;
     public $employee_hours;

@@ -46,6 +46,7 @@ class LeadManagement{
 			'NOVERI'=>"No Verifier",
 			'NI'=>"Not Interested",
 			'NIX'=>"NIX",
+			'OTHER'=>"OTHER dispo", // so very specific
 			'REVIEW'=>"Review Sale",
 			'REVIEWCC'=>"Review CC Sale",
 			'PAIDCC'=>"PAIDCC/DRIPP",

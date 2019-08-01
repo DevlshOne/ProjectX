@@ -35,9 +35,9 @@ table{
 .pad_top{ padding-top: 15px; }
 
 .right_line{
-	
+
 	border-right:1px solid #999999;
-	
+
 }
 
 .transbg{
@@ -58,38 +58,38 @@ table{
 
 
 .error_row{
-	
+
 	background-color:#ff0000;
 }
 
 
 
-.row0{	
-	background-color:#cccccc; 
-	padding:2px; 
+.row0{
+	background-color:#cccccc;
+	padding:2px;
 	color:#000000;
 }
 
-.row1{  
-	background-color:#fff; 
-	padding:2px; 
+.row1{
+	background-color:#fff;
+	padding:2px;
 	color:#000000;
 }
 
-.row0_highlight{	
-	background-color:#aaa; 
-	padding:2px; 
+.row0_highlight{
+	background-color:#aaa;
+	padding:2px;
 	color:#000000;
 }
 
-.row1_highlight{  
-	background-color:#aaa; 
-	padding:2px; 
+.row1_highlight{
+	background-color:#aaa;
+	padding:2px;
 	color:#000000;
 }
 
 
-.row2{	
+.row2{
 	font-family: Arial,sans-serif;
 	border-bottom:1px solid #000;
 	color: #000;
@@ -123,8 +123,6 @@ a:hover {
 	text-decoration: underline;
 	color: black;
 }
-
-
 #progress-wrp {
     border: 1px solid #0099CC;
     padding: 1px;
@@ -154,4 +152,7 @@ a:hover {
 	float: right;
 	padding-left: 6px;
 }
+<<<<<<< css/style.css
+=======
 
+>>>>>>> css/style.css
