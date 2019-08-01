@@ -12,6 +12,10 @@ class AgentInfo
     public $username;
     public $cluster_array;
 
+    
+    // FALSE by default, for nightly reports
+    var $skip_answeringmachines = false;
+    
 
     public function AgentInfo($user, $cluster_id)
     {
@@ -499,7 +503,10 @@ class SalesAnalysis
 
 
             // ANSWERING MACHINE STATS
-            $sql = "SELECT COUNT(id) FROM lead_tracking ".
+            
+            
+            if($this->skip_answeringmachines == false){
+                $sql = "SELECT COUNT(id) FROM lead_tracking ".
 
 //									" FORCE INDEX (time) ".
                                     //" USE INDEX (time) ".
@@ -523,10 +530,12 @@ class SalesAnalysis
                                     " AND (`dispo`='A' OR `dispo`='a') ".
                                     $ofcsql.
                                     (($campaign_id)?" AND campaign_id='".$campaign_id."' ":"");
-            //echo "\n".$sql."\n";
-            // ANSWERING MACHINE STATS
-            list($num_AnswerMachines) = $_SESSION['dbapi']->queryROW($sql);
-
+                //echo "\n".$sql."\n";
+                // ANSWERING MACHINE STATS
+                list($num_AnswerMachines) = $_SESSION['dbapi']->queryROW($sql);
+            }else{
+                $num_AnswerMachines = -1;
+            }
 
             $sql = "SELECT COUNT(id) FROM transfers ".
                     " WHERE xfer_time BETWEEN '$stime' AND '$etime' ".
@@ -887,9 +896,108 @@ $(function() {
 							<input type="checkbox" id="combiner" onclick="this.form.combine_users.value = (this.checked)?1:0" <?=($_REQUEST['combine_users'] > 0 || !isset($_REQUEST['combine_users']))?" CHECKED ":''?> >
 							Combine Left/Right Users
 						</td>
+<<<<<<< classes/sales_analysis.inc.php
 					</tr>
 					<tr>
 						<th colspan="2">
+=======
+<<<<<<< classes/sales_analysis.inc.php
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>
+						
+							<input type="checkbox" name="include_answer_machines" value="1" <?=($_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
+							Include Answering Machine stats
+						</td>
+					</tr>
+					<tr>
+						<th colspan="2">
+=======
+					</tr>
+					<tr>
+						<th colspan="2">
+
+							<span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0" /> Loading, Please wait...</span>
+
+							<span id="sales_submit_report_button">
+								<input type="button" value="Generate PRINTABLE" onclick="genReport(getEl('saleanal_report'), 'sales', 1)">
+
+								&nbsp;&nbsp;&nbsp;&nbsp;
+
+								<input type="submit" value="Generate">
+
+
+							</span>
+
+						</th>
+					</tr>
+					</table>
+
+
+				</td>
+			</tr>
+
+			</table>
+			</form>
+			<br /><br /><?php
+		}else{
+
+			?><meta charset="UTF-8">
+			<meta name="google" content="notranslate">
+			<meta http-equiv="Content-Language" content="en"><?php
+		}
+
+
+
+		if(isset($_POST['generate_report'])){
+
+			$time_started = microtime_float();
+
+
+			## TIME
+            $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
+            $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
+            /*
+            $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']);
+            $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']);
+            */
+
+			## TIMEFRAMES
+            if (!isset($_REQUEST['strt_time_hour'])) {
+			$stime = mktime(0,0,0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+			$etime = mktime(23,59,59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+                #echo "Human Start : " . date("r", $stime) . PHP_EOL;
+                #echo "Human End : " . date("r", $etime) . PHP_EOL;
+            } else {
+                $stime = mktime(date("H", $timestamp), date("i", $timestamp), 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+                $etime = mktime(date("H", $timestamp2), date("i", $timestamp2), 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+                #echo "Human Start : " . date("r", $stime) . PHP_EOL;
+                #echo "Human End : " . date("r", $etime) . PHP_EOL;
+            }
+
+			## AGENT CLUSTER
+			$agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
+
+
+			## CAMPAIGN
+			$campaign_code = trim($_REQUEST['campaign_id']);
+
+			$combine_users = (intval($_REQUEST['combine_users']) > 0)?true:false;
+
+//			$user_group = trim($_REQUEST['user_group']);
+//			$ignore_group = trim($_REQUEST['ignore_group']);
+
+
+			$vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
+
+			## GENERATE AND DISPLAY REPORT
+			$html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code);
+
+
+			/*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
+>>>>>>> classes/sales_analysis.inc.php
+>>>>>>> classes/sales_analysis.inc.php
 
 							<span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0" /> Loading, Please wait...</span>
 
@@ -962,6 +1070,17 @@ $(function() {
 
             $vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
 
+            
+            
+            
+            if($_REQUEST['include_answer_machines']){
+                $this->skip_answeringmachines = false;
+            }else{
+                $this->skip_answeringmachines = true;
+            }
+            
+            
+            
             ## GENERATE AND DISPLAY REPORT
             $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code);
 
@@ -1084,8 +1203,13 @@ $(function() {
 			<th title="Total number of calls for the day">Total Calls</th>
 			<th title="Number of Calls that were NOT INTERESTED">NI</th>
 			<th title="Number of Transfers">XFERS</th>
-			<th title="Number of Answering Machine calls">A</th>
-			<th title="Percentage of calls that are Answering Machines">%ANS</th>
+			<?php 
+			
+			if($this->skip_answeringmachines == false){
+			     ?><th title="Number of Answering Machine calls">A</th>
+				<th title="Percentage of calls that are Answering Machines">%ANS</th><?php 
+			}
+			?>
 			<th title="Contacts per Worked hour, and Calls per Worked hour">Con&amp;Calls/hr</th>
 
 
@@ -1120,13 +1244,23 @@ $(function() {
 				<td align="center"><?=number_format($agent_data['activity_wrkd'], 2)?></td>
 				<td align="center"><?=number_format($agent_data['calls_today'])?></td>
 				<td align="center"><?=number_format($agent_data['num_NI'])?></td>
-				<td align="center"><?=number_format($agent_data['num_XFER'])?></td>
-				<td align="center"><?=number_format($agent_data['num_AnswerMachines'])?></td>
+				<td align="center"><?=number_format($agent_data['num_XFER'])?></td><?
+				
+				if($this->skip_answeringmachines == false){
+				    ?><td align="center"><?=number_format($agent_data['num_AnswerMachines'])?></td>
+					<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/?>
 
+<<<<<<< classes/sales_analysis.inc.php
 				<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/?>
 
 				<td align="center"><?=$ans_percent?>%</td>
 
+=======
+					<td align="center"><?=$ans_percent?>%</td><?
+				}
+				?>
+
+>>>>>>> classes/sales_analysis.inc.php
 				<td align="center"><?=number_format($agent_data['contacts_per_worked_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_worked_hour'], 2)?></td>
 
 
@@ -1155,6 +1289,10 @@ $(function() {
 				<td align="right"><?=number_format($agent_data['yes2all_percent'], 2)?>%</td>
 				<td align="right">$<?=number_format($agent_data['sales_total'])?></td>
 
+<<<<<<< classes/sales_analysis.inc.php
+=======
+<<<<<<< classes/sales_analysis.inc.php
+>>>>>>> classes/sales_analysis.inc.php
 				<td align="right">$<?=number_format($agent_data['avg_sale'], 2)?></td>
 				<td align="right">$<?=number_format($agent_data['paid_hr'], 2)?></td>
 				<td align="right">$<?=number_format($agent_data['wrkd_hr'], 2)?></td>
@@ -1166,6 +1304,19 @@ $(function() {
 
         $unpaid_sale_percent = 100 - $paid_sale_percent;
 
+=======
+				<td align="right">$<?=number_format($agent_data['avg_sale'],2)?></td>
+				<td align="right">$<?=number_format($agent_data['paid_hr'],2)?></td>
+				<td align="right">$<?=number_format($agent_data['wrkd_hr'],2)?></td>
+			</tr><?php
+        } ?></tbody><?php
+
+
+		$paid_sale_percent = round( ((float)$totals['total_paid_sale_cnt'] / $totals['total_sale_cnt']) * 100, 2);
+
+		$unpaid_sale_percent = 100 - $paid_sale_percent;
+
+>>>>>>> classes/sales_analysis.inc.php
         $t_ans_percent = round((($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2); ?><tfoot>
 		<tr>
 			<th style="border-top:1px solid #000" align="left">Total Agents: <?=count($agent_data_arr)?></th>
@@ -1174,8 +1325,18 @@ $(function() {
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_calls'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_NI'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_XFER'])?></th>
+<<<<<<< classes/sales_analysis.inc.php
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_AnswerMachines'])?></th>
 			<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th>
+=======
+			<?
+				
+				if($this->skip_answeringmachines == false){
+				    ?><th style="border-top:1px solid #000"><?=number_format($totals['total_AnswerMachines'])?></th>
+					<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th><?
+				}
+			?>
+>>>>>>> classes/sales_analysis.inc.php
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_contacts_per_worked_hour'], 2).' - '.number_format($totals['total_calls_per_worked_hour'], 2)?></th>
 
 

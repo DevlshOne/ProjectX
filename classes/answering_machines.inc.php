@@ -16,8 +16,8 @@ class AnsweringMachines{
 	var $dnc_default_duration = 15768000; // (15768000 = Half a year)
 
 
-	var $AM_type_code = "700";
-	var $PM_type_code = "710";
+	var $AM_type_code = "7";
+	var $PM_type_code = "8";
 
 	function AnsweringMachines(){
 
@@ -187,16 +187,23 @@ class AnsweringMachines{
 
 
 
-	function extractAnswerDispos($timeframe){
+	function extractAnswerDispos($timeframe, $stime = 0, $etime = 0){
 
+	    if($stime == 0 && $etime == 0){
 			$stime = mktime(0,0,0);
 			$etime = mktime(23,59,59);
 
 			// MOVE IT BACK 1 DAY!
 			$stime = $stime - 86400;
 			$etime = $etime - 86400;
+	    }
 
-			$ignore_list_sql = " AND `list_id` NOT LIKE '7%'";
+			
+			
+			$ignore_list_sql =   " AND (".
+			                         " `list_id` NOT BETWEEN '".$this->AM_type_code."00' AND '".$this->AM_type_code."99' ".
+			 			             " AND `list_id` NOT BETWEEN '".$this->PM_type_code."00' AND '".$this->PM_type_code."99'".
+			                     ") ";
 
 			connectPXDB();
 
@@ -212,13 +219,13 @@ class AnsweringMachines{
 			foreach($arr as $phone=>$rowarr){
 
 
-				if(count($rowarr) >= $this->call_attempts_dnc_limit){
-
-					echo $phone." - PUSH TO THE TIMED DNC HERE, WHEN ITS FINISHED REVAMP.\n";
-
-
-					continue;
-				}
+//				if(count($rowarr) >= $this->call_attempts_dnc_limit){
+//
+//					echo $phone." - PUSH TO THE TIMED DNC HERE, WHEN ITS FINISHED REVAMP.\n";
+//
+//
+//					continue;
+//				}
 
 				echo "Rotating $phone to ".(($timeframe == 'AM')?"PM":"AM")." list\n";
 
@@ -226,6 +233,8 @@ class AnsweringMachines{
 
 					// EACH ROW:
 					//`id`,`lead_id`,`vici_cluster_id`,`time`,`dispo`,`campaign`
+
+
 
 					if(array_key_exists($row['vici_cluster_id'], $VICIDB)){
 
@@ -246,8 +255,7 @@ class AnsweringMachines{
 
 					}
 
-
-					// FIGURE OUT WHICH LIST WE'RE PUTTING IT IN, CREATE IT IF NECESSARY
+					// FIGURE OUT  WHICH LIST WE'RE PUTTING IT IN, CREATE IT IF NECESSARY
 
 					// AM LIST - MOVE TO PM LIST
 					if($timeframe == 'AM'){
@@ -262,15 +270,20 @@ class AnsweringMachines{
 					}
 
 					// UPDATE THE LIST ID IN VICIDIAL
-					echo ("UPDATE `vicidial_list` SET list_id='".intval($list_id)."' WHERE lead_id='".intval($row['lead_id'])."'");
+					execSQL("UPDATE `vicidial_list` SET list_id='".mysqli_real_escape_string($_SESSION['db'],$list_id)."',status='NEW',called_count=0  WHERE lead_id='".intval($row['lead_id'])."'");
 
+					
+					execSQL("INSERT INTO `custom_".mysqli_real_escape_string($_SESSION['db'],$list_id)."` SELECT * FROM `custom_".mysqli_real_escape_string($_SESSION['db'],$row['list_id'])."` WHERE lead_id='".intval($row['lead_id'])."' ", true);
+					
+					
+					//echo "\n";
 
 					// UPDATE THE LIST ID IN PX
 					//connectPXDB();
 					$_SESSION['db'] = $PXDB;
-					echo ("UPDATE `lead_tracking` SET list_id='".intval($list_id)."' WHERE id='".mysqli_real_escape_string($_SESSION['db'],$row['id'])."'");
+					execSQL("UPDATE `lead_tracking` SET list_id='".mysqli_real_escape_string($_SESSION['db'],$list_id)."' WHERE id='".mysqli_real_escape_string($_SESSION['db'],$row['id'])."'");
 
-
+//					echo "\n";
 				}
 
 
@@ -286,15 +299,81 @@ class AnsweringMachines{
 
 		$campaign = $row['campaign'];
 
-		$base_list_id = $row['list_id'];
-
-		$new_list_id = $type_code. $base_list_id;
+		$base_list_id = ($row['list_id']);
 
 		if($type_code == $this->AM_type_code){
-			$time_mode = "AM";
+		    $time_mode = "AM";
+		    
+		    $numlow = $this->AM_type_code.'00';
+		    $numhigh= $this->AM_type_code.'99';
+		    
 		}else{
-			$time_mode = "PM";
+		    $time_mode = "PM";
+		    
+		    $numlow = $this->PM_type_code.'00';
+		    $numhigh= $this->PM_type_code.'99';
 		}
+		
+		
+		
+		list($list_id) = queryROW("SELECT list_id FROM `vicidial_lists` ".
+		    " WHERE `list_id` BETWEEN '".mysqli_real_escape_string($_SESSION['db'],$numlow)."' AND '".mysqli_real_escape_string($_SESSION['db'],$numhigh)."' ".
+		    
+		    " AND campaign_id='".mysqli_real_escape_string($_SESSION['db'],$campaign)."' "
+		    
+		      ); ///'".mysqli_real_escape_string($_SESSION['db'], $new_list_id)."'"); // AND campaign_id='".mysqli_real_escape_string($_SESSION['db'],$campaign)."'
+		
+		      
+		// IF WE FIND IT, RETURN IT!
+		if($list_id)return $list_id;
+		
+		
+		// OTHERWISE, CREATE A NEW ONE
+		
+		// FIND THE HIGHEST LIST ID IN USE SO FAR, WITHIN THE RANGE, THEN INCREMENT 1
+		list($last_id) = queryROW("SELECT MAX(list_id) FROM asterisk.vicidial_lists WHERE list_id BETWEEN '".mysqli_real_escape_string($_SESSION['db'],$numlow)."' AND '".mysqli_real_escape_string($_SESSION['db'],$numhigh)."' ");
+
+		$last_id = intval($last_id);
+		
+		echo "Highest List ID in use: ".$last_id."\n";
+		
+		// INCREMENT LIST ID, TO MAKE A NEW LIST FOR THIS CAMPAIGN
+		$new_list_id = ($last_id >= $numlow)?$last_id+1:$numlow;
+		
+		// RETURN THE NEW LIST ID
+		$dat = array();
+		$dat['list_id'] = $new_list_id;
+		$dat['list_name'] = "AnsMach-".$campaign.'-'.$time_mode;
+		$dat['campaign_id'] = $campaign;
+		$dat['active'] = 'N';
+		$dat['list_description'] = "Answering Machine generated ".$time_mode." rotation list";
+		$dat['list_changedate'] = date("Y-m-d H:i:s");
+		
+		
+		aadd($dat, "vicidial_lists");
+		
+// 		$list_id = mysqli_insert_id($_SESSION['db']);
+		
+		echo "Created LIST ID $new_list_id on ".$row['vici_cluster_id']." (".getClusterName($row['vici_cluster_id'])."), copying custom fields...\n";
+		
+		
+		execSQL(
+		    "INSERT INTO vicidial_lists_fields(`list_id`,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order`) ".
+		    "SELECT $new_list_id,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order` FROM vicidial_lists_fields ".
+		    "WHERE list_id='".$base_list_id."' "
+		    );
+		
+		
+		execSQL("CREATE TABLE IF NOT EXISTS `custom_".$new_list_id."` LIKE `custom_".$base_list_id."`");
+
+		return $new_list_id;
+		
+	/***	
+		
+		$new_list_id = $type_code. $base_list_id;
+
+		
+
 
 		list($list_id) = queryROW("SELECT list_id FROM `vicidial_lists` ".
 							" WHERE `list_id`='".mysqli_real_escape_string($_SESSION['db'], $new_list_id)."'"); // AND campaign_id='".mysqli_real_escape_string($_SESSION['db'],$campaign)."'
@@ -328,9 +407,20 @@ class AnsweringMachines{
 
 		$list_id = mysqli_insert_id($_SESSION['db']);
 
-		echo "Created LIST ID $list_id on ".$row['vici_cluster_id']."\n";
+		echo "Created LIST ID $new_list_id on ".$row['vici_cluster_id']." (".getClusterName($row['vici_cluster_id'])."), copying custom fields...\n";
+
+
+		execSQL(
+			"INSERT INTO vicidial_lists_fields(`list_id`,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order`) ".
+			"SELECT $new_list_id,`field_label`,`field_name`,`field_description`,`field_rank`,`field_help`,`field_type`,`field_options`,`field_size`,`field_max`,`field_default`,`field_cost`,`field_required`,`name_position`,`multi_position`, `field_order` FROM vicidial_lists_fields ".
+				"WHERE list_id='".$base_list_id."' "
+		);
+
+
 
 		return $list_id;
+		
+		**/
 	}
 
 

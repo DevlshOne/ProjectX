@@ -21,6 +21,10 @@ class ListToolsClass{
 		include_once($_SESSION['site_config']['basedir'].'/classes/JXMLP.inc.php');
 		include_once($_SESSION['site_config']['basedir'].'/classes/lead_management.inc.php');
 
+		
+		include_once($_SESSION['site_config']['basedir'].'/classes/cmpgn_parents.inc.php');
+
+		
 	}
 
 

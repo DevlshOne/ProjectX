@@ -220,8 +220,7 @@ class API_Lead_Management{
 		$dat['postal_code'] = $row['zip_code'];
 
 
-		// YOU SNEAKY FUCK
-		//$dat['status'] = $row['dispo'];
+
 
 
 
@@ -239,7 +238,10 @@ class API_Lead_Management{
 			// EDIT "vicidial_list" TABLE	$field,$id,$assoarray,$table)
 			$affected = aeditByField('lead_id',$row['lead_id'], $dat, "vicidial_list");
 
-
+			
+			// YOU SNEAKY FUCK
+			// RE-ENABLING 7/18/2019
+			$dat['status'] = $row['dispo'];
 
 
 		// UPDATE BOTH
@@ -264,6 +266,9 @@ class API_Lead_Management{
 			/// CONNECT TO VICI
 			connectViciDB($cluster_idx);
 
+			// YOU SNEAKY FUCK
+			// RE-ENABLING 7/18/2019
+			$dat['status'] = $row['dispo'];
 
 			// EDIT "vicidial_list" TABLE	$field,$id,$assoarray,$table)
 			$affected = aeditByField('lead_id',$row['verifier_lead_id'], $dat, "vicidial_list");
