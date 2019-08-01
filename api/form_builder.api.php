@@ -63,6 +63,12 @@
                     $j = json_encode($data);
                     echo $j;
                     break;
+                case 'markDeleted':
+                    $id = intval($_REQUEST['id']);
+                    $campaign_id = intval($_REQUEST['campaign_id']);
+                    $screen_number = intval($_REQUEST['screen_number']);
+                    $_SESSION['dbapi']->form_builder->markFieldDeleted($id);
+                    break;
                 default:
                 case 'list':
                     $dat = array();

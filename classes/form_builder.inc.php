@@ -266,32 +266,30 @@
                     draggable: true,
                     resizable: true
                 });
-                $('#dropZone').sortable({
-                    revert: true,
-                }).droppable({
-                    drop: function(e, ui) {
-                        let el = $(ui.draggable);
-                        // el.resizable({
-                        //     containment: '#dropZone',
-                        //     maxHeight: 65,
-                        //     minHeight: 65,
-                        //     minWidth: 200,
-                        //     maxWidth: 600,
-                        //     helper: 'ui-resizable-helper',
-                        //     grid: 200,
-                        //     ghost: false,
-                        //     handles: 'e',
-                        //     stop: function(e2, ui2) {
-                        //         ui2.position.left = 0;
-                        //         ui2.size.height = 65;
-                        //         ui2.size.width = Math.round( ui2.size.width / 200 ) * 200;
-                        //     }
-                        // });
-                        $(this).append(el);
-                    }
+                $('#dropZone').droppable({
+                    // drop: function(e, ui) {
+                    //     let el = $(ui.draggable);
+                    //     // el.resizable({
+                    //     //     containment: '#dropZone',
+                    //     //     maxHeight: 65,
+                    //     //     minHeight: 65,
+                    //     //     minWidth: 200,
+                    //     //     maxWidth: 600,
+                    //     //     helper: 'ui-resizable-helper',
+                    //     //     grid: 200,
+                    //     //     ghost: false,
+                    //     //     handles: 'e',
+                    //     //     stop: function(e2, ui2) {
+                    //     //         ui2.position.left = 0;
+                    //     //         ui2.size.height = 65;
+                    //     //         ui2.size.width = Math.round( ui2.size.width / 200 ) * 200;
+                    //     //     }
+                    //     // });
+                    //     $(this).append(el);
+                    // }
                 });
-                $('.fldMaker').draggable({
-                    connectToSortable: "#dropZone",
+                $('li.fldMaker').draggable({
+                    containment: "#dropZone",
                     helper: 'clone',
                     cursor: 'move',
                     cursorAt: {
@@ -299,6 +297,7 @@
                         left: 25
                     },
                     snap: true,
+                    scroll: false,
                     snapMode: 'inner',
                     stop: function (e, ui) {
                         // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
@@ -319,7 +318,7 @@
                 }
 
                 function loadNewScreen(jsondata) {
-                    console.log(jsondata);
+                    // console.log(jsondata);
                     if (jsondata.length == 0 || jsondata === undefined) {
                         console.log('No data found');
                     } else {
@@ -348,11 +347,6 @@
                     $.getJSON('api/api.php?get=form_builder&mode=json&action=getScreen&campaign_id=' + c + '&screen_number=' + s, function(data) {
                         loadNewScreen(data);
                     });
-                    // loadAjaxData(getFieldsURL(c, s), 'loadNewScreen', 'json');
-                }
-
-                function removeField(i) {
-
                 }
 
                 function saveField(i) {
@@ -363,7 +357,9 @@
 
                 function deleteField(i) {
                     let f = formFields[i];
-                    f.markDeleted();
+                    $.post('api/api.php?get=form_builder&mode=json&action=markDeleted&id=' + f.dbID, function() {
+                        changeScreen(f.campID, f.screenNum);
+                    });
                 }
 
                 function editField(i) {
@@ -393,7 +389,7 @@
                         },
                         {
                             text: 'Cancel',
-                            text: 'Cancel editing',
+                            title: 'Cancel editing',
                             icon: 'ui-icon-cancel',
                             click: function() {
                                 $(this).dialog('close');

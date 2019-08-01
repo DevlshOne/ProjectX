@@ -43,8 +43,15 @@ class FormBuilderAPI{
 	    $screen_id = intval($scr);
 	    $sql = "SELECT * FROM `" . $this->table . "` WHERE `campaign_id` = " . $campaign_id . " AND `screen_num` = " . $screen_id . " AND `deleted` = 'no'";
 	    $data = $_SESSION['dbapi']->fetchAllAssoc($sql);
-//        echo var_dump($data);
         return $data;
+    }
+
+    function markFieldDeleted($id) {
+	    $custom_field_id = intval($id);
+	    $sql = "UPDATE `" . $this->table . "` SET `deleted`='yes' WHERE `id`= " . $custom_field_id;
+	    echo $sql;
+	    $_SESSION['dbapi']->query($sql);
+	    return;
     }
 
 	function getResults($info){

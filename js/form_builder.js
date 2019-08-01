@@ -41,6 +41,7 @@ function frmField(index, o) {
     this.isLocked = o.is_locked;
     this.idx = index;
     this.screenNum = o.screen_num;
+    this.campID = o.campaign_id;
     this.dbID = o.id;
 }
 frmField.prototype = {
@@ -72,9 +73,6 @@ frmField.prototype = {
         let fldRendering = $('#editBox');
         let fieldAsForm = '<form id="fieldAsForm' + this.idx + '">' +
             '<table class="pct100 tightTable">' +
-            // '<tr>' +
-            // '<td><input type="button" value="Delete" onclick="deleteField(' + this.idx + '); return false;" />&nbsp<input type="button" value="Done" title="Finish editing and save" onclick="doneEditing(' + this.idx + '); return false;" /></td>' +
-            // '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="field_step">Step : </label><select id="field_step' + this.idx + '" name="field_step"><option>-1</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></td>' +
             '</tr>' +
@@ -287,6 +285,28 @@ frmField.prototype = {
                 fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
+                lblObj.draggable({
+                    containment: $(this).closest('div.field'),
+                    cursor: 'move',
+                    snap: true,
+                    scroll: false,
+                    snapMode: 'inner',
+                    stop: function (e, ui) {
+                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
+                        // ui.disable();
+                    },
+                });
+                fldObj.draggable({
+                    containment: $(this).closest('div.field'),
+                    cursor: 'move',
+                    snap: true,
+                    scroll: false,
+                    snapMode: 'inner',
+                    stop: function (e, ui) {
+                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
+                        // ui.disable();
+                    },
+                });
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
@@ -315,6 +335,28 @@ frmField.prototype = {
                 fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
+                lblObj.draggable({
+                    containment: $(this).closest('div.field'),
+                    cursor: 'move',
+                    snap: true,
+                    scroll: false,
+                    snapMode: 'inner',
+                    stop: function (e, ui) {
+                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
+                        // ui.disable();
+                    },
+                });
+                fldObj.draggable({
+                    containment: $(this).closest('div.field'),
+                    cursor: 'move',
+                    snap: true,
+                    scroll: false,
+                    snapMode: 'inner',
+                    stop: function (e, ui) {
+                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
+                        // ui.disable();
+                    },
+                });
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
