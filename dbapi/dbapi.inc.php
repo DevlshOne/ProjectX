@@ -42,7 +42,11 @@ class DBAPI {
     public $page_query_count = 0;
 
 
+<<<<<<< dbapi/dbapi.inc.php
     // API OBJECTS
+=======
+	// API OBJECTS
+>>>>>>> dbapi/dbapi.inc.php
     public $accounts;
     public $activitys;
     public $action_log;

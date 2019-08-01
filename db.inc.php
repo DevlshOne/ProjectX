@@ -218,7 +218,11 @@
 	function execSQL($cmd, $ignore_error = false){
 	    
 	    if(!$ignore_error){
+<<<<<<< db.inc.php
 	        mysqli_query($_SESSION['db'],$cmd) or die("Error in execSQL(".$cmd."):".mysqli_error($_SESSION['db']));
+=======
+		mysqli_query($_SESSION['db'],$cmd) or die("Error in execSQL(".$cmd."):".mysqli_error($_SESSION['db']));
+>>>>>>> db.inc.php
 	    }else{
 	        $res = mysqli_query($_SESSION['db'],$cmd);
 	        

@@ -896,6 +896,7 @@ $(function() {
 							<input type="checkbox" id="combiner" onclick="this.form.combine_users.value = (this.checked)?1:0" <?=($_REQUEST['combine_users'] > 0 || !isset($_REQUEST['combine_users']))?" CHECKED ":''?> >
 							Combine Left/Right Users
 						</td>
+<<<<<<< classes/sales_analysis.inc.php
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
@@ -907,6 +908,90 @@ $(function() {
 					</tr>
 					<tr>
 						<th colspan="2">
+=======
+					</tr>
+					<tr>
+						<th colspan="2">
+
+							<span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0" /> Loading, Please wait...</span>
+
+							<span id="sales_submit_report_button">
+								<input type="button" value="Generate PRINTABLE" onclick="genReport(getEl('saleanal_report'), 'sales', 1)">
+
+								&nbsp;&nbsp;&nbsp;&nbsp;
+
+								<input type="submit" value="Generate">
+
+
+							</span>
+
+						</th>
+					</tr>
+					</table>
+
+
+				</td>
+			</tr>
+
+			</table>
+			</form>
+			<br /><br /><?php
+		}else{
+
+			?><meta charset="UTF-8">
+			<meta name="google" content="notranslate">
+			<meta http-equiv="Content-Language" content="en"><?php
+		}
+
+
+
+		if(isset($_POST['generate_report'])){
+
+			$time_started = microtime_float();
+
+
+			## TIME
+            $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
+            $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
+            /*
+            $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']);
+            $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']);
+            */
+
+			## TIMEFRAMES
+            if (!isset($_REQUEST['strt_time_hour'])) {
+			$stime = mktime(0,0,0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+			$etime = mktime(23,59,59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+                #echo "Human Start : " . date("r", $stime) . PHP_EOL;
+                #echo "Human End : " . date("r", $etime) . PHP_EOL;
+            } else {
+                $stime = mktime(date("H", $timestamp), date("i", $timestamp), 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
+                $etime = mktime(date("H", $timestamp2), date("i", $timestamp2), 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
+                #echo "Human Start : " . date("r", $stime) . PHP_EOL;
+                #echo "Human End : " . date("r", $etime) . PHP_EOL;
+            }
+
+			## AGENT CLUSTER
+			$agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
+
+
+			## CAMPAIGN
+			$campaign_code = trim($_REQUEST['campaign_id']);
+
+			$combine_users = (intval($_REQUEST['combine_users']) > 0)?true:false;
+
+//			$user_group = trim($_REQUEST['user_group']);
+//			$ignore_group = trim($_REQUEST['ignore_group']);
+
+
+			$vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
+
+			## GENERATE AND DISPLAY REPORT
+			$html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code);
+
+
+			/*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
+>>>>>>> classes/sales_analysis.inc.php
 
 							<span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0" /> Loading, Please wait...</span>
 
@@ -1191,6 +1276,7 @@ $(function() {
 				<td align="right"><?=number_format($agent_data['yes2all_percent'], 2)?>%</td>
 				<td align="right">$<?=number_format($agent_data['sales_total'])?></td>
 
+<<<<<<< classes/sales_analysis.inc.php
 				<td align="right">$<?=number_format($agent_data['avg_sale'], 2)?></td>
 				<td align="right">$<?=number_format($agent_data['paid_hr'], 2)?></td>
 				<td align="right">$<?=number_format($agent_data['wrkd_hr'], 2)?></td>
@@ -1202,6 +1288,19 @@ $(function() {
 
         $unpaid_sale_percent = 100 - $paid_sale_percent;
 
+=======
+				<td align="right">$<?=number_format($agent_data['avg_sale'],2)?></td>
+				<td align="right">$<?=number_format($agent_data['paid_hr'],2)?></td>
+				<td align="right">$<?=number_format($agent_data['wrkd_hr'],2)?></td>
+			</tr><?php
+        } ?></tbody><?php
+
+
+		$paid_sale_percent = round( ((float)$totals['total_paid_sale_cnt'] / $totals['total_sale_cnt']) * 100, 2);
+
+		$unpaid_sale_percent = 100 - $paid_sale_percent;
+
+>>>>>>> classes/sales_analysis.inc.php
         $t_ans_percent = round((($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2); ?><tfoot>
 		<tr>
 			<th style="border-top:1px solid #000" align="left">Total Agents: <?=count($agent_data_arr)?></th>

@@ -558,8 +558,15 @@
 					$_SESSION['login_tracker']->handleFLOW();
 
 				}else{
+<<<<<<< index.php
 
 					accessDenied("LoginTracker");
+=======
+
+					accessDenied("LoginTracker");
+
+				}		
+>>>>>>> index.php
 
 				}		
 				

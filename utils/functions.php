@@ -233,7 +233,7 @@
 
 	function curl_write_temp_file($url, $file_prefix = "TempFile-"){
 
-		$data = $this->curl_get_file($url);
+		$data = curl_get_file($url);
 
 		$temp_file = tempnam(sys_get_temp_dir(), $file_prefix);
 
