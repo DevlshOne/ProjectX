@@ -120,7 +120,7 @@ class DBAPI {
     {
 
         // WRITE TO THE LOG FILE
-        $output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.$_SESSION['user']['id'].") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
+        $output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.intval($_SESSION['user']['id']).") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
         file_put_contents($this->query_log_file, $output, FILE_APPEND);
 
 
@@ -129,7 +129,7 @@ class DBAPI {
             $dat = array();
             $dat['time'] = time();
             $dat['user'] = $_SESSION['user']['username'];
-            $dat['user_id'] = $_SESSION['user']['id'];
+            $dat['user_id'] = intval($_SESSION['user']['id']);
             $dat['total_queries'] = $this->page_query_count;
             $dat['total_load_time'] = round($time_taken, 3);
             $dat['ip_address'] = $_SERVER['REMOTE_ADDR'];
