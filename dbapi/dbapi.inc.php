@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * DBAPI - A collection of all the database and SQL functions
  */
@@ -12,18 +12,18 @@ class DBAPI {
 	/**
 	 * CONTROL VARIABLES (EDITABLE)
 	 */
-	var $query_debugging = true;			// A TOGGLE TO BASICALLY SHUT OFF ALL QUERY STATS/DEBUGGING
+    public $query_debugging = true;			// A TOGGLE TO BASICALLY SHUT OFF ALL QUERY STATS/DEBUGGING
 
-	var $slow_query_debugging_only = true;	// A TOGGLE TO ONLY LOG THE SLOW QUERIES (query_debugging needs to be true, for this to work)
-	var $slow_page_debugging_only = true;	// A TOGGLE TO SHUT OFF TEH FLOOD OF EVERY PAGE LOAD HITTING THE LOGS, AND ONLY SHOW ONES OVER THE LIMIT
+    public $slow_query_debugging_only = true;	// A TOGGLE TO ONLY LOG THE SLOW QUERIES (query_debugging needs to be true, for this to work)
+    public $slow_page_debugging_only = true;	// A TOGGLE TO SHUT OFF TEH FLOOD OF EVERY PAGE LOAD HITTING THE LOGS, AND ONLY SHOW ONES OVER THE LIMIT
 
-	var $explain_queries = true;			// A TOGGLE TO RUN THE SQL "EXPLAIN $yourQuery", AND PUT RESULTS INTO THE LOGS TOO (also requires query_debugging to be enabled. If slow_query_debugging_only is TRUE, then the explain results will go into teh SLOW log file instead of query log file.)
+    public $explain_queries = true;			// A TOGGLE TO RUN THE SQL "EXPLAIN $yourQuery", AND PUT RESULTS INTO THE LOGS TOO (also requires query_debugging to be enabled. If slow_query_debugging_only is TRUE, then the explain results will go into teh SLOW log file instead of query log file.)
 
-	var $slow_query_time_limit = 10;	// IN SECONDS, HOW LONG BEFORE A QUERY IS CONSIDERED SLOW. INTS WORK, FLOAT SHOULD BE SUPPORTED TOO
-	var $slow_page_time_limit = 10;		// IN SECONDS, HOW LONG A PAGE LOAD HAS TO TAKE, BEFORE IT GETS LOGGED (when slow_page_debugging_only is set to TRUE)
+    public $slow_query_time_limit = 10;	// IN SECONDS, HOW LONG BEFORE A QUERY IS CONSIDERED SLOW. INTS WORK, FLOAT SHOULD BE SUPPORTED TOO
+    public $slow_page_time_limit = 10;		// IN SECONDS, HOW LONG A PAGE LOAD HAS TO TAKE, BEFORE IT GETS LOGGED (when slow_page_debugging_only is set to TRUE)
 
-	var $query_log_file 		= "/var/www/logs/LMT_queries.log";			// THE FILE TO DUMP ALL RAW QUERIES
-	var $slow_query_log_file 	= "/var/www/logs/LMT_slow_queries.log";		// THE FILE TO DUMP THE SLOW QUERIES
+    public $query_log_file 		= "/var/www/logs/LMT_queries.log";			// THE FILE TO DUMP ALL RAW QUERIES
+    public $slow_query_log_file 	= "/var/www/logs/LMT_slow_queries.log";		// THE FILE TO DUMP THE SLOW QUERIES
 
 
 
@@ -33,160 +33,147 @@ class DBAPI {
 
 
 	// DATABASE CONNECTION
-	var $db;
+    public $db;
 
 
 
 	// INIT THE TIMERS
-	var $page_start_time = 0;
-	var $page_query_count = 0;
+    public $page_start_time = 0;
+    public $page_query_count = 0;
 
 
-	// API OBJECTS
-	var	$accounts,
-		$activitys,
-		$action_log,
-		$campaigns,
-		$extensions,
-		$messages,
-		$names,
-		$problems,
-		$scripts,
-		$users,
-		$user_groups,
-		$user_groups_master,
-		$voices,
-
-		$report_emails,
-
-		// FEATURE CONTROL
-		$features,
-
-		$imports,
-
-
-		// MERGED FROM REPORT SYSTEM
-		$ringing_calls,
-		$lead_management,
-		$employee_hours,
-		$scriptstats,
-		$dispo_log,
-
-		$pac_reports,
-
-		$quiz_results,
-		$quiz_questions,
-
-		$list_tool_tasks;
+    // API OBJECTS
+    public $accounts;
+    public $activitys;
+    public $action_log;
+    public $campaigns;
+    public $campaign_parents;
+	public $login_tracker;
+    public $extensions;
+    public $messages;
+    public $names;
+    public $problems;
+    public $scripts;
+    public $users;
+    public $user_groups;
+    public $user_groups_master;
+    public $voices;
+    public $report_emails;
+    // FEATURE CONTROL
+    public $features;
+    public $imports;
+    // MERGED FROM REPORT SYSTEM
+    public $ringing_calls;
+    public $lead_management;
+    public $employee_hours;
+    public $scriptstats;
+    public $dispo_log;
+    public $pac_reports;
+    public $quiz_results;
+    public $quiz_questions;
+    public $list_tool_tasks;
+    public $dialer_sales;
 
 
-	/**
-	 * DBAPI Constructor
-	 * Initialize the class, connect, etc
-	 */
-	function __construct(){
+    /**
+     * DBAPI Constructor
+     * Initialize the class, connect, etc
+     */
+    public function __construct()
+    {
 
-		## INCLUDE ALL THE REQUIRED FILES
-		$this->initIncludes();
+        ## INCLUDE ALL THE REQUIRED FILES
+        $this->initIncludes();
 
-		$this->page_start_time = microtime_float();
+        $this->page_start_time = microtime_float();
 
-		## CONNECT TO THE DATABASE
-		$this->connect();
-
-
-		## INIT THE SESSION SITE CONFIG DATA FROM PREFS TABLE
-		$this->initSiteConfig();
-	}
+        ## CONNECT TO THE DATABASE
+        $this->connect();
 
 
-	/**
-	 * Destructor - Cleanup Time
-	 */
-	function __destruct(){
-
-		if($this->query_debugging == true){
-
-			$page_end_time = microtime_float();
-
-			$time_taken = $page_end_time - $this->page_start_time;
+        ## INIT THE SESSION SITE CONFIG DATA FROM PREFS TABLE
+        $this->initSiteConfig();
+    }
 
 
-			if(!$this->slow_page_debugging_only || ($this->slow_page_debugging_only == true && $time_taken > $this->slow_page_time_limit) ){
+    /**
+     * Destructor - Cleanup Time
+     */
+    public function __destruct()
+    {
+        if ($this->query_debugging == true) {
+            $page_end_time = microtime_float();
 
-				$this->logPageLoad($time_taken);
-
-
-
-			}
-
-		}
-
-		## DISCONNECT ON DESTRUCTION
-		$this->disconnect();
+            $time_taken = $page_end_time - $this->page_start_time;
 
 
+            if (!$this->slow_page_debugging_only || ($this->slow_page_debugging_only == true && $time_taken > $this->slow_page_time_limit)) {
+                $this->logPageLoad($time_taken);
+            }
+        }
 
-	}
+        ## DISCONNECT ON DESTRUCTION
+        $this->disconnect();
+    }
 
-	function logPageLoad($time_taken){
+    public function logPageLoad($time_taken)
+    {
 
-		// WRITE TO THE LOG FILE
-		$output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.$_SESSION['user']['id'].") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken,3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
-		file_put_contents($this->query_log_file, $output, FILE_APPEND);
-
-
-		// WRITE TO THE DATABASE
-		try{
-
-			$dat = array();
-			$dat['time'] = time();
-			$dat['user'] = $_SESSION['user']['username'];
-			$dat['user_id'] = $_SESSION['user']['id'];
-			$dat['total_queries'] = $this->page_query_count;
-			$dat['total_load_time'] = round($time_taken,3);
-			$dat['ip_address'] = $_SERVER['REMOTE_ADDR'];
-			$dat['url'] = $_SERVER['REQUEST_URI'];
-
-			$dat['post_values'] = print_r($_POST, 1);
+        // WRITE TO THE LOG FILE
+        $output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.$_SESSION['user']['id'].") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
+        file_put_contents($this->query_log_file, $output, FILE_APPEND);
 
 
-			$_SESSION['dbapi']->aadd($dat,'analysis_page_loads');
+        // WRITE TO THE DATABASE
+        try {
+            $dat = array();
+            $dat['time'] = time();
+            $dat['user'] = $_SESSION['user']['username'];
+            $dat['user_id'] = $_SESSION['user']['id'];
+            $dat['total_queries'] = $this->page_query_count;
+            $dat['total_load_time'] = round($time_taken, 3);
+            $dat['ip_address'] = $_SERVER['REMOTE_ADDR'];
+            $dat['url'] = $_SERVER['REQUEST_URI'];
 
-		} catch (Exception $e) {
+            $dat['post_values'] = print_r($_POST, 1);
+
+
+            $_SESSION['dbapi']->aadd($dat, 'analysis_page_loads');
+        } catch (Exception $e) {
 
 //echo "Caught Exception ".$e->getMessage()."\n";
-
-		}
-
-	}
+        }
+    }
 
 
-	/**
-	 * Include all the required files
-	 */
-	function initIncludes(){
+    /**
+     * Include all the required files
+     */
+    public function initIncludes()
+    {
 
-		## INCLUDE DATABASE CONNECTION INFO AND OTHER SITE DATA
-		//include_once($_SERVER["DOCUMENT_ROOT"]."/site_config.php");
-		//include_once("./site_config.php");
-
-
-		include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
-
-		## ACTIVITY LOG
-		include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
-		$this->activitys = new ActivitysAPI();
+        ## INCLUDE DATABASE CONNECTION INFO AND OTHER SITE DATA
+        //include_once($_SERVER["DOCUMENT_ROOT"]."/site_config.php");
+        //include_once("./site_config.php");
 
 
-		## ACTION LOG
-		include_once($_SESSION['site_config']['basedir']."dbapi/action_log.db.php");
-		$this->action_log = new ActionLogAPI();
+        include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
 
+        ## ACTIVITY LOG
+        include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
+        $this->activitys = new ActivitysAPI();
 
-		## CAMPAIGNS
-		include_once($_SESSION['site_config']['basedir']."dbapi/campaigns.db.php");
-		$this->campaigns = new CampaignsAPI();
+        ## ACTION LOG
+        include_once($_SESSION['site_config']['basedir']."dbapi/action_log.db.php");
+        $this->action_log = new ActionLogAPI();
+
+        ## CAMPAIGNS
+        include_once($_SESSION['site_config']['basedir']."dbapi/campaigns.db.php");
+        $this->campaigns = new CampaignsAPI();
+
+        ## CAMPAIGN PARENTS
+        include_once($_SESSION['site_config']['basedir']."dbapi/cmpgn_parents.db.php");
+        $this->campaign_parents = new CampaignParentsAPI();
 
 		## EXTENSIONS
 		include_once($_SESSION['site_config']['basedir']."dbapi/extensions.db.php");
@@ -200,7 +187,11 @@ class DBAPI {
 		include_once($_SESSION['site_config']['basedir']."dbapi/names.db.php");
 		$this->names = new NamesAPI();
 
+		## LOGIN TRACKER
+		include_once($_SESSION['site_config']['basedir']."dbapi/login_tracker.db.php");
+		$this->login_tracker = new LoginTrackerAPI();
 
+		## Problems
 		include_once($_SESSION['site_config']['basedir']."dbapi/problems.db.php");
 		$this->problems = new ProblemsAPI();
 
@@ -472,10 +463,9 @@ class DBAPI {
         }else{
                 $res = mysqli_query($this->db,$cmd);
 
-                if($res === FALSE){
-
+            if ($res === false) {
                         echo "(Bypassing) Error in execSQL(".$cmd."):".mysqli_error($this->db);
-                        return FALSE;
+                return false;
                 }
         }
 

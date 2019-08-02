@@ -39,7 +39,6 @@
 					}else{
 						$this->namedata[$x] = $row[$this->namefield];
 					}
-
 					$this->valdata[$x]  = $row[$this->valfield];
 				}
 			}

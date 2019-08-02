@@ -233,7 +233,7 @@
 
 	function curl_write_temp_file($url, $file_prefix = "TempFile-"){
 
-		$data = $this->curl_get_file($url);
+		$data = curl_get_file($url);
 
 		$temp_file = tempnam(sys_get_temp_dir(), $file_prefix);
 
@@ -260,3 +260,20 @@
 
 		return $out;
 	}
+
+    /**
+     * @param $s integer Start time as timestamp
+     * @param $e integer End time as timestamp
+     * @param $f string format of output (see date->format for options)
+     */
+	function calculateDuration($s, $e, $f) {
+        $d1 = new DateTime();
+        $d2 = new DateTime();
+        $d1->setTimestamp($s);
+        $d2->setTimestamp($e);
+        $i = $d1->diff($d2);
+        #echo __METHOD__ . var_dump($d1, $d2, $i) . "<br />";
+        return $i->format($f);
+    }
+    
+    
