@@ -312,6 +312,8 @@
                                             Users</a></li>
                                     <li><a href="?area=user_groups&no_script=1"
                                            onclick="loadSection(this.href);return false">Group Manager</a></li>
+									<li><a href="?area=user_groups_master&no_script=1"
+                                           onclick="loadSection(this.href);return false">Master User Groups</a></li>
 
                                     <?
                                         /**<li><a href="?area=users&add_user&no_script=1" onclick="loadSection(this.href);return false">Add User</a></li>

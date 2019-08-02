@@ -252,7 +252,7 @@
 			//$_SESSION['interface']->makeHeader();
 			$_SESSION['interface']->makeNewHeader();
 
-			if($_REQUEST['area']){
+			if(isset($_REQUEST['area']) && $_REQUEST['area']){
 
 				?><script>
 					loadSection('<?=stripurl('no_script')?>&no_script=1');
@@ -894,7 +894,16 @@
 				}
 
 				break;
-
+				
+			case 'user_groups_master':
+				if (checkAccess('users')) {
+					include_once("classes/user_groups_master.inc.php");
+					$_SESSION['user_groups_master']->handleFLOW();
+				} else {
+					accessDenied("Users");
+				}
+				break;
+				
 
 			case 'report_emails':
 

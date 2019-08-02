@@ -181,7 +181,13 @@
 			$obj->handleSecondaryAjax();
 
 			break;
-
+			
+		case 'user_groups_master':
+			include_once($basedir . "api/user_groups_master.api.php");
+			$obj = new API_UserGroupsMaster();
+			$obj->handleSecondaryAjax();
+			break;
+			
 		case 'action_log':
 
 			include_once($basedir."api/action_log.api.php");
@@ -403,7 +409,13 @@
 		$obj->handleAPI();
 
 		break;
-
+		
+	case 'user_groups_master':
+		include_once($basedir . "api/user_groups_master.api.php");
+		$obj = new API_UserGroupsMaster();
+		$obj->handleAPI();
+		break;
+		
 	case 'change_password':
 
 		include_once($basedir."api/change_password.api.php");

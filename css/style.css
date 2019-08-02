@@ -23,8 +23,8 @@ table{
 .align_left{	text-align: left;}
 .align_right{	text-align: right;}
 
-.underline{ text-decoration:underline; }
-.italic{ text-decoration:italic; }
+.underline{ text-decoration: underline; }
+.italic{ font-style: italic; }
 
 .bl{	border-bottom:1px solid #000000;}
 .lb{	border:1px dotted #ccc;}
@@ -152,7 +152,10 @@ a:hover {
 	float: right;
 	padding-left: 6px;
 }
-<<<<<<< css/style.css
+.search {
+	font-size: large;
+	font-weight: bolder;
+}
 .lefty {
 	text-align: left;
 	align-content: baseline;
@@ -165,9 +168,137 @@ a:hover {
 	text-align: center;
 	align-content: baseline;
 }
-=======
-<<<<<<< css/style.css
-=======
-
->>>>>>> css/style.css
->>>>>>> css/style.css
+.pct16 {
+    width: 16%
+}
+.pct20 {
+	width: 20%;
+}
+.pct25 {
+	width: 25%;
+}
+.pct33 {
+    width: 33%;
+}
+.pct50 {
+	width: 50%;
+}
+.pct66 {
+    width: 66%;
+}
+.pct75 {
+	width: 75%;
+}
+.pct100 {
+	width: 100%;
+}
+.ht30 {
+	height: 30px;
+}
+#dragZone, #dropZone {
+	border: 1px solid #eee;
+	margin: 0;
+	padding: 5px 0 0 0;
+	margin-right: 10px;
+}
+#dragZone {
+	list-style-type: none;
+	overflow: hidden;
+	display: block;
+}
+#dragZone li {
+	float: left;
+	display: block;
+}
+#dropZone {
+	float:left;
+    display: inline-block;
+	width: 100%;
+}
+.fldMaker {
+	margin: 0 5px 5px 5px;
+	padding: 5px;
+	font-size: 1.2em;
+    max-width: 150px;
+}
+.fldTitle {
+	position: relative;
+	font-size: 0.8em;
+	color: orangered;
+	/*text-decoration: underline;*/
+	float: left;
+}
+.fldHolder {
+	margin: 0 5px 5px 5px;
+	padding: 5px;
+	font-size: 1.2em;
+	min-height: 36px;
+    box-sizing: border-box;
+	min-width: 370px;
+	float: left;
+}
+.fldActions {
+	float: right;
+	font-size: 0.6em;
+}
+.frmActionButton {
+    float: right;
+}
+.fldHeader {
+	position: relative;
+	padding-bottom: 4px;
+	width: 100%;
+	min-height: 24px;
+}
+.field {
+	float: left;
+	min-width: 370px;
+}
+.field > label, .field > input, .field > select {
+	font-size: 0.8em;
+	font-weight: 600;
+}
+.fafLabel {
+    min-width: 8%;
+    display: inline-block;
+}
+.tightTable {
+    padding: 4px;
+}
+.fieldPreview {
+	position: absolute;
+	display: block;
+}
+.labelPreview {
+	position: absolute;
+	display: block;
+	/*margin-right: 10px;*/
+}
+#previewBox {
+	position: relative;
+    /*overflow-y: visible;*/
+    /*height: auto;*/
+}
+.labelDIV {
+    border: 1px solid firebrick;
+    display: block;
+    float: left;
+    min-height: 80px;
+}
+.fieldDIV {
+    border: 1px solid coral;
+    display: block;
+    float: left;
+    min-height: 80px;
+}
+.dzRow {
+    width: 100%;
+    margin: 2px;
+    display: inline-block;
+}
+.dragMe {
+	background-blend-mode: overlay;
+	background-color: lightpink;
+	float:left;
+	padding: 4px;
+}
