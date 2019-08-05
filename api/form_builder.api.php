@@ -20,6 +20,8 @@
                     logAction('copy', 'form_builder', $id, "Copied form to campaign" . $tgtCampaign);
                     $_SESSION['api']->outputCopySuccess();
                     break;
+                case 'new':
+                    break;
                 case 'delete':
                     $id = intval($_REQUEST['id']);
                     $_SESSION['dbapi']->form_builder->delete($id);
@@ -68,6 +70,10 @@
                     $campaign_id = intval($_REQUEST['campaign_id']);
                     $screen_number = intval($_REQUEST['screen_number']);
                     $_SESSION['dbapi']->form_builder->markFieldDeleted($id);
+                    break;
+                case 'saveField':
+                    $fieldData = json_decode($_REQUEST['field'], TRUE);
+                    $_SESSION['dbapi']->form_builder->saveField($fieldData);
                     break;
                 default:
                 case 'list':

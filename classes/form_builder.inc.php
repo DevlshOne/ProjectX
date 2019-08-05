@@ -46,6 +46,8 @@
                     $this->makeAdd($_REQUEST['add']);
                 } elseif (isset($_REQUEST['copy'])) {
                     $this->makeCopy($_REQUEST['copy']);
+                } elseif (isset($_REQUEST['new'])) {
+                    $this->makeNew();
                 } else {
                     $this->listForms();
                 }
@@ -150,6 +152,15 @@
                     $('#' + objname).dialog('option', 'position', 'center');
                 }
 
+                function displayNewFormBuilderDialog() {
+                    var objname = 'dialog-modal-add-form-builder';
+                    $('#' + objname).dialog("option", "title", 'Create new form');
+                    $('#' + objname).dialog("open");
+                    $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    $('#' + objname).load("index.php?area=form_builder&new=1&printable=1&no_script=1");
+                    $('#' + objname).dialog('option', 'position', 'center');
+                }
+
                 function displayAddFormBuilderDialog(id) {
                     let objname = 'main_content';
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
@@ -164,14 +175,7 @@
                         <td height="40" class="pad_left ui-widget-header">
                             <table border="0" width="100%">
                                 <tr>
-                                    <td width="500">
-                                        Form Builder&nbsp;
-                                        <?
-                                            /**
-                                             * <input type="button" value="Add" onclick="displayAddNameDialog(0)">
-                                             * <input type="button" value="Search" onclick="toggleFormSearch()">
-                                             **/ ?>
-                                    </td>
+                                    <td width="500">Form Builder</td>
                                     <td width="150" align="center">PAGE SIZE: <select
                                                 name="<?= $this->order_prepend ?>pagesizeDD"
                                                 id="<?= $this->order_prepend ?>pagesizeDD"
@@ -181,8 +185,8 @@
                                             <option value="100">100</option>
                                             <option value="500">500</option>
                                         </select></td>
-                                    <td align="right"><?
-                                            /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/ ?>
+                                    <td align="right">
+<!--                                        <input type="button" value="New" onclick="displayNewFormBuilderDialog(); return false;">-->
                                         <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
                                             <tr>
                                                 <td id="form_builder_prev_td" class="page_system_prev"></td>
@@ -209,10 +213,18 @@
                 </td>
             </tr>
             </table>
-            <!--            <div id="dialog-modal-add-form-builder" title="Editing form" class="nod"></div>-->
+            <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod"></div>
             <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <script>
                 $("#dialog-modal-copy-form-builder").dialog({
+                    autoOpen: false,
+                    width: 500,
+                    height: 160,
+                    modal: false,
+                    draggable: true,
+                    resizable: false
+                });
+                $("#dialog-modal-add-form-builder").dialog({
                     autoOpen: false,
                     width: 500,
                     height: 160,
@@ -229,9 +241,8 @@
             $id = intval($id);
             $sourceName = $_SESSION['dbapi']->campaigns->getName($id);
             ?>
-            <form method=""
-                  POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkTargetCampaign(this); return false;">
-            <table border="0" align="center">
+            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkTargetCampaign(this); return false;">
+            <table border="0" style="text-align:center;">
                 <tr>
                     <th class="lefty pct50 ht30">Copying from :</th>
                     <td class="righty pct50 ht30" style="font-weight:700;"><?= $sourceName; ?></td>
@@ -242,6 +253,22 @@
                 </tr>
                 <tr>
                     <th colspan="2" class="centery"><input type="submit" value="Copy"></th>
+                </tr>
+            </table>
+            </form>
+            <?
+        }
+
+        function makeNew() {
+            ?>
+            <form method="POST" action="<?= stripurl('new') . 'add=0' ?>" autocomplete="off">
+            <table border="0" style="text-align:center;">
+                <tr>
+                    <th class="lefty pct50 ht30">Choose campaign for new form :</th>
+                    <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
+                </tr>
+                <tr>
+                    <th colspan="2" class="centery"><input type="submit" value="Go" onclick="displayAddFormBuilderDialog(0)"></th>
                 </tr>
             </table>
             </form>
@@ -266,32 +293,12 @@
                     draggable: true,
                     resizable: true
                 });
-                $('#dropZone').droppable({
-                    // drop: function(e, ui) {
-                    //     let el = $(ui.draggable);
-                    //     // el.resizable({
-                    //     //     containment: '#dropZone',
-                    //     //     maxHeight: 65,
-                    //     //     minHeight: 65,
-                    //     //     minWidth: 200,
-                    //     //     maxWidth: 600,
-                    //     //     helper: 'ui-resizable-helper',
-                    //     //     grid: 200,
-                    //     //     ghost: false,
-                    //     //     handles: 'e',
-                    //     //     stop: function(e2, ui2) {
-                    //     //         ui2.position.left = 0;
-                    //     //         ui2.size.height = 65;
-                    //     //         ui2.size.width = Math.round( ui2.size.width / 200 ) * 200;
-                    //     //     }
-                    //     // });
-                    //     $(this).append(el);
-                    // }
-                });
+                $('#dropZone').droppable();
                 $('li.fldMaker').draggable({
                     containment: "#dropZone",
                     helper: 'clone',
                     cursor: 'move',
+                    class: 'hand',
                     cursorAt: {
                         top: 25,
                         left: 25
@@ -314,7 +321,6 @@
                     // console.log(f);
                     f.create();
                     f.populate();
-                    // f.reposition();
                 }
 
                 function loadNewScreen(jsondata) {
@@ -336,7 +342,7 @@
                 }
 
                 function clearDropZone() {
-                    $('ul#dropZone').empty();
+                    $('#dropZone').empty();
                 }
 
                 function changeScreen(c, s) {
@@ -352,7 +358,7 @@
                 function saveField(i) {
                     let f = formFields[i];
                     f.saveToDB();
-                    f.populate();
+                    // f.populate();
                 }
 
                 function deleteField(i) {
@@ -457,7 +463,7 @@
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
                     </ul>
                     <div id="mainPanel" class="pct100">
-                        <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
+<!--                        <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>-->
                         <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
                         <ul id="dragZone" class="lefty pct100">
                             <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>
@@ -465,9 +471,9 @@
                             <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="2">TEXTAREA Field</li>
 <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="99">EMPTY Filler</li>-->
                         </ul>
-                        <ul id="dropZone" class="lefty pct100">
-                            <li class="ui-state-default fldHolder"></li>
-                        </ul>
+                        <div id="dropZone" class="lefty pct100">
+                            <div class="ui-state-default fldHolder"></div>
+                        </div>
                     </div>
                     <div id="dialog-modal-preview-form-builder" title="Previewing Form" class="nod"></div>
                 </div>

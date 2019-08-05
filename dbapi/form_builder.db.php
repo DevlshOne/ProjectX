@@ -38,7 +38,101 @@ class FormBuilderAPI{
 		return $name;
 	}
 
-	function getFieldsByScreen($id, $scr) {
+	function saveField($d) {
+	    $setFieldsArr = [];
+	    $sql = "UPDATE `" . $this->table . "` ";
+	    foreach($d as $k => $v) {
+	        switch($k) {
+                case 'isRequired':
+                    $setFieldsArr[] = "SET `is_required` = '" . $v . "'";
+                    break;
+                case 'isRequired':
+                    $setFieldsArr[] = "SET `name` = '" . $v . "'";
+                    break;
+                case 'lblWidth':
+                    $setFieldsArr[] = "SET `label_width` = '" . $v . "'";
+                    break;
+                case 'lblHeight':
+                    $setFieldsArr[] = "SET `label_height` = '" . $v . "'";
+                    break;
+                case 'toolTip':
+                    $setFieldsArr[] = "SET `tool_tip` = '" . $v . "'";
+                    break;
+                case 'placeHolder':
+                    $setFieldsArr[] = "SET `place_holder` = '" . $v . "'";
+                    break;
+                case 'cssName':
+                    $setFieldsArr[] = "SET `css_class` = '" . $v . "'";
+                    break;
+//                case 'fldName':
+//                    $setFieldsArr[] = "SET `db_field` = '" . $v . "'";
+//                    break;
+                case 'fldValue':
+                    $setFieldsArr[] = "SET `value` = '" . $v . "'";
+                    break;
+                case 'fldType':
+                    $setFieldsArr[] = "SET `field_type` = '" . $v . "'";
+                    break;
+                case 'fldMaxLength':
+                    $setFieldsArr[] = "SET `max_length` = '" . $v . "'";
+                    break;
+                case 'fldWidth':
+                    $setFieldsArr[] = "SET `field_width` = '" . $v . "'";
+                    break;
+                case 'fldHeight':
+                    $setFieldsArr[] = "SET `field_height` = '" . $v . "'";
+                    break;
+                case 'fldSpecial':
+                    $setFieldsArr[] = "SET `special_mode` = '" . $v . "'";
+                    break;
+                case 'fldOptions':
+                    $setFieldsArr[] = "SET `options` = '" . $v . "'";
+                    break;
+                case 'dbTable':
+                    $setFieldsArr[] = "SET `db_table` = '" . $v . "'";
+                    break;
+                case 'dbField':
+                    $setFieldsArr[] = "SET `db_field` = '" . $v . "'";
+                    break;
+                case 'fldVariables':
+                    $setFieldsArr[] = "SET `variables` = '" . $v . "'";
+                    break;
+                case 'callStep':
+                    $setFieldsArr[] = "SET `field_step` = '" . $v . "'";
+                    break;
+                case 'lblPosX':
+                    $setFieldsArr[] = "SET `label_x` = '" . $v . "'";
+                    break;
+                case 'lblPosY':
+                    $setFieldsArr[] = "SET `label_y` = '" . $v . "'";
+                    break;
+                case 'fldPosX':
+                    $setFieldsArr[] = "SET `field_x` = '" . $v . "'";
+                    break;
+                case 'fldPosY':
+                    $setFieldsArr[] = "SET `field_y` = '" . $v . "'";
+                    break;
+                case 'isHidden':
+                    $setFieldsArr[] = "SET `is_hidden` = '" . $v . "'";
+                    break;
+                case 'isLocked':
+                    $setFieldsArr[] = "SET `is_locked` = '" . $v . "'";
+                    break;
+                default:
+                    break;
+//this.idx = index;
+//this.screenNum = o.screen_num;
+//this.campID = o.campaign_id;
+//this.dbID = o.id;
+            }
+        }
+        $setStmts = join(', ', $setFieldsArr);
+        $sql .= $setStmts . " WHERE `id` = '" . $d['dbID'] . "'";
+        $_SESSION['dbapi']->query($sql);
+        return;
+    }
+
+    function getFieldsByScreen($id, $scr) {
 	    $campaign_id = intval($id);
 	    $screen_id = intval($scr);
 	    $sql = "SELECT * FROM `" . $this->table . "` WHERE `campaign_id` = " . $campaign_id . " AND `screen_num` = " . $screen_id . " AND `deleted` = 'no'";

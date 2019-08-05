@@ -13,6 +13,19 @@ let _formBuilder = {
 
     },
 };
+const fieldWrapperDragOptions = {
+    refreshPositions: true,
+    containment: '#dropZone',
+    cursor: 'move',
+    stop: function (e, ui) {
+        let fieldID = ui.helper.attr('data-fieldID');
+        console.log('dbID #' + fieldID + ' dropped at X:' + ui.position.left + ', Y:' + ui.position.top);
+        let f = formFields[fieldID];
+        f.fldPosX = ui.position.left;
+        f.fldPosY = ui.position.top;
+        f.saveToDB();
+    }
+};
 function frmField(index, o) {
     this.isRequired = o.is_required;
     this.txtLabel = o.name;
@@ -48,10 +61,14 @@ frmField.prototype = {
     constructor: frmField,
     saveToDB: function() {
         console.log('Saving field ' + this.idx);
+        console.log(JSON.stringify(this));
+        $.getJSON('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function(response) {
+            console.log(response);
+        });
         this.populate();
     },
     create: function() {
-        let newLI = '<li style="width:' + parseInt(parseInt(this.lblWidth) + parseInt(this.fldWidth)) + 'px;" title="Double-Click to Edit" ondblclick="editField(' + this.idx + '); return false;" class="ui-state-default fldHolder">\n' +
+        let newLI = '<div style="width: auto;" id="fieldWrapper_' + this.idx + '">\n' +
             // '<div class="fldHeader">\n' +
             // '<div class="fldActions">\n' +
             // '<div class="fldTitle">[' + this.screenNum + ':' + this.idx + '] - ' + this.txtLabel + '</div>\n' +
@@ -61,9 +78,9 @@ frmField.prototype = {
             // '</div>\n' +
             // '</div>\n' +
             // '<div class="fldTitle">' + this.txtLabel + '</div>\n' +
-            '<div class="field"></div>\n' +
-            '</li>\n';
-        $('ul#dropZone').append(newLI);
+            // '<div class="field"></div>\n' +
+            '</div>\n';
+        $('#dropZone').append(newLI);
     },
     markDeleted: function() {
 
@@ -256,7 +273,8 @@ frmField.prototype = {
         }
     },
     populate: function() {
-        let fldRendering = $('ul#dropZone li').eq(this.idx).children('div.field');
+        // let fldRendering = $('#dropZone').children('div.fldHolder').eq(this.idx);
+        let fldRendering = $('#fieldWrapper_' + this.idx);
         let fldFormat = '';
         let lblFormat = '';
         let fldObj = {};
@@ -285,32 +303,22 @@ frmField.prototype = {
                 fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
-                lblObj.draggable({
-                    containment: $(this).closest('div.field'),
-                    cursor: 'move',
-                    snap: true,
-                    scroll: false,
-                    snapMode: 'inner',
-                    stop: function (e, ui) {
-                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
-                        // ui.disable();
-                    },
-                });
-                fldObj.draggable({
-                    containment: $(this).closest('div.field'),
-                    cursor: 'move',
-                    snap: true,
-                    scroll: false,
-                    snapMode: 'inner',
-                    stop: function (e, ui) {
-                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
-                        // ui.disable();
-                    },
-                });
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
+                lblObj.wrap('<div class="dragMe" data-fieldID="' + this.idx + '" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="inp' + this.idx + '"></div>');
+                fldObj.closest('.dragMe').css({
+                    top: this.fldPosY + 'px',
+                    left: this.fldPosX + 'px',
+                    position: 'absolute'
+                });
+                lblObj.closest('.dragMe').css({
+                    top: this.lblPosY + 'px',
+                    left: this.lblPosX + 'px',
+                    position: 'absolute'
+                });
                 break;
             case '1' :
                 // This is a dropdown field, so let's create it and then populate it
@@ -335,28 +343,6 @@ frmField.prototype = {
                 fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
-                lblObj.draggable({
-                    containment: $(this).closest('div.field'),
-                    cursor: 'move',
-                    snap: true,
-                    scroll: false,
-                    snapMode: 'inner',
-                    stop: function (e, ui) {
-                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
-                        // ui.disable();
-                    },
-                });
-                fldObj.draggable({
-                    containment: $(this).closest('div.field'),
-                    cursor: 'move',
-                    snap: true,
-                    scroll: false,
-                    snapMode: 'inner',
-                    stop: function (e, ui) {
-                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
-                        // ui.disable();
-                    },
-                });
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
@@ -365,7 +351,22 @@ frmField.prototype = {
                     fldObj.append('<option>' + v + '</option>');
                 });
                 $(fldRendering).empty().append(lblObj, fldObj);
+                lblObj.wrap('<div class="dragMe" data-fieldID="' + this.idx + '" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="sel' + this.idx + '"></div>');
+                fldObj.closest('.dragMe').css({
+                    top: this.fldPosY + 'px',
+                    left: this.fldPosX + 'px',
+                    position: 'absolute'
+                });
+                lblObj.closest('.dragMe').css({
+                    top: this.lblPosY + 'px',
+                    left: this.lblPosX + 'px',
+                    position: 'absolute'
+                });
                 break;
         }
+        $('div.dragMe').each(function(i) {
+            $(this).draggable(fieldWrapperDragOptions);
+        });
     }
 };
