@@ -19,7 +19,7 @@ const fieldWrapperDragOptions = {
     cursor: 'move',
     stop: function (e, ui) {
         let fieldID = ui.helper.attr('data-fieldID');
-        console.log('dbID #' + fieldID + ' dropped at X:' + ui.position.left + ', Y:' + ui.position.top);
+        // console.log('dbID #' + fieldID + ' dropped at X:' + ui.position.left + ', Y:' + ui.position.top);
         let f = formFields[fieldID];
         f.fldPosX = ui.position.left;
         f.fldPosY = ui.position.top;
@@ -60,8 +60,8 @@ function frmField(index, o) {
 frmField.prototype = {
     constructor: frmField,
     saveToDB: function() {
-        console.log('Saving field ' + this.idx);
-        console.log(JSON.stringify(this));
+        // console.log('Saving field ' + this.idx);
+        // console.log(JSON.stringify(this));
         $.getJSON('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function(response) {
             console.log(response);
         });
