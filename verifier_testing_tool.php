@@ -5,7 +5,7 @@
 	include_once("utils/jsfunc.php");
 	include_once("utils/DropDowns.php");
 
-	$testing_phone = "100".substr("".time(), 0, 7);
+	$testing_phone = "100".substr("".time(), -7, 7);
 
 //	$testing_phone ="7021112222";
 

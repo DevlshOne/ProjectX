@@ -151,6 +151,67 @@ class ListToolsClass{
 					"'".mysqli_real_escape_string($_SESSION['db'],$type)."',".
 					"UNIX_TIMESTAMP())");
 	}
+	
+	
+	
+	
+	
+	
+	function convertCampaignToParents(){
+		
+		// load the parent campaign, and its subcampaigns
+		// build SQL " IN () " query, to include all the sub campaigns for this parent
+		connectPXDB();
+		
+		
+		
+		$res = query("SELECT * FROM campaign_parents WHERE deleted=0 ORDER BY `code` ASC", 1);
+		
+		echo date("g:i:s m/d/Y")." - Loading ".mysqli_num_rows($res)." campaign parents\n";
+		
+		$rowarr = array();
+		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+			
+			$rowarr[$row['id']] = array();
+			$rowarr[$row['id']]['parent'] = $row;
+			$rowarr[$row['id']]['children'] = array();
+			
+			$rowarr[$row['id']]['in_stack'] = array();
+			
+			$re2 = query("SELECT * FROM `campaigns` WHERE `status`='active' AND `parent_campaign_id`='".intval($row['id'])."' ");
+			while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
+				
+				$rowarr[$row['id']]['children'][] = $r2;
+				
+				$rowarr[$row['id']]['in_stack'][] = $r2['id'];
+				
+			}
+		}
+		
+
+		
+		echo date("g:i:s m/d/Y")." - Converting Children to Parent campaign ID...\n";
+		
+		// connect to list tool
+		connectListDB();
+		
+		
+		// update the lead_pulls table to point to the new parent ID, (WHERE campaign_id IN () from above)
+		foreach($rowarr as $parent_campaign_id => $data){
+
+			if(count($data['in_stack']) > 0){
+				$sql = "UPDATE `leads_pulls` SET campaign_id=".intval($parent_campaign_id)." WHERE campaign_id IN (".implode(",", $data['in_stack'])."); ";
+			
+			
+				echo $sql."\n";
+				
+				//execSQL($sql);
+			}
+		}
+		
+		echo date("g:i:s m/d/Y")." - DONE\n";
+		
+	}
 
 	function removeNumber($num){
 
@@ -917,7 +978,10 @@ class ListToolsClass{
 					<th style="padding-left:5px" align="left">Source:</th>
 					<td colspan="2"><?
 
-						echo $_SESSION['campaigns']->makeDDByCode('campaign_id',$row['campaign_id'],'',"",'',0," AND px_hidden='no' AND verifier_mode='no' ");
+						//echo $_SESSION['campaigns']->makeDDByCode('campaign_id',$row['campaign_id'],'',"",'',0," AND px_hidden='no' AND verifier_mode='no' ");
+						
+						echo $_SESSION['cmpgn_parents']->makeCampaignParentDD('campaign_id',$row['campaign_id'],'', false);
+						
 						//echo $_SESSION['campaigns']->makeDD('campaign_id',$row['campaign_id'],'',"",'',0," AND px_hidden='no' AND verifier_mode='no' ");
 
 

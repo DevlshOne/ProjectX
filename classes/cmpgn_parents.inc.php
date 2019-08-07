@@ -6,8 +6,8 @@
 
 $_SESSION['cmpgn_parents'] = new CampaignParents;
 
-class CampaignParents
-{
+class CampaignParents{
+	
     public $table	= 'campaign_parents';			## Classes main table to operate on
     public $orderby	= 'id';		## Default Order field
     public $orderdir	= 'DESC';	## Default order direction
@@ -17,32 +17,50 @@ class CampaignParents
     public $index_name = 'cmpgn_parents_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
     public $frm_name = 'cmpgnparentsnextfrm';
     public $order_prepend = 'cmpgn_parents_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
-    public function CampaignParents()
-    {
+ 
+    
+    public function CampaignParents(){
+    	
         ## REQURES DB CONNECTION!
         $this->handlePOST();
+        
     }
+    
+    
+    
+    
     /**
     *
     * @param string $currentSelected
     * @return string $showDD
     *
     **/
-    public function makeDDvalIDtxtCODE($currentSelected)
-    {
+    public function makeDDvalIDtxtCODE($currentSelected){
+    	
       $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0";
+      
       $res = $_SESSION['dbapi']->query($sql,1);
+      
       $showDD = "<select name='parent_campaign_id' id='dd-parent_campaign_id'>";
       $showDD .= "<option value='0'>[None]</option>";
+      
       if(mysqli_num_rows($res) > 0){
+      	
         for($x=0;$row = mysqli_fetch_array($res);$x++){
           $showDD .= "<option value='" . $row['id'] . "'";
+          
           if($row['id'] == $currentSelected) {
             $showDD .= " selected";
           }
+          
           $showDD .= ">" . $row['code'] . "</option>";
+          
         }
+        
       }
+      
+      
+      
       $showDD .= "</select>";
       return $showDD;
     }
@@ -56,9 +74,8 @@ class CampaignParents
      * @return string $showDD the complete select statement to be rendered
      *
      **/
-    public function makeCampaignParentDD($name, $sel, $onchange=NULL, $blank_entry=false)
-    {
-        $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0";
+    public function makeCampaignParentDD($name, $sel, $onchange=NULL, $blank_entry=false){
+        $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0 ORDER BY code ASC";
         $res = $_SESSION['dbapi']->query($sql,1);
         $showDD = "<select name='" . $name . "' id='" . $name . "'";
         if(isset($onchange)) {
@@ -101,8 +118,7 @@ class CampaignParents
             }
         }
     }
-    public function listEntrys()
-    {
+    public function listEntrys(){
         ?>
 		<script>
 			var campaign_parent_delmsg = 'Are you sure you want to delete this campaign parent?';
@@ -114,7 +130,7 @@ class CampaignParents
 				['id','align_center'],
 				['name','align_left'],
 				['code','align_center'],
-  			['[delete]','align_center']
+  				['[delete]','align_center']
 			];
 			/**
 			* Build the URL for AJAX to hit, to build the list
@@ -236,13 +252,17 @@ class CampaignParents
 		<?
     }
 
-    public function makeAdd($id)
-    {
+    public function makeAdd($id){
+    	
         $id=intval($id);
+        
         if ($id) {
             $row = $_SESSION['dbapi']->campaign_parents->getByID($id);
-        } ?>
-		<script>
+        } 
+        
+        
+        
+        ?><script>
 
 			function validateCampaignParentField(name,value,frm){
 				//alert(name+","+value);
@@ -314,7 +334,7 @@ class CampaignParents
 		<tr>
 			<th align="left" height="30">Code</th>
 			<td>
-        <input id="campaign_parent_code" name="code" type="text" onkeyup="this.value = this.value.toUpperCase(); "title="4 - 16 characters, uppercase and digits only" size="20" pattern="[A-Z0-9]{4,16}" maxlength="16" value="<?=htmlentities($row['code'])?>">
+        <input id="campaign_parent_code" name="code" type="text" onkeyup="this.value = this.value.toUpperCase();"  title="3 - 16 characters, uppercase and digits only" size="20" pattern="[A-Z0-9]{3,16}" maxlength="16" value="<?=htmlentities($row['code'])?>">
 			</td>
 		</tr>
 		<tr>
