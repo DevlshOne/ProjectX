@@ -75,7 +75,7 @@ class CampaignParents{
      *
      **/
     public function makeCampaignParentDD($name, $sel, $onchange=NULL, $blank_entry=false){
-        $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0";
+        $sql = "SELECT id, code FROM " . $this->table . " WHERE deleted=0 ORDER BY code ASC";
         $res = $_SESSION['dbapi']->query($sql,1);
         $showDD = "<select name='" . $name . "' id='" . $name . "'";
         if(isset($onchange)) {
