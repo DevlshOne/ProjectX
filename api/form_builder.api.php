@@ -14,11 +14,12 @@
                 return;
             }
             switch ($_REQUEST['action']) {
-                case 'copy':
-                    $id = intval($_REQUEST['id']);
-                    $tgtCampaign = $_SESSION['dbapi']->form_builder->copy($id);
-                    logAction('copy', 'form_builder', $id, "Copied form to campaign" . $tgtCampaign);
-                    $_SESSION['api']->outputCopySuccess();
+                case 'copyFields':
+                    $sourceID = intval($_REQUEST['sourceID']);
+                    $targetID = intval($_REQUEST['targetID']);
+                    $_SESSION['dbapi']->form_builder->copyFields($sourceID, $targetID);
+                    logAction('copy', 'form_builder', $targetID, "Copied fields from campaign " . $sourceID . " to campaign " . $targetID);
+//                    $_SESSION['api']->outputCopySuccess();
                     break;
                 case 'new':
                     break;

@@ -222,7 +222,7 @@
                     height: 160,
                     modal: false,
                     draggable: true,
-                    resizable: false
+                    resizable: false,
                 });
                 $("#dialog-modal-add-form-builder").dialog({
                     autoOpen: false,
@@ -241,18 +241,34 @@
             $id = intval($id);
             $sourceName = $_SESSION['dbapi']->campaigns->getName($id);
             ?>
-            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkTargetCampaign(this); return false;">
-            <table border="0" style="text-align:center;">
+            <script>
+                $(function() {
+                    $('#btnMakeCopy').on('click', function() {
+                        let targetID = $('#targetCampaign').val();
+                        let sourceID = $('#sourceCampaign').val();
+                        $.post('api/api.php?get=form_builder&mode=json&action=copyFields&sourceID=' + sourceID + '&targetID=' + targetID);
+                        $('#dialog-modal-copy-form-builder').dialog('close');
+                        loadForm_builders();
+                    });
+                });
+            </script>
+            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off">
+            <table border="0" style="width:100%;text-align:center;">
                 <tr>
                     <th class="lefty pct50 ht30">Copying from :</th>
-                    <td class="righty pct50 ht30" style="font-weight:700;"><?= $sourceName; ?></td>
+                    <td class="righty pct50 ht30" style="font-weight:700;">
+                        <input type="hidden" id="sourceCampaign" value="<?= $id; ?>" />
+                        <?= $sourceName; ?>
+                    </td>
                 </tr>
                 <tr>
                     <th class="lefty pct50 ht30" height="30">To campaign :</th>
-                    <td class="righty pct50 ht30"><?= makeCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
+                    <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
                 </tr>
                 <tr>
-                    <th colspan="2" class="centery"><input type="submit" value="Copy"></th>
+                    <th colspan="2" class="centery">
+                        <input id="btnMakeCopy" type="button" value="Make Copy">
+                    </th>
                 </tr>
             </table>
             </form>

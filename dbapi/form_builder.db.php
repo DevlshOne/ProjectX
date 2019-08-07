@@ -40,6 +40,11 @@ class FormBuilderAPI{
 
 	function saveField($d) {
 	    $setFieldsArr = [];
+	    if($d['dbID'] == 0) {
+	        $sql = "INSERT INTO `" . $this->table . "` (`name`) VALUES (`" . $d['name'] . "`)";
+	        $r = $_SESSION['dbapi']->query($sql);
+	        $d['dbID'] = mysqli_insert_id($r);
+        }
 	    $sql = "UPDATE `" . $this->table . "` SET ";
 	    foreach($d as $k => $v) {
 	        switch($k) {
@@ -131,6 +136,19 @@ class FormBuilderAPI{
 //        echo $sql;
         $_SESSION['dbapi']->query($sql);
         return;
+    }
+
+    function copyFields($src, $tgt) {
+	    $sql = "SELECT * FROM `" . $this->table . "` WHERE `campaign_id` = '" . $src . "'";
+	    $data = $_SESSION['dbapi']->fetchAllAssoc($sql);
+	    foreach($data as $row) {
+            $row['campaign_id'] = $tgt;
+            $keys = join("`,`", array_keys($row));
+            $vals = join("','", array_values($row));
+            $sql2 = "INSERT INTO " . $this->table . " (`" . $keys . "`) VALUES ('" . $vals . "')";
+//            echo $sql2;
+            $_SESSION['dbapi']->query($sql2);
+        }
     }
 
     function getFieldsByScreen($id, $scr) {

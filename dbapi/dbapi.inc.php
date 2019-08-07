@@ -441,6 +441,7 @@
 
         public function fetchAllAssoc($cmd) {
             return $this->query($cmd, 8);
+            # Returns all results as an associative array
         }
 
         /**
