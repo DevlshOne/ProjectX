@@ -1598,7 +1598,7 @@ $(function() {
 
                 break;
 
-            case 2:
+            case 2: // VERIFIER CALL STATS
 
                 $html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
 
@@ -1627,7 +1627,7 @@ $(function() {
                 $textdata .=	"\nReport is attached (or view email as HTML).";
                 break;
 
-            case 3:
+            case 3: // SUMMARY REPORT
 
                 $html = $_SESSION['summary_report']->makeHTMLReport($report_type, $stime, $etime);
 
