@@ -897,14 +897,21 @@ $(function() {
 							Combine Left/Right Users
 						</td>
 					</tr>
+					
+					
+					<input type="hidden" name="include_answer_machines" value="1" /><?
+					
+					/***
 					<tr>
 						<td>&nbsp;</td>
 						<td>
 						
-							<input type="checkbox" name="include_answer_machines" value="1" <?=($_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
+							<input type="checkbox" name="include_answer_machines" value="1" <?=(!isset($_REQUEST['include_answer_machines']) || $_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
 							Include Answering Machine stats
 						</td>
 					</tr>
+					***/
+					?>
 					<tr>
 						<th colspan="2">
 
@@ -982,11 +989,11 @@ $(function() {
             
             
             
-            if($_REQUEST['include_answer_machines']){
+//             if($_REQUEST['include_answer_machines']){
                 $this->skip_answeringmachines = false;
-            }else{
-                $this->skip_answeringmachines = true;
-            }
+//             }else{
+//                 $this->skip_answeringmachines = true;
+//             }
             
             
             
@@ -1377,8 +1384,9 @@ $(function() {
      *
      *
      */
-    public function sendReportEmails()
-    {
+    public function sendReportEmails(){
+    	
+    	
         $curtime = time();
 
         // INIT VARIABLES
@@ -1640,6 +1648,7 @@ $(function() {
                 $textdata .=	"\nReport is attached (or view email as HTML).";
                 break;
                 
+                
             case 4: // ROUSTER REPORT
             	
             	
@@ -1648,9 +1657,9 @@ $(function() {
             	
             	
             	$html = $_SESSION['rouster_report']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
-//									            	makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = null, $combine_users = false){
-            		
-            		
+            	//									            	makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = null, $combine_users = false){
+            	
+            	
             	if ($html == null) {
             		echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
             		continue 2;
@@ -1675,7 +1684,7 @@ $(function() {
               	
               	$textdata .=	"\nReport is attached (or view email as HTML).";
               	break;
-            	
+              	
             }
             // REPORT HAS BEEN GENERATED, DO THE EMAIL SHIT HERE
 
