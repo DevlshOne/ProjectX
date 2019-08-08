@@ -246,9 +246,11 @@
                     $('#btnMakeCopy').on('click', function() {
                         let targetID = $('#targetCampaign').val();
                         let sourceID = $('#sourceCampaign').val();
-                        $.post('api/api.php?get=form_builder&mode=json&action=copyFields&sourceID=' + sourceID + '&targetID=' + targetID);
-                        $('#dialog-modal-copy-form-builder').dialog('close');
-                        loadForm_builders();
+                        $.post('api/api.php?get=form_builder&mode=json&action=copyFields&sourceID=' + sourceID + '&targetID=' + targetID, function() {
+                            $('#dialog-modal-copy-form-builder').dialog('close');
+                            alert('Campaign copied');
+                        });
+                        // loadForm_builders();
                     });
                 });
             </script>

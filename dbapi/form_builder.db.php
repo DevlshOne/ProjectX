@@ -143,10 +143,11 @@ class FormBuilderAPI{
 	    $data = $_SESSION['dbapi']->fetchAllAssoc($sql);
 	    foreach($data as $row) {
             $row['campaign_id'] = $tgt;
+            unset($row['id']);
             $keys = join("`,`", array_keys($row));
             $vals = join("','", array_values($row));
             $sql2 = "INSERT INTO " . $this->table . " (`" . $keys . "`) VALUES ('" . $vals . "')";
-//            echo $sql2;
+//            echo $sql2 . "\n";
             $_SESSION['dbapi']->query($sql2);
         }
     }

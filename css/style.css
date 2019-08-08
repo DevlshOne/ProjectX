@@ -215,6 +215,7 @@ a:hover {
     display: inline-block;
 	width: 100%;
 	position: relative;
+	min-height: 600px;
 }
 .fldMaker {
 	margin: 0 5px 5px 5px;
