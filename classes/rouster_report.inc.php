@@ -1354,8 +1354,11 @@ class RousterReport{
 				?></td>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
 
-
-					echo renderTimeFormatted($running_t_time/60);
+					$tmphours = floor($running_t_time / 3600);
+					$tmpmin = floor( ($running_t_time - ($tmphours * 3600)) / 60 );
+					echo $tmphours.':'.(($tmpmin <= 9)?'0'.$tmpmin:$tmpmin);
+	
+					//	echo renderTimeFormatted($running_t_time/60);
 
 
 				?></td>
