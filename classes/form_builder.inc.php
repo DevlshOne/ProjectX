@@ -186,7 +186,7 @@
                                             <option value="500">500</option>
                                         </select></td>
                                     <td align="right">
-<!--                                        <input type="button" value="New" onclick="displayNewFormBuilderDialog(); return false;">-->
+                                        <!--                                        <input type="button" value="New" onclick="displayNewFormBuilderDialog(); return false;">-->
                                         <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
                                             <tr>
                                                 <td id="form_builder_prev_td" class="page_system_prev"></td>
@@ -242,11 +242,11 @@
             $sourceName = $_SESSION['dbapi']->campaigns->getName($id);
             ?>
             <script>
-                $(function() {
-                    $('#btnMakeCopy').on('click', function() {
+                $(function () {
+                    $('#btnMakeCopy').on('click', function () {
                         let targetID = $('#targetCampaign').val();
                         let sourceID = $('#sourceCampaign').val();
-                        $.post('api/api.php?get=form_builder&mode=json&action=copyFields&sourceID=' + sourceID + '&targetID=' + targetID, function() {
+                        $.post('api/api.php?get=form_builder&mode=json&action=copyFields&sourceID=' + sourceID + '&targetID=' + targetID, function () {
                             $('#dialog-modal-copy-form-builder').dialog('close');
                             confirm('Campaign copied');
                             loadForm_builders();
@@ -255,24 +255,24 @@
                 });
             </script>
             <form method="POST" action="<?= stripurl('') ?>" autocomplete="off">
-            <table border="0" style="width:100%;text-align:center;">
-                <tr>
-                    <th class="lefty pct50 ht30">Copying from :</th>
-                    <td class="righty pct50 ht30" style="font-weight:700;">
-                        <input type="hidden" id="sourceCampaign" value="<?= $id; ?>" />
-                        <?= $sourceName; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="lefty pct50 ht30" height="30">To campaign :</th>
-                    <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
-                </tr>
-                <tr>
-                    <th colspan="2" class="centery">
-                        <input id="btnMakeCopy" type="button" value="Make Copy">
-                    </th>
-                </tr>
-            </table>
+                <table border="0" style="width:100%;text-align:center;">
+                    <tr>
+                        <th class="lefty pct50 ht30">Copying from :</th>
+                        <td class="righty pct50 ht30" style="font-weight:700;">
+                            <input type="hidden" id="sourceCampaign" value="<?= $id; ?>"/>
+                            <?= $sourceName; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="lefty pct50 ht30" height="30">To campaign :</th>
+                        <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="centery">
+                            <input id="btnMakeCopy" type="button" value="Make Copy">
+                        </th>
+                    </tr>
+                </table>
             </form>
             <?
         }
@@ -280,15 +280,15 @@
         function makeNew() {
             ?>
             <form method="POST" action="<?= stripurl('new') . 'add=0' ?>" autocomplete="off">
-            <table border="0" style="text-align:center;">
-                <tr>
-                    <th class="lefty pct50 ht30">Choose campaign for new form :</th>
-                    <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
-                </tr>
-                <tr>
-                    <th colspan="2" class="centery"><input type="submit" value="Go" onclick="displayAddFormBuilderDialog(0)"></th>
-                </tr>
-            </table>
+                <table border="0" style="text-align:center;">
+                    <tr>
+                        <th class="lefty pct50 ht30">Choose campaign for new form :</th>
+                        <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
+                    </tr>
+                    <tr>
+                        <th colspan="2" class="centery"><input type="submit" value="Go" onclick="displayAddFormBuilderDialog(0)"></th>
+                    </tr>
+                </table>
             </form>
             <?
         }
@@ -317,7 +317,7 @@
                     tolerance: 'pointer',
                     greedy: true,
                     hoverClass: 'highlight',
-                    drop: function(e, ui) {
+                    drop: function (e, ui) {
                         $(ui.draggable).detach().css(
                             {
                                 position: 'absolute',
@@ -377,7 +377,7 @@
                     // load new screen fields
                     // console.log('Changing screen to ' + c + ':' + s);
                     clearDropZone();
-                    $.getJSON('api/api.php?get=form_builder&mode=json&action=getScreen&campaign_id=' + c + '&screen_number=' + s, function(data) {
+                    $.getJSON('api/api.php?get=form_builder&mode=json&action=getScreen&campaign_id=' + c + '&screen_number=' + s, function (data) {
                         loadNewScreen(data);
                     });
                 }
@@ -400,7 +400,7 @@
 
                 function deleteField(i) {
                     let f = formFields[i];
-                    $.post('api/api.php?get=form_builder&mode=json&action=markDeleted&id=' + f.dbID, function() {
+                    $.post('api/api.php?get=form_builder&mode=json&action=markDeleted&id=' + f.dbID, function () {
                         changeScreen(f.campID, f.screenNum);
                     });
                 }
@@ -416,7 +416,7 @@
                             text: 'Delete',
                             title: 'Remove field from this form',
                             icon: 'ui-icon-trash',
-                            click: function() {
+                            click: function () {
                                 deleteField(i);
                                 $(this).dialog('close');
                             }
@@ -425,8 +425,8 @@
                             text: 'Save',
                             title: 'Finish editing and save',
                             icon: 'ui-icon-disk',
-                            click: function() {
-                                $.each($('#fieldAsForm' + i).serializeArray(), function(index, field) {
+                            click: function () {
+                                $.each($('#fieldAsForm' + i).serializeArray(), function (index, field) {
                                     f[field.name] = field.value;
                                     console.log('Setting f.' + field.name + ' to ' + field.value);
                                 });
@@ -439,7 +439,7 @@
                             text: 'Cancel',
                             title: 'Cancel editing',
                             icon: 'ui-icon-cancel',
-                            click: function() {
+                            click: function () {
                                 $(this).dialog('close');
                             }
                         }
@@ -494,7 +494,7 @@
                 });
             </script>
             <div class="pct100">
-                <div class="ht40 pd10 ui-widget-header">Editing Form for Campaign : <?=$sourceName;?></div>
+                <div class="ht40 pd10 ui-widget-header">Editing Form for Campaign : <?= $sourceName; ?></div>
                 <div id="screenTabs">
                     <ul>
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 0); return false;">Screen 0</a></li>
@@ -505,14 +505,17 @@
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
                     </ul>
                     <div id="mainPanel" class="pct100">
-                        <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
-                        <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
-                        <ul id="dragZone" class="lefty pct100">
-                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>
-                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">SELECT Field</li>
-                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="2">TEXTAREA Field</li>
-<!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="99">EMPTY Filler</li>-->
-                        </ul>
+                        <div class="ht40" style="margin-bottom:10px;">
+                            <input type="button" value="Add Field" onclick="addField(); return false;" style="float:left;" class="frmActionButton"/>
+                            <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
+                            <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
+                            <!--                        <ul id="dragZone" class="lefty pct100">-->
+                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>-->
+                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">SELECT Field</li>-->
+                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="2">TEXTAREA Field</li>-->
+                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="99">EMPTY Filler</li>-->
+                            <!--                        </ul>-->
+                        </div>
                         <div id="dropZone" class="lefty pct100">
                             <div class="ui-state-default fldHolder"></div>
                         </div>
