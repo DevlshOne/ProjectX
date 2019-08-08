@@ -48,6 +48,8 @@ class API_Functions{
 		echo '<Result>Success</Result>'."\n";
 	}
 
+	function outputCopySuccess() {}
+
 	function outputEditSuccess($id,$warning_msgs=null){
 
 		switch($_SESSION['api']->mode){

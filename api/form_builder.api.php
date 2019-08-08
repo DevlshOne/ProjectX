@@ -19,7 +19,7 @@
                     $targetID = intval($_REQUEST['targetID']);
                     $_SESSION['dbapi']->form_builder->copyFields($sourceID, $targetID);
                     logAction('copy', 'form_builder', $targetID, "Copied fields from campaign " . $sourceID . " to campaign " . $targetID);
-//                    $_SESSION['api']->outputCopySuccess();
+                    $_SESSION['api']->outputCopySuccess();
                     break;
                 case 'new':
                     break;

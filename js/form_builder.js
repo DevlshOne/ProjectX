@@ -23,7 +23,7 @@ const fieldWrapperDragOptions = {
         let f = formFields[fieldID];
         f.fldPosX = ui.position.left;
         f.fldPosY = ui.position.top;
-        f.saveToDB();
+        // f.saveToDB();
     }
 };
 function frmField(index, o) {

@@ -216,6 +216,7 @@ a:hover {
 	width: 100%;
 	position: relative;
 	min-height: 600px;
+	overflow-y: auto;
 }
 .fldMaker {
 	margin: 0 5px 5px 5px;

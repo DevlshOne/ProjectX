@@ -248,9 +248,9 @@
                         let sourceID = $('#sourceCampaign').val();
                         $.post('api/api.php?get=form_builder&mode=json&action=copyFields&sourceID=' + sourceID + '&targetID=' + targetID, function() {
                             $('#dialog-modal-copy-form-builder').dialog('close');
-                            alert('Campaign copied');
+                            confirm('Campaign copied');
+                            loadForm_builders();
                         });
-                        // loadForm_builders();
                     });
                 });
             </script>
@@ -315,19 +315,15 @@
                 $('li.fldMaker').draggable({
                     containment: "#dropZone",
                     helper: 'clone',
-                    cursor: 'move',
-                    class: 'hand',
-                    cursorAt: {
-                        top: 25,
-                        left: 25
-                    },
-                    snap: true,
+                    // cursor: 'move',
+                    // class: 'hand',
+                    // cursorAt: {
+                    //     top: 25,
+                    //     left: 25
+                    // },
+                    // snap: true,
                     scroll: false,
-                    snapMode: 'inner',
-                    stop: function (e, ui) {
-                        // console.log('Dropped at X:' + ui.position.top + ', Y:' + ui.position.left);
-                        // ui.disable();
-                    },
+                    // snapMode: 'inner',
                     revert: 'invalid'
                 });
                 $('.fldTitle').on('click', function () {
@@ -376,7 +372,13 @@
                 function saveField(i) {
                     let f = formFields[i];
                     f.saveToDB();
-                    // f.populate();
+                }
+
+                function saveForm() {
+                    for (var i = 0; i < formFields.length; i++) {
+                        let f = formFields[i];
+                        f.saveToDB();
+                    }
                 }
 
                 function deleteField(i) {
@@ -481,7 +483,7 @@
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
                     </ul>
                     <div id="mainPanel" class="pct100">
-<!--                        <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>-->
+                        <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
                         <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
                         <ul id="dragZone" class="lefty pct100">
                             <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>
