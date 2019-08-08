@@ -138,7 +138,7 @@ class FormBuilderAPI{
         }
         $setStmts = join(', ', $setFieldsArr);
         $sql .= $setStmts . " WHERE `id` = '" . $d['dbID'] . "'";
-        echo $sql;
+//        echo $sql;
         return $_SESSION['dbapi']->query($sql);
     }
 

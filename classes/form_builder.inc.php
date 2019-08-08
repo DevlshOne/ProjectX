@@ -295,6 +295,7 @@
 
         function makeAdd($id) {
             $id = intval($id);
+            $sourceName = $_SESSION['dbapi']->campaigns->getName($id);
             if ($id) {
                 $row = $_SESSION['dbapi']->form_builder->getByID($id);
             }
@@ -478,7 +479,7 @@
                 });
             </script>
             <div class="pct100">
-                <div class="ui-widget-header">Editing Form for Campaign :</div>
+                <div class="ht40 pd10 ui-widget-header">Editing Form for Campaign : <?=$sourceName;?></div>
                 <div id="screenTabs">
                     <ul>
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 0); return false;">Screen 0</a></li>

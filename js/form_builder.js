@@ -17,8 +17,10 @@ const fieldWrapperDragOptions = {
     refreshPositions: true,
     containment: '#dropZone',
     cursor: 'move',
+    revert: 'invalid',
+    helper: 'clone',
     stop: function (e, ui) {
-        let fieldID = ui.helper.attr('data-fieldid');
+        let fieldID = ui.helper.attr('data-fieldID');
         // console.log('dbID #' + fieldID + ' dropped at X:' + ui.position.left + ', Y:' + ui.position.top);
         let f = formFields[fieldID];
         f.fldPosX = ui.position.left;
@@ -289,8 +291,8 @@ frmField.prototype = {
                 fldObj.attr('tabindex', this.idx);
                 fldObj.attr('required', this.isRequired);
                 lblObj.attr('value', this.txtLabel);
-                lblObj.text(this.txtLabel + ' label');
-                fldObj.text(this.txtLabel + ' input');
+                lblObj.text('LBL:' + this.txtLabel);
+                fldObj.text('INP:' + this.txtLabel);
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
                 lblObj.css('margin-right', '10px');
@@ -332,8 +334,8 @@ frmField.prototype = {
                 fldObj.attr('tabindex', this.idx);
                 fldObj.attr('required', this.isRequired);
                 lblObj.attr('value', this.txtLabel);
-                lblObj.text(this.txtLabel + ' label');
-                fldObj.text(this.txtLabel + ' select');
+                lblObj.text('LBL:' + this.txtLabel);
+                fldObj.text('SEL:' + this.txtLabel);
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
                 lblObj.css('margin-right', '10px');
