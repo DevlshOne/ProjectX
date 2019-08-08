@@ -18,7 +18,7 @@ const fieldWrapperDragOptions = {
     containment: '#dropZone',
     cursor: 'move',
     stop: function (e, ui) {
-        let fieldID = ui.helper.attr('data-fieldID');
+        let fieldID = ui.helper.attr('data-fieldid');
         // console.log('dbID #' + fieldID + ' dropped at X:' + ui.position.left + ', Y:' + ui.position.top);
         let f = formFields[fieldID];
         f.fldPosX = ui.position.left;
@@ -60,8 +60,6 @@ function frmField(index, o) {
 frmField.prototype = {
     constructor: frmField,
     saveToDB: function() {
-        // console.log('Saving field ' + this.idx);
-        // console.log(JSON.stringify(this));
         $.getJSON('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function(response) {
             console.log(response);
         });
@@ -91,7 +89,7 @@ frmField.prototype = {
         let fieldAsForm = '<form id="fieldAsForm' + this.idx + '">' +
             '<table class="pct100 tightTable">' +
             '<tr>' +
-            '<td><label class="fafLabel" for="field_step">Step : </label><select id="field_step' + this.idx + '" name="field_step"><option>-1</option><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option></select></td>' +
+            '<td><label class="fafLabel" for="field_step">Field Step : </label><input id="field_step' + this.idx + '" name="field_step" type="number" value = "' + this.callStep + '"/></td>' +
             '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="field_type">Type : </label><select id="field_type' + this.idx + '" onchange="changeFieldType(' + this.idx + ', $(this).val());return false;" name="field_type"><option value="0">Text</option><option value="1">Dropdown</option><option value="2">Textarea</option></select></td>' +
@@ -100,20 +98,20 @@ frmField.prototype = {
             '<td><label class="fafLabel" for="name">Label : </label><input class="pct75" id="name' + this.idx + '"  name="name" type="text" value="' + this.txtLabel + '" /></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="label_width">Label Width : </label><input class="pct75" id="name' + this.idx + '"  name="name" type="number" min="0" max="500" value="' + this.lblWidth + '" /></td>' +
+            '<td><label class="fafLabel" for="label_width">Label Width : </label><input class="pct75" id="label_width' + this.idx + '"  name="label_width" type="number" min="0" max="500" value="' + this.lblWidth + '" /></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="label_height">Label Height : </label><input class="pct75" id="name' + this.idx + '"  name="name" type="number" min="0" max="500" value="' + this.lblHeight + '" /></td>' +
+            '<td><label class="fafLabel" for="label_height">Label Height : </label><input class="pct75" id="label_height' + this.idx + '"  name="label_height" type="number" min="0" max="500" value="' + this.lblHeight + '" /></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="label_x">Label X : </label><input class="pct75" id="name' + this.idx + '"  name="name" type="number" min="0" max="1024" value="' + this.lblPosX + '" /></td>' +
+            '<td><label class="fafLabel" for="label_x">Label X : </label><input class="pct75" id="label_x' + this.idx + '"  name="label_x" type="number" min="0" max="1024" value="' + this.lblPosX + '" /></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="label_y">Label Y : </label><input class="pct75" id="name' + this.idx + '"  name="name" type="text" value="' + this.lblPosY + '" /></td>' +
+            '<td><label class="fafLabel" for="label_y">Label Y : </label><input class="pct75" id="label_y' + this.idx + '"  name="label_y" type="text" value="' + this.lblPosY + '" /></td>' +
             '</tr>' +
-            '<tr>' +
-            '<td><label class="fafLabel" for="db_field">Field Name : </label><input class="pct75" id="db_field' + this.idx + '" name="db_field" type="text" value="' + this.dbField + '" /></td>' +
-            '</tr>' +
+            // '<tr>' +
+            // '<td><label class="fafLabel" for="db_field">Field Name : </label><input class="pct75" id="name' + this.idx + '" name="name" type="text" value="' + this.name + '" /></td>' +
+            // '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="field_width">Field Width : </label><input class="pct75" id="field_width' + this.idx + '" name="field_width" type="number" min="0" max="500" value="' + this.fldWidth + '" /></td>' +
             '</tr>' +
@@ -282,14 +280,17 @@ frmField.prototype = {
         switch(this.fldType) {
             case '0' :
                 // This is a text field, so let's create it and then populate it
-                fldFormat = '<input type="text" />';
-                lblFormat = '<label></label>';
+                // fldFormat = '<input type="text" />';
+                // lblFormat = '<label></label>';
+                fldFormat = '<div></div>';
+                lblFormat = '<div></div>';
                 fldObj = $(fldFormat);
                 lblObj = $(lblFormat);
                 fldObj.attr('tabindex', this.idx);
                 fldObj.attr('required', this.isRequired);
                 lblObj.attr('value', this.txtLabel);
-                lblObj.text(this.txtLabel);
+                lblObj.text(this.txtLabel + ' label');
+                fldObj.text(this.txtLabel + ' input');
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
                 lblObj.css('margin-right', '10px');
@@ -297,7 +298,7 @@ frmField.prototype = {
                 fldObj.attr('placeholder', this.placeHolder);
                 fldObj.addClass(this.cssName);
                 fldObj.attr('name', this.fldName);
-                lblObj.attr('for', this.fldName);
+                // lblObj.attr('for', this.fldName);
                 fldObj.attr('id', this.fldName);
                 fldObj.attr('value', this.fldValue);
                 fldObj.attr('maxlength', this.fldMaxLength);
@@ -322,14 +323,17 @@ frmField.prototype = {
                 break;
             case '1' :
                 // This is a dropdown field, so let's create it and then populate it
-                fldFormat = '<select></select>';
-                lblFormat = '<label></label>';
+                // fldFormat = '<select></select>';
+                // lblFormat = '<label></label>';
+                fldFormat = '<div></div>';
+                lblFormat = '<div></div>';
                 fldObj = $(fldFormat);
                 lblObj = $(lblFormat);
                 fldObj.attr('tabindex', this.idx);
                 fldObj.attr('required', this.isRequired);
                 lblObj.attr('value', this.txtLabel);
-                lblObj.text(this.txtLabel);
+                lblObj.text(this.txtLabel + ' label');
+                fldObj.text(this.txtLabel + ' select');
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
                 lblObj.css('margin-right', '10px');
@@ -337,7 +341,7 @@ frmField.prototype = {
                 fldObj.attr('placeholder', this.placeHolder);
                 fldObj.addClass(this.cssName);
                 fldObj.attr('name', this.fldName);
-                lblObj.attr('for', this.fldName);
+                // lblObj.attr('for', this.fldName);
                 fldObj.attr('id', this.fldName);
                 fldObj.attr('value', this.fldValue);
                 fldObj.attr('maxlength', this.fldMaxLength);
@@ -346,10 +350,10 @@ frmField.prototype = {
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
-                let arrOptions = this.fldOptions.split(';');
-                jQuery.each(arrOptions, function(i, v) {
-                    fldObj.append('<option>' + v + '</option>');
-                });
+                // let arrOptions = this.fldOptions.split(';');
+                // jQuery.each(arrOptions, function(i, v) {
+                //     fldObj.append('<option>' + v + '</option>');
+                // });
                 $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div class="dragMe" data-fieldID="' + this.idx + '" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="sel' + this.idx + '"></div>');

@@ -303,8 +303,10 @@ a:hover {
 	background-blend-mode: overlay;
 	background-color: lightpink;
 	float:left;
-	padding: 4px;
+	padding: 0px;
 	cursor: move;
 	vertical-align: middle;
 	z-index: 10;
+	border: 1px dotted black;
+	overflow: hidden;
 }

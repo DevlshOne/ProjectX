@@ -371,11 +371,12 @@
 
                 function saveField(i) {
                     let f = formFields[i];
+                    console.log(JSON.stringify(f));
                     f.saveToDB();
                 }
 
                 function saveForm() {
-                    for (var i = 0; i < formFields.length; i++) {
+                    for (let i = 0; i < formFields.length; i++) {
                         let f = formFields[i];
                         f.saveToDB();
                     }
@@ -405,11 +406,16 @@
                             }
                         },
                         {
-                            text: 'Done',
+                            text: 'Save',
                             title: 'Finish editing and save',
                             icon: 'ui-icon-disk',
                             click: function() {
-                                saveField(i);
+                                $.each($('#fieldAsForm' + i).serializeArray(), function(index, field) {
+                                    f[field.name] = field.value;
+                                    console.log('Setting f.' + field.name + ' to ' + field.value);
+                                });
+                                f.saveToDB();
+                                // saveField(f);
                                 $(this).dialog('close');
                             }
                         },

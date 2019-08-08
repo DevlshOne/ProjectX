@@ -51,7 +51,7 @@ class FormBuilderAPI{
                 case 'isRequired':
                     $setFieldsArr[] = "`is_required` = '" . $v . "'";
                     break;
-                case 'isRequired':
+                case 'name':
                     $setFieldsArr[] = "`name` = '" . $v . "'";
                     break;
                 case 'lblWidth':
@@ -69,9 +69,13 @@ class FormBuilderAPI{
                 case 'cssName':
                     $setFieldsArr[] = "`css_class` = '" . $v . "'";
                     break;
-//                case 'fldName':
-//                    $setFieldsArr[] = "`db_field` = '" . $v . "'";
-//                    break;
+                case 'fldName':
+                case 'txtLabel':
+                case 'idx':
+                case 'screenNum':
+                case 'campID':
+                case 'dbID':
+                    break;
                 case 'fldValue':
                     $setFieldsArr[] = "`value` = '" . $v . "'";
                     break;
@@ -124,6 +128,7 @@ class FormBuilderAPI{
                     $setFieldsArr[] = "`is_locked` = '" . $v . "'";
                     break;
                 default:
+                    $setFieldsArr[] = "`" . $k . "` = '" . $v . "'";
                     break;
 //this.idx = index;
 //this.screenNum = o.screen_num;
@@ -133,9 +138,8 @@ class FormBuilderAPI{
         }
         $setStmts = join(', ', $setFieldsArr);
         $sql .= $setStmts . " WHERE `id` = '" . $d['dbID'] . "'";
-//        echo $sql;
-        $_SESSION['dbapi']->query($sql);
-        return;
+        echo $sql;
+        return $_SESSION['dbapi']->query($sql);
     }
 
     function copyFields($src, $tgt) {
@@ -147,7 +151,6 @@ class FormBuilderAPI{
             $keys = join("`,`", array_keys($row));
             $vals = join("','", array_values($row));
             $sql2 = "INSERT INTO " . $this->table . " (`" . $keys . "`) VALUES ('" . $vals . "')";
-//            echo $sql2 . "\n";
             $_SESSION['dbapi']->query($sql2);
         }
     }
