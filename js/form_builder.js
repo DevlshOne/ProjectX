@@ -18,7 +18,7 @@ const fieldWrapperDragOptions = {
     containment: '#dropZone',
     cursor: 'move',
     revert: 'invalid',
-    helper: 'clone',
+    // helper: 'clone',
     stop: function (e, ui) {
         let fieldID = ui.helper.attr('data-fieldID');
         // console.log('dbID #' + fieldID + ' dropped at X:' + ui.position.left + ', Y:' + ui.position.top);
@@ -63,9 +63,9 @@ frmField.prototype = {
     constructor: frmField,
     saveToDB: function() {
         $.getJSON('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function(response) {
-            console.log(response);
         });
-        this.populate();
+        // this.populate();
+        // changeScreen(this.campID, this.screenNum);
     },
     create: function() {
         let newLI = '<div style="width: auto;" id="fieldWrapper_' + this.idx + '">\n' +
@@ -295,7 +295,7 @@ frmField.prototype = {
                 fldObj.text('INP:' + this.txtLabel);
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
-                lblObj.css('margin-right', '10px');
+                // lblObj.css('margin-right', '10px');
                 lblObj.attr('title', this.toolTip);
                 fldObj.attr('placeholder', this.placeHolder);
                 fldObj.addClass(this.cssName);
@@ -338,7 +338,7 @@ frmField.prototype = {
                 fldObj.text('SEL:' + this.txtLabel);
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
-                lblObj.css('margin-right', '10px');
+                // lblObj.css('margin-right', '10px');
                 lblObj.attr('title', this.toolTip);
                 fldObj.attr('placeholder', this.placeHolder);
                 fldObj.addClass(this.cssName);

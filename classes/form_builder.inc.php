@@ -312,7 +312,19 @@
                     draggable: true,
                     resizable: true
                 });
-                $('#dropZone').droppable();
+                $('#dropZone').droppable({
+                    accept: '.dragMe',
+                    tolerance: 'pointer',
+                    greedy: true,
+                    hoverClass: 'highlight',
+                    drop: function(e, ui) {
+                        $(ui.draggable).detach().css(
+                            {
+                                position: 'absolute',
+                            }
+                        ).appendTo(this);
+                    }
+                });
                 $('li.fldMaker').draggable({
                     containment: "#dropZone",
                     helper: 'clone',
@@ -372,15 +384,18 @@
 
                 function saveField(i) {
                     let f = formFields[i];
-                    console.log(JSON.stringify(f));
                     f.saveToDB();
                 }
 
                 function saveForm() {
                     for (let i = 0; i < formFields.length; i++) {
                         let f = formFields[i];
+                        let campID = f.campID;
+                        let screenNum = f.screenNum;
                         f.saveToDB();
                     }
+                    window.alert('Form saved');
+                    changeScreen(campID, screenNum);
                 }
 
                 function deleteField(i) {
@@ -416,7 +431,7 @@
                                     console.log('Setting f.' + field.name + ' to ' + field.value);
                                 });
                                 f.saveToDB();
-                                // saveField(f);
+                                window.alert('Field saved');
                                 $(this).dialog('close');
                             }
                         },
