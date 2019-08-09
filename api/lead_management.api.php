@@ -36,6 +36,75 @@ class API_Lead_Management{
 		execSQL("DELETE FROM `sales` WHERE transfer_id='$transfer_id' AND lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
 	}
 	
+	
+	
+	/**
+	 * createSaleOnCCIData($row)
+	 * 
+	 * I created this function, for incase they created a sale with the wrong date, so it didn't sync to CCIData. 
+	 * 
+	 * We later discovered that it was using "vici_last_local_call_time" field, which is why it was sending the older date
+	 * 
+	 * Going to skip hooking this function up to anything, until its determined that we actually need it for a valid purpose
+	 * 
+	 * -Jon - 8/9/2019
+	 * 
+	 * @param unknown $row SALE ROW/RECORD
+	 */
+	function createSaleOnCCIData($row){
+		
+		
+		
+		$cluster = getClusterRow($row['agent_cluster_id']);
+		
+		$cluster_ip = $cluster['ip_address'];
+		
+		$cluster = null; /// CLEAN IT UP
+	
+		// PART OF CCI-DATA'S INDEX, IS THE SALE DATE, SO THIS HAS TO MATCH UP, OR WE GET DUPES
+		$date = date("m/d/Y", $row['sale_time']);
+		$time = date("H:i:s", $row['sale_time']);
+	
+		
+		$start_sql = "REPLACE INTO `leads` (`lead_id`,`phone`,`agent_id`,`agent_name`,`sales_date`,`sales_time`,".
+				"`last_name`,`first_name`,`contact`,`address1`,`address2`,`city`,`state`,`zip`,`campaign`,`list_id`,".
+				"`sale_amount`,`verifier`,`office`,`call_group`,`server`) VALUES ";
+		
+		$sql = $start_sql;
+		
+		$sql .= "('".addslashes($row['agent_lead_id'])."',".
+				"'".addslashes($row['phone'])."',".
+				"'".addslashes(strtoupper($row['agent_username']))."',".
+				"'".addslashes(strtoupper($row['agent_name']))."',".
+				"'".addslashes($date)."',".
+				"'".addslashes($time)."',".
+				"'".addslashes(strtoupper($row['last_name']))."',".
+				"'".addslashes(strtoupper($row['first_name']))."',".
+				"'".addslashes(strtoupper($row['first_name']))."',".
+				"'".addslashes(strtoupper($row['address1']))."',".
+				"'".addslashes(strtoupper($row['address2']))."',".
+				"'".addslashes(strtoupper($row['city']))."',".
+				"'".addslashes(strtoupper($row['state']))."',".
+				"'".addslashes($row['zip'])."',".
+				"'".addslashes(strtoupper($row['campaign']))."',".
+				"'".addslashes(strtoupper($row['campaign_code']))."',".
+				"'".addslashes($row['amount'])."',".
+				"'".addslashes(strtoupper($row['verifier_username']))."',".
+				"'".(($row['office'])?addslashes(strtoupper($row['office'])) : "90")."',".
+				"'".addslashes(strtoupper($row['call_group']))."',".
+				"'".addslashes($cluster_ip)."')";
+		
+		// CONNECT TO CCIDATA
+		connectCCIDB();
+		
+		$cnt = execSQL($sql);
+		
+		// CONNECT BACK TO PX
+		connectPXDB();
+		
+		return $cnt;
+	}
+	
 	function removeSaleFromCCIData($lead_tracking_id, $sale_time){
 		
 		// LOAD THE LEAD INFORMATION
@@ -675,6 +744,9 @@ class API_Lead_Management{
 				
 				
 				
+				$verifier_cluster_id = (intval($row['verifier_vici_cluster_id']) > 0)?$row['verifier_vici_cluster_id']:999999;
+				
+				
 				
 				//$agent_user = $_SESSION['dbapi']->lead_management->getUserByID();
 				
@@ -706,7 +778,7 @@ class API_Lead_Management{
 					
 					$dat['verifier_username'] = $verifier_user['username'];
 					$dat['verifier_lead_id'] = $row['verifier_lead_id'];
-					$dat['verifier_cluster_id'] = $row['verifier_vici_cluster_id'];
+					$dat['verifier_cluster_id'] = $verifier_cluster_id;
 					$dat['verifier_amount'] = intval($_REQUEST['verifier_amount']);
 					$dat['verifier_dispo'] = $dispo;
 					
@@ -726,7 +798,7 @@ class API_Lead_Management{
 					$dat['agent_lead_id'] = $row['lead_id'];
 					$dat['agent_cluster_id'] = $row['vici_cluster_id'];
 					$dat['verifier_lead_id'] = $row['verifier_lead_id'];
-					$dat['verifier_cluster_id'] = $row['verifier_vici_cluster_id'];
+					$dat['verifier_cluster_id'] = $verifier_cluster_id;
 					$dat['campaign_id'] = $row['campaign_id'];
 					$dat['sale_time'] = $sale_time;
 					
@@ -920,7 +992,7 @@ class API_Lead_Management{
 							$dat['agent_lead_id'] = $row['lead_id'];
 							$dat['agent_cluster_id'] = $row['vici_cluster_id'];
 							$dat['verifier_lead_id'] = $row['verifier_lead_id'];
-							$dat['verifier_cluster_id'] = $row['verifier_vici_cluster_id'];
+							$dat['verifier_cluster_id'] = $verifier_cluster_id;
 							$dat['campaign_id'] = $row['campaign_id'];
 							
 							
