@@ -850,84 +850,75 @@ class SalesAnalysis{
 			<tr>
 				<td colspan="2">
 
-<script>
-$(function() {
-  let timeFields = $('#startTimeFilter, #endTimeFilter');
-  let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
-  if(retainTime) {
-    $(timeFields).show();
-    $('#timeFilter').prop('checked', true);
-  } else {
-  $(timeFields).hide();
-      $('#timeFilter').prop('checked', false);
-}
-  $('#timeFilter').on('click', function() {
-    $(timeFields).toggle();
-  });
-});
-</script>
 
 					<table border="0">
 					<tr>
 						<th>Date Start:</th>
-						<td>
-           <?php  echo makeTimebar("strt_date_", 1, null, false, $timestamp); ?>
-           <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php  echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?></div>
-            </td>
+						<td><?
+
+							echo makeTimebar("stime_", 1, null,false,$timestamp);
+
+						?></td>
 					</tr>
 					<tr>
 						<th>Date End:</th>
-						<td>
-              <?php echo makeTimebar("end_date_", 1, null, false, $timestamp2); ?>
-              <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php  echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>
-            </td>
-					</tr>
-          <tr>
-						<th>Use Time?</th>
-						<td>
-              <input type="checkbox" name="timeFilter" id="timeFilter">
-            </td>
+						<td><?
+
+							echo makeTimebar("etime_", 1, null,false,$timestamp2);
+
+						?></td>
 					</tr>
 					<tr>
 						<th>Agent Cluster:</th>
-						<td><?php
+						<td><?
 
-                            echo $this->makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0)?-1:$_REQUEST['agent_cluster_id'], '', ""); ?></td>
+							echo $this->makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0)?-1:$_REQUEST['agent_cluster_id'], '', "");
+
+						?></td>
 					</tr>
 					<?/*<tr>
 						<th>Verifier Cluster:</th>
-						<td><?php
+						<td><?
 
-                            echo $this->makeClusterDD("verifier_cluster_id", $_REQUEST['verifier_cluster_id'], '', ""); ?></td>
+							echo $this->makeClusterDD("verifier_cluster_id", $_REQUEST['verifier_cluster_id'], '', "");
+
+						?></td>
 					</tr>**/?>
 					<tr>
 						<th>PX Campaign ID:</th>
-						<td><?php
+						<td><?
 
-                            echo makeCampaignDD("campaign_id", $_REQUEST['campaign_id'], '', ""); ?></td>
+							echo makeCampaignDD("campaign_id", $_REQUEST['campaign_id'], '', "");
+
+						?></td>
 					</tr>
 
 					<tr>
 						<th>VICI Campaign:</th>
-						<td><?php
+						<td><?
 
-                            echo $this->makeViciCampaignDD('vici_campaign_code', $_REQUEST['vici_campaign_code'], '', ""); ?></td>
+							echo $this->makeViciCampaignDD('vici_campaign_code', $_REQUEST['vici_campaign_code'], '', "");
+
+						?></td>
 					</tr>
 
 					<tr>
 						<th>User Group:</th>
-						<td><?php
+						<td><?
 
-                            //echo $this->makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "");
-                            echo makeViciUserGroupDD("user_group[]", $_REQUEST['user_group'], '', "", 7)
-                        ?></td>
+							//echo $this->makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "");
+							echo makeViciUserGroupDD("user_group[]", $_REQUEST['user_group'], '', "", 7)
+						?></td>
 					</tr>
 					<tr>
 						<th>Ignore User Group:</th>
-						<td><?php
+						<td><?
 
-                            //echo $this->makeViciUserGroupDD("ignore_group", $_REQUEST['ignore_group'], '', "");
-                            echo makeViciUserGroupDD("ignore_group[]", $_REQUEST['ignore_group'], '', "", 7, "[None]"); ?></td>
+							//echo $this->makeViciUserGroupDD("ignore_group", $_REQUEST['ignore_group'], '', "");
+							echo makeViciUserGroupDD("ignore_group[]", $_REQUEST['ignore_group'], '', "", 7, "[None]");
+
+
+						?></td>
 					</tr>
 					<tr>
 						<th height="30">Ignore Users:<br />(<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
@@ -943,7 +934,6 @@ $(function() {
 							<input type="checkbox" id="combiner" onclick="this.form.combine_users.value = (this.checked)?1:0" <?=($_REQUEST['combine_users'] > 0 || !isset($_REQUEST['combine_users']))?" CHECKED ":''?> >
 							Combine Left/Right Users
 						</td>
-<<<<<<< classes/sales_analysis.inc.php
 					</tr>
 					<tr>
 						<th colspan="2">
@@ -1015,133 +1005,27 @@ $(function() {
 
 
 			/*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
-=======
-					</tr>
-					
-					
-					<input type="hidden" name="include_answer_machines" value="1" /><?
-					
-					/***
-					<tr>
-						<td>&nbsp;</td>
-						<td>
-						
-							<input type="checkbox" name="include_answer_machines" value="1" <?=(!isset($_REQUEST['include_answer_machines']) || $_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
-							Include Answering Machine stats
-						</td>
-					</tr>
-					***/
-					?>
-					<tr>
-						<th colspan="2">
->>>>>>> classes/sales_analysis.inc.php
 
-							<span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0" /> Loading, Please wait...</span>
+			if($html == null){
 
-							<span id="sales_submit_report_button">
-								<input type="button" value="Generate PRINTABLE" onclick="genReport(getEl('saleanal_report'), 'sales', 1)">
+				echo '<span style="font-size:14px;font-style:italic;">No results found, for the specified values.</span><br />';
 
-								&nbsp;&nbsp;&nbsp;&nbsp;
+			}else{
+				echo $html;
+			}
 
-								<input type="submit" value="Generate">
+			/*?></div><?*/
+
+			$time_ended = microtime_float();
 
 
-							</span>
-
-						</th>
-					</tr>
-					</table>
+			$time_taken = $time_ended - $time_started;
 
 
-				</td>
-			</tr>
+			echo '<br /><span style="float:bottom;color:#fff">Load time: '.$time_taken.'</span>';
 
-			</table>
-			</form>
-			<br /><br /><?php
-        } else {
-            ?><meta charset="UTF-8">
-			<meta name="google" content="notranslate">
-			<meta http-equiv="Content-Language" content="en"><?php
-        }
-
-
-
-        if (isset($_POST['generate_report'])) {
-            $time_started = microtime_float();
-
-
-            ## TIME
-            $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
-            $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
-            /*
-            $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']);
-            $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']);
-            */
-
-            ## TIMEFRAMES
-            if (!isset($_REQUEST['strt_time_hour'])) {
-                $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-                $etime = mktime(23, 59, 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
-                #echo "Human Start : " . date("r", $stime) . PHP_EOL;
-                #echo "Human End : " . date("r", $etime) . PHP_EOL;
-            } else {
-                $stime = mktime(date("H", $timestamp), date("i", $timestamp), 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-                $etime = mktime(date("H", $timestamp2), date("i", $timestamp2), 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
-                #echo "Human Start : " . date("r", $stime) . PHP_EOL;
-                #echo "Human End : " . date("r", $etime) . PHP_EOL;
-            }
-
-            ## AGENT CLUSTER
-            $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
-
-
-            ## CAMPAIGN
-            $campaign_code = trim($_REQUEST['campaign_id']);
-
-            $combine_users = (intval($_REQUEST['combine_users']) > 0)?true:false;
-
-            //			$user_group = trim($_REQUEST['user_group']);
-            //			$ignore_group = trim($_REQUEST['ignore_group']);
-
-
-            $vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
-
-            
-            
-            
-//             if($_REQUEST['include_answer_machines']){
-                $this->skip_answeringmachines = false;
-//             }else{
-//                 $this->skip_answeringmachines = true;
-//             }
-            
-            
-            
-            ## GENERATE AND DISPLAY REPORT
-            $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code);
-
-
-            /*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
-
-            if ($html == null) {
-                echo '<span style="font-size:14px;font-style:italic;">No results found, for the specified values.</span><br />';
-            } else {
-                echo $html;
-            }
-
-            /*?></div><?*/
-
-            $time_ended = microtime_float();
-
-
-            $time_taken = $time_ended - $time_started;
-
-
-            echo '<br /><span style="float:bottom;color:#fff">Load time: '.$time_taken.'</span>';
-
-            if (!isset($_REQUEST['no_nav'])) {
-                ?><script>
+			if(!isset($_REQUEST['no_nav'])){
+				?><script>
 					$(document).ready( function () {
 
 					    $('#sales_anal_table').DataTable({
@@ -1154,7 +1038,6 @@ $(function() {
 
 
 					} );
-<<<<<<< classes/sales_analysis.inc.php
 				</script><?
 			}
 
@@ -1273,85 +1156,6 @@ $(function() {
 
 		</script>
 		
-=======
-				</script><?php
-            }
-        }
-    }
-
-
-    public function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code='')
-    {
-        echo '<span style="font-size:9px">makeHTMLReport('."$stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code) called</span><br /><br />\n";
-
-
-        list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code);
-
-        if (count($agent_data_arr) < 1) {
-            return null;
-        }
-
-        // ACTIVATE OUTPUT BUFFERING
-        ob_start();
-        ob_clean(); ?><h1><?php
-
-            if ($campaign_code) {
-                echo $campaign_code.' ';
-            }
-
-        echo "Sales Analysis - ";
-
-        if ($agent_cluster_id >= 0) {
-            echo $_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
-        }
-
-        //			if($user_group){
-//
-        //				if(is_array($user_group)){
-//
-        //					if(trim($user_group[0]) != ''){
-//
-        //						echo implode($user_group,' | ');
-        //						echo " - ";
-        //					}
-//
-//
-        //				}else{
-        //					echo $user_group.' - ';
-        //				}
-        //			}
-
-
-        if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
-            echo date("m-d-Y", $stime);
-        } else {
-            echo date("m-d-Y", $stime).' to '.date("m-d-Y", $etime);
-        } ?></h1>
-		<h3><?php
-
-            if ($user_group) {
-                if (is_array($user_group)) {
-                    if (trim($user_group[0]) != '') {
-                        echo '<b>User Groups:</b>'.implode($user_group, ' | ');
-                        echo "<br />";
-                    }
-                } else {
-                    echo '<b>User Group:</b>'.$user_group."<br />";
-                }
-            }
-
-
-        if ($ignore_group) {
-            if (is_array($ignore_group)) {
-                if (trim($ignore_group[0]) != '') {
-                    echo '<b>Ignoring Groups:</b> '.implode($ignore_group, ' | ');
-                    echo "<br />";
-                }
-            } else {
-                echo '<b>Ignoring Group:</b> '.$ignore_group.'<br />';
-            }
-        } ?></h3>
->>>>>>> classes/sales_analysis.inc.php
 		<table id="sales_anal_table" style="width:100%" border="0"  cellspacing="1">
 		<thead>
 		<tr><?
@@ -1369,13 +1173,8 @@ $(function() {
 			<th title="Total number of calls for the day">Total Calls</th>
 			<th title="Number of Calls that were NOT INTERESTED">NI</th>
 			<th title="Number of Transfers">XFERS</th>
-			<?php 
-			
-			if($this->skip_answeringmachines == false){
-			     ?><th title="Number of Answering Machine calls">A</th>
-				<th title="Percentage of calls that are Answering Machines">%ANS</th><?php 
-			}
-			?>
+			<th title="Number of Answering Machine calls">A</th>
+			<th title="Percentage of calls that are Answering Machines">%ANS</th>
 			<th title="Contacts per Worked hour, and Calls per Worked hour">Con&amp;Calls/hr</th>
 
 
@@ -1394,7 +1193,6 @@ $(function() {
 			<th align="right">WRKD $/HR</th>
 		</tr>
 		</thead>
-<<<<<<< classes/sales_analysis.inc.php
 		<tbody><?
 
 
@@ -1424,35 +1222,16 @@ $(function() {
 				?><td><?=htmlentities(strtoupper($agent_data['agent_username']))?></td>
 				<td align="center"><?=number_format($agent_data['activity_paid'],2)?></td>
 				<td align="center"><?=number_format($agent_data['activity_wrkd'],2)?></td>
-=======
-		<tbody><?php
-
-
-
-        foreach ($agent_data_arr as $agent_data) {
-            $paid_sale_percent = ($agent_data['sale_cnt'] <= 0)?0:round(((float)$agent_data['paid_sale_cnt'] / $agent_data['sale_cnt']) * 100, 2);
-
-            $unpaid_sale_percent = 100 - $paid_sale_percent;
-
-
-            $ans_percent = round((($agent_data['num_AnswerMachines'] / $agent_data['calls_today']) * 100), 2); ?><tr>
-				<td><?=htmlentities(strtoupper($agent_data['agent_username']))?></td>
-				<td align="center"><?=number_format($agent_data['activity_paid'], 2)?></td>
-				<td align="center"><?=number_format($agent_data['activity_wrkd'], 2)?></td>
->>>>>>> classes/sales_analysis.inc.php
 				<td align="center"><?=number_format($agent_data['calls_today'])?></td>
 				<td align="center"><?=number_format($agent_data['num_NI'])?></td>
-				<td align="center"><?=number_format($agent_data['num_XFER'])?></td><?
-				
-				if($this->skip_answeringmachines == false){
-				    ?><td align="center"><?=number_format($agent_data['num_AnswerMachines'])?></td>
-					<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/?>
+				<td align="center"><?=number_format($agent_data['num_XFER'])?></td>
+				<td align="center"><?=number_format($agent_data['num_AnswerMachines'])?></td>
 
-					<td align="center"><?=$ans_percent?>%</td><?
-				}
-				?>
+				<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'],2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'],2)?></td> **/?>
 
-				<td align="center"><?=number_format($agent_data['contacts_per_worked_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_worked_hour'], 2)?></td>
+				<td align="center"><?=$ans_percent?>%</td>
+
+				<td align="center"><?=number_format($agent_data['contacts_per_worked_hour'],2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_worked_hour'],2)?></td>
 
 
 
@@ -1468,19 +1247,18 @@ $(function() {
 					<?=number_format($agent_data['paid_sale_cnt'])?> ($<?=number_format($agent_data['paid_sales_total'])?>)
 
 				</td>
-				<td align="right"><?=number_format($paid_sale_percent, 2)?>%</td>
+				<td align="right"><?=number_format($paid_sale_percent,2)?>%</td>
 
 
 				<td align="center"><?=number_format(($agent_data['sale_cnt']-$agent_data['paid_sale_cnt']))?></td>
-				<td align="right"><?=number_format($unpaid_sale_percent, 2)?>%</td>
+				<td align="right"><?=number_format($unpaid_sale_percent,2)?>%</td>
 
 
-				<td align="right"><?=number_format($agent_data['closing_percent'], 2)?>%</td>
-				<td align="right"><?=number_format($agent_data['conversion_percent'], 2)?>%</td>
-				<td align="right"><?=number_format($agent_data['yes2all_percent'], 2)?>%</td>
+				<td align="right"><?=number_format($agent_data['closing_percent'],2)?>%</td>
+				<td align="right"><?=number_format($agent_data['conversion_percent'],2)?>%</td>
+				<td align="right"><?=number_format($agent_data['yes2all_percent'],2)?>%</td>
 				<td align="right">$<?=number_format($agent_data['sales_total'])?></td>
 
-<<<<<<< classes/sales_analysis.inc.php
 				<td align="right">$<?=number_format($agent_data['avg_sale'],2)?></td>
 				<td align="right">$<?=number_format($agent_data['paid_hr'],2)?></td>
 				<td align="right">$<?=number_format($agent_data['wrkd_hr'],2)?></td>
@@ -1514,50 +1292,27 @@ $(function() {
 
 			?><th style="border-top:1px solid #000"><?=number_format($totals['total_activity_paid_hrs'],2)?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_activity_wrkd_hrs'],2)?></th>
-=======
-				<td align="right">$<?=number_format($agent_data['avg_sale'], 2)?></td>
-				<td align="right">$<?=number_format($agent_data['paid_hr'], 2)?></td>
-				<td align="right">$<?=number_format($agent_data['wrkd_hr'], 2)?></td>
-			</tr><?php
-        } ?></tbody><?php
-
-
-        $paid_sale_percent = round(((float)$totals['total_paid_sale_cnt'] / $totals['total_sale_cnt']) * 100, 2);
-
-        $unpaid_sale_percent = 100 - $paid_sale_percent;
-
-        $t_ans_percent = round((($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2); ?><tfoot>
-		<tr>
-			<th style="border-top:1px solid #000" align="left">Total Agents: <?=count($agent_data_arr)?></th>
-			<th style="border-top:1px solid #000"><?=number_format($totals['total_activity_paid_hrs'], 2)?></th>
-			<th style="border-top:1px solid #000"><?=number_format($totals['total_activity_wrkd_hrs'], 2)?></th>
->>>>>>> classes/sales_analysis.inc.php
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_calls'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_NI'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_XFER'])?></th>
-			<?
-				
-				if($this->skip_answeringmachines == false){
-				    ?><th style="border-top:1px solid #000"><?=number_format($totals['total_AnswerMachines'])?></th>
-					<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th><?
-				}
-			?>
-			<th style="border-top:1px solid #000"><?=number_format($totals['total_contacts_per_worked_hour'], 2).' - '.number_format($totals['total_calls_per_worked_hour'], 2)?></th>
+			<th style="border-top:1px solid #000"><?=number_format($totals['total_AnswerMachines'])?></th>
+			<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th>
+			<th style="border-top:1px solid #000"><?=number_format($totals['total_contacts_per_worked_hour'],2).' - '.number_format($totals['total_calls_per_worked_hour'],2)?></th>
 
 
 
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_sale_cnt'])?></th>
 
 			<th style="border-top:1px solid #000" align="left"><?=number_format($totals['total_paid_sale_cnt'])?> ($<?=number_format($totals['total_paid_sales'])?>)</th>
-			<th style="border-top:1px solid #000" align="right"><?=number_format($paid_sale_percent, 2)?>%</th>
+			<th style="border-top:1px solid #000" align="right"><?=number_format($paid_sale_percent,2)?>%</th>
 
 			<th style="border-top:1px solid #000" align="center"><?=number_format(($totals['total_sale_cnt']-$totals['total_paid_sale_cnt']))?></th>
-			<th style="border-top:1px solid #000" align="right"><?=number_format($unpaid_sale_percent, 2)?>%</th>
+			<th style="border-top:1px solid #000" align="right"><?=number_format($unpaid_sale_percent,2)?>%</th>
 
 
 			<th style="border-top:1px solid #000" align="right"><?=number_format($totals['total_closing'], 2)?>%</th>
 			<th style="border-top:1px solid #000" align="right"><?=number_format($totals['total_conversion'], 2)?>%</th>
-			<th style="border-top:1px solid #000" align="right"><?=number_format($totals['total_yes2all'], 2)?>%</th>
+			<th style="border-top:1px solid #000" align="right"><?=number_format($totals['total_yes2all'],2)?>%</th>
 
 			<th style="border-top:1px solid #000" align="right">$<?=number_format($totals['total_sales'])?></th>
 
@@ -1567,102 +1322,104 @@ $(function() {
 
 		</tr>
 		</tfoot>
-		</table><?php
+		</table><?
 
-        // GRAB DATA FROM BUFFER
-        $data = ob_get_contents();
+		// GRAB DATA FROM BUFFER
+		$data = ob_get_contents();
 
-        // TURN OFF OUTPUT BUFFERING, WITHOUT OUTPUTTING
-        ob_end_clean();
+		// TURN OFF OUTPUT BUFFERING, WITHOUT OUTPUTTING
+		ob_end_clean();
 
-        // RETURN HTML
-        return $data;
-    }
-
-
+		// RETURN HTML
+		return $data;
+	}
 
 
 
 
-    public function makeClusterDD($name, $selected, $css, $onchange)
-    {
-        $out = '<select name="'.$name.'" id="'.$name.'" ';
-
-        $out .= ($css)?' class="'.$css.'" ':'';
-        $out .= ($onchange)?' onchange="'.$onchange.'" ':'';
-        $out .= '>';
-
-        $out .= '<option value="-1" '.(($selected == '-1')?' SELECTED ':'').'>[All]</option>';
 
 
-        foreach ($_SESSION['site_config']['db'] as $dbidx=>$db) {
-            $out .= '<option value="'.$dbidx.'" ';
-            $out .= ($selected == $dbidx)?' SELECTED ':'';
-            $out .= '>'.htmlentities($db['name']).'</option>';
-        }
+	function makeClusterDD($name, $selected, $css, $onchange){
+
+		$out = '<select name="'.$name.'" id="'.$name.'" ';
+
+		$out .= ($css)?' class="'.$css.'" ':'';
+		$out .= ($onchange)?' onchange="'.$onchange.'" ':'';
+		$out .= '>';
+
+		$out .= '<option value="-1" '.(($selected == '-1')?' SELECTED ':'').'>[All]</option>';
 
 
+		foreach($_SESSION['site_config']['db'] as $dbidx=>$db){
 
-        $out .= '</select>';
-
-        return $out;
-    }
-
-
-    public function makeViciCampaignDD($name, $selected, $css, $onchange)
-    {
-        $cache_area_name = 'vici_campaign_code';
-
-        if (!$_SESSION['cached_data']) {
-            $_SESSION['cached_data'] = array();
-        }
-
-        // CHECK IF ITS FIRST TIME RUNNING, OR IF ITS OVERDUE TIME TO REFRESH
-        if (!$_SESSION['cached_data'][$cache_area_name] || ($_SESSION['cached_data'][$cache_area_name]['time']+300) < time()) {
-
-            // RESET/REFRESH
-            $_SESSION['cached_data'][$cache_area_name] = array();
-
-            $res = $_SESSION['dbapi']->query("SELECT campaign_code FROM campaign_codes WHERE 1 ORDER by campaign_code ASC"); //account_id='".$_SESSION['account']['id']."'
-
-            $_SESSION['cached_data'][$cache_area_name]['data'] = array();
-
-            while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-                $_SESSION['cached_data'][$cache_area_name]['data'][] = $row;
-            }
-
-            // RESET LAST UPDATED TIME/START TIMER FOR REFRESH
-            $_SESSION['cached_data'][$cache_area_name]['time'] = time();
-        }
-
-
-        $out = '<select name="'.$name.'" id="'.$name.'" ';
-
-        $out .= ($css)?' class="'.$css.'" ':'';
-        $out .= ($onchange)?' onchange="'.$onchange.'" ':'';
-        $out .= '>';
-
-
-        $out .= '<option value="" '.(($selected == '')?' SELECTED ':'').'>[All]</option>';
+			$out .= '<option value="'.$dbidx.'" ';
+			$out .= ($selected == $dbidx)?' SELECTED ':'';
+			$out .= '>'.htmlentities($db['name']).'</option>';
+		}
 
 
 
-        foreach ($_SESSION['cached_data'][$cache_area_name]['data'] as $row) {
-            $out .= '<option value="'.$row['campaign_code'].'" ';
-            $out .= ($selected == $row['campaign_code'])?' SELECTED ':'';
-            $out .= '>'.htmlentities($row['campaign_code']).'</option>';
-        }
+		$out .= '</select>';
+
+		return $out;
+	}
+
+
+	function makeViciCampaignDD($name, $selected, $css, $onchange){
+
+		$cache_area_name = 'vici_campaign_code';
+
+		if(!$_SESSION['cached_data'])$_SESSION['cached_data'] = array();
+
+		// CHECK IF ITS FIRST TIME RUNNING, OR IF ITS OVERDUE TIME TO REFRESH
+		if(!$_SESSION['cached_data'][$cache_area_name] || ($_SESSION['cached_data'][$cache_area_name]['time']+300) < time()){
+
+			// RESET/REFRESH
+			$_SESSION['cached_data'][$cache_area_name] = array();
+
+			$res = $_SESSION['dbapi']->query("SELECT campaign_code FROM campaign_codes WHERE 1 ORDER by campaign_code ASC"); //account_id='".$_SESSION['account']['id']."'
+
+			$_SESSION['cached_data'][$cache_area_name]['data'] = array();
+
+			while($row = mysqli_fetch_array($res,  MYSQLI_ASSOC)){
+
+				$_SESSION['cached_data'][$cache_area_name]['data'][] = $row;
+			}
+
+			// RESET LAST UPDATED TIME/START TIMER FOR REFRESH
+			$_SESSION['cached_data'][$cache_area_name]['time'] = time();
+		}
+
+
+		$out = '<select name="'.$name.'" id="'.$name.'" ';
+
+		$out .= ($css)?' class="'.$css.'" ':'';
+		$out .= ($onchange)?' onchange="'.$onchange.'" ':'';
+		$out .= '>';
+
+
+		$out .= '<option value="" '.(($selected == '')?' SELECTED ':'').'>[All]</option>';
 
 
 
-        $out .= '</select>';
+		foreach($_SESSION['cached_data'][$cache_area_name]['data'] as $row){
 
-        return $out;
-    }
+			$out .= '<option value="'.$row['campaign_code'].'" ';
+			$out .= ($selected == $row['campaign_code'])?' SELECTED ':'';
+			$out .= '>'.htmlentities($row['campaign_code']).'</option>';
+		}
 
-    public function makeViciUserGroupDD($name, $selected, $css, $onchange)
-    {
-        return makeViciUserGroupDD($name, $selected, $css, $onchange);
+
+
+		$out .= '</select>';
+
+		return $out;
+	}
+
+	function makeViciUserGroupDD($name, $selected, $css, $onchange){
+
+
+		return makeViciUserGroupDD($name, $selected, $css, $onchange);
 
 //
 //		$res = query("SELECT DISTINCT(user_group) AS user_group FROM users WHERE user_group IS NOT NULL");
@@ -1692,371 +1449,353 @@ $(function() {
 //		$out .= '</select>';
 //
 //		return $out;
-    }
+	}
 
 
 
-    /**
-     * Send Report emails - Reads the report email table and determines what reports need to go out
-     *
-     *
-     *
-     */
-    public function sendReportEmails(){
-    	
-    	
-        $curtime = time();
+	/**
+	 * Send Report emails - Reads the report email table and determines what reports need to go out
+	 *
+	 *
+	 *
+	 */
+	function sendReportEmails(){
 
-        // INIT VARIABLES
-        $stime= $etime = 0;
-        $campaign_code = null;
-        $agent_cluster_idx = -1;
-        $agent_cluster_id = 0;
-        $combine_users =1;
-        $user_group = null;
-        $ignore_group = null;
 
-        connectPXDB();
+		$curtime = time();
 
-        $res = $_SESSION['dbapi']->query(
-            "SELECT * FROM report_emails ".
-                    " WHERE enabled='yes' "
-                    );
+		// INIT VARIABLES
+		$stime= $etime = 0;
+		$campaign_code = null;
+		$agent_cluster_idx = -1;
+		$agent_cluster_id = 0;
+		$combine_users =1;
+		$user_group = null;
+		$ignore_group = null;
 
+		connectPXDB();
 
+		$res = $_SESSION['dbapi']->query("SELECT * FROM report_emails ".
+					" WHERE enabled='yes' "
+					);
 
-        echo date("H:i:s m/d/Y")." - Starting sendReportEmails() funtime...\n";
 
-        while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-            echo date("H:i:s m/d/Y")." - Checking REID#".$row['id']." report id:".$row['report_id']." interval:".$row['interval']." last_ran:".$row['last_ran']."\n";
 
-            // CHECK INTERVAL AND TIME LAST RAN
-            switch ($row['interval']) {
-            default:
-                echo date("H:i:s m/d/Y")." - ERROR: UNKNOWN or NEW/uncompleted interval: ".$row['interval']."\n";
-                continue 2;
-            case 'daily':
+		echo date("H:i:s m/d/Y")." - Starting sendReportEmails() funtime...\n";
 
-                // GET TODAYS TIME, from 00:00:00
-                $tmptime = mktime(0, 0, 0);
+		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 
-                // APPLY TIME OFFSET
-                $tmptime += $row['trigger_time'];
 
+			echo date("H:i:s m/d/Y")." - Checking REID#".$row['id']." report id:".$row['report_id']." interval:".$row['interval']." last_ran:".$row['last_ran']."\n";
 
-                // NOT TIME TO RUN YET TODAY
-                if ($curtime < $tmptime) {
+			// CHECK INTERVAL AND TIME LAST RAN
+			switch($row['interval']){
+			default:
+				echo date("H:i:s m/d/Y")." - ERROR: UNKNOWN or NEW/uncompleted interval: ".$row['interval']."\n";
+				continue 2;
+			case 'daily':
 
-                    // IF ITS NOT TIME, SKIP
-                    echo date("H:i:s m/d/Y")." - DAILY RE ID#".$row['id']." skipped, not time yet today.\n";
-                    continue 2;
-                }
+				// GET TODAYS TIME, from 00:00:00
+				$tmptime = mktime(0,0,0);
 
-                // HAS IT BEEN LONGER THAN A DAY? (With a 3 minute 'grace' period, to be cron friendly)
-                if ($curtime < ($row['last_ran'] + 86220)) {
+				// APPLY TIME OFFSET
+				$tmptime += $row['trigger_time'];
 
-                    // IF ITS NOT TIME, SKIP
-                    echo date("H:i:s m/d/Y")." - DAILY RE ID#".$row['id']." skipped, hasn't been a day.\n";
-                    continue 2;
-                }
 
-                // GRAB REPORT NAME/DATA
-                $report = $_SESSION['dbapi']->querySQL("SELECT * FROM reports WHERE id='".$row['report_id']."' ");
+				// NOT TIME TO RUN YET TODAY
+				if($curtime < $tmptime){
 
-                $report_name = $report['name'];
+					// IF ITS NOT TIME, SKIP
+					echo date("H:i:s m/d/Y")." - DAILY RE ID#".$row['id']." skipped, not time yet today.\n";
+					continue 2;
 
-                // SETUP DEFAULT TIME FRAMES
-                $stime = mktime(0, 0, 0);
-                $etime = $stime + 86399;
+				}
 
+				// HAS IT BEEN LONGER THAN A DAY? (With a 3 minute 'grace' period, to be cron friendly)
+				if($curtime < ($row['last_ran'] + 86220)){
 
-                break;
-            case 'weekly':
+					// IF ITS NOT TIME, SKIP
+					echo date("H:i:s m/d/Y")." - DAILY RE ID#".$row['id']." skipped, hasn't been a day.\n";
+					continue 2;
+				}
 
-                $diw = date("w");
+				// GRAB REPORT NAME/DATA
+				$report = $_SESSION['dbapi']->querySQL("SELECT * FROM reports WHERE id='".$row['report_id']."' ");
 
-                // GET TODAYS TIME, from 00:00:00
-                $tmptime = mktime(0, 0, 0);
+				$report_name = $report['name'];
 
-                // SUBTRACT DAY OFFSET, TO GET BEGINNING OF WEEK
-                $tmptime -= ($diw * 86400);
+				// SETUP DEFAULT TIME FRAMES
+				$stime = mktime(0,0,0);
+				$etime = $stime + 86399;
 
-                // SAVE THIS FOR LATER
-                $startofweek = $tmptime;
 
-                // APPLY TIME OFFSET
-                $tmptime += $row['trigger_time'];
+				break;
+			case 'weekly':
 
-                // IS IT TIME TO RUN YET?
-                if ($curtime < $tmptime) {
+				$diw = date("w");
 
-                    // IF ITS NOT TIME, SKIP
-                    echo date("H:i:s m/d/Y")." - WEEKLY RE ID#".$row['id']." skipped, not time yet this week.\n";
-                    continue 2;
-                }
+				// GET TODAYS TIME, from 00:00:00
+				$tmptime = mktime(0,0,0);
 
-                // HAS IT BEEN LONGER THAN A WEEK?
-                if ($curtime < ($row['last_ran'] + 604620)) {
+				// SUBTRACT DAY OFFSET, TO GET BEGINNING OF WEEK
+				$tmptime -= ($diw * 86400);
 
-                    // IF ITS NOT TIME, SKIP
-                    echo date("H:i:s m/d/Y")." - WEEKLY RE ID#".$row['id']." skipped, hasn't been a week since last run.\n";
-                    continue 2;
-                }
+				// SAVE THIS FOR LATER
+				$startofweek = $tmptime;
 
+				// APPLY TIME OFFSET
+				$tmptime += $row['trigger_time'];
 
+				// IS IT TIME TO RUN YET?
+				if($curtime < $tmptime){
 
+					// IF ITS NOT TIME, SKIP
+					echo date("H:i:s m/d/Y")." - WEEKLY RE ID#".$row['id']." skipped, not time yet this week.\n";
+					continue 2;
+				}
 
-                // GRAB REPORT NAME/DATA
-                $report = $_SESSION['dbapi']->querySQL("SELECT * FROM reports WHERE id='".$row['report_id']."' ");
+				// HAS IT BEEN LONGER THAN A WEEK?
+				if($curtime < ($row['last_ran'] + 604620)){
 
-                $report_name = $report['name'];
+					// IF ITS NOT TIME, SKIP
+					echo date("H:i:s m/d/Y")." - WEEKLY RE ID#".$row['id']." skipped, hasn't been a week since last run.\n";
+					continue 2;
+				}
 
-                // SETUP DEFAULT TIME FRAMES
-                $stime = $tmptime - 604800;
-                $stime = mktime(23, 59, 59, date("m", $stime), date("d", $stime), date("Y", $stime)) + 1;
 
-                $etime = $stime + 604799;
-    //			$etime = mktime(23,59,59, date("m", $etime), date("d", $etime), date("Y", $etime));
 
-                //$etime = $stime + 604799;
 
-                break;
-            case 'monthly':
+				// GRAB REPORT NAME/DATA
+				$report = $_SESSION['dbapi']->querySQL("SELECT * FROM reports WHERE id='".$row['report_id']."' ");
 
-                // GET FIRST DAY OF THE MONTH
-                $tmptime = mktime(0, 0, 0, date("m"), 1, date("Y"));
+				$report_name = $report['name'];
 
-                // SAVE THE FIRST DAY OF MONTH TIME FOR SEXYTIME LATER
-                $firstofthemonth = $tmptime; // WAKE UP, WAKE UP, GET UP, GET UP
+				// SETUP DEFAULT TIME FRAMES
+				$stime = $tmptime - 604800;
+				$stime = mktime(23,59,59, date("m", $stime), date("d", $stime), date("Y", $stime)) + 1;
 
-                // APPLY TIME OFFSET
-                $tmptime += $row['trigger_time'];
+				$etime = $stime + 604799;
+	//			$etime = mktime(23,59,59, date("m", $etime), date("d", $etime), date("Y", $etime));
 
-                // IS IT TIME TO RUN YET?
-                if ($curtime < $tmptime) {
+				//$etime = $stime + 604799;
 
-                    // IF ITS NOT TIME, SKIP
-                    echo date("H:i:s m/d/Y")." - MONTHLY RE ID#".$row['id']." skipped, not time yet this month.\n";
-                    continue 2;
-                }
+				break;
+			case 'monthly':
 
+				// GET FIRST DAY OF THE MONTH
+				$tmptime = mktime(0,0,0, date("m"), 1, date("Y"));
 
-                // HAS IT BEEN LONGER THAN A WEEK? (With a 3 minute 'grace' period, to be cron friendly)
+				// SAVE THE FIRST DAY OF MONTH TIME FOR SEXYTIME LATER
+				$firstofthemonth = $tmptime; // WAKE UP, WAKE UP, GET UP, GET UP
 
-                if (date("m", $row['last_ran']) == date("m", $curtime)) {
+				// APPLY TIME OFFSET
+				$tmptime += $row['trigger_time'];
 
-                    // IF ITS NOT TIME, SKIP
-                    echo date("H:i:s m/d/Y")." - MONTHLY RE ID#".$row['id']." skipped, already ran this month.\n";
-                    continue 2;
-                }
+				// IS IT TIME TO RUN YET?
+				if($curtime < $tmptime){
 
-                // GRAB REPORT NAME/DATA
-                $report = $_SESSION['dbapi']->querySQL("SELECT * FROM reports WHERE id='".$row['report_id']."' ");
+					// IF ITS NOT TIME, SKIP
+					echo date("H:i:s m/d/Y")." - MONTHLY RE ID#".$row['id']." skipped, not time yet this month.\n";
+					continue 2;
+				}
 
-                $report_name = $report['name'];
 
-                // SETUP DEFAULT TIME FRAMES - THIS MONTH
-                $stime = $firstofthemonth;
-                $etime = mktime(23, 59, 59, date("m", $curtime), date("t", $curtime), date("Y", $curtime));
+				// HAS IT BEEN LONGER THAN A WEEK? (With a 3 minute 'grace' period, to be cron friendly)
 
+				if(date("m", $row['last_ran']) == date("m", $curtime)){
 
-                break;
-            }
+					// IF ITS NOT TIME, SKIP
+					echo date("H:i:s m/d/Y")." - MONTHLY RE ID#".$row['id']." skipped, already ran this month.\n";
+					continue 2;
+				}
 
-            $cluster_id = 0;
-            $source_cluster_id = 0;
-            $ignore_source_cluster_id = 0;
+				// GRAB REPORT NAME/DATA
+				$report = $_SESSION['dbapi']->querySQL("SELECT * FROM reports WHERE id='".$row['report_id']."' ");
 
-            $source_user_group = null;
+				$report_name = $report['name'];
 
-            $report_type = 'cold';
+				// SETUP DEFAULT TIME FRAMES - THIS MONTH
+				$stime = $firstofthemonth;
+				$etime = mktime(23,59,59, date("m", $curtime), date("t", $curtime) , date("Y", $curtime) );
 
-            // EXECUTE THE REPORT SETTINGS, TO POPULATE OR OVERWRITE REPORT VARIABLES/SETTINGS
-            echo date("H:i:s m/d/Y")." - Loading PHP Variables/SETTINGS for report:\n".$row['settings']."\n";
 
-            $eres = eval($row['settings']);
+				break;
+			}
 
+			$cluster_id = 0;
+			$source_cluster_id = 0;
+			$ignore_source_cluster_id = 0;
 
-            $html = null;
+			$source_user_group = null;
 
-            // SWITCH REPORT TYPE
-            switch (intval($row['report_id'])) {
-            default:
+			$report_type = 'cold';
 
-                echo date("H:i:s m/d/Y")." - ERROR: report_id: ".$row['report_id']." hasn't been added yet.\n";
-                continue;
+			// EXECUTE THE REPORT SETTINGS, TO POPULATE OR OVERWRITE REPORT VARIABLES/SETTINGS
+			echo date("H:i:s m/d/Y")." - Loading PHP Variables/SETTINGS for report:\n".$row['settings']."\n";
 
-            case 1:
+			$eres = eval($row['settings']);
 
-                if ($agent_cluster_id > 0) {
-                    $agent_cluster_idx = getClusterIndex($agent_cluster_id);
-                }
 
+			$html = null;
 
-                // GENERATE REPORT HTML ( RETURNS NULL IF THERE ARE NO RECORDS TO REPORT ON!)
-                // NOTE: THE VARIABLES THAT APPEAR 'uninitialized' ARE LOADED FROM THE 'settings' DB FIELD
-                $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $combine_users, $user_group, $ignore_group);
+			// SWITCH REPORT TYPE
+			switch(intval($row['report_id'])){
+			default:
 
-                if ($html == null) {
-                    echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
-                    continue 2;
-                }
+				echo date("H:i:s m/d/Y")." - ERROR: report_id: ".$row['report_id']." hasn't been added yet.\n";
+				continue;
 
+			case 1:
 
-                $textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
+				if($agent_cluster_id > 0){
+					$agent_cluster_idx = getClusterIndex($agent_cluster_id);
+				}
 
-                        "Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
-                        (($campaign_code)?"Campaign Code: ".$campaign_code."\n":'').
-                        (($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
-                        (($combine_users)?"Combine users: ".$combine_users."\n":'').
-                        (($user_group)?" User Group:".$user_group."\n":'').
-                        "\nReport is attached (or view email as HTML).";
 
+				// GENERATE REPORT HTML ( RETURNS NULL IF THERE ARE NO RECORDS TO REPORT ON!)
+				// NOTE: THE VARIABLES THAT APPEAR 'uninitialized' ARE LOADED FROM THE 'settings' DB FIELD
+				$html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $combine_users, $user_group, $ignore_group);
 
+				if($html == null){
 
-                break;
+					echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
+					continue 2;
+				}
 
-            case 2: // VERIFIER CALL STATS
 
-                $html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
+				$textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
 
-                if ($html == null) {
-                    echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
-                    continue 2;
-                }
+						"Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y",$etime)."\n".
+						(($campaign_code)?"Campaign Code: ".$campaign_code."\n":'').
+						(($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+						(($combine_users)?"Combine users: ".$combine_users."\n":'').
+						(($user_group)?" User Group:".$user_group."\n":'').
+						"\nReport is attached (or view email as HTML).";
 
-                $textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
 
-                        "Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
-                        (($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
-                        (($user_group)?" User Group:".$user_group."\n":'');
 
-                if (count($source_user_group) > 0) {
-                    $textdata .= "Source group(s): ";
-                    $z=0;
-                    foreach ($source_user_group as $sgrp) {
-                        $textdata .= ($z++ > 0)?", ":'';
-                        $textdata .= $sgrp;
-                    }
-                    $textdata .= "\n";
-                }
+				break;
 
+			case 2:
 
-                $textdata .=	"\nReport is attached (or view email as HTML).";
-                break;
+				$html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
 
-            case 3: // SUMMARY REPORT
+				if($html == null){
 
-                $html = $_SESSION['summary_report']->makeHTMLReport($report_type, $stime, $etime);
+					echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
+					continue 2;
+				}
 
-                if ($html == null) {
-                    echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
-                    continue 2;
-                }
+				$textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
 
-                $textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
+						"Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y",$etime)."\n".
+						(($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+						(($user_group)?" User Group:".$user_group."\n":'');
 
-                        "Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
-                        "Report type: ".$report_type."\n"
-                        ;
+				if(count($source_user_group) > 0){
+					$textdata .= "Source group(s): ";
+					$z=0;
+					foreach($source_user_group as $sgrp){
+						$textdata .= ($z++ > 0)?", ":'';
+						$textdata .= $sgrp;
+					}
+					$textdata .= "\n";
+				}
 
 
+				$textdata .=	"\nReport is attached (or view email as HTML).";
+				break;
 
+			case 3:
 
-                $textdata .=	"\nReport is attached (or view email as HTML).";
-                break;
-                
-                
-            case 4: // ROUSTER REPORT
-            	
-            	
-            	include_once($_SESSION['site_config']['basedir'].'classes/rouster_report.inc.php');
-            	
-            	
-            	
-            	$html = $_SESSION['rouster_report']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
-            	//									            	makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = null, $combine_users = false){
-            	
-            	
-            	if ($html == null) {
-            		echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
-            		continue 2;
-            	}
-            	
-            	$textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
-              	
-              	"Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
-              	(($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
-              	(($user_group)?" User Group:".$user_group."\n":'');
-              	
-              	if (count($source_user_group) > 0) {
-              		$textdata .= "Source group(s): ";
-              		$z=0;
-              		foreach ($source_user_group as $sgrp) {
-              			$textdata .= ($z++ > 0)?", ":'';
-              			$textdata .= $sgrp;
-              		}
-              		$textdata .= "\n";
-              	}
-              	
-              	
-              	$textdata .=	"\nReport is attached (or view email as HTML).";
-              	break;
-              	
-            }
-            // REPORT HAS BEEN GENERATED, DO THE EMAIL SHIT HERE
+				$html = $_SESSION['summary_report']->makeHTMLReport($report_type, $stime, $etime);
 
-            if (!trim($html)) {
-                echo date("H:i:s m/d/Y")." - ERROR: no html was generated to email, skipping!\n";
-                continue;
-            }
+				if($html == null){
 
+					echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
+					continue 2;
+				}
 
+				$textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
 
+						"Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y",$etime)."\n".
+						"Report type: ".$report_type."\n"
+						;
 
 
-            // BUILD HTML EMAIL
-            $subject = ucfirst($row['interval']).' '.$report_name.' '.$row['subject_append'].' - '.date("m/d/Y", $curtime);
 
-            $filename = "system_report-".date("m-d-Y")."-".preg_replace("/[^a-zA-Z0-9-_]/", "_", ucfirst($row['interval']).'-'.$report_name).".html";
 
-            $headers   = array(
-                            "From"		=> "ATC Reporting <support@advancedtci.com>",
-                            "Subject"	=> $subject,
-                            "X-Mailer"	=> "ATC Reporting System",
-                            "Reply-To"	=> "ATC Reporting <support@advancedtci.com>"
-                        );
+				$textdata .=	"\nReport is attached (or view email as HTML).";
+				break;
+			}
+			// REPORT HAS BEEN GENERATED, DO THE EMAIL SHIT HERE
 
-            $mime = new Mail_mime(array('eol' => "\n"));
+			if(!trim($html)){
+				echo date("H:i:s m/d/Y")." - ERROR: no html was generated to email, skipping!\n";
+				continue;
+			}
 
-            // SET TEXT AND HTML CONTENT BODIES
-            $mime->setTXTBody($textdata, false);
-            $mime->setHTMLBody($html, false);
 
-            // ATTACH HTML REPORT AS FILE AS WELL
-            $mime->addAttachment($html, "text/html", $filename, false, "quoted-printable", "attachment");
 
-            // BUILD THE EMAIL SHIT
-            $mail_body = $mime->get();
-            $mail_header=$mime->headers($headers);
 
-            $mail =& Mail::factory('mail');
 
-            // SEND IT
-            if ($mail->send($row['email_address'], $mail_header, $mail_body) != true) {
-                echo date("H:i:s m/d/Y")." - ERROR: Mail::send() call failed sending to ".$row['email_address'];
-            } else {
-                echo date("H:i:s m/d/Y")." - Successfully emailed ".$row['email_address']." - ".$subject."\n";
+			// BUILD HTML EMAIL
+			$subject = ucfirst($row['interval']).' '.$report_name.' '.$row['subject_append'].' - '.date("m/d/Y", $curtime);
 
-                // UPDATE last_ran TIME
+			$filename = "system_report-".date("m-d-Y")."-".preg_replace("/[^a-zA-Z0-9-_]/", "_", ucfirst($row['interval']).'-'.$report_name).".html";
 
-                $dat = array();
-                $dat['last_ran'] = $curtime;
-                aedit($row['id'], $dat, "report_emails");
-            }
-        } // END WHILE (report emails)
+			$headers   = array(
+							"From"		=> "ATC Reporting <support@advancedtci.com>",
+							"Subject"	=> $subject,
+							"X-Mailer"	=> "ATC Reporting System",
+							"Reply-To"	=> "ATC Reporting <support@advancedtci.com>"
+						);
 
+			$mime = new Mail_mime(array('eol' => "\n"));
 
-        echo date("H:i:s m/d/Y")." - Finished sendReportEmails()\n";
-    }
+			// SET TEXT AND HTML CONTENT BODIES
+			$mime->setTXTBody($textdata, false);
+			$mime->setHTMLBody($html, false);
+
+			// ATTACH HTML REPORT AS FILE AS WELL
+			$mime->addAttachment($html, "text/html", $filename, false, "quoted-printable", "attachment");
+
+			// BUILD THE EMAIL SHIT
+			$mail_body = $mime->get();
+			$mail_header=$mime->headers($headers);
+
+			$mail =& Mail::factory('mail');
+
+			// SEND IT
+			if($mail->send($row['email_address'], $mail_header, $mail_body) != TRUE){
+
+				echo date("H:i:s m/d/Y")." - ERROR: Mail::send() call failed sending to ".$row['email_address'];
+
+			}else{
+				echo date("H:i:s m/d/Y")." - Successfully emailed ".$row['email_address']." - ".$subject."\n";
+
+				// UPDATE last_ran TIME
+
+				$dat = array();
+				$dat['last_ran'] = $curtime;
+				aedit($row['id'], $dat, "report_emails");
+
+
+			}
+
+
+
+		} // END WHILE (report emails)
+
+
+		echo date("H:i:s m/d/Y")." - Finished sendReportEmails()\n";
+
+	}
+
+
+
+
+
+
+
 } // END OF CLASS
