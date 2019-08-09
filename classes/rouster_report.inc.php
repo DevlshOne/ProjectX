@@ -1039,10 +1039,7 @@ class RousterReport{
 				//$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_cnt'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
 				$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_total'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
 
-				//$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($act_total_time/3600));
-				$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / ($activity_time/3600));
-				
-				
+				$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($act_total_time/3600));
 //print_r($row);
 //echo '<br /><br />';
 //				if($combine_users){
@@ -1296,16 +1293,8 @@ class RousterReport{
 
 
 //			$total_paidcc_per_worked_hour = ($running_total_activity_time <= 0)?0:($running_total_paid_sales_amount / ($running_t_time/3600));
-//			$total_paidcc_per_worked_hour = ($running_total_total_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_total_time/3600));//($running_t_max/3600));
+			$total_paidcc_per_worked_hour = ($running_total_total_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_total_time/3600));//($running_t_max/3600));
 
-			
-			$total_paidcc_per_worked_hour = ($running_total_activity_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_activity_time/3600));//($running_t_max/3600));
-			
-			
-			
-//			$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / ($activity_time/3600));
-				
-				
 
 			// TOTALS ROW
 			?><tfoot>
@@ -1365,8 +1354,11 @@ class RousterReport{
 				?></td>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
 
-
-					echo renderTimeFormatted($running_t_time/60);
+					$tmphours = floor($running_t_time / 3600);
+					$tmpmin = floor( ($running_t_time - ($tmphours * 3600)) / 60 );
+					echo $tmphours.':'.(($tmpmin <= 9)?'0'.$tmpmin:$tmpmin);
+	
+					//	echo renderTimeFormatted($running_t_time/60);
 
 
 				?></td>
