@@ -1,4 +1,11 @@
-// console.log('Form Builder script loaded');
+function isEmpty(obj) {
+    for(let key in obj) {
+        if(obj.hasOwnProperty(key)) return false;
+    }
+    return true;
+}
+
+
 let _formBuilder = {
     doInit: function() {
 
@@ -29,6 +36,9 @@ const fieldWrapperDragOptions = {
     }
 };
 function frmField(index, o) {
+    if(isEmpty(o)) {
+        o = {};
+    }
     this.isRequired = o.is_required;
     this.txtLabel = o.name;
     this.lblWidth = o.label_width;
@@ -58,6 +68,11 @@ function frmField(index, o) {
     this.screenNum = o.screen_num;
     this.campID = o.campaign_id;
     this.dbID = o.id;
+    for(let objProperty in this) {
+        if(this[objProperty] === undefined) {
+            this[objProperty] = '';
+        }
+    }
 }
 frmField.prototype = {
     constructor: frmField,

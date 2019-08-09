@@ -328,6 +328,7 @@
                 $('li.fldMaker').draggable({
                     containment: "#dropZone",
                     helper: 'clone',
+                    refreshPositions: true,
                     // cursor: 'move',
                     // class: 'hand',
                     // cursorAt: {
@@ -396,6 +397,17 @@
                     }
                     window.alert('Form saved');
                     changeScreen(campID, screenNum);
+                }
+
+                function addField(c, s) {
+                    let newIndex = formFields.length;
+                    let newObj = {};
+                    newObj.campID = c;
+                    newObj.screenNum = s;
+                    newObj.name = 'New Field';
+                    let formField = new frmField(newIndex, newObj);
+                    formFields.push(formField);
+                    editField(newIndex);
                 }
 
                 function deleteField(i) {
@@ -506,9 +518,10 @@
                     </ul>
                     <div id="mainPanel" class="pct100">
                         <div class="ht40" style="margin-bottom:10px;">
-                            <input type="button" value="Add Field" onclick="addField(); return false;" style="float:left;" class="frmActionButton"/>
-                            <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
+                            <input type="button" value="Add Field" onclick="addField(formID, 0); return false;" style="float:left;" class="frmActionButton"/>
                             <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
+                            <input type="button" value="Refresh Form" onclick="changeScreen(formID, 0); return false;" class="frmActionButton"/>
+                            <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
                             <!--                        <ul id="dragZone" class="lefty pct100">-->
                             <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>-->
                             <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">SELECT Field</li>-->

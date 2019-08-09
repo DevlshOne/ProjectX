@@ -44,6 +44,10 @@ class FormBuilderAPI{
 	        $sql = "INSERT INTO `" . $this->table . "` (`name`) VALUES (`" . $d['name'] . "`)";
 	        echo $sql;
 	        $r = $_SESSION['dbapi']->query($sql);
+	        if(!$r) {
+	            echo "Error saving new field";
+	            return;
+            }
 	        $d['dbID'] = mysqli_insert_id($r);
         }
 	    $sql = "UPDATE `" . $this->table . "` SET ";
@@ -131,10 +135,6 @@ class FormBuilderAPI{
                 default:
                     $setFieldsArr[] = "`" . $k . "` = '" . $v . "'";
                     break;
-//this.idx = index;
-//this.screenNum = o.screen_num;
-//this.campID = o.campaign_id;
-//this.dbID = o.id;
             }
         }
         $setStmts = join(', ', $setFieldsArr);
