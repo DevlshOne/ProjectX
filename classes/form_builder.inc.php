@@ -390,13 +390,13 @@
 
                 function saveForm() {
                     for (let i = 0; i < formFields.length; i++) {
-                        let f = formFields[i];
+                        var f = formFields[i];
                         let campID = f.campID;
                         let screenNum = f.screenNum;
                         f.saveToDB();
                     }
                     window.alert('Form saved');
-                    changeScreen(campID, screenNum);
+                    changeScreen(f.campID, f.screenNum);
                 }
 
                 function addField(c, s) {
@@ -404,7 +404,16 @@
                     let newObj = {};
                     newObj.campID = c;
                     newObj.screenNum = s;
+                    // let's set some default values per Jon
                     newObj.name = 'New Field';
+                    newObj.label_x = 0;
+                    newObj.label_y = 0;
+                    newObj.field_x = 100;
+                    newObj.field_y = 0;
+                    newObj.label_height = 30;
+                    newObj.label_width = 100;
+                    newObj.field_height = 30;
+                    newObj.field_width = 100;
                     let formField = new frmField(newIndex, newObj);
                     formFields.push(formField);
                     editField(newIndex);
@@ -461,14 +470,10 @@
 
                 function changeFieldType(i, v) {
                     switch (v) {
-                        default :
-                        case '0' :
-                            $('#options' + i).closest('tr').hide();
-                            break;
                         case '1' :
                             $('#options' + i).closest('tr').show();
                             break;
-                        case '2' :
+                        default :
                             $('#options' + i).closest('tr').hide();
                             break;
                     }

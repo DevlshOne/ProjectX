@@ -40,9 +40,9 @@ class FormBuilderAPI{
 
 	function saveField($d) {
 	    $setFieldsArr = [];
-	    if($d['dbID'] === 0) {
-	        $sql = "INSERT INTO `" . $this->table . "` (`name`) VALUES (`" . $d['name'] . "`)";
-	        echo $sql;
+	    if(empty($d['dbID'])) {
+	        $sql = "INSERT INTO `" . $this->table . "` (`name`) VALUES ('" . $d['name'] . "')";
+//	        echo $sql;
 	        $r = $_SESSION['dbapi']->query($sql);
 	        if(!$r) {
 	            echo "Error saving new field";

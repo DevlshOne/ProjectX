@@ -267,7 +267,7 @@ a:hover {
 	font-weight: 600;
 }
 .fafLabel {
-    min-width: 8%;
+    min-width: 15%;
     display: inline-block;
 }
 .tightTable {
@@ -307,13 +307,18 @@ a:hover {
     display: inline-block;
 }
 .dragMe {
-	background-blend-mode: overlay;
-	background-color: lightpink;
 	float:left;
 	padding: 0px;
 	cursor: move;
 	vertical-align: middle;
-	/*z-index: 10;*/
-	border: 1px dotted black;
 	overflow: hidden;
+	background-blend-mode: overlay;
+}
+.dragMe.dragL {
+	background-color: darkgrey;
+	border: 1px dotted #cd0a0a;
+}
+.dragMe.dragF {
+	background-color: lightgrey;
+	border: 1px dotted #cd0a0a;
 }

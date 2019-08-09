@@ -106,10 +106,10 @@ frmField.prototype = {
         let fieldAsForm = '<form id="fieldAsForm' + this.idx + '">' +
             '<table class="pct100 tightTable">' +
             '<tr>' +
-            '<td><label class="fafLabel" for="field_step">Field Step : </label><input id="field_step' + this.idx + '" name="field_step" type="number" value = "' + this.callStep + '"/></td>' +
+            '<td><label class="fafLabel" for="field_step">Screen Number : </label><input id="screen_num' + this.idx + '" name="screen_num" type="number" value = "' + $('#screenTabs').tabs("option", "active") + '" readonly="readonly" disabled="disabled"/></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="field_type">Type : </label><select id="field_type' + this.idx + '" onchange="changeFieldType(' + this.idx + ', $(this).val());return false;" name="field_type"><option value="0">Text</option><option value="1">Dropdown</option><option value="2">Textarea</option></select></td>' +
+            '<td><label class="fafLabel" for="field_type">Type : </label><select id="field_type' + this.idx + '" onchange="changeFieldType(' + this.idx + ', $(this).val());return false;" name="field_type"><option value="0">Text</option><option value="1">Dropdown</option><option value="2">Checkbox</option><option value="3">Image</option><option value="4">Label</option><option value="5">Button</option><option value="6">Textarea</option></select></td>' +
             '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="name">Label : </label><input class="pct75" id="name' + this.idx + '"  name="name" type="text" value="' + this.txtLabel + '" /></td>' +
@@ -140,6 +140,9 @@ frmField.prototype = {
             '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="field_y">Field Y : </label><input class="pct75" id="field_y' + this.idx + '" name="field_y" type="number" min="0" max="1024" value="' + this.fldPosY + '" /></td>' +
+            '</tr>' +
+            '<tr>' +
+            '<td><label class="fafLabel" for="field_step">Field Step : </label><input id="field_step' + this.idx + '" name="field_step" type="number" value = "' + this.callStep + '"/></td>' +
             '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="is_required">Required : </label><input id="is_required' + this.idx + '" name="is_required" type="checkbox" value="' + this.isRequired + '" /></td>' +
@@ -198,45 +201,6 @@ frmField.prototype = {
                 lblObj = $(lblFormat);
                 fldObj.addClass('fieldPreview');
                 lblObj.addClass('labelPreview');
-                fldObj.attr('required', this.isRequired);
-                lblObj.attr('value', this.txtLabel);
-                lblObj.text(this.txtLabel);
-                lblObj.attr('title', this.toolTip);
-                fldObj.attr('placeholder', this.placeHolder);
-                fldObj.addClass(this.cssName);
-                fldObj.attr('name', this.fldName);
-                lblObj.attr('for', this.fldName);
-                fldObj.attr('id', this.fldName);
-                fldObj.attr('value', this.fldValue);
-                fldObj.attr('maxlength', this.fldMaxLength);
-                if(this.lblPosX < 0 && this.lblPosY < 0) {
-                    lblObj.css('display','none');
-                    this.isHidden = 1;
-                }
-                fldObj.css('display')
-                // console.log('Placing label wrapper ' + this.txtLabel + ' at ' + this.lblPosY + 'px from top, ' + this.lblPosX + 'px from left.');
-                // console.log('Placing field wrapper ' + this.txtLabel + ' at ' + this.fldPosY + 'px from top, ' + this.fldPosX + 'px from left.');
-                // somewhere in here, there has to be some figuring done on where to place these - even with 0,0s and funky offset labels
-                // how many rows do we create? how many columns? what fields span more than one column? how do we know when to move to the next row?
-                // how far should we allow the offset of a label? is this really the smart way to perform this task?
-                // do we even render the ones that are "hidden"?
-                // lots of questions
-                $(fldPreview).append(lblObj, fldObj);
-                lblObj.css({
-                    width: this.lblWidth,
-                    height: this.lblHeight,
-                    top: this.lblPosY + 'px',
-                    left: this.lblPosX + 'px',
-                    position: 'absolute'
-                });
-                fldObj.css({
-                    width: this.fldWidth,
-                    height: this.fldHeight,
-                    top: this.fldPosY + 'px',
-                    left: this.fldPosX + 'px',
-                    position: 'absolute'
-                });
-                // debugger;
                 break;
             case '1' :
                 // This is a dropdown field, so let's create it and then populate it
@@ -246,146 +210,226 @@ frmField.prototype = {
                 lblObj = $(lblFormat);
                 fldObj.addClass('fieldPreview');
                 lblObj.addClass('labelPreview');
-                fldObj.attr('required', this.isRequired);
-                lblObj.attr('value', this.txtLabel);
-                lblObj.text(this.txtLabel);
-                lblObj.attr('title', this.toolTip);
-                fldObj.attr('placeholder', this.placeHolder);
-                fldObj.addClass(this.cssName);
-                fldObj.attr('name', this.fldName);
-                lblObj.attr('for', this.fldName);
-                fldObj.attr('id', this.fldName);
-                fldObj.attr('value', this.fldValue);
-                fldObj.attr('maxlength', this.fldMaxLength);
-                if(this.lblPosX < 0 && this.lblPosY < 0) {
-                    lblObj.css('display','none');
-                    this.isHidden = 1;
-                }
                 let arrOptions = this.fldOptions.split(';');
                 jQuery.each(arrOptions, function(i, v) {
                     fldObj.append('<option>' + v + '</option>');
                 });
-                // console.log('Placing label wrapper ' + this.txtLabel + ' at ' + this.lblPosY + 'px from top, ' + this.lblPosX + 'px from left.');
-                // console.log('Placing field wrapper ' + this.txtLabel + ' at ' + this.fldPosY + 'px from top, ' + this.fldPosX + 'px from left.');
-                // somewhere in here, there has to be some figuring done on where to place these - even with 0,0s and funky offset labels
-                $(fldPreview).append(lblObj, fldObj);
-                lblObj.css({
-                    width: this.lblWidth,
-                    height: this.lblHeight,
-                    top: this.lblPosY + 'px',
-                    left: this.lblPosX + 'px',
-                    position: 'absolute'
-                });
-                fldObj.css({
-                    width: this.fldWidth,
-                    height: this.fldHeight,
-                    top: this.fldPosY + 'px',
-                    left: this.fldPosX + 'px',
-                    position: 'absolute'
-                });
-                // debugger;
+                break;
+            case '2' :
+                // This is a checkbox field, so let's create it and then populate it
+                fldFormat = '<input type="checkbox" />';
+                lblFormat = '<label></label>';
+                fldObj = $(fldFormat);
+                lblObj = $(lblFormat);
+                fldObj.addClass('fieldPreview');
+                lblObj.addClass('labelPreview');
+                break;
+            case '3' :
+                // This is an image field, so let's create it and then populate it
+                // not sure which field holds the SRC, but it needs to be implemented
+                fldFormat = '<img />';
+                lblFormat = '<label></label>';
+                fldObj = $(fldFormat);
+                lblObj = $(lblFormat);
+                fldObj.addClass('fieldPreview');
+                lblObj.addClass('labelPreview');
+                break;
+            case '4' :
+                // This is a label field, so let's create it and then populate it
+                // not sure which field holds the SRC, but it needs to be implemented
+                fldFormat = '<label></label>';
+                lblFormat = '<label></label>';
+                fldObj = $(fldFormat);
+                lblObj = $(lblFormat);
+                fldObj.addClass('fieldPreview');
+                lblObj.addClass('labelPreview');
+                break;
+            case '5' :
+                // This is a button field, so let's create it and then populate it
+                // not sure which field holds the SRC, but it needs to be implemented
+                fldFormat = '<input type="button" />';
+                lblFormat = '<label></label>';
+                fldObj = $(fldFormat);
+                lblObj = $(lblFormat);
+                fldObj.addClass('fieldPreview');
+                lblObj.addClass('labelPreview');
+                break;
+            case '6' :
+                // This is a label field, so let's create it and then populate it
+                // not sure which field holds the SRC, but it needs to be implemented
+                fldFormat = '<textarea></textarea>';
+                lblFormat = '<label></label>';
+                fldObj = $(fldFormat);
+                lblObj = $(lblFormat);
+                fldObj.addClass('fieldPreview');
+                lblObj.addClass('labelPreview');
                 break;
         }
+        fldObj.attr('required', this.isRequired);
+        lblObj.attr('value', this.txtLabel);
+        lblObj.text(this.txtLabel);
+        lblObj.attr('title', this.toolTip);
+        fldObj.attr('placeholder', this.placeHolder);
+        fldObj.addClass(this.cssName);
+        fldObj.attr('name', this.fldName);
+        lblObj.attr('for', this.fldName);
+        fldObj.attr('id', this.fldName);
+        fldObj.attr('value', this.fldValue);
+        fldObj.attr('maxlength', this.fldMaxLength);
+        $(fldPreview).append(lblObj, fldObj);
+        if(this.lblPosX < 0 && this.lblPosY < 0) {
+            lblObj.css('display','none');
+            this.isHidden = 1;
+        }
+        lblObj.css({
+            width: this.lblWidth,
+            height: this.lblHeight,
+            top: this.lblPosY + 'px',
+            left: this.lblPosX + 'px',
+            position: 'absolute'
+        });
+        fldObj.css({
+            width: this.fldWidth,
+            height: this.fldHeight,
+            top: this.fldPosY + 'px',
+            left: this.fldPosX + 'px',
+            position: 'absolute'
+        });
     },
     populate: function() {
         // let fldRendering = $('#dropZone').children('div.fldHolder').eq(this.idx);
         let fldRendering = $('#fieldWrapper_' + this.idx);
-        let fldFormat = '';
-        let lblFormat = '';
-        let fldObj = {};
-        let lblObj = {};
+        let fldFormat = '<div></div>';
+        let lblFormat = '<div></div>';
+        let fldObj = $(fldFormat);
+        let lblObj = $(lblFormat);
+        lblObj.css('padding', '7px');
+        lblObj.css('font-variant', 'all-small-caps');
+        fldObj.css('padding', '7px');
+        fldObj.css('font-variant', 'all-small-caps');
+        fldObj.css('font-weight', '800');
         switch(this.fldType) {
             case '0' :
                 // This is a text field, so let's create it and then populate it
-                // fldFormat = '<input type="text" />';
-                // lblFormat = '<label></label>';
-                fldFormat = '<div></div>';
-                lblFormat = '<div></div>';
-                fldObj = $(fldFormat);
-                lblObj = $(lblFormat);
-                fldObj.attr('tabindex', this.idx);
-                fldObj.attr('required', this.isRequired);
-                lblObj.attr('value', this.txtLabel);
-                lblObj.text('LBL:' + this.txtLabel);
-                fldObj.text('INP:' + this.txtLabel);
+                // fldObj.attr('required', this.isRequired);
+                // fldObj.attr('value', this.fldValue);
+                // fldObj.attr('maxlength', this.fldMaxLength);
+                lblObj.text(this.txtLabel);
+                fldObj.text(this.txtLabel);
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
-                // lblObj.css('margin-right', '10px');
-                lblObj.attr('title', this.toolTip);
-                fldObj.attr('placeholder', this.placeHolder);
-                fldObj.addClass(this.cssName);
                 fldObj.attr('name', this.fldName);
-                // lblObj.attr('for', this.fldName);
-                fldObj.attr('id', this.fldName);
-                fldObj.attr('value', this.fldValue);
-                fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
-                lblObj.wrap('<div class="dragMe" data-fieldID="' + this.idx + '" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="inp' + this.idx + '"></div>');
-                fldObj.closest('.dragMe').css({
-                    top: this.fldPosY + 'px',
-                    left: this.fldPosX + 'px',
-                    position: 'absolute'
-                });
-                lblObj.closest('.dragMe').css({
-                    top: this.lblPosY + 'px',
-                    left: this.lblPosX + 'px',
-                    position: 'absolute'
-                });
+                lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="inp' + this.idx + '"></div>');
                 break;
             case '1' :
                 // This is a dropdown field, so let's create it and then populate it
-                // fldFormat = '<select></select>';
-                // lblFormat = '<label></label>';
-                fldFormat = '<div></div>';
-                lblFormat = '<div></div>';
-                fldObj = $(fldFormat);
-                lblObj = $(lblFormat);
-                fldObj.attr('tabindex', this.idx);
-                fldObj.attr('required', this.isRequired);
-                lblObj.attr('value', this.txtLabel);
-                lblObj.text('LBL:' + this.txtLabel);
-                fldObj.text('SEL:' + this.txtLabel);
+                lblObj.text(this.txtLabel);
+                fldObj.text(this.txtLabel);
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
-                // lblObj.css('margin-right', '10px');
-                lblObj.attr('title', this.toolTip);
-                fldObj.attr('placeholder', this.placeHolder);
-                fldObj.addClass(this.cssName);
                 fldObj.attr('name', this.fldName);
-                // lblObj.attr('for', this.fldName);
-                fldObj.attr('id', this.fldName);
-                fldObj.attr('value', this.fldValue);
-                fldObj.attr('maxlength', this.fldMaxLength);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
-                // let arrOptions = this.fldOptions.split(';');
-                // jQuery.each(arrOptions, function(i, v) {
-                //     fldObj.append('<option>' + v + '</option>');
-                // });
                 $(fldRendering).empty().append(lblObj, fldObj);
-                lblObj.wrap('<div class="dragMe" data-fieldID="' + this.idx + '" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="sel' + this.idx + '"></div>');
-                fldObj.closest('.dragMe').css({
-                    top: this.fldPosY + 'px',
-                    left: this.fldPosX + 'px',
-                    position: 'absolute'
-                });
-                lblObj.closest('.dragMe').css({
-                    top: this.lblPosY + 'px',
-                    left: this.lblPosX + 'px',
-                    position: 'absolute'
-                });
+                lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="sel' + this.idx + '"></div>');
+                break;
+            case '2' :
+                // This is a checkbox field, so let's create it and then populate it
+                lblObj.text(this.txtLabel);
+                fldObj.text(this.txtLabel);
+                lblObj.css('width', this.lblWidth);
+                lblObj.css('height', this.lblHeight);
+                fldObj.attr('name', this.fldName);
+                fldObj.css('width', this.fldWidth);
+                fldObj.css('height', this.fldHeight);
+                if(this.isHidden) {
+                    // lblObj.css('display', 'none');
+                }
+                lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="chk' + this.idx + '"></div>');
+                break;
+            case '3' :
+                // This is an image field, so let's create it and then populate it
+                lblObj.text(this.txtLabel);
+                fldObj.text(this.txtLabel);
+                lblObj.css('width', this.lblWidth);
+                lblObj.css('height', this.lblHeight);
+                fldObj.attr('name', this.fldName);
+                fldObj.css('width', this.fldWidth);
+                fldObj.css('height', this.fldHeight);
+                if(this.isHidden) {
+                    // lblObj.css('display', 'none');
+                }
+                lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="img' + this.idx + '"></div>');
+                break;
+            case '4' :
+                // This is a label field, so let's create it and then populate it
+                lblObj.text(this.txtLabel);
+                fldObj.text(this.txtLabel);
+                lblObj.css('width', this.lblWidth);
+                lblObj.css('height', this.lblHeight);
+                fldObj.attr('name', this.fldName);
+                fldObj.css('width', this.fldWidth);
+                fldObj.css('height', this.fldHeight);
+                if(this.isHidden) {
+                    // lblObj.css('display', 'none');
+                }
+                lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="lblf' + this.idx + '"></div>');
+                break;
+            case '5' :
+                // This is a button field, so let's create it and then populate it
+                lblObj.text(this.txtLabel);
+                fldObj.text(this.txtLabel);
+                lblObj.css('width', this.lblWidth);
+                lblObj.css('height', this.lblHeight);
+                fldObj.attr('name', this.fldName);
+                fldObj.css('width', this.fldWidth);
+                fldObj.css('height', this.fldHeight);
+                if(this.isHidden) {
+                    // lblObj.css('display', 'none');
+                }
+                lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="btn' + this.idx + '"></div>');
+                break;
+            case '6' :
+                // This is a textarea field, so let's create it and then populate it
+                lblObj.text(this.txtLabel);
+                fldObj.text(this.txtLabel);
+                lblObj.css('width', this.lblWidth);
+                lblObj.css('height', this.lblHeight);
+                fldObj.attr('name', this.fldName);
+                fldObj.css('width', this.fldWidth);
+                fldObj.css('height', this.fldHeight);
+                if(this.isHidden) {
+                    // lblObj.css('display', 'none');
+                }
+                lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="txt' + this.idx + '"></div>');
                 break;
         }
+        fldObj.closest('.dragMe').css({
+            top: this.fldPosY + 'px',
+            left: this.fldPosX + 'px',
+            position: 'absolute'
+        });
+        lblObj.closest('.dragMe').css({
+            top: this.lblPosY + 'px',
+            left: this.lblPosX + 'px',
+            position: 'absolute'
+        });
         $('div.dragMe').each(function(i) {
             $(this).draggable(fieldWrapperDragOptions);
         });
