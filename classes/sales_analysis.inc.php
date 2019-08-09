@@ -83,7 +83,7 @@ class SalesAnalysis{
 
 
 
-	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id=''){
+	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null){
 
 		$campaign_id = 0;
 	//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group)<br />\n";
@@ -126,7 +126,7 @@ class SalesAnalysis{
 
 		}
 
-
+		
 		/**
 		 * Campaign SQL Generation
 		 */
@@ -360,6 +360,19 @@ class SalesAnalysis{
 			}
 
 
+			
+			if($ignore_arr != null && is_array($ignore_arr)){
+				
+				// SKIPP THEM!!!!
+				if(in_array($tmp, $ignore_arr)){
+					//						echo "Skipping user on ignore list.\n";
+					
+					continue;
+				}
+				
+				
+			}
+			
 
 			$idx = $this->findAgent($agent_array, $tmp);
 
@@ -908,6 +921,13 @@ class SalesAnalysis{
 						?></td>
 					</tr>
 					<tr>
+						<th height="30">Ignore Users:<br />(<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
+	
+						<td>
+							<input type="text" size="30" name="ignore_users_list" id="ignore_users_list" value="<?=htmlentities($_REQUEST['ignore_users_list'])?>" >
+						</td>
+					</tr>
+					<tr>
 						<td>&nbsp;</td>
 						<td>
 							<input type="hidden" name="combine_users" value="<?=($_REQUEST['combine_users'] > 0 || !isset($_REQUEST['combine_users']))?1:0?>">
@@ -972,6 +992,8 @@ class SalesAnalysis{
 
 			$combine_users = (intval($_REQUEST['combine_users']) > 0)?true:false;
 
+			$ignore_arr = preg_split("/,|;|:| /", $_REQUEST['ignore_users_list'], -1, PREG_SPLIT_NO_EMPTY);
+			
 //			$user_group = trim($_REQUEST['user_group']);
 //			$ignore_group = trim($_REQUEST['ignore_group']);
 
@@ -979,7 +1001,7 @@ class SalesAnalysis{
 			$vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
 
 			## GENERATE AND DISPLAY REPORT
-			$html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code);
+			$html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code, $ignore_arr);
 
 
 			/*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
@@ -1024,12 +1046,12 @@ class SalesAnalysis{
 	}
 
 
-	function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users,$user_group, $ignore_group, $vici_campaign_code=''){
+	function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users,$user_group, $ignore_group, $vici_campaign_code='', $ignore_arr= null){
 
-		echo '<span style="font-size:9px">makeHTMLReport('."$stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code) called</span><br /><br />\n";
+		echo '<span style="font-size:9px">makeHTMLReport('."$stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code,$ignore_arr) called</span><br /><br />\n";
 
 
-		list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code);
+		list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code,$ignore_arr);
 
 		if(count($agent_data_arr) < 1){
 
@@ -1118,10 +1140,34 @@ class SalesAnalysis{
 
 
 		?></h3>
+		
+		<script>
+
+			function addUserToIgnore(username){
+
+				var str = $('#ignore_users_list').val();
+
+				if(str.length > 0 && !str.endsWith(","))str += ",";
+
+				str += username ;
+
+				$('#ignore_users_list').val(str);
+			}
+
+		</script>
+		
 		<table id="sales_anal_table" style="width:100%" border="0"  cellspacing="1">
 		<thead>
-		<tr>
-			<th align="left">Agent</th>
+		<tr><?
+
+			// CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
+			if($_SESSION['user']['priv'] > 3){
+
+				?><th nowrap align="left">&nbsp;</th><?
+			}
+
+
+			?><th align="left">Agent</th>
 			<th title="Number of hours being Paid for">PD HRS</th>
 			<th title="Number of hours of Activity tracked">WRKD HRS</th>
 			<th title="Total number of calls for the day">Total Calls</th>
@@ -1161,8 +1207,19 @@ class SalesAnalysis{
 			$ans_percent = round(  (($agent_data['num_AnswerMachines'] / $agent_data['calls_today']) * 100), 2);
 
 
-			?><tr>
-				<td><?=htmlentities(strtoupper($agent_data['agent_username']))?></td>
+			?><tr><?
+
+					// CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
+					if($_SESSION['user']['priv'] > 3){
+
+						?><td style="border-right:1px dotted #CCC;padding-right:3px">
+
+							<a href="#" onclick="addUserToIgnore('<?=htmlentities(strtoupper($agent_data['agent_username']))?>');return false;">[Ignore]</a>
+
+						</td><?
+					}
+
+				?><td><?=htmlentities(strtoupper($agent_data['agent_username']))?></td>
 				<td align="center"><?=number_format($agent_data['activity_paid'],2)?></td>
 				<td align="center"><?=number_format($agent_data['activity_wrkd'],2)?></td>
 				<td align="center"><?=number_format($agent_data['calls_today'])?></td>
@@ -1219,9 +1276,21 @@ class SalesAnalysis{
 		$t_ans_percent = round(  (($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2);
 
 		?><tfoot>
-		<tr>
-			<th style="border-top:1px solid #000" align="left">Total Agents: <?=count($agent_data_arr)?></th>
-			<th style="border-top:1px solid #000"><?=number_format($totals['total_activity_paid_hrs'],2)?></th>
+		<tr><?
+				// CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
+
+				if($_SESSION['user']['priv'] > 3){
+
+					?><th colspan="2" style="border-top:1px solid #000" align="left">Total Agents: <?=count($agent_data_arr)?></th><?
+
+				}else{
+
+					?><th style="border-top:1px solid #000" align="left">Total Agents: <?=count($agent_data_arr)?></th><?
+
+				}
+
+
+			?><th style="border-top:1px solid #000"><?=number_format($totals['total_activity_paid_hrs'],2)?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_activity_wrkd_hrs'],2)?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_calls'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_NI'])?></th>
