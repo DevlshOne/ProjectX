@@ -329,31 +329,20 @@
 
 
 	function makeClusterDD($name, $selected, $css, $onchange, $blank_option = 1){
-
 		$out = '<select name="'.$name.'" id="'.$name.'" ';
-
 		$out .= ($css)?' class="'.$css.'" ':'';
 		$out .= ($onchange)?' onchange="'.$onchange.'" ':'';
 		$out .= '>';
-
 		//$out .= '<option value="">[All]</option>';
-
 		if($blank_option){
 			$out .= '<option value="" '.(($selected == '')?' SELECTED ':'').'>'.((!is_numeric($blank_option))?$blank_option:"[All]").'</option>';
 		}
-
 		foreach($_SESSION['site_config']['db'] as $dbidx=>$db){
-
 			$out .= '<option value="'.$db['cluster_id'].'" ';
 			$out .= ($selected == $db['cluster_id'])?' SELECTED ':'';
 			$out .= '>'.htmlentities($db['name']).'</option>';
 		}
-
-
-
-
 		$out .= '</select>';
-
 		return $out;
 	}
 

@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * API Gateway - XML interface between front end and database
  * Written by: Jonathan Will, Digital Node LLC.
@@ -84,6 +84,14 @@
 			$names->handleSecondaryAjax();
 
 			break;
+
+		case 'login_tracker':
+
+			include_once($basedir."api/login_tracker.api.php");
+			$login_tracker = new API_LoginTracker();
+			$login_tracker->handleSecondaryAjax();
+
+			break;				
 		case 'voice':
 
 			include_once($basedir."api/voices.api.php");
@@ -173,7 +181,13 @@
 			$obj->handleSecondaryAjax();
 
 			break;
-
+			
+		case 'user_groups_master':
+			include_once($basedir . "api/user_groups_master.api.php");
+			$obj = new API_UserGroupsMaster();
+			$obj->handleSecondaryAjax();
+			break;
+			
 		case 'action_log':
 
 			include_once($basedir."api/action_log.api.php");
@@ -263,7 +277,12 @@
 		include_once($basedir."api/campaigns.api.php");
 		$campaigns = new API_Campaigns();
 		$campaigns->handleAPI();
+        break;
 
+        case 'campaign_parents':
+            include_once($basedir."api/cmpgn_parents.api.php");
+            $campaign_parents = new API_CampaignParents();
+            $campaign_parents->handleAPI();
 		break;
 
 	case 'extensions':
@@ -287,6 +306,14 @@
 		$names->handleAPI();
 
 		break;
+
+	case 'login_tracker':
+
+		include_once($basedir."api/login_tracker.api.php");
+		$login_tracker = new API_LoginTracker();
+		$login_tracker->handleAPI();
+
+		break;		
 
 	case 'problems':
 
@@ -382,7 +409,13 @@
 		$obj->handleAPI();
 
 		break;
-
+		
+	case 'user_groups_master':
+		include_once($basedir . "api/user_groups_master.api.php");
+		$obj = new API_UserGroupsMaster();
+		$obj->handleAPI();
+		break;
+		
 	case 'change_password':
 
 		include_once($basedir."api/change_password.api.php");

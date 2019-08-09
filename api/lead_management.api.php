@@ -9,6 +9,7 @@ class API_Lead_Management{
 	
 	var $json_parent_tagname = "ResultSet";
 	var $json_record_tagname = "Result";
+<<<<<<< api/lead_management.api.php
 	
 	
 	
@@ -111,10 +112,46 @@ class API_Lead_Management{
 		$row = $_SESSION['dbapi']->lead_management->getByID($lead_tracking_id);
 		
 		
+=======
+
+
+
+	function deleteSale($lead_tracking_id){
+
+		$lead_tracking_id = intval($lead_tracking_id);
+
+		list($sale_time) = queryROW("SELECT `sale_time` FROM `sales` WHERE transfer_id='$transfer_id' AND lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
+
+		$this->removeSaleFromCCIData($lead_tracking_id, $sale_time);
+
+		execSQL("DELETE FROM `sales` WHERE lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
+	}
+
+	function deleteSaleByXFER($lead_tracking_id,$transfer_id){
+
+
+		$lead_tracking_id = intval($lead_tracking_id);
+		$transfer_id = intval($transfer_id);
+
+		list($sale_time) = queryROW("SELECT `sale_time` FROM `sales` WHERE transfer_id='$transfer_id' AND lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
+
+		$this->removeSaleFromCCIData($lead_tracking_id, $sale_time);
+
+		execSQL("DELETE FROM `sales` WHERE transfer_id='$transfer_id' AND lead_tracking_id='$lead_tracking_id' ORDER BY id DESC LIMIT 1");
+	}
+
+	function removeSaleFromCCIData($lead_tracking_id, $sale_time){
+
+		// LOAD THE LEAD INFORMATION
+		$row = $_SESSION['dbapi']->lead_management->getByID($lead_tracking_id);
+
+
+>>>>>>> api/lead_management.api.php
 		// FALL BACK TO LEAD TIME, JUST IN CASE
 		if(!$sale_time){
 			$sale_time = $row['time'];
 		}
+<<<<<<< api/lead_management.api.php
 		
 		// CONNECT TO CCI DB
 		connectCCIDB();
@@ -138,6 +175,31 @@ class API_Lead_Management{
 		connectPXDB();
 	}
 	
+=======
+
+		// CONNECT TO CCI DB
+		connectCCIDB();
+
+		// REMOVE THE SALE RECORD
+
+		$sql = "DELETE FROM `leads` ".
+			" WHERE `phone`='".mysqli_real_escape_string($_SESSION['db'], $row['phone_num'])."' ".
+			" AND `lead_id`='".intval($row['lead_id'])."' ".
+			" AND `sales_date`='".date("m/d/Y", $sale_time)."' ".
+			" AND `campaign`='".mysqli_real_escape_string($_SESSION['db'], $row['campaign'])."' ".
+			" AND `office`='".intval($row['office'])."' ".
+			" LIMIT 1"; //mysqli_real_escape_string($_SESSION['db'], $row['phone_num'])
+
+//		echo $sql."\n";exit;
+
+		execSQL($sql);
+
+
+		// CONNECT BACK TO PX WHEN WE'RE DONE
+		connectPXDB();
+	}
+
+>>>>>>> api/lead_management.api.php
 	function getCallGroup($user_id, $cluster_id){
 		
 		$user_id = intval($user_id);
@@ -287,12 +349,21 @@ class API_Lead_Management{
 		$dat['city'] = $row['city'];
 		$dat['state'] = $row['state'];
 		$dat['postal_code'] = $row['zip_code'];
+<<<<<<< api/lead_management.api.php
 		
 		
 		
 		
 		
 		
+=======
+
+
+
+
+
+
+>>>>>>> api/lead_management.api.php
 		// JUST UPDATE 1
 		if($row['vici_cluster_id'] == $row['verifier_vici_cluster_id'] || $row['verifier_vici_cluster_id'] <= 0){
 			
@@ -306,14 +377,24 @@ class API_Lead_Management{
 			
 			// EDIT "vicidial_list" TABLE	$field,$id,$assoarray,$table)
 			$affected = aeditByField('lead_id',$row['lead_id'], $dat, "vicidial_list");
+<<<<<<< api/lead_management.api.php
 			
+=======
+
+>>>>>>> api/lead_management.api.php
 			
 			// YOU SNEAKY FUCK
 			// RE-ENABLING 7/18/2019
 			$dat['status'] = $row['dispo'];
+<<<<<<< api/lead_management.api.php
 			
 			
 			// UPDATE BOTH
+=======
+
+
+		// UPDATE BOTH
+>>>>>>> api/lead_management.api.php
 		}else{
 			
 			// UPDATE AGENT CLUSTER
@@ -334,11 +415,19 @@ class API_Lead_Management{
 			
 			/// CONNECT TO VICI
 			connectViciDB($cluster_idx);
+<<<<<<< api/lead_management.api.php
 			
 			// YOU SNEAKY FUCK
 			// RE-ENABLING 7/18/2019
 			$dat['status'] = $row['dispo'];
 			
+=======
+
+			// YOU SNEAKY FUCK
+			// RE-ENABLING 7/18/2019
+			$dat['status'] = $row['dispo'];
+
+>>>>>>> api/lead_management.api.php
 			// EDIT "vicidial_list" TABLE	$field,$id,$assoarray,$table)
 			$affected = aeditByField('lead_id',$row['verifier_lead_id'], $dat, "vicidial_list");
 			
@@ -587,6 +676,7 @@ class API_Lead_Management{
 				
 				// SYNC CHANGES TO DRIPP
 				$this->syncDataChangesToDRIPP($id);
+<<<<<<< api/lead_management.api.php
 				
 				
 				
@@ -655,6 +745,63 @@ class API_Lead_Management{
 					if($hour != 12 )$hour += 12;
 					
 					$sale_time = mktime($hour, $min, 0 , $month, $day, $year);
+=======
+
+
+				$newrow = $_SESSION['dbapi']->lead_management->getByID($id);
+
+				logAction('edit', 'lead_management', $id, "", $row, $newrow);
+			}
+
+
+
+			$_SESSION['api']->outputEditSuccess($id);
+
+
+
+			break;
+
+		case 'change_dispo':
+
+
+			$id = intval($_POST['editing_lead']);
+
+//			$row = $_SESSION['dbapi']->lead_management->getByID($id);
+
+
+			$dat = array();
+			$dat['dispo'] = $_REQUEST['dispo'];
+
+
+			$row = $_SESSION['dbapi']->lead_management->getByID($id);
+
+
+			// MUST'VE BEEN A SALE, BUT IS OVVVERRRR NOWWWW
+			if(($row['dispo'] == 'SALE' || $row['dispo'] == 'PAIDCC' || $row['dispo'] == 'SALECC') && $dat['dispo'] != $row['dispo']){
+
+
+				// CHANGING FROM SALE TO PAIDCC
+				if(strtoupper($dat['dispo']) == 'PAIDCC'){
+
+					execSQL("UPDATE `sales` SET `is_paid`='yes' WHERE lead_tracking_id='$id' ORDER BY id DESC LIMIT 1");
+
+				// CHANGING FROM PAIDCC TO SALE
+				}else if(strtoupper($dat['dispo']) == 'SALE'){
+
+					execSQL("UPDATE `sales` SET `is_paid`='no' WHERE lead_tracking_id='$id' ORDER BY id DESC LIMIT 1");
+
+				// CHANGING FROM (SALE/PAIDCC) to SALECC
+				}else if(strtoupper($dat['dispo']) == 'SALECC'){
+
+					execSQL("UPDATE `sales` SET `is_paid`='roustedcc' WHERE lead_tracking_id='$id' ORDER BY id DESC LIMIT 1");
+
+				}else{
+
+					// BEELETED - FIND THE SALE AND AXE IT ( NO AXIN QUESTIONS )
+					$this->deleteSale($id);
+
+
+>>>>>>> api/lead_management.api.php
 				}
 				
 				// XFER TIME SHIT
@@ -878,6 +1025,7 @@ class API_Lead_Management{
 						
 						// IF IT WAS A REVIEW, CHANGING TO NON-SALE
 						(($xfer['verifier_dispo'] == 'REVIEW' || $xfer['verifier_dispo'] == 'REVIEWCC')  && ($_REQUEST['dispo'] != 'REVIEW' && $_REQUEST['dispo'] != 'SALE' && $_REQUEST['dispo'] != 'PAIDCC' && $_REQUEST['dispo'] != 'SALECC'))
+<<<<<<< api/lead_management.api.php
 						){
 							
 							// SAVE NEW DISPO
@@ -915,6 +1063,34 @@ class API_Lead_Management{
 				}else{
 					
 					// EDIT THE XFER RECORD
+=======
+					){
+
+				// SAVE NEW DISPO
+				$dat = array();
+				$dat['dispo'] = $dispo;
+				$_SESSION['dbapi']->aedit($row['id'], $dat, 'lead_tracking');
+
+
+
+
+				// DELETE SALE RECORD
+				$this->deleteSaleByXFER($row['id'], $xfer['id']);
+//				$_SESSION['dbapi']->execSQL("DELETE FROM sales WHERE transfer_id='".$xfer['id']."'");
+
+
+
+//				if($_REQUEST['dispo'] != 'REVIEW'){
+//
+//					// DELETE XFER RECORD
+////					$_SESSION['dbapi']->execSQL("DELETE FROM transfers WHERE id='".$xfer['id']."'");
+//					/// NO! BAD! DONT DELETE TEH TRANSFER RECORD, WE NEED IT FOR REPORTING THAT THE AGENT MADE TRANSFERS, THEY JUST DIDNT CLOSE
+//
+//
+//				}else{
+
+					// EDIT TRANSFER DISPO
+>>>>>>> api/lead_management.api.php
 					$dat = array();
 					$dat['agent_username'] = $agent_user['username'];
 					$dat['agent_amount'] = intval($_REQUEST['agent_amount']);
@@ -922,6 +1098,7 @@ class API_Lead_Management{
 					$dat['verifier_username'] = $verifier_user['username'];
 					$dat['verifier_amount'] = intval($_REQUEST['verifier_amount']);
 					$dat['verifier_dispo'] = $dispo;
+<<<<<<< api/lead_management.api.php
 					
 					$dat['vici_last_call_time'] = $calltime;
 					
@@ -929,6 +1106,75 @@ class API_Lead_Management{
 					
 					if($dispo == 'SALE' || $dispo == 'PAIDCC' || $dispo == 'SALECC'){
 						
+=======
+					$_SESSION['dbapi']->aedit($xfer['id'], $dat, 'transfers');
+
+//				}
+
+
+			// DEFAULT TO MODIFY/EDIT TRANSFER/SALE DATA
+			}else{
+
+				// EDIT THE XFER RECORD
+				$dat = array();
+				$dat['agent_username'] = $agent_user['username'];
+				$dat['agent_amount'] = intval($_REQUEST['agent_amount']);
+
+				$dat['verifier_username'] = $verifier_user['username'];
+				$dat['verifier_amount'] = intval($_REQUEST['verifier_amount']);
+				$dat['verifier_dispo'] = $dispo;
+
+				$dat['vici_last_call_time'] = $calltime;
+
+				$dat['xfer_time'] = $xfer_time;// set to SALE TIME
+
+				if($dispo == 'SALE' || $dispo == 'PAIDCC' || $dispo == 'SALECC'){
+
+					$dat['sale_time'] = $sale_time;
+				}
+
+				$dat['call_group'] = $this->getCallGroup($agent_user['id'], $row['vici_cluster_id']);
+
+
+				$_SESSION['dbapi']->aedit($xfer['id'], $dat, 'transfers');
+
+				$xfer_id = $xfer['id'];
+
+				if($dispo == 'SALE' || $dispo == 'PAIDCC' || $dispo == 'SALECC'){
+
+
+					if(intval($sale['id']) > 0){
+
+
+
+						// EDIT THE SALE RECORD
+						$dat = array();
+
+						$dat['agent_username'] = $agent_user['username'];
+						$dat['agent_name'] = $agent_user['first_name'].(($agent_user['last_name'])?' '.$agent_user['last_name']:'');
+
+						$dat['verifier_username'] = $verifier_user['username'];
+						$dat['verifier_name'] = $verifier_user['first_name'].(($verifier_user['last_name'])?' '.$verifier_user['last_name']:'');
+						$dat['amount'] = intval($_REQUEST['verifier_amount']);
+
+
+
+						// IF IT WAS A SALE, BUT CHANGING TO PAIDCC
+						if($_REQUEST['dispo'] == 'PAIDCC'){
+
+							$dat['is_paid'] = 'yes';
+
+						}else if($_REQUEST['dispo'] == 'SALECC'){
+
+							$dat['is_paid'] = 'roustedcc';
+
+						}else{
+
+							$dat['is_paid'] = 'no';
+
+						}
+
+>>>>>>> api/lead_management.api.php
 						$dat['sale_time'] = $sale_time;
 					}
 					

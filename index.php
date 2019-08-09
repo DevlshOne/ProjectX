@@ -9,8 +9,25 @@
 	// ENSURE SESSION IS RUNNING, CAUSE WE NEED THAT SHIT
 	session_start();
 
+	$uri = null;
+	// IF /dev2 HIT, KICK TO STAGING
+	if(preg_match('/\/dev2\//', $_SERVER['REQUEST_URI'])){
+
+		$uri = preg_replace("/\/dev2\//", "/staging/", $_SERVER['REQUEST_URI']);
+
+	// IF /dev HIT, KICK TO "reports" AKA PRODUCTION
+	}else if(preg_match('/\/dev\//', $_SERVER['REQUEST_URI'])){
+
+		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
+	}
+
+	if($uri != null){
+		header("Location: ".$uri);
+		exit;
+	}
 
 
+//print_r($_SERVER);
 
 
 	/**
@@ -108,70 +125,65 @@
 			<script src="js/ajax_functions.js"></script>
 			<script src="js/functions.js"></script>
 			<script src="js/page_system.js"></script>
-
-
-
 			<?/** NEW NAVIGATION STUFF
 
 			*
 			***/?>
-
-
-
-
 			<script src="js/modernizr.js"></script> <!-- Modernizr -->
 			<script src="js/jquery.menu-aim.js"></script>
 			<script src="js/main.js"></script> <!-- Resource jQuery -->
-
-
-
-
 			<script>
-
 				function genReport(frm, area, printable){
-
-
 					if(area){
-
 						$('#'+area+'_submit_report_button').hide();
 						$('#'+area+'_loading_plx_wait_span').show();
 					}
-
 					var url = frm.action;
-
 					if(printable){
 						url += "&no_nav=1";
 					}
-
 					$.post(url, $('#'+frm.id).serialize()).done(function(data){
-
 						if(printable){
-
 							//$('#main_content').html(data);
-
 							var win = window.open("about:blank");
 							$(win.document.body).html(data);
-
 							win.focus();
 							//alert("open window here");
-
 						}else{
-
 							$('#main_content').html(data);
-
 						}
-
-
 						if(area){
-
 							$('#'+area+'_submit_report_button').show();
 							$('#'+area+'_loading_plx_wait_span').hide();
 						}
-
 					});
 					return false;
 				}
 
+                function download(type, filename, text) {
+                    let element = document.createElement('a');
+                    element.setAttribute('href', 'data:text/' + type + ';charset=utf-8,' + encodeURIComponent(text));
+                    element.setAttribute('download', filename);
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                }
+
+                function genCSV(tableElement) {
+                    $(tableElement).each(function () {
+                        let $table = $(this);
+                        let dFile = $('#reportTitle').val() + '.csv';
+                        let csv = $table.table2CSV({
+                            delivery: 'value',
+                            filename: dFile
+                        });
+                        download('csv', dFile, csv);
+                        // let hdrs = 'data:text/csv;charset=UTF-8,' + encodeURIComponent(csv);
+                        // window.location.download = dFile;
+                        // window.location.href = hdrs;
+                    });
+                }
 
 				function loadSection(url){
 
@@ -240,7 +252,7 @@
 			//$_SESSION['interface']->makeHeader();
 			$_SESSION['interface']->makeNewHeader();
 
-			if($_REQUEST['area']){
+			if(isset($_REQUEST['area']) && $_REQUEST['area']){
 
 				?><script>
 					loadSection('<?=stripurl('no_script')?>&no_script=1');
@@ -307,7 +319,6 @@
 
 					include_once("classes/campaigns.inc.php");
 					$_SESSION['campaigns']->handleFLOW();
-
 				}else{
 
 					accessDenied("Campaigns");
@@ -315,6 +326,16 @@
 				}
 
 				break;
+
+				case 'campaign_parents':
+						if(	checkAccess('campaigns')) {
+							include_once("classes/cmpgn_parents.inc.php");
+						$_SESSION['cmpgn_parents']->handleFLOW();
+					}else{
+						accessDenied("Campaigns");
+					}
+					break;
+
 			case 'scripts':
 
 
@@ -519,8 +540,24 @@
 
 				}
 
+				break;
+
+			case 'login_tracker':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['login_tracker'] == 'yes') // MANAGERS WITH LOGIN TRACKER ACCESS
+				){
+
+					include_once("classes/login_tracker.inc.php");
+					$_SESSION['login_tracker']->handleFLOW();
 
 
+				}else{
+
+					accessDenied("LoginTracker");
+
+				}
+				
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //
 //					echo "You lack the ability to access this section. Access to advanced config is denied.";
@@ -660,6 +697,11 @@
 
 
 				break;
+
+                case 'dialer_sales':
+                    include_once("classes/dialer_sales.inc.php");
+                    $_SESSION['dialer_sales']->handleFlow();
+                    break;
 
 			case 'employee_hours':
 
@@ -852,7 +894,16 @@
 				}
 
 				break;
-
+				
+			case 'user_groups_master':
+				if (checkAccess('users')) {
+					include_once("classes/user_groups_master.inc.php");
+					$_SESSION['user_groups_master']->handleFLOW();
+				} else {
+					accessDenied("Users");
+				}
+				break;
+				
 
 			case 'report_emails':
 
