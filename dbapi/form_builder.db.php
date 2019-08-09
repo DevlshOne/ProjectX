@@ -175,7 +175,7 @@ class FormBuilderAPI{
 	function getResults($info){
 		$fields = ($info['fields'])?$info['fields']:'*';
 		$sql = "SELECT $fields FROM `".$this->table."` WHERE `deleted` = 'no' GROUP BY `campaign_id` ";
-		if(is_array($info['id'])){
+		if(isset($info['id']) && is_array($info['id'])){
 			$sql .= " AND (";
 			$x=0;
 			foreach($info['id'] as $idx=>$sid){

@@ -356,6 +356,7 @@ frmField.prototype = {
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
+                $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="chk' + this.idx + '"></div>');
                 break;
@@ -368,9 +369,11 @@ frmField.prototype = {
                 fldObj.attr('name', this.fldName);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
+                fldObj.attr('scr', this.fldValue);
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
+                $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="img' + this.idx + '"></div>');
                 break;
@@ -386,21 +389,22 @@ frmField.prototype = {
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
+                $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="lblf' + this.idx + '"></div>');
                 break;
             case '5' :
                 // This is a button field, so let's create it and then populate it
-                lblObj.text(this.txtLabel);
+                // NO LABEL with buttons
                 fldObj.text(this.txtLabel);
-                lblObj.css('width', this.lblWidth);
-                lblObj.css('height', this.lblHeight);
                 fldObj.attr('name', this.fldName);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
+                fldObj.val(this.fldValue);
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
+                $(fldRendering).empty().append(fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="btn' + this.idx + '"></div>');
                 break;
@@ -416,6 +420,7 @@ frmField.prototype = {
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
+                $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="txt' + this.idx + '"></div>');
                 break;

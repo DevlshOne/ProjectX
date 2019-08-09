@@ -205,9 +205,9 @@
                     <table border="0" width="100%" id="form_builder_table">
                         <tr>
                             <th class="row2" align="left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                            <th class="row2"><?= $this->getOrderLink('screen_count') ?>Total Screens</a></th>
-                            <th class="row2"><?= $this->getOrderLink('field_count') ?>Total Fields</a></th>
-                            <th class="row2">&nbsp;</th>
+                            <th class="row2">Total Screens</th>
+                            <th class="row2">Total Fields</th>
+                            <th class="row2">Action</th>
                         </tr>
                     </table>
                 </td>
@@ -304,6 +304,7 @@
             <script>
                 var formID = '<?=$id;?>';
                 var formFields = [];
+                var currentScreen = 0;
                 $("#dialog-modal-preview-form-builder").dialog({
                     autoOpen: false,
                     width: 660,
@@ -378,9 +379,11 @@
                     // load new screen fields
                     // console.log('Changing screen to ' + c + ':' + s);
                     clearDropZone();
+                    formFields = [];
                     $.getJSON('api/api.php?get=form_builder&mode=json&action=getScreen&campaign_id=' + c + '&screen_number=' + s, function (data) {
                         loadNewScreen(data);
                     });
+                    currentScreen = s;
                 }
 
                 function saveField(i) {
@@ -493,8 +496,6 @@
                     let currYPos = 0;
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<div id="previewBox" class="pct100"></div>');
-                    // $('#' + objname).load("index.php?area=form_builder&preview=" + id + "&printable=1&no_script=1");
-                    // $('#' + objname).dialog('option', 'position', 'center');
                     formFields.forEach((ff) => {
                         ff.preview();
                     });
@@ -511,7 +512,10 @@
                 });
             </script>
             <div class="pct100">
-                <div class="ht40 pd10 ui-widget-header">Editing Form for Campaign : <?= $sourceName; ?></div>
+                <div class="ht40 pd10 ui-widget-header">
+                    <div style="float:left;">Editing Form for Campaign : <?= $sourceName; ?></div>
+                    <div style="float:right;"><input type="button" value="Back" onclick="loadSection('?area=form_builder&no_script=1');" /></div>
+                </div>
                 <div id="screenTabs">
                     <ul>
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 0); return false;">Screen 0</a></li>
@@ -523,9 +527,9 @@
                     </ul>
                     <div id="mainPanel" class="pct100">
                         <div class="ht40" style="margin-bottom:10px;">
-                            <input type="button" value="Add Field" onclick="addField(formID, 0); return false;" style="float:left;" class="frmActionButton"/>
+                            <input type="button" value="Add Field" onclick="addField(formID, currentScreen); return false;" style="float:left;" class="frmActionButton"/>
                             <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
-                            <input type="button" value="Refresh Form" onclick="changeScreen(formID, 0); return false;" class="frmActionButton"/>
+                            <input type="button" value="Refresh Form" onclick="changeScreen(formID, currentScreen); return false;" class="frmActionButton"/>
                             <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
                             <!--                        <ul id="dragZone" class="lefty pct100">-->
                             <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>-->
@@ -547,7 +551,7 @@
         function getOrderLink($field) {
             $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
             $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-            $var .= ");loadNames();return false;\">";
+            $var .= ");loadForm_builders();return false;\">";
             return $var;
         }
     }
