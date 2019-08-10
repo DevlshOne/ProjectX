@@ -8,31 +8,27 @@ $_SESSION['scripts'] = new Scripts;
 
 class Scripts{
 
-	var $table	= 'scripts';			## Classes main table to operate on
-	var $orderby	= 'id';		## Default Order field
-	var $orderdir	= 'DESC';	## Default order direction
+	var $table		= 'scripts';		## Classes main table to operate on
+	var $orderby	= 'id';				## Default Order field
+	var $orderdir	= 'DESC';			## Default order direction
 
 
 	## Page  Configuration
-	var $pagesize	= 20;	## Adjusts how many items will appear on each page
-	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+	var $pagesize	= 20;				## Adjusts how many items will appear on each page
+	var $index		= 0;				## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
 
-	var $index_name = 'scr_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-	var $frm_name = 'scrnextfrm';
+	var $index_name = 'scr_list';		## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+	var $frm_name 	= 'scrnextfrm';
 
-	var $order_prepend = 'scr_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+	var $order_prepend = 'scr_';		## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
 	function Scripts(){
 
-
-		## REQURES DB CONNECTION!
 		include_once("classes/campaigns.inc.php");
 
-
 		$this->handlePOST();
+
 	}
-
-
 
 
 
@@ -56,14 +52,13 @@ class Scripts{
 
 	}
 
+
 	function handleFLOW(){
 		# Handle flow, based on query string
 
 		if(!checkAccess('scripts')){
 
-
 			accessDenied("Scripts");
-
 			return;
 
 		}else{
@@ -72,7 +67,9 @@ class Scripts{
 				$this->makeAdd($_REQUEST['add_script']);
 
 			}else{
+
 				$this->listEntrys();
+
 			}
 
 		}
@@ -80,12 +77,7 @@ class Scripts{
 	}
 
 
-
-
-
-
 	function listEntrys(){
-
 
 		?><script>
 
@@ -151,17 +143,16 @@ class Scripts{
 				// CHECK IF WE ARE ALREADY LOADING THIS DATA
 				if(val == true){
 
-					//console.log("scripts ALREADY LOADING (BYPASSED) \n");
 					return;
+
 				}else{
 
 					eval('scripts_loading_flag = true');
+
 				}
 
 
 				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-
-
 
 				loadAjaxData(getScriptsURL(),'parseScripts');
 
@@ -177,8 +168,6 @@ class Scripts{
 				<?=$this->order_prepend?>totalcount = parseXMLData('script',ScriptsTableFormat,xmldoc);
 
 
-//alert(<?=$this->order_prepend?>totalcount + " > "+<?=$this->order_prepend?>pagesize+" ??");
-
 				// ACTIVATE PAGE SYSTEM!
 				if(parseInt(<?=$this->order_prepend?>totalcount) > parseInt(<?=$this->order_prepend?>pagesize)){
 
@@ -193,7 +182,6 @@ class Scripts{
 
 				}else{
 
-///alert("hide?");
 					hidePageSystem('scripts');
 
 				}
@@ -242,6 +230,7 @@ class Scripts{
 				frm.s_voice_id.value = 0;
 				frm.s_screen_num.value=-1;
 				frm.s_variables.value = '';
+
 			}
 
 
@@ -364,7 +353,6 @@ class Scripts{
 
 		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadScripts();return false">
 			<input type="hidden" name="searching_scripts">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
 
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
@@ -478,8 +466,6 @@ class Scripts{
 	}
 
 
-
-
 	function makeAdd($id){
 
 		$id=intval($id);
@@ -495,9 +481,6 @@ class Scripts{
 		?><script>
 
 			function validateScriptField(name,value,frm){
-
-				//alert(name+","+value);
-
 
 				switch(name){
 				default:
@@ -589,12 +572,6 @@ class Scripts{
 					});
 
 
-
-
-					//alert("Form validated, posting");
-
-
-
 				}
 
 				return false;
@@ -653,19 +630,10 @@ class Scripts{
 				obj.options.length=0;
 
 				var newopts = new Array();
-//				newopts[0] = document.createElement("OPTION");
-//
-//				if(ie)	obj.add(newopts[0]);
-//				else	obj.add(newopts[0],null);
-//
-//				newopts[0].innerText	= '';
-//				newopts[0].value	= 0;
 				var curid=0;
 				for(x=0;x < item_id.length;x++){
-					//curid=item_id[x];
-					curid=x;
 
-					//alert(which+' '+item_name[curid]);
+					curid=x;
 
 					if(catid && item_cpgnid[curid] != catid){
 						continue;
@@ -849,7 +817,7 @@ class Scripts{
 							// handleEditXML(xmldata, baseurl,uiobj,success_callback_func)
 							var result = handleEditXML(msg);
 							var res = result['result'];
-alert(res);
+							alert(res);
 							if(res <= 0){
 
 								alert(result['message']);
@@ -934,7 +902,7 @@ alert(res);
 
 				<table border="0" width="100%">
 				<tr>
-					<th colspan="2" class="ui-widget-header">
+					<th colspan="4" class="ui-widget-header">
 
 						Voice Files (<a href="#" onclick="alert('These sounds are binding to the key you set above, for the screen you selected.\n\nUpload Script Sound: These are the main script sound and multipress sounds\nUpload REPEAT Sound: This will upload the special REPEAT sound, for when caller is interrupted mid-script.');return false;">help?</a>)
 
@@ -1025,8 +993,6 @@ alert(res);
 
 
 	}
-
-
 
 
 	function getOrderLink($field){
