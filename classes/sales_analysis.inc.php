@@ -1727,6 +1727,41 @@ class SalesAnalysis{
 
 				$textdata .=	"\nReport is attached (or view email as HTML).";
 				break;
+			case 4: // ROUSTER REPORT
+				
+				
+				include_once($_SESSION['site_config']['basedir'].'classes/rouster_report.inc.php');
+				
+				
+				
+				$html = $_SESSION['rouster_report']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
+				//									            	makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = null, $combine_users = false){
+				
+				
+				if ($html == null) {
+					echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
+					continue 2;
+				}
+				
+				$textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
+						
+						"Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
+						(($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+						(($user_group)?" User Group:".$user_group."\n":'');
+						
+						if (count($source_user_group) > 0) {
+							$textdata .= "Source group(s): ";
+							$z=0;
+							foreach ($source_user_group as $sgrp) {
+								$textdata .= ($z++ > 0)?", ":'';
+								$textdata .= $sgrp;
+							}
+							$textdata .= "\n";
+						}
+						
+						
+						$textdata .=	"\nReport is attached (or view email as HTML).";
+						break;
 			}
 			// REPORT HAS BEEN GENERATED, DO THE EMAIL SHIT HERE
 
