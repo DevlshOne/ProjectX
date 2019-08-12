@@ -457,6 +457,7 @@
                                 let resp = f.saveToDB();
                                 window.alert('Field saved!');
                                 $(this).dialog('close');
+                                changeScreen(f.campID, f.screenNum);
                             }
                         },
                         {
