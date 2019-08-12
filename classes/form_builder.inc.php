@@ -330,15 +330,7 @@
                     containment: "#dropZone",
                     helper: 'clone',
                     refreshPositions: true,
-                    // cursor: 'move',
-                    // class: 'hand',
-                    // cursorAt: {
-                    //     top: 25,
-                    //     left: 25
-                    // },
-                    // snap: true,
                     scroll: false,
-                    // snapMode: 'inner',
                     revert: 'invalid'
                 });
                 $('.fldTitle').on('click', function () {
@@ -424,6 +416,7 @@
                     newObj.field_step = 0;
                     newObj.is_hidden = 0;
                     newObj.is_locked = 0;
+                    newObj.value = '';
                     let formField = new frmField(newIndex, newObj);
                     formFields.push(formField);
                     editField(newIndex);

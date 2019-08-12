@@ -168,7 +168,7 @@ class FormBuilderAPI{
             foreach($d as $k => $v) {
                 switch($k) {
                     case 'isRequired':
-                        $setFieldsArr[] = "`is_required` = '" . (isset($v) ? '0' : '1') . "'";
+                        $setFieldsArr[] = "`is_required` = '" . $v . "'";
                         break;
                     case 'name':
                         $setFieldsArr[] = "`name` = '" . $v . "'";

@@ -123,9 +123,6 @@ frmField.prototype = {
             '<tr>' +
             '<td><label class="fafLabel" for="label_y">Label Y : </label><input class="pct75" id="label_y' + this.idx + '"  name="label_y" type="text" value="' + this.lblPosY + '" /></td>' +
             '</tr>' +
-            // '<tr>' +
-            // '<td><label class="fafLabel" for="db_field">Field Name : </label><input class="pct75" id="name' + this.idx + '" name="name" type="text" value="' + this.name + '" /></td>' +
-            // '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="field_width">Field Width : </label><input class="pct75" id="field_width' + this.idx + '" name="field_width" type="number" min="0" max="500" value="' + this.fldWidth + '" /></td>' +
             '</tr>' +
@@ -142,7 +139,7 @@ frmField.prototype = {
             '<td><label class="fafLabel" for="field_step">Field Step : </label><input id="field_step' + this.idx + '" name="field_step" type="number" value = "' + this.callStep + '"/></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="is_required">Required : </label><input id="is_required' + this.idx + '" name="is_required" type="checkbox" value="' + this.isRequired + '" /></td>' +
+            '<td><label class="fafLabel" for="is_required">Required : </label><input id="is_required' + this.idx + '" name="is_required" type="checkbox" /></td>' +
             '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="tool_tip">Tooltip : </label><input class="pct75" id="tool_tip' + this.idx + '" name="tool_tip" type="text" value="' + this.toolTip + '" />' +
@@ -169,16 +166,30 @@ frmField.prototype = {
             '<td><label class="fafLabel" for="db_table">DB Table : </label><input class="pct75" id="db_table' + this.idx + '" name="db_table" type="text" value="' + this.dbTable + '" /></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="db_field">DB Field : </label><input class="pct75" id="db_field' + this.idx + '" name="tool_tip" type="text" value="' + this.dbField + '" /></td>' +
+            '<td><label class="fafLabel" for="db_field">DB Field : </label><input class="pct75" id="db_field' + this.idx + '" name="db_field" type="text" value="' + this.dbField + '" /></td>' +
             '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="variables">Variables : </label><input class="pct75" id="variables' + this.idx + '" name="variables" type="text" value="' + this.fldVariables + '" /></td>' +
             '</tr>' +
             '</table>' +
-            '<script>$(function(){$("#field_type' + this.idx + '").val(' + this.fldType + ');$("#field_step' + this.idx + '").val(' + this.callStep + ');});</script>' +
             '</form>';
         $(fldRendering).empty().append(fieldAsForm);
-        $('#field_type' + this.idx).change();
+        $(function() {
+            $('#field_type' + this.idx).val(this.fldType);
+            $('#field_step' + this.idx).val(this.callStep);
+            $('#value' + this.idx).val(this.fldValue);
+            $('#tool_tip' + this.idx).val(this.tooltip);
+            $('#place_holder' + this.idx).val(this.placeHolder);
+            $('#css_class' + this.idx).val(this.cssName);
+            $('#special_mode' + this.idx).val(this.fldSpecial);
+            $('#options' + this.idx).val(this.fldOptions);
+            $('#db_table' + this.idx).val(this.dbTable);
+            $('#db_field' + this.idx).val(this.dbField);
+            $('variables' + this.idx).val(this.fldVariables);
+            $('#is_required' + this.idx).prop('checked', function() {
+               return (this.isRequired == 0 ? 'checked' : '');
+            });
+        });
     },
     reposition: function() {
 
@@ -397,12 +408,9 @@ frmField.prototype = {
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
                 fldObj.val(this.fldValue);
-                if(this.isHidden) {
-                    // lblObj.css('display', 'none');
-                }
                 $(fldRendering).empty().append(fldObj);
-                lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe" id="btn' + this.idx + '"></div>');
+                // lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="btn' + this.idx + '"></div>');
                 break;
             case '6' :
                 // This is a textarea field, so let's create it and then populate it
