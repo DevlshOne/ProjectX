@@ -406,7 +406,9 @@
                     let newIndex = formFields.length;
                     let newObj = {};
                     newObj.campID = c;
+                    newObj.campaign_id = c;
                     newObj.screenNum = s;
+                    newObj.screen_num = s;
                     // let's set some default values per Jon
                     newObj.name = 'New Field';
                     newObj.label_x = 0;
@@ -417,6 +419,11 @@
                     newObj.label_width = 100;
                     newObj.field_height = 30;
                     newObj.field_width = 100;
+                    newObj.field_type = 0;
+                    newObj.max_length = 50;
+                    newObj.field_step = 0;
+                    newObj.is_hidden = 0;
+                    newObj.is_locked = 0;
                     let formField = new frmField(newIndex, newObj);
                     formFields.push(formField);
                     editField(newIndex);
@@ -452,10 +459,10 @@
                             click: function () {
                                 $.each($('#fieldAsForm' + i).serializeArray(), function (index, field) {
                                     f[field.name] = field.value;
-                                    console.log('Setting f.' + field.name + ' to ' + field.value);
+                                    // console.log('Setting f.' + field.name + ' to ' + field.value);
                                 });
-                                f.saveToDB();
-                                window.alert('Field saved');
+                                let resp = f.saveToDB();
+                                window.alert('Field saved!');
                                 $(this).dialog('close');
                             }
                         },
@@ -472,12 +479,20 @@
                 }
 
                 function changeFieldType(i, v) {
+                    let f = formFields[i];
+                    f.fldType = $('option:selected', '#field_type' + i).val();
                     switch (v) {
                         case '1' :
                             $('#options' + i).closest('tr').show();
+                            $('#value' + i).closest('label').text('Default Value : ');
+                            break;
+                        case '3' :
+                            $('#options' + i).closest('tr').hide();
+                            $('#value' + i).closest('label').text('Src URL : ');
                             break;
                         default :
                             $('#options' + i).closest('tr').hide();
+                            $('#value' + i).closest('label').text('Default Value : ');
                             break;
                     }
                 }

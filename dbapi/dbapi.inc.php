@@ -331,6 +331,10 @@
             return $this->execSQL("DELETE FROM `$table` WHERE id='$id'");
         }
 
+        public function insertedID() {
+            return mysqli_insert_id($this->db);
+        }
+
         public function explainSQL($cmd) {
             $sql = "EXPLAIN " . $cmd;
 

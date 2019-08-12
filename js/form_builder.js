@@ -30,9 +30,13 @@ const fieldWrapperDragOptions = {
         let fieldID = ui.helper.attr('data-fieldID');
         // console.log('dbID #' + fieldID + ' dropped at X:' + ui.position.left + ', Y:' + ui.position.top);
         let f = formFields[fieldID];
-        f.fldPosX = ui.position.left;
-        f.fldPosY = ui.position.top;
-        // f.saveToDB();
+        if($(ui.helper[0]).hasClass('dragL')) {
+            f.lblPosX = ui.position.left;
+            f.lblPosY = ui.position.top;
+        } else {
+            f.fldPosX = ui.position.left;
+            f.fldPosY = ui.position.top;
+        }
     }
 };
 function frmField(index, o) {
@@ -77,24 +81,17 @@ function frmField(index, o) {
 frmField.prototype = {
     constructor: frmField,
     saveToDB: function() {
-        $.getJSON('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function(response) {
-        });
-        // this.populate();
-        // changeScreen(this.campID, this.screenNum);
+        $.post('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function() {
+        })
+            .done(function() {
+                return 1;
+            })
+            .fail(function() {
+                return 0;
+            });
     },
     create: function() {
-        let newLI = '<div style="width: auto;" id="fieldWrapper_' + this.idx + '">\n' +
-            // '<div class="fldHeader">\n' +
-            // '<div class="fldActions">\n' +
-            // '<div class="fldTitle">[' + this.screenNum + ':' + this.idx + '] - ' + this.txtLabel + '</div>\n' +
-            // '<input type="button" value="Remove" onclick="removeField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
-            // '<input type="button" value="Edit" onclick="editField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
-            // '<input type="button" value="Save" onclick="saveField(' + this.idx + '); return false;" class="fldActionButton" />\n' +
-            // '</div>\n' +
-            // '</div>\n' +
-            // '<div class="fldTitle">' + this.txtLabel + '</div>\n' +
-            // '<div class="field"></div>\n' +
-            '</div>\n';
+        let newLI = '<div style="width: auto;" id="fieldWrapper_' + this.idx + '"></div>';
         $('#dropZone').append(newLI);
     },
     markDeleted: function() {
@@ -252,7 +249,6 @@ frmField.prototype = {
                 fldObj = $(fldFormat);
                 lblObj = $(lblFormat);
                 fldObj.addClass('fieldPreview');
-                lblObj.addClass('labelPreview');
                 break;
             case '6' :
                 // This is a label field, so let's create it and then populate it
@@ -369,7 +365,7 @@ frmField.prototype = {
                 fldObj.attr('name', this.fldName);
                 fldObj.css('width', this.fldWidth);
                 fldObj.css('height', this.fldHeight);
-                fldObj.attr('scr', this.fldValue);
+                fldObj.attr('src', this.fldValue);
                 if(this.isHidden) {
                     // lblObj.css('display', 'none');
                 }
