@@ -186,7 +186,7 @@ case 'pac_reports_export':
 	}
 
 
-	$output = $_SESSION['pac_reports']->exportNams($stime, $etime);
+	list($output,$totals) = $_SESSION['pac_reports']->exportNams($stime, $etime,false);
 
 	header('Content-Description: File Transfer');
 	header('Content-Type: application/octet-stream');
