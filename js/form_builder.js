@@ -103,7 +103,7 @@ frmField.prototype = {
         let fieldAsForm = '<form id="fieldAsForm' + this.idx + '">' +
             '<table class="pct100 tightTable">' +
             '<tr>' +
-            '<td><label class="fafLabel" for="field_step">Screen Number : </label><input id="screen_num' + this.idx + '" name="screen_num" type="number" value = "' + $('#screenTabs').tabs("option", "active") + '" readonly="readonly" disabled="disabled"/></td>' +
+            '<td><label class="fafLabel" for="field_step">Screen Number : </label><input id="screen_num' + this.idx + '" name="screen_num" type="number" value = "' + $('#screenTabs').tabs("option", "active") + '" readonly="readonly" /></td>' +
             '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="field_type">Type : </label><select id="field_type' + this.idx + '" onchange="changeFieldType(' + this.idx + ', $(this).val());return false;" name="field_type"><option value="0">Text</option><option value="1">Dropdown</option><option value="2">Checkbox</option><option value="3">Image</option><option value="4">Label</option><option value="5">Button</option><option value="6">Textarea</option></select></td>' +
@@ -172,6 +172,7 @@ frmField.prototype = {
             '<td><label class="fafLabel" for="variables">Variables : </label><input class="pct75" id="variables' + this.idx + '" name="variables" type="text" value="' + this.fldVariables + '" /></td>' +
             '</tr>' +
             '</table>' +
+            '<input type="hidden" id="campaign_id' + this.idx + '" name="campaign_id" value="' + this.campID + '" />' +
             '</form>';
         $(fldRendering).empty().append(fieldAsForm);
         $(function() {
@@ -185,7 +186,8 @@ frmField.prototype = {
             $('#options' + this.idx).val(this.fldOptions);
             $('#db_table' + this.idx).val(this.dbTable);
             $('#db_field' + this.idx).val(this.dbField);
-            $('variables' + this.idx).val(this.fldVariables);
+            $('#variables' + this.idx).val(this.fldVariables);
+            $('#campaign_id' + this.idx).val(this.campID);
             $('#is_required' + this.idx).prop('checked', function() {
                return (this.isRequired == 0 ? 'checked' : '');
             });

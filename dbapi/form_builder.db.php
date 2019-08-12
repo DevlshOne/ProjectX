@@ -39,122 +39,46 @@ class FormBuilderAPI{
 	}
 
 	function saveField($d) {
-	    $insKeys = [];
-	    $insVals = [];
 	    if(empty($d['dbID'])) {
+	        // this is a field ADD
+            $insKeys = [];
+            $insVals = [];
             foreach($d as $k => $v) {
                 switch($k) {
                     case 'isRequired':
-                        $insKeys[] = "is_required";
-                        $insVals[] = (isset($v) ? '0' : '1');
-                        break;
-                    case 'name':
-                        $insKeys[] = "name";
-                        $insVals[] = $v;
-                        break;
                     case 'lblWidth':
-                        $insKeys[] = "label_width";
-                        $insVals[] = $v;
-                        break;
                     case 'lblHeight':
-                        $insKeys[] = "label_height";
-                        $insVals[] = $v;
-                        break;
                     case 'toolTip':
-                        $insKeys[] = "tool_tip";
-                        $insVals[] = $v;
-                        break;
                     case 'placeHolder':
-                        $insKeys[] = "place_holder";
-                        $insVals[] = $v;
-                        break;
                     case 'cssName':
-                        $insKeys[] = "css_class";
-                        $insVals[] = $v;
-                        break;
                     case 'campID':
-                        $insKeys[] = "campaign_id";
-                        $insVals[] = $v;
-                        break;
                     case 'screenNum':
-                        $insKeys[] = "screen_num";
-                        $insVals[] = $v;
-                        break;
                     case 'dbID':
                     case 'fldName':
                     case 'txtLabel':
                     case 'idx':
-                        break;
                     case 'fldValue':
-                        $insKeys[] = "value";
-                        $insVals[] = $v;
-                        break;
                     case 'fldType':
-                        $insKeys[] = "field_type";
-                        $insVals[] = $v;
-                        break;
                     case 'fldMaxLength':
-                        $insKeys[] = "max_length";
-                        $insVals[] = $v;
-                        break;
                     case 'fldWidth':
-                        $insKeys[] = "field_width";
-                        $insVals[] = $v;
-                        break;
                     case 'fldHeight':
-                        $insKeys[] = "field_height";
-                        $insVals[] = $v;
-                        break;
                     case 'fldSpecial':
-                        $insKeys[] = "special_mode";
-                        $insVals[] = $v;
-                        break;
                     case 'fldOptions':
-                        $insKeys[] = "options";
-                        $insVals[] = $v;
-                        break;
                     case 'dbTable':
-                        $insKeys[] = "db_table";
-                        $insVals[] = $v;
-                        break;
                     case 'dbField':
-                        $insKeys[] = "db_field";
-                        $insVals[] = $v;
-                        break;
                     case 'fldVariables':
-                        $insKeys[] = "variables";
-                        $insVals[] = $v;
-                        break;
                     case 'callStep':
-                        $insKeys[] = "field_step";
-                        $insVals[] = $v;
-                        break;
                     case 'lblPosX':
-                        $insKeys[] = "label_x";
-                        $insVals[] = $v;
-                        break;
                     case 'lblPosY':
-                        $insKeys[] = "label_y";
-                        $insVals[] = $v;
-                        break;
                     case 'fldPosX':
-                        $insKeys[] = "field_x";
-                        $insVals[] = $v;
-                        break;
                     case 'fldPosY':
-                        $insKeys[] = "field_y";
-                        $insVals[] = $v;
-                        break;
                     case 'isHidden':
-                        $insKeys[] = "is_hidden";
-                        $insVals[] = $v;
-                        break;
                     case 'isLocked':
-                        $insKeys[] = "is_locked";
-                        $insVals[] = $v;
+                    case 'id':
                         break;
                     default:
-                        $setFieldsArr[] = "`" . $k . "` = '" . $v . "'";
+                        $insKeys[] = $k;
+                        $insVals[] = $v;
                         break;
                 }
             }
@@ -162,6 +86,7 @@ class FormBuilderAPI{
             $vals = join("','", $insVals);
             $sql = "INSERT INTO `" . $this->table . "` (`" . $keys . "`) VALUES ('" . $vals . "')";
         } else {
+	        // this is a field EDIT
     	    $setFieldsArr = [];
 	        $newID = $d['dbID'];
             $sql = "UPDATE `" . $this->table . "` SET ";
