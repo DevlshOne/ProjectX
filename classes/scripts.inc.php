@@ -66,11 +66,16 @@ class Scripts{
 
 				$this->makeAdd($_REQUEST['add_script']);
 
+			}elseif(isset($_REQUEST['edit_voice_file'])) {
+
+				$this->EditVoiceFile($_REQUEST['edit_voice_file']);
+
 			}else{
 
 				$this->listEntrys();
 
 			}
+
 
 		}
 
@@ -197,6 +202,7 @@ class Scripts{
 			}
 
 
+
 			function displayAddScriptDialog(scriptid){
 
 				var objname = 'dialog-modal-add-script';
@@ -204,7 +210,7 @@ class Scripts{
 
 				if(scriptid > 0){
 					$('#'+objname).dialog( "option", "title", 'Editing Script' );
-					$('#'+objname).dialog( "option", "height", '580' );
+					$('#'+objname).dialog( "option", "height", '600' );
 				}else{
 					$('#'+objname).dialog( "option", "title", 'Adding new Script' );
 					$('#'+objname).dialog( "option", "height", '380' );
@@ -347,6 +353,8 @@ class Scripts{
 
 		</script>
 		<div id="dialog-modal-add-script" title="Adding new Script" class="nod">
+		</div>
+		<div id="dialog-modal-edit-voicefile" title="Editing Voice File" class="nod">
 		</div><?
 
 
@@ -715,7 +723,7 @@ class Scripts{
 				$('#del_voice_id').val(id);
 
 				checkScriptFrm(getEl('scr_add_frm'));
-			}
+			}			
 
 			// SET TITLEBAR
 			$('#dialog-modal-add-script').dialog( "option", "title", '<?=($id)?'Editing Script #'.$id.' - '.addslashes(htmlentities($row['name'])):'Adding new Script'?>' );
@@ -891,12 +899,44 @@ class Scripts{
 
 			}
 
+			function displayEditVoiceFile(voicefileid){
+
+				var objname = 'dialog-modal-edit-voicefile';
+
+				$('#'+objname).dialog( "option", "title", 'Editing Voice File' );
+				$('#'+objname).dialog( "option", "height", '300' );
+
+				$('#'+objname).dialog("open");
+
+				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+
+				$('#'+objname).load("index.php?area=scripts&edit_voice_file="+voicefileid+"&printable=1&no_script=1");
+
+				$('#'+objname).dialog('option', 'position', 'center');
+
+			}						
+
+
+			function handleFileListClick(id){
+
+				displayEditVoiceFile(id);
+
+			}	
+
+			$("#dialog-modal-edit-voicefile").dialog({
+				autoOpen: false,
+				height: 300,
+				modal: false,
+				draggable:true,
+				resizable: false
+			});
+
 			</script>
 				<div class="nod">
 					<iframe id="iframe_upload" name="iframe_upload" width="1" height="1" frameborder="0" src="about:blank"></iframe>
 				</div>
 
-				<form id="ninja_upload_<?=$id?>_frm" name="ninja_upload_<?=$id?>_frm" method="POST" enctype="multipart/form-data" action="ajax.php?mode=image_upload" target="iframe_upload">
+				<form id="ninja_upload_<?=$id?>_frm" name="ninja_upload_<?=$id?>_frm" method="POST" enctype="multipart/form-data" action="ajax.php?mode=sound_upload" target="iframe_upload">
 					<input type="hidden" name="script_id" id="script_id" value="<?=$row['id']?>">
 					<input type="hidden" name="voice_id" id="voice_id" value="<?=$row['voice_id']?>">
 
@@ -909,15 +949,23 @@ class Scripts{
 					</th>
 				</tr>
 				<tr>
-					<th colspan="2">
+					<th align="left">
 						<select name="upload_mode">
 							<option value="script">Upload Script Sound:</option>
 							<option value="repeat-short">Upload SHORT REPEAT:</option>
 							<option value="repeat-long">Upload LONG REPEAT:</option>
 							<option value="repeat-question">Upload Q. ONLY REPEAT:</option>
 						</select>
-						<input type="file" name="sound_file" id="sound_file" onchange="ninjaUploadImage(<?=$id?>)">
 					</th>
+					<td>
+						<input type="file" name="sound_file" id="sound_file" onchange="ninjaUploadImage(<?=$id?>)">
+					</td>
+				</tr>
+				<tr>
+					<th align="left">Voice File Description</th>
+					<td colspan="2">
+					<textarea name="file_description" rows="3" cols="35">Enter a description...</textarea>
+					</td>
 				</tr>
 				<tr>
 					<td align="center" colspan="2" id="upload_status_cell"><?
@@ -942,7 +990,7 @@ class Scripts{
 				while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
 					$class = 'row'.($color++%2);
 					?><tr>
-						<td class="<?=$class?>"><?=htmlentities($r2['file'])?></td>
+						<td class="<?=$class?>"><span class="hand" onclick="handleFileListClick(<?=$r2['id']?>)"><?=htmlentities($r2['file'])?></span></td>
 						<td class="<?=$class?>"><?=$r2['duration'].'&nbsp;sec'?></td>
 						<td class="<?=$class?>" align="center"><?
 
@@ -994,6 +1042,42 @@ class Scripts{
 
 	}
 
+
+	function EditVoiceFile($id){
+
+
+		$id=intval($id);
+
+
+		if($id){
+
+			$row = $_SESSION['dbapi']->scripts->getVoiceFileByID($id);
+
+
+		}
+
+		?><script>
+
+
+
+		</script>
+		
+		<form method="POST" id="scr_edit_vfile" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkScriptFrm(this); return false">
+			<input type="hidden" id="editing_vfile" name="editing_vfile" value="<?=$id?>" >
+
+		<table border="0" align="center" width="100%">
+		<tr>
+			<th align="left" height="30">Filename</th>
+			<td><?=$row['file']?></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">Description</th>
+			<td><textarea name="description" rows="3" cols="35"><?=htmlentities($row['description'])?></textarea></td>
+		</tr>
+		<?
+
+
+	}
 
 	function getOrderLink($field){
 
