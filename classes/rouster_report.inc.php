@@ -294,7 +294,9 @@ class RousterReport{
 					if(! isset( $agent_array[$username]['total_activity_date_time_array'][$curdate]  )){
 
 
+						//seconds_INCALL+seconds_READY+seconds_QUEUE+seconds_PAUSED as TotalTime
 						$agent_array[$username]['total_activity_date_time_array'][$curdate] = intval($row['TotalTime']);
+						//seconds_INCALL+seconds_READY+seconds_QUEUE as DailyActivityTime
 						$agent_array[$username]['total_activity_date_daily_array'][$curdate] = intval($row['DailyActivityTime']);
 
 					}else{
@@ -1039,7 +1041,15 @@ class RousterReport{
 				//$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_cnt'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
 				$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_total'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
 
-				$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($act_total_time/3600));
+				// I feel like we're going back and forth here, so I'm marking the request/date/time
+				// NICOLE: can we make it use activity for worked/hr (8/13/2019)
+				$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($activity_time/3600));
+				//$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($act_total_time/3600));
+				
+// 				echo $paidcc_per_hour.' vs '.$paidcc_per_worked_hour."<br />";
+// 				echo 'Paid total: '.$row['paid_sale_total'].'<br />';
+// 				echo ($row['paid_time']/60).' vs '.($act_total_time/3600).'<br /><br />';
+				
 //print_r($row);
 //echo '<br /><br />';
 //				if($combine_users){
@@ -1128,8 +1138,11 @@ class RousterReport{
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
 						// PAID TIME
-
-						echo renderTimeFormatted($row['paid_time'] * 60);
+						$ptime = ($row['paid_time'] );
+						$tmpmin = floor($ptime/60);
+						$tmpsec = ($ptime%60);
+						$total_ptime = $tmpmin.':'.(($tmpsec < 10)?'0'.$tmpsec:$tmpsec);
+						echo $total_ptime;
 
 
 					?></td>
@@ -1289,11 +1302,15 @@ class RousterReport{
 			$total_pos_bump_amount =  $running_total_pos_bump_verifier_amount - $running_total_pos_bump_agent_amount;
 			$total_pos_bump_percent = ($running_total_pos_bump_agent_amount <= 0)?0:round(($running_total_pos_bump_verifier_amount / $running_total_pos_bump_agent_amount) * 100, 2);
 
+			
+			
 			$total_paidcc_per_hour = ($running_paid_time <= 0)?0:($running_total_paid_sales_amount / ($running_paid_time/60));
 
-
+// NICOLE: CAN WE USE ACTIVITY TIME (8/13/2019)
 //			$total_paidcc_per_worked_hour = ($running_total_activity_time <= 0)?0:($running_total_paid_sales_amount / ($running_t_time/3600));
-			$total_paidcc_per_worked_hour = ($running_total_total_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_total_time/3600));//($running_t_max/3600));
+//			$total_paidcc_per_worked_hour = ($running_total_total_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_total_time/3600));//($running_t_max/3600));
+			$total_paidcc_per_worked_hour = ($running_total_activity_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_activity_time/3600));//($running_t_max/3600));
+			
 
 
 			// TOTALS ROW
@@ -1363,9 +1380,15 @@ class RousterReport{
 
 				?></td>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
-
-
-					echo renderTimeFormatted($running_paid_time * 60);
+	
+					// PAID TIME
+					$ptime = ($running_paid_time );
+					$tmpmin = floor($ptime/60);
+					$tmpsec = ($ptime%60);
+					$total_ptime = $tmpmin.':'.(($tmpsec < 10)?'0'.$tmpsec:$tmpsec);
+					echo $total_ptime;
+					
+					//echo renderTimeFormatted($running_paid_time * 60);
 
 
 				?></td>
