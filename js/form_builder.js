@@ -173,25 +173,27 @@ frmField.prototype = {
             '</tr>' +
             '</table>' +
             '<input type="hidden" id="campaign_id' + this.idx + '" name="campaign_id" value="' + this.campID + '" />' +
-            '</form>';
+            '</form>' +
+            '<script>' +
+            '  $("#fieldAsForm' + this.idx + '").ready(function() {' +
+            '      $("#field_type' + this.idx + '").val(' + this.fldType + ');' +
+            '      $("#field_step' + this.idx + '").val(' + this.callStep + ');' +
+            '      $("#value' + this.idx + '").val(' + this.fldValue + ');' +
+            '      $("#tool_tip' + this.idx + '").val(' + this.tooltip + ');' +
+            '      $("#place_holder' + this.idx + '").val(' + this.placeHolder + ');' +
+            '      $("#css_class' + this.idx + '").val(' + this.cssName + ');' +
+            '      $("#special_mode' + this.idx + '").val(' + this.fldSpecial + ');' +
+            '      $("#options' + this.idx + '").val(' + this.fldOptions + ');' +
+            '      $("#db_table' + this.idx + '").val(' + this.dbTable + ');' +
+            '      $("#db_field' + this.idx + '").val(' + this.dbField + ');' +
+            '      $("#variables' + this.idx + '").val(' + this.fldVariables + ');' +
+            '      $("#campaign_id' + this.idx + '").val(' + this.campID + ');' +
+            '      $("#is_required' + this.idx + '").prop("checked", function() {' +
+            '        return (this.isRequired == 0 ? "checked" : "");' +
+            '      });' +
+            '  });' +
+            '</script>'
         $(fldRendering).empty().append(fieldAsForm);
-        $(function() {
-            $('#field_type' + this.idx).val(this.fldType);
-            $('#field_step' + this.idx).val(this.callStep);
-            $('#value' + this.idx).val(this.fldValue);
-            $('#tool_tip' + this.idx).val(this.tooltip);
-            $('#place_holder' + this.idx).val(this.placeHolder);
-            $('#css_class' + this.idx).val(this.cssName);
-            $('#special_mode' + this.idx).val(this.fldSpecial);
-            $('#options' + this.idx).val(this.fldOptions);
-            $('#db_table' + this.idx).val(this.dbTable);
-            $('#db_field' + this.idx).val(this.dbField);
-            $('#variables' + this.idx).val(this.fldVariables);
-            $('#campaign_id' + this.idx).val(this.campID);
-            $('#is_required' + this.idx).prop('checked', function() {
-               return (this.isRequired == 0 ? 'checked' : '');
-            });
-        });
     },
     reposition: function() {
 
@@ -238,11 +240,12 @@ frmField.prototype = {
                 // This is an image field, so let's create it and then populate it
                 // not sure which field holds the SRC, but it needs to be implemented
                 fldFormat = '<img />';
-                lblFormat = '<label></label>';
+                lblFormat = '<div style="display:none;"></div>';
                 fldObj = $(fldFormat);
                 lblObj = $(lblFormat);
                 fldObj.addClass('fieldPreview');
                 lblObj.addClass('labelPreview');
+                fldObj.attr('src', this.fldValue);
                 break;
             case '4' :
                 // This is a label field, so let's create it and then populate it
@@ -256,7 +259,6 @@ frmField.prototype = {
                 break;
             case '5' :
                 // This is a button field, so let's create it and then populate it
-                // not sure which field holds the SRC, but it needs to be implemented
                 fldFormat = '<input type="button" />';
                 lblFormat = '<label></label>';
                 fldObj = $(fldFormat);
@@ -265,7 +267,6 @@ frmField.prototype = {
                 break;
             case '6' :
                 // This is a label field, so let's create it and then populate it
-                // not sure which field holds the SRC, but it needs to be implemented
                 fldFormat = '<textarea></textarea>';
                 lblFormat = '<label></label>';
                 fldObj = $(fldFormat);
@@ -274,29 +275,33 @@ frmField.prototype = {
                 lblObj.addClass('labelPreview');
                 break;
         }
-        fldObj.attr('required', this.isRequired);
-        lblObj.attr('value', this.txtLabel);
-        lblObj.text(this.txtLabel);
-        lblObj.attr('title', this.toolTip);
-        fldObj.attr('placeholder', this.placeHolder);
         fldObj.addClass(this.cssName);
-        fldObj.attr('name', this.fldName);
-        lblObj.attr('for', this.fldName);
-        fldObj.attr('id', this.fldName);
-        fldObj.attr('value', this.fldValue);
-        fldObj.attr('maxlength', this.fldMaxLength);
-        $(fldPreview).append(lblObj, fldObj);
-        if(this.lblPosX < 0 && this.lblPosY < 0) {
-            lblObj.css('display','none');
-            this.isHidden = 1;
+        if(this.fldType !== 3) {
+            fldObj.attr('required', this.isRequired);
+            lblObj.attr('value', this.txtLabel);
+            lblObj.text(this.txtLabel);
+            fldObj.attr('value', this.fldValue);
+            lblObj.attr('title', this.toolTip);
+            fldObj.attr('placeholder', this.placeHolder);
+            fldObj.attr('name', this.fldName);
+            lblObj.attr('for', this.fldName);
+            fldObj.attr('id', this.fldName);
+            fldObj.attr('maxlength', this.fldMaxLength);
+            $(fldPreview).append(lblObj, fldObj);
+            if(this.lblPosX < 0 && this.lblPosY < 0) {
+                lblObj.css('display','none');
+                this.isHidden = 1;
+            }
+            lblObj.css({
+                width: this.lblWidth,
+                height: this.lblHeight,
+                top: this.lblPosY + 'px',
+                left: this.lblPosX + 'px',
+                position: 'absolute'
+            });
+        } else {
+            $(fldPreview).append(fldObj);
         }
-        lblObj.css({
-            width: this.lblWidth,
-            height: this.lblHeight,
-            top: this.lblPosY + 'px',
-            left: this.lblPosX + 'px',
-            position: 'absolute'
-        });
         fldObj.css({
             width: this.fldWidth,
             height: this.fldHeight,

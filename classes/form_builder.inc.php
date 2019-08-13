@@ -413,7 +413,7 @@
                     newObj.field_width = 100;
                     newObj.field_type = 0;
                     newObj.max_length = 50;
-                    newObj.field_step = 0;
+                    newObj.field_step = -1;
                     newObj.is_hidden = 0;
                     newObj.is_locked = 0;
                     newObj.value = '';
@@ -527,7 +527,7 @@
                 </div>
                 <div id="screenTabs">
                     <ul>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 0); return false;">Screen 0</a></li>
+                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 0); return false;">All Screens</a></li>
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 1); return false;">Screen 1</a></li>
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 2); return false;">Screen 2</a></li>
                         <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 3); return false;">Screen 3</a></li>
