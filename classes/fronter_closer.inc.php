@@ -113,7 +113,7 @@ class FronterCloser{
 		//echo $sql;
 
 
-		$res = query($sql);
+		$res = $_SESSION['dbapi']->ROquery($sql);
 
 
 		$fronters = array();
@@ -308,9 +308,9 @@ class FronterCloser{
 
 	function makeCampaignDD($name, $selected, $css, $onchange){
 
-		connectPXDB();
+		//connectPXDB();
 
-		$res = query("SELECT name, id FROM campaigns WHERE `status`='active'");
+		$res = $_SESSION['dbapi']->ROquery("SELECT name, id FROM campaigns WHERE `status`='active'");
 
 
 
