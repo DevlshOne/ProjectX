@@ -12,7 +12,6 @@ class Scripts{
 	var $orderby	= 'id';				## Default Order field
 	var $orderdir	= 'DESC';			## Default order direction
 
-
 	## Page  Configuration
 	var $pagesize	= 20;				## Adjusts how many items will appear on each page
 	var $index		= 0;				## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
@@ -40,6 +39,7 @@ class Scripts{
 			else	$this->orderdir ='DESC';
 
 			$this->orderby = $_GET[$this->order_prepend.'orderby'];	# Or switch order by
+
 		}
 
 		# Page index adjustments
@@ -48,7 +48,6 @@ class Scripts{
 			$this->index = $_REQUEST[$this->index_name] * $this->pagesize;
 
 		}
-
 
 	}
 
@@ -62,6 +61,7 @@ class Scripts{
 			return;
 
 		}else{
+		
 			if(isset($_REQUEST['add_script'])){
 
 				$this->makeAdd($_REQUEST['add_script']);
@@ -75,7 +75,6 @@ class Scripts{
 				$this->listEntrys();
 
 			}
-
 
 		}
 
@@ -355,11 +354,8 @@ class Scripts{
 		<div id="dialog-modal-add-script" title="Adding new Script" class="nod">
 		</div>
 		<div id="dialog-modal-edit-voicefile" title="Editing Voice File" class="nod">
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadScripts();return false">
+		</div>
+		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadScripts();return false">
 			<input type="hidden" name="searching_scripts">
 
 		<table border="0" width="100%" class="lb" cellspacing="0">
@@ -398,7 +394,6 @@ class Scripts{
 			</td>
 
 		</tr>
-
 		<tr>
 			<td colspan="2"><table border="0" id="script_search_table">
 			<tr>
@@ -514,9 +509,7 @@ class Scripts{
 
 			function checkScriptFrm(frm){
 
-
 				var params = getFormValues(frm,'validateScriptField');
-
 
 				// FORM VALIDATION FAILED!
 				// param[0] == field name
@@ -540,8 +533,6 @@ class Scripts{
 
 				// SUCCESS - POST AJAX TO SERVER
 				}else{
-
-
 
 					// AJAX CHECK TO MAKE SURE KEYS NOT IN USE
 					$.ajax({
@@ -574,11 +565,10 @@ class Scripts{
 								alert("Error: The keys specified appear to already be in use for this screen/campaign/voice");
 
 							}
+
 						}
 
-
 					});
-
 
 				}
 
@@ -618,12 +608,10 @@ class Scripts{
 
 						displayAddScriptDialog(res);
 
-						//alert(result['message']);
-
 					}
 
-
 				});
+
 			}
 
 
@@ -752,9 +740,6 @@ class Scripts{
 			<th align="left" height="30">Language</th>
 			<td id="lang_td_row">[Loading...]</td>
 		</tr>
-
-
-
 		<tr>
 			<th align="left" height="30">Name</th>
 			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>"></td>
@@ -839,9 +824,8 @@ class Scripts{
 							$('#upload_status_cell').html("");
 
 						}
+
 					});
-
-
 
 			}
 
@@ -899,12 +883,14 @@ class Scripts{
 
 			}
 
+			// Display edit voice file dialog with given voice file id
 			function displayEditVoiceFile(voicefileid){
 
 				var objname = 'dialog-modal-edit-voicefile';
 
-				$('#'+objname).dialog( "option", "title", 'Editing Voice File' );
-				$('#'+objname).dialog( "option", "height", '300' );
+				$('#'+objname).dialog( "option", "title", 'Editing Voice File #'+voicefileid );
+				$('#'+objname).dialog( "option", "height", '225' );
+				$('#'+objname).dialog( "option", "width", '400' );
 
 				$('#'+objname).dialog("open");
 
@@ -916,16 +902,18 @@ class Scripts{
 
 			}						
 
-
+			// Function to display edit voice file dialog box on list click
 			function handleFileListClick(id){
 
 				displayEditVoiceFile(id);
 
 			}	
 
+			// Edit voice file dialog spec
 			$("#dialog-modal-edit-voicefile").dialog({
 				autoOpen: false,
-				height: 300,
+				height: 225,
+				width: 400,
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -949,6 +937,12 @@ class Scripts{
 					</th>
 				</tr>
 				<tr>
+					<th align="left">Voice File Description</th>
+					<td colspan="2">
+					<textarea name="file_description" rows="4" cols="35"></textarea>
+					</td>
+				</tr>				
+				<tr>
 					<th align="left">
 						<select name="upload_mode">
 							<option value="script">Upload Script Sound:</option>
@@ -959,12 +953,6 @@ class Scripts{
 					</th>
 					<td>
 						<input type="file" name="sound_file" id="sound_file" onchange="ninjaUploadImage(<?=$id?>)">
-					</td>
-				</tr>
-				<tr>
-					<th align="left">Voice File Description</th>
-					<td colspan="2">
-					<textarea name="file_description" rows="3" cols="35">Enter a description...</textarea>
 					</td>
 				</tr>
 				<tr>
@@ -1045,24 +1033,120 @@ class Scripts{
 
 	function EditVoiceFile($id){
 
+		# Function to edit voice file descriptions
+		# Takes voice file id and pulls db record to be editted
 
 		$id=intval($id);
 
-
 		if($id){
 
+			# Grab voice file db record
 			$row = $_SESSION['dbapi']->scripts->getVoiceFileByID($id);
-
 
 		}
 
 		?><script>
 
+			// Used by dialog box Cancel button
+			function HideEditVoiceFile(){
+
+				var objname = 'dialog-modal-edit-voicefile';
+
+				$('#'+objname).dialog("close");
+			
+			}
+
+			// Used by form submit to validate form fields
+			// 'description' is the only required field when submitting
+			function validateVoiceEditField(name,value,frm){
+
+				switch(name){
+				default:
+
+					// Bypass fields not specified
+					return true;
+					break;
+
+				case 'description':
+
+					// Require 'description' field to have a value
+					if(!value)return false;
+
+					return true;
+					break;
+
+				}
+
+				return true;
+
+			}
+
+			// Form submit function that validates form fields and posts AJAX
+			function checkVoiceEditFrm(frm){
+
+				var params = getFormValues(frm,'validateVoiceEditField');
+
+				// FORM VALIDATION FAILED!
+				// param[0] == field name
+				// param[1] == field value
+				if(typeof params == "object"){
+
+					switch(params[0]){
+					default:
+
+						alert("Error submitting form. Check your values");
+
+						break;
+
+					case 'description':
+
+						alert("Please enter a description for this voice file.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+
+					}
+
+				// SUCCESS - POST AJAX TO SERVER
+				}else{
+					
+					$.ajax({
+						type: "POST",
+						cache: false,
+						url: 'api/api.php?get=scripts&mode=xml&action=edit_voice_file',
+						data: params,
+						error: function(){
+							alert("Error saving voice file edit form. Please contact an admin.");
+						},
+
+						success: function(msg){
+
+							var result = handleEditXML(msg);
+							var res = result['result'];
+
+							if(res <= 0){
+
+								alert(result['message']);
+
+								return;
+
+							}
+
+							displayEditVoiceFile(res);
+
+						}
+
+					});
+
+				}
+
+				return false;
+
+			}
 
 
 		</script>
 		
-		<form method="POST" id="scr_edit_vfile" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkScriptFrm(this); return false">
+		<form method="POST" id="scr_edit_vfile" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkVoiceEditFrm(this); return false">
 			<input type="hidden" id="editing_vfile" name="editing_vfile" value="<?=$id?>" >
 
 		<table border="0" align="center" width="100%">
@@ -1072,7 +1156,13 @@ class Scripts{
 		</tr>
 		<tr>
 			<th align="left" height="30">Description</th>
-			<td><textarea name="description" rows="3" cols="35"><?=htmlentities($row['description'])?></textarea></td>
+			<td><textarea name="description" rows="4" cols="35"><?=htmlentities($row['description'])?></textarea></td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2" height="50">
+				<input type="submit" value="Save Changes">
+				<input type="button" value="Cancel" onclick="HideEditVoiceFile(); return false;">
+			</td>
 		</tr>
 		<?
 

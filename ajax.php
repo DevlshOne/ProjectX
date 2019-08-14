@@ -959,7 +959,7 @@ case 'sound_upload':
 							## RELATIVE PATH - WEB/URLS
 							$dat['voice_id'] = $voice['id'];
 							$dat['script_id'] = $script_id;
-							$dat['description'] = $$file_description;
+							$dat['description'] = $file_description;
 							$dat['file'] = $output_filename;
 
 							list($dat['ordernum']) = $_SESSION['dbapi']->queryROW(
