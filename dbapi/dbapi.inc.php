@@ -1,6 +1,50 @@
 <?php
 /**
  * DBAPI - A collection of all the database and SQL functions
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * //////////////////////////
+ * HOW TO : SPECIFY LOAD BALANCING READ/WRITE POOL, IN 'site_config.inc.php'
+ * 
+        $_SESSION['site_config']['pxdb_lb'] = array();
+        $lbptr=0;
+        $_SESSION['site_config']['pxdb_lb'][$lbptr]['sqlhost']     = "10.101.xx.xx";
+        $_SESSION['site_config']['pxdb_lb'][$lbptr]['sqllogin']    = "projectxdb";
+        $_SESSION['site_config']['pxdb_lb'][$lbptr]['sqlpass']     = "passwordhere";
+        $_SESSION['site_config']['pxdb_lb'][$lbptr]['sqldb']       = "projectx";
+        $lbptr++;
+        $_SESSION['site_config']['pxdb_lb'][$lbptr]['sqlhost']     = "10.101.xx.xx";
+        $_SESSION['site_config']['pxdb_lb'][$lbptr]['sqllogin']    = "projectxdb";
+        $_SESSION['site_config']['pxdb_lb'][$lbptr]['sqlpass']     = "passwordhere";
+        $_SESSION['site_config']['pxdb_lb'][$lbptr]['sqldb']       = "projectx";
+        $lbptr++;
+
+/////////////////////////
+ * 
+ * HOW TO : SPECIFY A READ ONLY SLAVE POOL, IN 'site_config.inc.php'
+ * 
+ * (Used for high intensity reports, to spread out the load)
+ * 
+        $_SESSION['site_config']['pxdb_readonly'] = array();
+        $roptr = 0;
+        $_SESSION['site_config']['pxdb_readonly'][$roptr]['sqlhost']     = "10.101.xx.xx";
+        $_SESSION['site_config']['pxdb_readonly'][$roptr]['sqllogin']    = "projectxdb";
+        $_SESSION['site_config']['pxdb_readonly'][$roptr]['sqlpass']     = "";
+        $_SESSION['site_config']['pxdb_readonly'][$roptr]['sqldb']       = "projectx";
+        $roptr++;
+        $_SESSION['site_config']['pxdb_readonly'][$roptr]['sqlhost']     = "10.101.xx.xx";
+        $_SESSION['site_config']['pxdb_readonly'][$roptr]['sqllogin']    = "projectxdb";
+        $_SESSION['site_config']['pxdb_readonly'][$roptr]['sqlpass']     = "";
+        $_SESSION['site_config']['pxdb_readonly'][$roptr]['sqldb']       = "projectx";
+        $roptr++;
+
+////////////////////////
+ * 
  */
 
 
@@ -26,7 +70,21 @@ class DBAPI {
     public $slow_query_log_file 	= "/var/www/logs/LMT_slow_queries.log";		// THE FILE TO DUMP THE SLOW QUERIES
 
 
-
+	
+    // MASTER SWITCH TO DISABLE/ENABLE READ SLAVES. (The array of connections must be correctly specified and working, or this will set itself back to FALSE for the each page load)
+	public $use_read_slaves = true;
+	
+	
+	// TURNING THIS ON, WILL OUTPUT HTML COMMENTS CONTAINING INFO ABOUT WHICH DB CONNECTIONS WERE USED. 
+	// BE CAREFUL! THIS WILL OUTPUT THE HTML COMMENTS AS THE FIRST LINES OF CVS EXPORTS AND API REPLIES TOO!
+	public $debug_db_connection = false;
+	
+	
+	
+	// THESE ARE POPULATED WHEN CONNECTED, FOR TRACKING WHAT PAGES LOADED USING WHAT SETTINGS
+	public $db_ip = null;
+	public $db_ro_ip = null;
+    
 
 
 //// SHOULDNT NEED TO EDIT BELOW HERE ///
@@ -35,12 +93,14 @@ class DBAPI {
 	// DATABASE CONNECTION
     public $db;
 
+    public $db_readslave;
 
 
 	// INIT THE TIMERS
     public $page_start_time = 0;
     public $page_query_count = 0;
 
+    public $read_slave_query_count = 0;
 
     // API OBJECTS
     public $accounts;
@@ -79,8 +139,7 @@ class DBAPI {
      * DBAPI Constructor
      * Initialize the class, connect, etc
      */
-    public function __construct()
-    {
+    public function __construct(){
 
         ## INCLUDE ALL THE REQUIRED FILES
         $this->initIncludes();
@@ -88,9 +147,26 @@ class DBAPI {
         $this->page_start_time = microtime_float();
 
         ## CONNECT TO THE DATABASE
+        ## MAIN DATABASE CONNECTION (now with load balancing support, for dual masters)
         $this->connect();
 
-
+        
+        if($this->use_read_slaves == true){
+        	
+        	
+        	if(count($_SESSION['site_config']['pxdb_readonly']) > 0){
+        
+        		$this->connectReadSlave();
+        		
+        	// DISABLE IF NO READ SLAVES DETECTED
+        	}else{
+        		$this->use_read_slaves = false;
+        	}
+        }
+        
+        //$db_readslave
+        
+        
         ## INIT THE SESSION SITE CONFIG DATA FROM PREFS TABLE
         $this->initSiteConfig();
     }
@@ -99,8 +175,8 @@ class DBAPI {
     /**
      * Destructor - Cleanup Time
      */
-    public function __destruct()
-    {
+    public function __destruct(){
+    	
         if ($this->query_debugging == true) {
             $page_end_time = microtime_float();
 
@@ -116,8 +192,7 @@ class DBAPI {
         $this->disconnect();
     }
 
-    public function logPageLoad($time_taken)
-    {
+    public function logPageLoad($time_taken){
 
         // WRITE TO THE LOG FILE
         $output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.intval($_SESSION['user']['id']).") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
@@ -131,8 +206,13 @@ class DBAPI {
             $dat['user'] = $_SESSION['user']['username'];
             $dat['user_id'] = intval($_SESSION['user']['id']);
             $dat['total_queries'] = $this->page_query_count;
+            $dat['total_read_only_queries'] = $this->read_slave_query_count;
             $dat['total_load_time'] = round($time_taken, 3);
             $dat['ip_address'] = $_SERVER['REMOTE_ADDR'];
+            
+            if($this->db_ip != null)		$dat['db_ip'] = $this->db_ip;
+            if($this->db_ro_ip != null)		$dat['db_ro_ip'] = $this->db_ro_ip;
+            
             $dat['url'] = $_SERVER['REQUEST_URI'];
 
             $dat['post_values'] = print_r($_POST, 1);
@@ -156,6 +236,7 @@ class DBAPI {
         //include_once($_SERVER["DOCUMENT_ROOT"]."/site_config.php");
         //include_once("./site_config.php");
 
+    	include_once($_SESSION['site_config']['basedir']."utils/functions.php");
 
         include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
 
@@ -301,18 +382,152 @@ class DBAPI {
 	 */
 	function connect(){
 
-		# CREATE MYSQL DATABASE CONNECTION
-    	$this->db = mysqli_connect(
-						$_SESSION['site_config']['pxdb']['sqlhost'],
-						$_SESSION['site_config']['pxdb']['sqllogin'],
-						$_SESSION['site_config']['pxdb']['sqlpass'],
-						$_SESSION['site_config']['pxdb']['sqldb']
+		if(!isset($_SESSION['db_load_balance_index'])){
+			$_SESSION['db_load_balance_index'] = 0;
+			$_SESSION['site_config']['pxdb_lb_failcount'] = 0;
+		}
+		
+		
+		// IF LOAD BALANCER OPTIONS ARE NOT SPECIFIED
+		// FALLBACK TO DEFAULT/ORIGINAL SESSION VARIABLES/MAIN CONNECTION
+		if(!isset($_SESSION['site_config']['pxdb_lb']) || count($_SESSION['site_config']['pxdb_lb']) < 1){
+			
+			# CREATE MYSQL DATABASE CONNECTION
+			$this->db = mysqli_connect(
+					$_SESSION['site_config']['pxdb']['sqlhost'],
+					$_SESSION['site_config']['pxdb']['sqllogin'],
+					$_SESSION['site_config']['pxdb']['sqlpass'],
+					$_SESSION['site_config']['pxdb']['sqldb']
 					) or die(mysqli_error($this->db)."Connection to MySQL Failed.");
+			
+			$_SESSION['site_config']['pxdb_lb_failcount'] = 0;
+			
+			$this->db_ip = gethostbyname( $_SESSION['site_config']['pxdb']['sqlhost']);
 
+			
+			echo "<!-- Successfully connected Single DB Mode : ".$_SESSION['site_config']['pxdb']['sqlhost']." -->\n";
+			
+			return;
+		}
+		
+		$tcnt = count($_SESSION['site_config']['pxdb_lb']);
+		
+		if($_SESSION['site_config']['pxdb_lb_failcount'] >= $tcnt){
+			
+			// RESET IT SO IT CAN TRY AGAIN NEXT PAGE LOAD
+			$_SESSION['site_config']['pxdb_lb_failcount'] = 0;
+			
+			die(mysqli_error($this->db)."Connection to MySQL servers failed.");
+			
+		}
+		
+		$mod = ($_SESSION['db_load_balance_index']%$tcnt) ;
+
+		
+		$failover = false;
+		# CREATE MYSQL DATABASE CONNECTION
+		$this->db = mysqli_connect(
+				$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'],
+				$_SESSION['site_config']['pxdb_lb'][$mod]['sqllogin'],
+				$_SESSION['site_config']['pxdb_lb'][$mod]['sqlpass'],
+				$_SESSION['site_config']['pxdb_lb'][$mod]['sqldb'] 
+				) or $failover=true;
+		//
+		if($failover){
+			$_SESSION['db_load_balance_index']++;
+			
+			$_SESSION['site_config']['pxdb_lb_failcount']++;
+			
+			// ATTEMPT TO CONNECT TO THE OTHER DB!
+			return $this->connect();
+		}
+		
+		$this->db_ip = gethostbyname( $_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']);
+		
+		
+		//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
+		
+		if($this->debug_db_connection)echo "<!-- Successfully connected to Load Balanced DB : ".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']." -->\n";
+		
+		$_SESSION['db_load_balance_index']++;
+		
 //		mysql_select_db($_SESSION['site_config']['pxdb']['sqldb'],$this->db)
 //			or die("Could not select database ".$_SESSION['site_config']['pxdb']['sqldb']);
 
 	}
+	
+	
+	
+	/**
+	 * Use the info in site_config and connect to database
+	 */
+	function connectReadSlave(){
+		
+		if(!isset($_SESSION['db_ro_balance_index'])){
+		
+			$_SESSION['db_ro_balance_index'] = 0;
+			$_SESSION['site_config']['pxdb_ro_failcount'] = 0;
+		}
+		
+		
+		// IF LOAD BALANCER OPTIONS ARE NOT SPECIFIED
+		// FALLBACK TO DEFAULT/ORIGINAL SESSION VARIABLES/MAIN CONNECTION
+		if(!isset($_SESSION['site_config']['pxdb_readonly']) || count($_SESSION['site_config']['pxdb_readonly']) < 1){
+			
+			$this->use_read_slaves = false;
+			
+			return;
+		}
+		
+		$tcnt = count($_SESSION['site_config']['pxdb_readonly']);
+		
+		if($_SESSION['site_config']['pxdb_ro_failcount'] >= $tcnt){
+			
+			// RESET IT SO IT CAN TRY AGAIN NEXT PAGE LOAD
+			$_SESSION['site_config']['pxdb_ro_failcount'] = 0;
+			
+			echo ("Connection to MySQL read slaves failed.<br />\n");
+			
+			$this->use_read_slaves = false;
+			
+			return;
+		}
+		
+		$mod = ($_SESSION['db_ro_balance_index']%$tcnt) ;
+		
+		
+		$failover = false;
+		# CREATE MYSQL DATABASE CONNECTION
+		$this->db_readslave = mysqli_connect(
+				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost'],
+				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqllogin'],
+				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlpass'],
+				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqldb']
+				) or $failover=true;
+		//
+		if($failover){
+			$_SESSION['db_ro_balance_index']++;
+			
+			$_SESSION['site_config']['pxdb_ro_failcount']++;
+			
+			// ATTEMPT TO CONNECT TO THE OTHER DB!
+			return $this->connectReadSlave();
+		}
+		
+
+		$this->db_ro_ip = gethostbyname( $_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']);
+		
+		if($this->debug_db_connection)echo "<!-- Successfully connected to READ SLAVE : ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
+		
+		//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
+		
+		
+		$_SESSION['db_ro_balance_index']++;
+	}
+	
+	
+	
+	
 
 	/**
 	 * Disconnect from database and cleanup variables
@@ -322,6 +537,12 @@ class DBAPI {
 		mysqli_close($this->db);
 
 		unset($this->db);
+		
+		if(isset($this->db_readslave)){
+			
+			mysqli_close($this->db_readslave);
+			unset($this->db_readslave);
+		}
 	}
 
 
@@ -526,11 +747,28 @@ class DBAPI {
 	function queryROWS($cmd){ 	return $this->query($cmd,5);}	# Returns the number of rows in a result set
 	function fetchROW($cmd)	{ 	return $this->query($cmd,6);}	# Returns an associative array that corresponds to the fetched row, or FALSE if there are no more rows.
 
-
+	function ROqueryROW($cmd)	{	return $this->ROQuery($cmd,2);}	# Returns an array of 1 result
+	function ROqueryOBJ($cmd)	{	return $this->ROQuery($cmd,3);}	# Returns an object of first result
+	function ROquerySQL($cmd)	{	return $this->ROQuery($cmd,4);}	# Returns as associative-array(hash) of 1 result
+	function ROqueryROWS($cmd)	{ 	return $this->ROQuery($cmd,5);}	# Returns the number of rows in a result set
+	function ROfetchROW($cmd)	{ 	return $this->ROQuery($cmd,6);}	# Returns an associative array that corresponds to the fetched row, or FALSE if there are no more rows.
+	
+	/**
+	 * Runs READ ONLY queries against the read slaves, mostly for reports, to spread out the load
+	 * @param unknown $cmd
+	 * @return unknown
+	 */
+	function ROQuery($cmd, $mode = 0){
+		
+		//echo "READ ONLY QUERY CALLED (MODE $mode) : ".$cmd." <br />\n";
+		
+		return $this->query($cmd, $mode, false, true);
+	}
+	
 	/**
 	 * The primary query function, used by most other functions that use a resultset (selects)
 	 */
-	function query($cmd, $mode=0, $no_debug = false){			# with mode = 0 or 1, it will return the result set, all the records returned.
+	function query($cmd, $mode=0, $no_debug = false, $read_only_mode = false){			# with mode = 0 or 1, it will return the result set, all the records returned.
 		//print $cmd."<br>";
 
 		if($this->query_debugging == true && !$no_debug){
@@ -556,7 +794,29 @@ class DBAPI {
 
 		$this->page_query_count++;
 
-		$res = mysqli_query($this->db,$cmd);
+		// MAKE SURE ITS REALLY A SELECT, NOT AN INSERT OR UPDATE
+		$is_select = startsWith($cmd, "SELECT");
+		
+		if($read_only_mode == true && $this->use_read_slaves == true && $is_select == true){
+			
+			
+			//echo "Using Read slave for: ".$cmd."<br />\n";
+			
+			$res = mysqli_query($this->db_readslave,$cmd);
+			
+			$this->read_slave_query_count++;
+			
+		}else{
+			
+			
+			//echo "NOT Using Read slave for: ".$cmd."<br />\n";
+			$res = mysqli_query($this->db,$cmd);
+			
+		}
+
+		
+		
+		
 
 		if($this->query_debugging == true && !$no_debug){
 

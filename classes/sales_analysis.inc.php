@@ -140,7 +140,7 @@ class SalesAnalysis{
 				$x=0;
 				foreach($campaign_code as $code){
 					
-					list($campaign_id) = $_SESSION['dbapi']->queryROW("SELECT id FROM campaigns WHERE vici_campaign_id='".mysqli_real_escape_string($_SESSION['db'],$code)."' ");
+					list($campaign_id) = $_SESSION['dbapi']->ROqueryROW("SELECT id FROM campaigns WHERE vici_campaign_id='".mysqli_real_escape_string($_SESSION['db'],$code)."' ");
 					
 					if($x++ > 0) $sql_campaign .= " OR ";
 					
@@ -159,7 +159,7 @@ class SalesAnalysis{
 				// SINGULAR
 			}else{
 				
-				list($campaign_id) = $_SESSION['dbapi']->queryROW("SELECT id FROM campaigns WHERE vici_campaign_id='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ");
+				list($campaign_id) = $_SESSION['dbapi']->ROqueryROW("SELECT id FROM campaigns WHERE vici_campaign_id='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ");
 				
 				$sql_campaign = " AND campaign_id='".$campaign_id."' ";
 				
@@ -328,7 +328,7 @@ class SalesAnalysis{
 		$ofcsql.
 		" ORDER BY agent_username ASC";
 		//echo $sql;
-		$res = $_SESSION['dbapi']->query($sql);
+		$res = $_SESSION['dbapi']->ROquery($sql);
 		//$res = query("SELECT DISTINCT(agent_username),agent_cluster_id FROM sales ".$where." ORDER BY agent_username ASC");
 		while($row = mysqli_fetch_row($res)){
 			
@@ -466,14 +466,14 @@ class SalesAnalysis{
 								$unpaidsql = $sql." AND is_paid='no' ";
 								
 								// GET THE UNPAID DEALS
-								list($amount,$salecnt) = $_SESSION['dbapi']->queryROW($unpaidsql);
+								list($amount,$salecnt) = $_SESSION['dbapi']->ROqueryROW($unpaidsql);
 								
 								
 								$running_amount += $amount;
 								$running_salecnt += $salecnt;
 								
 								// GET THE PAID DEALS
-								list($amount,$salecnt) = $_SESSION['dbapi']->queryROW($paidsql);
+								list($amount,$salecnt) = $_SESSION['dbapi']->ROqueryROW($paidsql);
 								
 								// ADDING TO THE MAIN NUMBERS
 								$running_amount += $amount;
@@ -511,7 +511,7 @@ class SalesAnalysis{
 					$ofcsql.
 					(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
 					
-					list($num_total_calls_px) = $_SESSION['dbapi']->queryROW($sql);
+					list($num_total_calls_px) = $_SESSION['dbapi']->ROqueryROW($sql);
 					
 					
 					
@@ -542,7 +542,7 @@ class SalesAnalysis{
 							
 							
 							// NOT INTERESTED STATS
-							list($num_NI) = $_SESSION['dbapi']->queryROW($sql
+							list($num_NI) = $_SESSION['dbapi']->ROqueryROW($sql
 									);
 							
 							
@@ -573,7 +573,7 @@ class SalesAnalysis{
 									(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
 									//echo "\n".$sql."\n";
 									// ANSWERING MACHINE STATS
-									list($num_AnswerMachines) = $_SESSION['dbapi']->queryROW($sql);
+									list($num_AnswerMachines) = $_SESSION['dbapi']->ROqueryROW($sql);
 									
 									
 									$sql = "SELECT COUNT(id) FROM transfers ".
@@ -594,7 +594,7 @@ class SalesAnalysis{
 											
 											//			echo $sql."<br />\n";
 											
-											list($num_XFER) = $_SESSION['dbapi']->queryROW($sql
+											list($num_XFER) = $_SESSION['dbapi']->ROqueryROW($sql
 													);
 											
 											
@@ -607,7 +607,7 @@ class SalesAnalysis{
 											if($combine_users){
 												
 												list($activity_paid,$activity_wrkd,$activity_num_calls)  =
-												$_SESSION['dbapi']->queryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
+												$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
 														"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
 														//	" AND `account_id`='".$_SESSION['account']['id']."' ".
 														" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."' "
@@ -618,7 +618,7 @@ class SalesAnalysis{
 												
 												//" AND (username='".mysql_real_escape_string($agent)."' OR username='".mysql_real_escape_string($agent)."2') "
 												list($activity_paid2,$activity_wrkd2,$activity_num_calls2)  =
-												$_SESSION['dbapi']->queryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
+												$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
 														"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
 														//	" AND `account_id`='".$_SESSION['account']['id']."' ".
 														" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."2' "
@@ -635,7 +635,7 @@ class SalesAnalysis{
 											}else{
 												// GET AGENT ACTIVITY TIMER
 												list($activity_paid,$activity_wrkd,$activity_num_calls)  =
-												$_SESSION['dbapi']->queryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
+												$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
 														"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
 														//" AND `account_id`='".$_SESSION['account']['id']."' ".
 														" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."' ".
@@ -1432,7 +1432,7 @@ $(function() {
             // RESET/REFRESH
             $_SESSION['cached_data'][$cache_area_name] = array();
 
-            $res = $_SESSION['dbapi']->query("SELECT campaign_code FROM campaign_codes WHERE 1 ORDER by campaign_code ASC"); //account_id='".$_SESSION['account']['id']."'
+            $res = $_SESSION['dbapi']->ROquery("SELECT campaign_code FROM campaign_codes WHERE 1 ORDER by campaign_code ASC"); //account_id='".$_SESSION['account']['id']."'
 
             $_SESSION['cached_data'][$cache_area_name]['data'] = array();
 

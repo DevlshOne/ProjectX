@@ -88,7 +88,7 @@ class RecentHangups{
 
 		}
 
-		$res = query("SELECT * FROM transfers ".
+		$res = $_SESSION['dbapi']->ROquery("SELECT * FROM transfers ".
 						" WHERE xfer_time BETWEEN '$stime' AND '$etime' ".
 						" AND verifier_dispo='hangup' ".
 						$ofcsql
@@ -129,7 +129,7 @@ class RecentHangups{
 		$color=0;
 		while($row=mysqli_fetch_array($res, MYSQLI_ASSOC)){
 
-			list($fn,$mi,$ln,$phone) = queryROW("SELECT first_name,middle_initial,last_name,phone_num FROM lead_tracking WHERE id='".$row['lead_tracking_id']."'");
+			list($fn,$mi,$ln,$phone) = $_SESSION['dbapi']->ROqueryROW("SELECT first_name,middle_initial,last_name,phone_num FROM lead_tracking WHERE id='".$row['lead_tracking_id']."'");
 
 			$class = 'hand row'.($color++%2);
 
