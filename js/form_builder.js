@@ -277,7 +277,9 @@ frmField.prototype = {
         }
         fldObj.addClass(this.cssName);
         if(this.fldType !== 3) {
-            fldObj.attr('required', this.isRequired);
+            fldObj.prop('required', function() {
+                return this.isRequired == 1;
+            });
             lblObj.attr('value', this.txtLabel);
             lblObj.text(this.txtLabel);
             fldObj.attr('value', this.fldValue);
