@@ -410,7 +410,7 @@ class DBAPI {
 					$this->db_ip = gethostbyname( $_SESSION['site_config']['pxdb']['sqlhost']);
 					
 					
-					echo "<!-- Successfully connected Single DB Mode : ".$_SESSION['site_config']['pxdb']['sqlhost']." -->\n";
+					if($this->debug_db_connection)echo "<!-- Successfully connected Single DB Mode : ".$_SESSION['site_config']['pxdb']['sqlhost']." -->\n";
 					
 					return;
 		}
@@ -493,7 +493,7 @@ class DBAPI {
 			// RESET IT SO IT CAN TRY AGAIN NEXT PAGE LOAD
 			$_SESSION['pxdb_ro_failcount'] = 0;
 			
-			echo ("<!-- Connection to MySQL read slaves failed. -->\n");
+			if($this->debug_db_connection)echo ("<!-- Connection to MySQL read slaves failed. -->\n");
 			
 			$this->use_read_slaves = false;
 			
