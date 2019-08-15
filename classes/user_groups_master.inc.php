@@ -5,13 +5,15 @@
      *  Date Created: 20190708
      ***************************************************************/
 
-    $_SESSION['user_groups_master'] = new UserGroupsMaster;
+$_SESSION['user_groups_master'] = new UserGroupsMaster;
 
-    class UserGroupsMaster
-    {
+class UserGroupsMaster{
+	
         var $table = 'user_groups_master';            ## Classes main table to operate on
+        
         var $orderby = 'user_group';                ## Default Order field
         var $orderdir = 'ASC';                    ## Default order direction
+        
         ## Page  Configuration
         var $pagesize = 100;                        ## Adjusts how many items will appear on each page
         var $index = 0;                            ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
@@ -51,11 +53,10 @@
         {
             ?>
             <script>
-                var name_delmsg = 'Are you sure you want to delete this name?';
+                var user_groups_master_delmsg = 'Are you sure you want to delete this Master group?';
                 var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-                var <?=$this->index_name?> =
-                0;
+                var <?=$this->index_name?> = 0;
                 var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
                 var UserGroupsMasterTableFormat = [
                     ['user_group', 'align_left'],
@@ -70,7 +71,9 @@
                  * Build the URL for AJAX to hit, to build the list
                  */
                 function getUserGroupsMasterURL() {
+                     
                     let frm = getEl('<?=$this->frm_name?>');
+                    
                     return 'api/api.php' +
                         '?get=user_groups_master&' +
                         'mode=xml&' +
@@ -80,10 +83,9 @@
                         's_company_id=' + encodeURI(frm.s_company_id.value) + '&' +
                         's_time_shift=' + encodeURI(frm.s_time_shift.value) + '&' +
                         's_agent_type=' + encodeURI(frm.s_agent_type.value) + '&' +
-                        'index=' + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
-                )
-                    +'&pagesize=' + <?=$this->order_prepend?>pagesize + '&' +
-                    'orderby=' + <?=$this->order_prepend?>orderby + '&orderdir=' + <?=$this->order_prepend?>orderdir;
+                        'index=' + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) +
+                        '&pagesize=' + <?=$this->order_prepend?>pagesize + '&' +
+	                    'orderby=' + <?=$this->order_prepend?>orderby + '&orderdir=' + <?=$this->order_prepend?>orderdir;
                 }
 
                 var user_groups_master_loading_flag = false;
@@ -439,10 +441,11 @@
             </table>
             <?
         }
-        function getOrderLink($field)
-        {
+        
+        
+        function getOrderLink($field){
             $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
-            $var .= "((" . $this->order_prepend . "orderdir == 'ASC')?'ASC':'DESC')";
+            $var .= "((" . $this->order_prepend . "orderdir == 'ASC')?'DESC':'ASC')";
             $var .= ");loadUser_groups_master();return false;\">";
             return $var;
         }

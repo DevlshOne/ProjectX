@@ -1,222 +1,251 @@
 <?php
-    /**
-     * API Gateway - XML interface between front end and database
-     * Written by: Jonathan Will, Digital Node LLC.
-     *
-     *
-     * globals:
-     *        $api    :    API Core Functions class
-     */
+/**
+ * API Gateway - XML interface between front end and database
+ * Written by: Jonathan Will
+ *
+ *
+ * globals:
+ * 		$api	:	API Core Functions class
+ */
 
-    session_start();
+	session_start();
+
 
 ## INIT
 
-    $basedir = "../";
+	$basedir = "../";
 
-    ## CORE FUNCTIONS
-    include_once($basedir . 'api/functions.api.php');
-    include_once($basedir . 'utils/rendertime.php');
-    include_once($basedir . 'utils/functions.php');
-    include_once($basedir . 'utils/feature_functions.php');
+	## CORE FUNCTIONS
+	include_once($basedir.'api/functions.api.php');
+	include_once($basedir.'utils/rendertime.php');
+	include_once($basedir.'utils/functions.php');
+	include_once($basedir.'utils/feature_functions.php');
 
-    // NEEDED FOR TEMPLATE APPLY FUNCTION
-    include_once($basedir . "classes/vici_templates.inc.php");
+		// NEEDED FOR TEMPLATE APPLY FUNCTION
+		include_once($basedir."classes/vici_templates.inc.php");
 
-    ## INIT SESSION CLASS $api
-    $_SESSION['api'] = new API_Functions();
+	## INIT SESSION CLASS $api
+	$_SESSION['api'] = new API_Functions();
+
 
 ## FILE HEADER
 
-    $_SESSION['api']->outputFileHeader();
+	$_SESSION['api']->outputFileHeader();
+
 
 ## AUTHENTICATION
 
-    ## SESSION AUTH
-    if (!$_SESSION['user']['id']) {
-        $_SESSION['api']->errorOut('Not logged in.', true, -101);
-    }
+	## SESSION AUTH
+	if(!$_SESSION['user']['id']){
+
+
+
+		$_SESSION['api']->errorOut('Not logged in.', true, -101);
+
+
+	}
+
 
 ## START MAIN FLOW
-    ## BASE INCLUDES - SITE CONFIG + DATABASE CONNECTION
-    include_once($basedir . "site_config.php");
-    include_once($basedir . "dbapi/dbapi.inc.php");
-    include_once($basedir . "db.inc.php");
-    include_once($basedir . 'utils/db_utils.php');
+
+	## BASE INCLUDES - SITE CONFIG + DATABASE CONNECTION
+	include_once($basedir."site_config.php");
+	include_once($basedir."dbapi/dbapi.inc.php");
+
+	include_once($basedir."db.inc.php");
+
+	include_once($basedir.'utils/db_utils.php');
+
+
+
 ## SELECT THE DATA TYPES TO RETRIEVE
-    switch ($_REQUEST['get']) {
-        default:
+	switch($_REQUEST['get']){
+	default:
 
-            $_SESSION['api']->errorOut("Data type not specified.");
+		$_SESSION['api']->errorOut("Data type not specified.");
 
-            break;
+		break;
 
-        ## SECONDARY AJAX - BULK INFORMATION GRABBING FOR POST-LIST-RENDERING DATA LOADING/POPULATION
-        case 'secondary_ajax':
 
-            switch ($_REQUEST['area']) {
-                default:
+	## SECONDARY AJAX - BULK INFORMATION GRABBING FOR POST-LIST-RENDERING DATA LOADING/POPULATION
+	case 'secondary_ajax':
 
-                    $_SESSION['api']->errorOut("SECONDARY AJAX : Area not specified.");
+		switch($_REQUEST['area']){
+		default:
 
-                    break;
+			$_SESSION['api']->errorOut("Area not specified.");
 
-                case 'name':
+			break;
 
-                    include_once($basedir . "api/names.api.php");
-                    $names = new API_Names();
-                    $names->handleSecondaryAjax();
+		case 'name':
 
-                    break;
-                case 'voice':
+			include_once($basedir."api/names.api.php");
+			$names = new API_Names();
+			$names->handleSecondaryAjax();
 
-                    include_once($basedir . "api/voices.api.php");
-                    $voices = new API_Voices();
-                    $voices->handleSecondaryAjax();
+			break;
 
-                    break;
+		case 'login_tracker':
 
-                case 'extension':
+			include_once($basedir."api/login_tracker.api.php");
+			$login_tracker = new API_LoginTracker();
+			$login_tracker->handleSecondaryAjax();
 
-                    include_once($basedir . "api/extensions.api.php");
-                    $ext = new API_Extensions();
-                    $ext->handleSecondaryAjax();
+			break;				
+		case 'voice':
 
-                    break;
+			include_once($basedir."api/voices.api.php");
+			$voices = new API_Voices();
+			$voices->handleSecondaryAjax();
 
-                case 'script':
+			break;
 
-                    include_once($basedir . "api/scripts.api.php");
-                    $scr = new API_Scripts();
-                    $scr->handleSecondaryAjax();
+		case 'extension':
 
-                    break;
+			include_once($basedir."api/extensions.api.php");
+			$ext = new API_Extensions();
+			$ext->handleSecondaryAjax();
 
-                case 'message':
-                    include_once($basedir . "api/messages.api.php");
-                    $messages = new API_Messages();
-                    $messages->handleSecondaryAjax();
+			break;
 
-                    break;
+		case 'script':
 
-                case 'problem':
-                    include_once($basedir . "api/problems.api.php");
-                    $problems = new API_Problems();
-                    $problems->handleSecondaryAjax();
+			include_once($basedir."api/scripts.api.php");
+			$scr = new API_Scripts();
+			$scr->handleSecondaryAjax();
 
-                    break;
+			break;
 
-                case 'scriptstat':
 
-                    include_once($basedir . "api/script_statistics.api.php");
-                    $scriptstats = new API_Script_Statistics();
-                    $scriptstats->handleSecondaryAjax();
+		case 'message':
+			include_once($basedir."api/messages.api.php");
+			$messages = new API_Messages();
+			$messages->handleSecondaryAjax();
 
-                    break;
+			break;
 
-                case 'lead':
+		case 'problem':
+			include_once($basedir."api/problems.api.php");
+			$problems = new API_Problems();
+			$problems->handleSecondaryAjax();
 
-                    include_once($basedir . "api/lead_management.api.php");
-                    $leads = new API_Lead_Management();
-                    $leads->handleSecondaryAjax();
+			break;
 
-                    break;
+		case 'scriptstat':
 
-                case 'ringing_calls':
+			include_once($basedir."api/script_statistics.api.php");
+			$scriptstats = new API_Script_Statistics();
+			$scriptstats->handleSecondaryAjax();
 
-                    include_once($basedir . "api/ringing_calls.api.php");
-                    $rings = new API_Ringing_Calls();
-                    $rings->handleSecondaryAjax();
+			break;
 
-                    break;
 
-                case 'dispo_log':
+		case 'lead':
 
-                    include_once($basedir . "api/dispo_log.api.php");
-                    $dispo = new API_Dispo_Log();
-                    $dispo->handleSecondaryAjax();
+			include_once($basedir."api/lead_management.api.php");
+			$leads = new API_Lead_Management();
+			$leads->handleSecondaryAjax();
 
-                    break;
+			break;
 
-                case 'feature':
 
-                    include_once($basedir . "api/feature_control.api.php");
-                    $feat = new API_Features();
-                    $feat->handleSecondaryAjax();
+		case 'ringing_calls':
 
-                    break;
+			include_once($basedir."api/ringing_calls.api.php");
+			$rings = new API_Ringing_Calls();
+			$rings->handleSecondaryAjax();
 
-                case 'usergroup':
+			break;
 
-                    include_once($basedir . "api/user_groups.api.php");
-                    $obj = new API_UserGroups();
-                    $obj->handleSecondaryAjax();
+		case 'dispo_log':
 
-                    break;
+			include_once($basedir."api/dispo_log.api.php");
+			$dispo = new API_Dispo_Log();
+			$dispo->handleSecondaryAjax();
 
-                case 'user_groups_master':
-                    include_once($basedir . "api/user_groups_master.api.php");
-                    $obj = new API_UserGroupsMaster();
-                    $obj->handleSecondaryAjax();
-                    break;
+			break;
+
+
+		case 'feature':
+
+			include_once($basedir."api/feature_control.api.php");
+			$feat = new API_Features();
+			$feat->handleSecondaryAjax();
+
+			break;
+
+		case 'usergroup':
+
+			include_once($basedir."api/user_groups.api.php");
+			$obj = new API_UserGroups();
+			$obj->handleSecondaryAjax();
+
+			break;
+			
+		case 'user_groups_master':
+			include_once($basedir . "api/user_groups_master.api.php");
+			$obj = new API_UserGroupsMaster();
+			$obj->handleSecondaryAjax();
+			break;
 
                 case 'form_builder':
                     include_once($basedir . "api/form_builder.api.php");
                     $obj = new API_FormBuilder();
                     $obj->handleSecondaryAjax();
                     break;
+	
+		case 'action_log':
 
-                case 'action_log':
+			include_once($basedir."api/action_log.api.php");
+			$al = new API_ActionLog();
+			$al->handleSecondaryAjax();
 
-                    include_once($basedir . "api/action_log.api.php");
-                    $al = new API_ActionLog();
-                    $al->handleSecondaryAjax();
+			break;
 
-                    break;
+		case 'import':
 
-                case 'import':
+			include_once($basedir."api/list_tool_imports.api.php");
+			$im = new API_ListToolImport();
+			$im->handleSecondaryAjax();
 
-                    include_once($basedir . "api/list_tool_imports.api.php");
-                    $im = new API_ListToolImport();
-                    $im->handleSecondaryAjax();
+			break;
+		case 'task':
 
-                    break;
-                case 'task':
+			include_once($basedir."api/list_tool_tasks.api.php");
 
-                    include_once($basedir . "api/list_tool_tasks.api.php");
+			include_once($basedir."classes/JXMLP.inc.php");
 
-                    include_once($basedir . "classes/JXMLP.inc.php");
+			$lt = new API_Tasks();
+			$lt->handleSecondaryAjax();
 
-                    $lt = new API_Tasks();
-                    $lt->handleSecondaryAjax();
+			break;
 
-                    break;
+		case 'report_email':
+		case 'report':
 
-                case 'report_email':
-                case 'report':
+			include_once($basedir."api/report_emails.api.php");
+			$al = new API_ReportEmails();
+			$al->handleSecondaryAjax();
 
-                    include_once($basedir . "api/report_emails.api.php");
-                    $al = new API_ReportEmails();
-                    $al->handleSecondaryAjax();
+			break;
 
-                    break;
 
-                case 'quiz_results':
-                case 'quiz':
+		case 'quiz_results':
+		case 'quiz':
 
-                    include_once($basedir . "api/quiz_results.api.php");
-                    $obj = new API_QuizResults();
-                    $obj->handleSecondaryAjax();
+			include_once($basedir."api/quiz_results.api.php");
+			$obj = new API_QuizResults();
+			$obj->handleSecondaryAjax();
 
-                    break;
-                case 'question':
-                case 'quiz_question':
+			break;
+		case 'question':
+		case 'quiz_question':
 
-                    include_once($basedir . "api/quiz_questions.api.php");
-                    $obj = new API_Questions();
-                    $obj->handleSecondaryAjax();
+			include_once($basedir."api/quiz_questions.api.php");
+			$obj = new API_Questions();
+			$obj->handleSecondaryAjax();
 
-                    break;
+			break;
 
 //		case 'account':
 //
@@ -226,224 +255,252 @@
 //			$accounts->handleSecondaryAjax();
 //
 //			break;
-            }
+		}
 
-            break;
 
-        case 'activity_log':
 
-            include_once($basedir . "api/activity_log.api.php");
-            $activitys = new API_Activitys();
-            $activitys->handleAPI();
+		break;
 
-            break;
+	case 'activity_log':
 
-        case 'action_log':
+		include_once($basedir."api/activity_log.api.php");
+		$activitys = new API_Activitys();
+		$activitys->handleAPI();
 
-            include_once($basedir . "api/action_log.api.php");
-            $al = new API_ActionLog();
-            $al->handleAPI();
+		break;
 
-            break;
+	case 'action_log':
 
-        case 'campaigns':
-            include_once($basedir . "api/campaigns.api.php");
-            $campaigns = new API_Campaigns();
-            $campaigns->handleAPI();
-            break;
+		include_once($basedir."api/action_log.api.php");
+		$al = new API_ActionLog();
+		$al->handleAPI();
+
+		break;
+
+
+	case 'campaigns':
+
+		include_once($basedir."api/campaigns.api.php");
+		$campaigns = new API_Campaigns();
+		$campaigns->handleAPI();
+      		break;
 
         case 'campaign_parents':
-            include_once($basedir . "api/cmpgn_parents.api.php");
+            include_once($basedir."api/cmpgn_parents.api.php");
             $campaign_parents = new API_CampaignParents();
             $campaign_parents->handleAPI();
-            break;
 
-        case 'extensions':
-            include_once($basedir . "api/extensions.api.php");
-            $extensions = new API_Extensions();
-            $extensions->handleAPI();
+		break;
 
-            break;
+	case 'extensions':
 
-        case 'messages':
-            include_once($basedir . "api/messages.api.php");
-            $messages = new API_Messages();
-            $messages->handleAPI();
+		include_once($basedir."api/extensions.api.php");
+		$extensions = new API_Extensions();
+		$extensions->handleAPI();
 
-            break;
-        case 'names':
+		break;
 
-            include_once($basedir . "api/names.api.php");
-            $names = new API_Names();
-            $names->handleAPI();
+	case 'messages':
+		include_once($basedir."api/messages.api.php");
+		$messages = new API_Messages();
+		$messages->handleAPI();
 
-            break;
+		break;
+	case 'names':
 
-        case 'problems':
+		include_once($basedir."api/names.api.php");
+		$names = new API_Names();
+		$names->handleAPI();
 
-            include_once($basedir . "api/problems.api.php");
-            $problems = new API_Problems();
-            $problems->handleAPI();
+		break;
 
-            break;
-        case 'scripts':
+	case 'login_tracker':
 
-            include_once($basedir . "api/scripts.api.php");
-            $scripts = new API_Scripts();
-            $scripts->handleAPI();
+		include_once($basedir."api/login_tracker.api.php");
+		$login_tracker = new API_LoginTracker();
+		$login_tracker->handleAPI();
 
-            break;
+		break;		
 
-        case 'voices':
+	case 'problems':
 
-            include_once($basedir . "api/voices.api.php");
-            $voices = new API_Voices();
-            $voices->handleAPI();
+		include_once($basedir."api/problems.api.php");
+		$problems = new API_Problems();
+		$problems->handleAPI();
 
-            break;
+		break;
+	case 'scripts':
 
-        case 'users':
+		include_once($basedir."api/scripts.api.php");
+		$scripts = new API_Scripts();
+		$scripts->handleAPI();
 
-            include_once($basedir . "api/users.api.php");
-            $users = new API_Users();
-            $users->handleAPI();
+		break;
 
-            break;
+	case 'voices':
 
-        case 'scriptstats':
+		include_once($basedir."api/voices.api.php");
+		$voices = new API_Voices();
+		$voices->handleAPI();
 
-            include_once($basedir . "api/script_statistics.api.php");
-            $scripts = new API_Script_Statistics();
-            $scripts->handleAPI();
+		break;
 
-            break;
+	case 'users':
 
-        case 'lead_management':
+		include_once($basedir."api/users.api.php");
+		$users = new API_Users();
+		$users->handleAPI();
 
-            include_once($basedir . "api/lead_management.api.php");
-            $leads = new API_Lead_Management();
-            $leads->handleAPI();
+		break;
 
-            break;
 
-        case 'employee_hours':
 
-            include_once($basedir . "api/employee_hours.api.php");
-            $employee_hours = new API_Employee_Hours();
-            $employee_hours->handleAPI();
 
-            break;
-        case 'ringing_calls':
+	case 'scriptstats':
 
-            include_once($basedir . "api/ringing_calls.api.php");
-            $rings = new API_Ringing_Calls();
-            $rings->handleAPI();
+		include_once($basedir."api/script_statistics.api.php");
+		$scripts = new API_Script_Statistics();
+		$scripts->handleAPI();
 
-            break;
+		break;
 
-        case 'dispo_log':
+	case 'lead_management':
 
-            include_once($basedir . "api/dispo_log.api.php");
-            $dispos = new API_Dispo_Log();
-            $dispos->handleAPI();
+		include_once($basedir."api/lead_management.api.php");
+		$leads = new API_Lead_Management();
+		$leads->handleAPI();
 
-            break;
+		break;
 
-        // FEATURE CONTROL
-        case 'features':
 
-            include_once($basedir . "api/feature_control.api.php");
-            $feat = new API_Features();
-            $feat->handleAPI();
+	case 'employee_hours':
 
-            break;
+		include_once($basedir."api/employee_hours.api.php");
+		$employee_hours = new API_Employee_Hours();
+		$employee_hours->handleAPI();
 
-        case 'usergroups':
-        case 'user_groups':
+		break;
+	case 'ringing_calls':
 
-            include_once($basedir . "api/user_groups.api.php");
-            $obj = new API_UserGroups();
-            $obj->handleAPI();
+		include_once($basedir."api/ringing_calls.api.php");
+		$rings = new API_Ringing_Calls();
+		$rings->handleAPI();
 
-            break;
+		break;
 
-        case 'user_groups_master':
-            include_once($basedir . "api/user_groups_master.api.php");
-            $obj = new API_UserGroupsMaster();
-            $obj->handleAPI();
-            break;
+
+
+	case 'dispo_log':
+
+		include_once($basedir."api/dispo_log.api.php");
+		$dispos = new API_Dispo_Log();
+		$dispos->handleAPI();
+
+		break;
+
+
+	// FEATURE CONTROL
+	case 'features':
+
+		include_once($basedir."api/feature_control.api.php");
+		$feat = new API_Features();
+		$feat->handleAPI();
+
+		break;
+
+	case 'usergroups':
+	case 'user_groups':
+
+		include_once($basedir."api/user_groups.api.php");
+		$obj = new API_UserGroups();
+		$obj->handleAPI();
+
+		break;
+		
+	case 'user_groups_master':
+		include_once($basedir . "api/user_groups_master.api.php");
+		$obj = new API_UserGroupsMaster();
+		$obj->handleAPI();
+		break;
 
         case 'form_builder':
             include_once($basedir . "api/form_builder.api.php");
             $obj = new API_FormBuilder();
             $obj->handleAPI();
             break;
+		
+	case 'change_password':
 
-        case 'change_password':
+		include_once($basedir."api/change_password.api.php");
+		$changepw = new API_ChangePassword();
+		$changepw->handleAPI();
 
-            include_once($basedir . "api/change_password.api.php");
-            $changepw = new API_ChangePassword();
-            $changepw->handleAPI();
+		break;
 
-            break;
 
-        case 'report_emails':
-        case 'reports':
+	case 'report_emails':
+	case 'reports':
 
-            include_once($basedir . "api/report_emails.api.php");
-            $re = new API_ReportEmails();
-            $re->handleAPI();
+			include_once($basedir."api/report_emails.api.php");
+			$re = new API_ReportEmails();
+			$re->handleAPI();
 
-            break;
+			break;
 
-        case 'verifier_testing_tool':
 
-            include_once($basedir . "api/verifier_testing_tool.api.php");
-            $obj = new API_VerifierTestingTool();
-            $obj->handleAPI();
 
-            break;
+	case 'verifier_testing_tool':
 
-        case 'list_tool_tasks':
+		include_once($basedir."api/verifier_testing_tool.api.php");
+		$obj = new API_VerifierTestingTool();
+		$obj->handleAPI();
 
-            include_once($basedir . "api/list_tool_tasks.api.php");
-            $obj = new API_Tasks();
-            $obj->handleAPI();
+		break;
 
-            break;
-        case 'list_tool_imports':
-        case 'imports':
+	case 'list_tool_tasks':
 
-            include_once($basedir . "api/list_tool_imports.api.php");
-            $obj = new API_ListToolImport();
-            $obj->handleAPI();
 
-            break;
+		include_once($basedir."api/list_tool_tasks.api.php");
+		$obj = new API_Tasks();
+		$obj->handleAPI();
 
-        case 'pac_reports':
-        case 'pacs':
+		break;
+	case 'list_tool_imports':
+	case 'imports':
 
-            include_once($basedir . "api/pac_reports.api.php");
-            $obj = new API_PACReports();
-            $obj->handleAPI();
 
-            break;
+		include_once($basedir."api/list_tool_imports.api.php");
+		$obj = new API_ListToolImport();
+		$obj->handleAPI();
 
-        case 'quiz_results':
+		break;
 
-            include_once($basedir . "api/quiz_results.api.php");
-            $obj = new API_QuizResults();
-            $obj->handleAPI();
 
-            break;
+	case 'pac_reports':
+	case 'pacs':
 
-        case 'quiz_question':
-        case 'quiz_questions':
-        case 'questions':
+		include_once($basedir."api/pac_reports.api.php");
+		$obj = new API_PACReports();
+		$obj->handleAPI();
 
-            include_once($basedir . "api/quiz_questions.api.php");
-            $obj = new API_Questions();
-            $obj->handleAPI();
+		break;
 
-            break;
-    }
+
+	case 'quiz_results':
+
+		include_once($basedir."api/quiz_results.api.php");
+		$obj = new API_QuizResults();
+		$obj->handleAPI();
+
+		break;
+
+	case 'quiz_question':
+	case 'quiz_questions':
+	case 'questions':
+
+		include_once($basedir."api/quiz_questions.api.php");
+		$obj = new API_Questions();
+		$obj->handleAPI();
+
+		break;
+	}

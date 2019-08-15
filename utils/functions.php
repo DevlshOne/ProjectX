@@ -201,11 +201,11 @@
 	//http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
 	function startsWith($haystack, $needle) {
 	    // search backwards starting from haystack length characters from the end
-	    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+	    return $needle === "" || strripos($haystack, $needle, -strlen($haystack)) !== FALSE;
 	}
 	function endsWith($haystack, $needle) {
 	    // search forward starting from end minus needle length characters
-	    return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
+	    return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && stripos($haystack, $needle, $temp) !== FALSE);
 	}
 
 
@@ -260,3 +260,20 @@
 
 		return $out;
 	}
+
+    /**
+     * @param $s integer Start time as timestamp
+     * @param $e integer End time as timestamp
+     * @param $f string format of output (see date->format for options)
+     */
+	function calculateDuration($s, $e, $f) {
+        $d1 = new DateTime();
+        $d2 = new DateTime();
+        $d1->setTimestamp($s);
+        $d2->setTimestamp($e);
+        $i = $d1->diff($d2);
+        #echo __METHOD__ . var_dump($d1, $d2, $i) . "<br />";
+        return $i->format($f);
+    }
+    
+    

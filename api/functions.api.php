@@ -156,7 +156,11 @@ class API_Functions{
 		return $out;
 	}
 
+<<<<<<< api/functions.api.php
 	function renderResultSetXML($tagname, $res){
+=======
+	function renderResultSetXML($tagname,$res){
+>>>>>>> api/functions.api.php
 		$_SESSION['API_CACHE_STORAGE'][$tagname] = array();
 		$out = '';
 		$taghead = '<'.$tagname.' ';

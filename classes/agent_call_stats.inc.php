@@ -259,7 +259,7 @@ class AgentCallStats{
 
 		// GET A LIST OF TEH AGENTS
 		// ACTIVITY LOG: THE AGENTS THAT ARE WORKING TODAY
-		$res = query($sql
+		$res = $_SESSION['dbapi']->ROquery($sql
 
 						//(($call_group)?" AND call_group='".mysql_real_escape_string($call_group)."' ":"")
 						,1);
@@ -333,8 +333,8 @@ class AgentCallStats{
 
 									"";//" AND `call_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."'";
 //			echo $sql."\n";
-			list($cnt) = queryROW($sql);
-			list($paid_sales_cnt) = queryROW($sql." AND `is_paid`='yes' ");
+			list($cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
+			list($paid_sales_cnt) = $_SESSION['dbapi']->ROqueryROW($sql." AND `is_paid`='yes' ");
 
 
 			// GET TOTAL SALES AMOUNTS FOR PAID SALES
@@ -352,7 +352,7 @@ class AgentCallStats{
 									$source_user_group_sql.
 									" AND `is_paid`='yes' ";//" AND `call_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."'";
 			//echo $sql."\n";
-			list($paid_sales_amount) = queryROW($sql);
+			list($paid_sales_amount) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 
 
@@ -369,20 +369,20 @@ class AgentCallStats{
 			## GET ALL TRANSFERS FOR THE AGENT/TIMEFRAME
 			$sql = "SELECT COUNT(`id`) FROM `transfers` ".
 						$xfer_where;
-			list($call_cnt) = queryROW($sql);
+			list($call_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 
 			## HANGUPS - OUT OF ALL THE TRANSFERS, HOW MANY WHERE HANGUPS
 			$sql = "SELECT COUNT(`id`) FROM `transfers` ".
 						$xfer_where.
 						" AND verifier_dispo='hangup' ";
-			list($hangup_cnt) = queryROW($sql);
+			list($hangup_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 			## DECLINES - OUT OF ALL THE TRANSFERS, HOW MANY WHERE DECLINED
 			$sql = "SELECT COUNT(`id`) FROM `transfers` ".
 						$xfer_where.
 						" AND verifier_dispo='DEC' ";
-			list($decline_cnt) = queryROW($sql);
+			list($decline_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 
 
@@ -392,7 +392,7 @@ class AgentCallStats{
 			$sql = "SELECT SUM(agent_amount),SUM(verifier_amount) FROM `transfers` ".
 						$xfer_where.
 						" AND (verifier_dispo='PAIDCC') "; //verifier_dispo='SALE' OR
-			list($agent_amount_total, $verifier_amount_total) = queryROW($sql);
+			list($agent_amount_total, $verifier_amount_total) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 
 
@@ -403,7 +403,7 @@ class AgentCallStats{
 						$xfer_where.
 						" AND verifier_amount > agent_amount ".
 						" AND (verifier_dispo='PAIDCC') "; //verifier_dispo='SALE' OR
-			list($positive_agent_amount_total, $positive_verifier_amount_total) = queryROW($sql);
+			list($positive_agent_amount_total, $positive_verifier_amount_total) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 
 
@@ -414,7 +414,7 @@ class AgentCallStats{
 								" AND (verifier_dispo='PAIDCC') ".
 								" AND verifier_amount > agent_amount ";
 			//echo $sql;
-			list($bump_count) = queryROW($sql);
+			list($bump_count) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 
 
@@ -422,7 +422,7 @@ class AgentCallStats{
 
 
 
-			list($agent_array[$username]['reviewcnt']) = $_SESSION['dbapi']->queryROW("SELECT COUNT(`id`) FROM `dispo_log` ".
+			list($agent_array[$username]['reviewcnt']) = $_SESSION['dbapi']->ROqueryROW("SELECT COUNT(`id`) FROM `dispo_log` ".
 										" WHERE `agent_username`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$row['username'])."' ".
 							//			" AND `account_id`='".$_SESSION['account']['id']."' ".
 										" AND `micro_time` BETWEEN '$stmicro' AND '$etmicro' ".
@@ -579,8 +579,7 @@ class AgentCallStats{
 
 //echo $sql;
 
-			$res = query($sql
-			      ,1);
+			$res = query($sql,1);
 
 			while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 
@@ -1168,7 +1167,11 @@ class AgentCallStats{
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
 
 
-					echo renderTimeFormatted($running_t_time/60);
+					$tmphours = floor($running_t_time / 3600);
+					$tmpmin = floor( ($running_t_time - ($tmphours * 3600)) / 60 );
+					echo $tmphours.':'.(($tmpmin <= 9)?'0'.$tmpmin:$tmpmin);
+					
+					//	echo renderTimeFormatted($running_t_time/60);
 
 
 				?></td>

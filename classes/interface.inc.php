@@ -1,4 +1,5 @@
-<? /***************************************************************
+<?php
+ /***************************************************************
  *    Interface class - handles generic interface stuff, like menus, navigation, etc
  *    Written By: Jonathan Will
  ***************************************************************/
@@ -59,11 +60,7 @@
                         <li class="cd-label">Navigation</li>
                         <?
 
-                            if (checkAccess('campaigns') ||
-                                checkAccess('voices') ||
-                                checkAccess('names') ||
-                                checkAccess('scripts')
-                            ) {
+                            if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
                                 ?>
                                 <li class="has-children comments">
                                 <a href="#0">Campaign Setup</a>
@@ -75,9 +72,9 @@
                                             <li><a href="?area=campaigns&no_script=1"
                                                    onclick="loadSection(this.href);return false">Campaigns</a></li>
                                             <li><a href="?area=campaign_parents&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Campaign Parents</a></li>
-                                            <li><a href="?area=form_builder&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Form Builder</a></li>
+                                                   onclick="loadSection(this.href);return false">Campaign Parents</a>
+                                            </li>
+						                    <li><a href="?area=form_builder&no_script=1" onclick="loadSection(this.href);return false">Form Builder</a></li>
                                             <?
                                         }
 
@@ -108,13 +105,7 @@
                                 </li><?
                             }
 
-                            if (checkAccess('lead_management') ||
-                                checkAccess('employee_hours') ||
-                                checkAccess('ringing_calls') ||
-                                checkAccess('messages') ||
-                                checkAccess('server_status') ||
-                                checkAccess('extensions')
-                            ) {
+                            if (checkAccess('lead_management') || checkAccess('employee_hours') || checkAccess('ringing_calls') || checkAccess('messages') || checkAccess('server_status') || checkAccess('extensions')) {
                                 ?>
                                 <li class="has-children bookmarks">
                                 <a href="#0">Management Tools</a>
@@ -209,13 +200,7 @@
                                 </li><?
                             }
 
-                            if (checkAccess('fronter_closer') ||
-                                checkAccess('sales_analysis') ||
-                                checkAccess('agent_call_stats') ||
-                                checkAccess('user_charts') ||
-                                checkAccess('recent_hangups') ||
-                                checkAccess('script_statistics') ||
-                                checkAccess('dispo_log')
+                            if (checkAccess('fronter_closer') || checkAccess('sales_analysis') || checkAccess('agent_call_stats') || checkAccess('user_charts') || checkAccess('recent_hangups') || checkAccess('script_statistics') || checkAccess('dispo_log')
 
                             ) {
                                 ?>
@@ -257,6 +242,13 @@
                                             <li><a href="?area=summary_report&no_script=1"
                                                    onclick="loadSection(this.href);return false">Summary Report</a>
                                             </li><?
+                                        }
+
+                                        if ($_SESSION['user']['priv'] >= 5) {
+                                            ?>
+                                            <li><a href="?area=dialer_sales&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Area Code Sales By
+                                                    Dialer</a></li><?
                                         }
 
                                         if (checkAccess('user_charts')) {
@@ -322,12 +314,12 @@
                                             Users</a></li>
                                     <li><a href="?area=user_groups&no_script=1"
                                            onclick="loadSection(this.href);return false">Group Manager</a></li>
-                                    <li><a href="?area=user_groups_master&no_script=1"
+									<li><a href="?area=user_groups_master&no_script=1"
                                            onclick="loadSection(this.href);return false">Master User Groups</a></li>
 
-                                    <? /**<li><a href="?area=users&add_user&no_script=1" onclick="loadSection(this.href);return false">Add User</a></li>
-                                     * <li><a href="?area=users&bulk_add&no_script=1" onclick="loadSection(this.href);return false">Bulk Add</a></li>**/ ?>
-
+                                    <?
+                                        /**<li><a href="?area=users&add_user&no_script=1" onclick="loadSection(this.href);return false">Add User</a></li>
+                                         * <li><a href="?area=users&bulk_add&no_script=1" onclick="loadSection(this.href);return false">Bulk Add</a></li>**/ ?>
                                     <?
 
                                         if (checkAccess('feature_control')) {
@@ -337,13 +329,24 @@
                                             </li><?
                                         }
 
+                                        if (checkAccess('login_tracker')) {
+                                            ?>
+                                            <li><a href="?area=login_tracker&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Login Tracker</a>
+                                            </li><?
+                                        }
+
                                         if (checkAccess('action_log')) {//if($_SESSION['user']['priv'] >= 5){
                                             ?>
                                             <li><a href="?area=action_log&no_script=1"
                                                    onclick="loadSection(this.href);return false">Action Log!</a></li><?
-                                        } ?></ul>
+                                        }
+
+                                    ?></ul>
                                 </li><?
-                            } ?></ul>
+                            }
+
+                        ?></ul>
 
 
                     <!--
@@ -471,7 +474,7 @@
                             ?>
                             <li><a href="?area=campaigns&no_script">Campaigns</a></li>
                             <li><a href="?area=campaign_parents&no_script">Campaign Parents</a></li>
-                            <li><a href="?area=form_builder&no_script=1">Form Builder</a></li>
+				<li><a href="?area=form_builder&no_script=1">Form Builder</a></li>
                             <li><a href="?area=voices&no_script">Voices</a></li>
                             <li><a href="?area=names&no_script">Names</a></li>
 
@@ -525,3 +528,4 @@
             </script><?
         }
     }
+

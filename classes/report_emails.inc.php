@@ -294,6 +294,7 @@ class ReportEmails{
 					<option value="1"<?=($_REQUEST['s_report_id'] == 1)?" SELECTED ":""?>>Sales Analysis</option>
 					<option value="2"<?=($_REQUEST['s_report_id'] == 2)?" SELECTED ":""?>>Verifier Report</option>
 					<option value="3"<?=($_REQUEST['s_report_id'] == 3)?" SELECTED ":""?>>Summary Report</option>
+					<option value="4"<?=($_REQUEST['s_report_id'] == 4)?" SELECTED ":""?>>Rouster Report</option>
 				</select></td>
 				<td align="center"><input type="text" name="s_email_address" size="15" value="<?=htmlentities($_REQUEST['s_email_address'])?>"></td>
 				<td align="center"><input type="text" name="s_subject_append" size="15" value="<?=htmlentities($_REQUEST['s_subject_append'])?>"></td>
@@ -506,6 +507,9 @@ class ReportEmails{
 				</option>
 				<option value="3" <?=(($row['report_id'] == 3)?" SELECTED ":"")?> >
 					Summary Report
+				</option>
+				<option value="4" <?=(($row['report_id'] == 4)?" SELECTED ":"")?> >
+					Rouster Report
 				</option>
 			</select></td>
 		</tr>

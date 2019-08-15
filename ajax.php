@@ -186,7 +186,7 @@ case 'pac_reports_export':
 	}
 
 
-	$output = $_SESSION['pac_reports']->exportNams($stime, $etime);
+	list($output,$totals) = $_SESSION['pac_reports']->exportNams($stime, $etime,false);
 
 	header('Content-Description: File Transfer');
 	header('Content-Type: application/octet-stream');
@@ -895,8 +895,7 @@ case 'list_upload':
 
 	break;
 
-case 'image_upload':
-
+case 'sound_upload':
 
 
 	$warning_msg_stack = array();
@@ -905,13 +904,14 @@ case 'image_upload':
 
 	$voice_id = intval($_REQUEST['voice_id']);
 	$script_id = intval($_REQUEST['script_id']);
+	$file_description = $_REQUEST['file_description'];
 
 
 	$voice = $_SESSION['dbapi']->voices->getByID($voice_id);
 
 
 
-	## UPLOADING IMAGE
+	## UPLOADING SOUND FILE
 	if($_FILES['sound_file']['name']){
 
 
@@ -950,8 +950,6 @@ case 'image_upload':
 
 						$warning_msg_stack[] = " File: ".$name." already exists.";
 
-						//jsAlert("Splash Image: ".$name." already exists.",0);
-
 					## MOVE FILE TO FINAL DESTINATION, ADD TO DB RECORD
 					} else {
 
@@ -961,6 +959,7 @@ case 'image_upload':
 							## RELATIVE PATH - WEB/URLS
 							$dat['voice_id'] = $voice['id'];
 							$dat['script_id'] = $script_id;
+							$dat['description'] = $file_description;
 							$dat['file'] = $output_filename;
 
 							list($dat['ordernum']) = $_SESSION['dbapi']->queryROW(
@@ -969,14 +968,6 @@ case 'image_upload':
 							## INCREMENT MAX ORDERNUM
 							$dat['ordernum']++;
 
-
-/**
- * <select name="upload_mode">
-							<option value="script">Upload Script Sound:</option>
-							<option value="repeat-short">Upload SHORT REPEAT:</option>
-							<option value="repeat-long">Upload LONG REPEAT:</option>
-							<option value="repeat-question">Upload Q. ONLY REPEAT:</option>
- */
 							switch($_REQUEST['upload_mode']){
 							case 'script':
 							default:
@@ -1001,14 +992,9 @@ case 'image_upload':
 
 							}
 
-							// DELETE OLD IMAGE HERE
-
-
-
 
 						}else{
-							$warning_msg_stack[] = " Upload: Error moving image to output directory ($output_filename)";
-							//jsAlert("Splash Image: Error moving image to output directory ($output_filename)");
+							$warning_msg_stack[] = " Upload: Error moving sound file to output directory ($output_filename)";
 
 						}
 
@@ -1016,15 +1002,14 @@ case 'image_upload':
 				}
 			}else{
 
-				$warning_msg_stack[] = ucfirst($image_type)." Upload: File too large.";
-				//jsAlert("Splash Image: File too large.",0);
+				$warning_msg_stack[] = " Upload: File too large.";
+
 			}
 
 			break;
 		default:
 
 			$warning_msg_stack[] = " Invalid file type. (".$_FILES['sound_file']['type'].")";
-			//jsAlert("Splash Image invalid file type. (".$_FILES['splash_img']['type'].")",0);
 
 			break;
 		}
