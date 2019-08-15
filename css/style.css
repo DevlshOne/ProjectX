@@ -306,36 +306,12 @@ a:hover {
 .textField {
 	background-image: url("../images/form_builder_text.png");
 	background-repeat: no-repeat;
-    /*-webkit-background-size: cover;*/
-    /*-moz-background-size: cover;*/
-    /*-o-background-size: cover;*/
-    /*background-size: cover;*/
-	/*background-position: center center;*/
-	/*background-attachment: fixed;*/
-	/*background-clip: border-box;*/
-	/*background-origin: border-box;*/
 }
 .selectField {
 	background-image: url("../images/form_builder_dropdown.png");
 	background-repeat: no-repeat;
-    /*-webkit-background-size: cover;*/
-    /*-moz-background-size: cover;*/
-    /*-o-background-size: cover;*/
-    /*background-size: cover;*/
-	/*background-position: center center;*/
-	/*background-attachment: fixed;*/
-	/*background-clip: border-box;*/
-	/*background-origin: border-box;*/
 }
 .checkboxField {
 	background-image: url("../images/form_builder_checkbox.png");
 	background-repeat: no-repeat;
-    /*-webkit-background-size: cover;*/
-    /*-moz-background-size: cover;*/
-    /*-o-background-size: cover;*/
-    /*background-size: cover;*/
-	/*background-position: center center;*/
-	/*background-attachment: fixed;*/
-	/*background-clip: border-box;*/
-	/*background-origin: border-box;*/
 }
