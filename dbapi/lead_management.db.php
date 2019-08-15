@@ -474,7 +474,7 @@ class LeadManagementAPI{
 		//echo $sql;
 
 		## RETURN RESULT SET
-		return $_SESSION['dbapi']->query($start_sql.' '.$index_suggestion.' '.$sql);
+		return $_SESSION['dbapi']->ROquery($start_sql.' '.$index_suggestion.' '.$sql);
 	}
 
 
