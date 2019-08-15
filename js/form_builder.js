@@ -342,6 +342,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 fldObj.addClass('textField');
+                fldObj.css('background-size', this.fldWidth + 'px ' + this.fldHeight + 'px');
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edi" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="inp' + this.idx + '"></div>');
                 break;
@@ -359,6 +360,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 fldObj.addClass('selectField');
+                fldObj.css('background-size', this.fldWidth + 'px ' + this.fldHeight + 'px');
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="sel' + this.idx + '"></div>');
                 break;
@@ -376,6 +378,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 fldObj.addClass('checkboxField');
+                fldObj.css('background-size', this.fldWidth + 'px ' + this.fldHeight + 'px');
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="chk' + this.idx + '"></div>');
                 break;
@@ -394,6 +397,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 fldObj.addClass('imageField');
+                fldObj.css('background-size', this.fldWidth + 'px ' + this.fldHeight + 'px');
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="img' + this.idx + '"></div>');
                 break;
@@ -411,6 +415,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 fldObj.addClass('labelField');
+                fldObj.css('background-size', this.fldWidth + 'px ' + this.fldHeight + 'px');
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="lblf' + this.idx + '"></div>');
                 break;
@@ -424,6 +429,7 @@ frmField.prototype = {
                 fldObj.val(this.fldValue);
                 $(fldRendering).empty().append(fldObj);
                 fldObj.addClass('buttonField');
+                fldObj.css('background-size', this.fldWidth + 'px ' + this.fldHeight + 'px');
                 // lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="btn' + this.idx + '"></div>');
                 break;
@@ -441,6 +447,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 fldObj.addClass('textareaField');
+                fldObj.css('background-size', this.fldWidth + 'px ' + this.fldHeight + 'px');
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="txt' + this.idx + '"></div>');
                 break;
