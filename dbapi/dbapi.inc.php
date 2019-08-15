@@ -186,6 +186,8 @@ class DBAPI {
             if (!$this->slow_page_debugging_only || ($this->slow_page_debugging_only == true && $time_taken > $this->slow_page_time_limit)) {
                 $this->logPageLoad($time_taken);
             }
+            ## DISCONNECT ON DESTRUCTION
+            $this->disconnect();
         }
 
         ## DISCONNECT ON DESTRUCTION
@@ -222,6 +224,7 @@ class DBAPI {
         } catch (Exception $e) {
 
 //echo "Caught Exception ".$e->getMessage()."\n";
+            }
         }
     }
 

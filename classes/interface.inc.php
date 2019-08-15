@@ -1,4 +1,5 @@
-<? /***************************************************************
+<?php
+ /***************************************************************
  *    Interface class - handles generic interface stuff, like menus, navigation, etc
  *    Written By: Jonathan Will
  ***************************************************************/
@@ -73,6 +74,7 @@
                                             <li><a href="?area=campaign_parents&no_script=1"
                                                    onclick="loadSection(this.href);return false">Campaign Parents</a>
                                             </li>
+						                    <li><a href="?area=form_builder&no_script=1" onclick="loadSection(this.href);return false">Form Builder</a></li>
                                             <?
                                         }
 
@@ -472,6 +474,7 @@
                             ?>
                             <li><a href="?area=campaigns&no_script">Campaigns</a></li>
                             <li><a href="?area=campaign_parents&no_script">Campaign Parents</a></li>
+				<li><a href="?area=form_builder&no_script=1">Form Builder</a></li>
                             <li><a href="?area=voices&no_script">Voices</a></li>
                             <li><a href="?area=names&no_script">Names</a></li>
 
@@ -525,3 +528,4 @@
             </script><?
         }
     }
+

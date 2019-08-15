@@ -48,6 +48,8 @@ class API_Functions{
 		echo '<Result>Success</Result>'."\n";
 	}
 
+	function outputCopySuccess() {}
+
 	function outputEditSuccess($id,$warning_msgs=null){
 
 		switch($_SESSION['api']->mode){
@@ -154,7 +156,11 @@ class API_Functions{
 		return $out;
 	}
 
+<<<<<<< api/functions.api.php
+	function renderResultSetXML($tagname, $res){
+=======
 	function renderResultSetXML($tagname,$res){
+>>>>>>> api/functions.api.php
 		$_SESSION['API_CACHE_STORAGE'][$tagname] = array();
 		$out = '';
 		$taghead = '<'.$tagname.' ';
