@@ -237,7 +237,7 @@
                                             </li><?
                                         }
 
-                                        if ($_SESSION['user']['priv'] >= 5) {
+                                        if (checkAccess('summary_report')) {
                                             ?>
                                             <li><a href="?area=summary_report&no_script=1"
                                                    onclick="loadSection(this.href);return false">Summary Report</a>

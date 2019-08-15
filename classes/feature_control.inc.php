@@ -543,7 +543,9 @@ class FeatureControl{
 
 
 						$this->renderFeatureRow('rouster_report', 'Rouster Call Stats', ($row['rouster_report'] == 'yes')?true:false );
-
+						
+						$this->renderFeatureRow('summary_report', 'Summary Reports', ($row['summary_report'] == 'yes')?true:false );
+						
 
 						$this->renderFeatureRow('user_charts', 'User Charts', ($row['user_charts'] == 'yes')?true:false );
 						$this->renderFeatureRow('recent_hangups', 'Recent Hangups', ($row['recent_hangups'] == 'yes')?true:false );
