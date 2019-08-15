@@ -322,3 +322,42 @@ a:hover {
 	background-color: lightgrey;
 	border: 1px dotted #cd0a0a;
 }
+.textField {
+	background-image: url(../images/form_builder_text.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-attachment: fixed;
+	background-clip: border-box;
+	background-origin: border-box;
+	background-attachment: fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+.selectField {
+	background-image: url(../images/form_builder_dropdown.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-attachment: fixed;
+	background-clip: border-box;
+	background-origin: border-box;
+	background-attachment: fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+.checkboxField {
+	background-image: url(../images/form_builder_checkbox.png);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-attachment: fixed;
+	background-clip: border-box;
+	background-origin: border-box;
+	background-attachment: fixed;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}

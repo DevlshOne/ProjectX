@@ -342,7 +342,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="inp' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF textField" id="inp' + this.idx + '"></div>');
                 break;
             case '1' :
                 // This is a dropdown field, so let's create it and then populate it
@@ -358,7 +358,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="sel' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF selectField" id="sel' + this.idx + '"></div>');
                 break;
             case '2' :
                 // This is a checkbox field, so let's create it and then populate it
@@ -374,7 +374,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="chk' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF checkboxField" id="chk' + this.idx + '"></div>');
                 break;
             case '3' :
                 // This is an image field, so let's create it and then populate it
@@ -391,7 +391,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="img' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF imageField" id="img' + this.idx + '"></div>');
                 break;
             case '4' :
                 // This is a label field, so let's create it and then populate it
@@ -407,7 +407,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="lblf' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF labelField" id="lblf' + this.idx + '"></div>');
                 break;
             case '5' :
                 // This is a button field, so let's create it and then populate it
@@ -419,7 +419,7 @@ frmField.prototype = {
                 fldObj.val(this.fldValue);
                 $(fldRendering).empty().append(fldObj);
                 // lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="btn' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF buttonField" id="btn' + this.idx + '"></div>');
                 break;
             case '6' :
                 // This is a textarea field, so let's create it and then populate it
@@ -435,7 +435,7 @@ frmField.prototype = {
                 }
                 $(fldRendering).empty().append(lblObj, fldObj);
                 lblObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragL" id="lbl' + this.idx + '"></div>');
-                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="txt' + this.idx + '"></div>');
+                fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF textareaField" id="txt' + this.idx + '"></div>');
                 break;
         }
         fldObj.closest('.dragMe').css({
