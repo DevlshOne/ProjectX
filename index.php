@@ -21,10 +21,18 @@
 		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
 	}
 
+<<<<<<< index.php
+?>
+    <!DOCTYPE HTML>
+<html>
+<head>
+    <title>Project X - Management Tools and Reports</title>
+=======
 	if($uri != null){
 		header("Location: ".$uri);
 		exit;
 	}
+>>>>>>> index.php
 
 
 //print_r($_SERVER);
@@ -40,12 +48,19 @@
 	include_once("utils/microtime.php");
 	include_once("dbapi/dbapi.inc.php");
 
+<<<<<<< index.php
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
+    <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/>
+=======
 
 	/**
 	 * Additional includes/requires go here
 	 */
 	include_once("utils/jsfunc.php");
 	include_once("utils/stripurl.php");
+>>>>>>> index.php
 
 
 	include_once("utils/format_phone.php");
@@ -274,6 +289,18 @@
 				$_SESSION['home']->handleFLOW();
 
 
+<<<<<<< index.php
+                case 'form_builder':
+                    if (checkAccess('campaigns')) {
+                        include_once("classes/form_builder.inc.php");
+                        $_SESSION['form_builder']->handleFLOW();
+                    } else {
+                        accessDenied("Campaigns");
+                    }
+                    break;
+
+                case 'scripts':
+=======
 				break;
 			case 'activity_log':
 
@@ -338,6 +365,7 @@
 
 			case 'scripts':
 
+>>>>>>> index.php
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['scripts'] == 'yes') // MANAGERS WITH SCRIPT ACCESS

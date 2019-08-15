@@ -933,15 +933,15 @@ $(function() {
 						<th>User Group:</th>
 						<td><?php
 
-                            //echo $this->makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "");
-                            echo makeViciUserGroupDD("user_group[]", $_REQUEST['user_group'], '', "", 7)
-                        ?></td>
+							//echo $this->makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "");
+							echo makeViciUserGroupDD("user_group[]", $_REQUEST['user_group'], '', "", 7)
+						?></td>
 					</tr>
 					<tr>
 						<th>Ignore User Group:</th>
 						<td><?php
 
-                            //echo $this->makeViciUserGroupDD("ignore_group", $_REQUEST['ignore_group'], '', "");
+							//echo $this->makeViciUserGroupDD("ignore_group", $_REQUEST['ignore_group'], '', "");
                             echo makeViciUserGroupDD("ignore_group[]", $_REQUEST['ignore_group'], '', "", 7, "[None]"); ?></td>
 					</tr>
 					<tr>
@@ -1000,8 +1000,9 @@ $(function() {
 			</table>
 			</form>
 			<br /><br /><?php
-        } else {
-            ?><meta charset="UTF-8">
+		}else{
+
+			?><meta charset="UTF-8">
 			<meta name="google" content="notranslate">
 			<meta http-equiv="Content-Language" content="en"><?php
         }
@@ -1123,37 +1124,40 @@ $(function() {
         ob_start();
         ob_clean(); ?><h1><?php
 
-            if ($campaign_code) {
-                echo $campaign_code.' ';
-            }
+			if($campaign_code){
+				echo $campaign_code.' ';
+			}
 
-        echo "Sales Analysis - ";
+			echo "Sales Analysis - ";
 
-        if ($agent_cluster_id >= 0) {
-            echo $_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
-        }
+			if($agent_cluster_id >= 0){
 
-        //			if($user_group){
+				echo $_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
+			}
+
+//			if($user_group){
 //
-        //				if(is_array($user_group)){
+//				if(is_array($user_group)){
 //
-        //					if(trim($user_group[0]) != ''){
+//					if(trim($user_group[0]) != ''){
 //
-        //						echo implode($user_group,' | ');
-        //						echo " - ";
-        //					}
+//						echo implode($user_group,' | ');
+//						echo " - ";
+//					}
 //
 //
-        //				}else{
-        //					echo $user_group.' - ';
-        //				}
-        //			}
+//				}else{
+//					echo $user_group.' - ';
+//				}
+//			}
 
 
-        if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
-            echo date("m-d-Y", $stime);
-        } else {
-            echo date("m-d-Y", $stime).' to '.date("m-d-Y", $etime);
+			if(date("m-d-Y", $stime) == date("m-d-Y", $etime)){
+
+				echo date("m-d-Y", $stime);
+
+			}else{
+				echo date("m-d-Y", $stime).' to '.date("m-d-Y", $etime);
         } ?></h1>
 		<h3><?php
 
@@ -1281,7 +1285,7 @@ $(function() {
 				}
 				?>
 
-				<td align="center"><?=number_format($agent_data['contacts_per_worked_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_worked_hour'], 2)?></td>
+				<td align="center"><?=number_format($agent_data['contacts_per_worked_hour'],2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_worked_hour'],2)?></td>
 
 
 
@@ -1297,16 +1301,16 @@ $(function() {
 					<?=number_format($agent_data['paid_sale_cnt'])?> ($<?=number_format($agent_data['paid_sales_total'])?>)
 
 				</td>
-				<td align="right"><?=number_format($paid_sale_percent, 2)?>%</td>
+				<td align="right"><?=number_format($paid_sale_percent,2)?>%</td>
 
 
 				<td align="center"><?=number_format(($agent_data['sale_cnt']-$agent_data['paid_sale_cnt']))?></td>
-				<td align="right"><?=number_format($unpaid_sale_percent, 2)?>%</td>
+				<td align="right"><?=number_format($unpaid_sale_percent,2)?>%</td>
 
 
-				<td align="right"><?=number_format($agent_data['closing_percent'], 2)?>%</td>
-				<td align="right"><?=number_format($agent_data['conversion_percent'], 2)?>%</td>
-				<td align="right"><?=number_format($agent_data['yes2all_percent'], 2)?>%</td>
+				<td align="right"><?=number_format($agent_data['closing_percent'],2)?>%</td>
+				<td align="right"><?=number_format($agent_data['conversion_percent'],2)?>%</td>
+				<td align="right"><?=number_format($agent_data['yes2all_percent'],2)?>%</td>
 				<td align="right">$<?=number_format($agent_data['sales_total'])?></td>
 				<td align="right">$<?=number_format($agent_data['avg_sale'],2)?></td>
 				<td align="right">$<?=number_format($agent_data['paid_hr'],2)?></td>
@@ -1358,15 +1362,15 @@ $(function() {
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_sale_cnt'])?></th>
 
 			<th style="border-top:1px solid #000" align="left"><?=number_format($totals['total_paid_sale_cnt'])?> ($<?=number_format($totals['total_paid_sales'])?>)</th>
-			<th style="border-top:1px solid #000" align="right"><?=number_format($paid_sale_percent, 2)?>%</th>
+			<th style="border-top:1px solid #000" align="right"><?=number_format($paid_sale_percent,2)?>%</th>
 
 			<th style="border-top:1px solid #000" align="center"><?=number_format(($totals['total_sale_cnt']-$totals['total_paid_sale_cnt']))?></th>
-			<th style="border-top:1px solid #000" align="right"><?=number_format($unpaid_sale_percent, 2)?>%</th>
+			<th style="border-top:1px solid #000" align="right"><?=number_format($unpaid_sale_percent,2)?>%</th>
 
 
 			<th style="border-top:1px solid #000" align="right"><?=number_format($totals['total_closing'], 2)?>%</th>
 			<th style="border-top:1px solid #000" align="right"><?=number_format($totals['total_conversion'], 2)?>%</th>
-			<th style="border-top:1px solid #000" align="right"><?=number_format($totals['total_yes2all'], 2)?>%</th>
+			<th style="border-top:1px solid #000" align="right"><?=number_format($totals['total_yes2all'],2)?>%</th>
 
 			<th style="border-top:1px solid #000" align="right">$<?=number_format($totals['total_sales'])?></th>
 
@@ -1378,15 +1382,15 @@ $(function() {
 		</tfoot>
 		</table><?php
 
-        // GRAB DATA FROM BUFFER
-        $data = ob_get_contents();
+		// GRAB DATA FROM BUFFER
+		$data = ob_get_contents();
 
-        // TURN OFF OUTPUT BUFFERING, WITHOUT OUTPUTTING
-        ob_end_clean();
+		// TURN OFF OUTPUT BUFFERING, WITHOUT OUTPUTTING
+		ob_end_clean();
 
-        // RETURN HTML
-        return $data;
-    }
+		// RETURN HTML
+		return $data;
+	}
 
 
 
@@ -1395,32 +1399,33 @@ $(function() {
 
     public function makeClusterDD($name, $selected, $css, $onchange)
     {
-        $out = '<select name="'.$name.'" id="'.$name.'" ';
+		$out = '<select name="'.$name.'" id="'.$name.'" ';
 
-        $out .= ($css)?' class="'.$css.'" ':'';
-        $out .= ($onchange)?' onchange="'.$onchange.'" ':'';
-        $out .= '>';
+		$out .= ($css)?' class="'.$css.'" ':'';
+		$out .= ($onchange)?' onchange="'.$onchange.'" ':'';
+		$out .= '>';
 
-        $out .= '<option value="-1" '.(($selected == '-1')?' SELECTED ':'').'>[All]</option>';
-
-
-        foreach ($_SESSION['site_config']['db'] as $dbidx=>$db) {
-            $out .= '<option value="'.$dbidx.'" ';
-            $out .= ($selected == $dbidx)?' SELECTED ':'';
-            $out .= '>'.htmlentities($db['name']).'</option>';
-        }
+		$out .= '<option value="-1" '.(($selected == '-1')?' SELECTED ':'').'>[All]</option>';
 
 
+		foreach($_SESSION['site_config']['db'] as $dbidx=>$db){
 
-        $out .= '</select>';
+			$out .= '<option value="'.$dbidx.'" ';
+			$out .= ($selected == $dbidx)?' SELECTED ':'';
+			$out .= '>'.htmlentities($db['name']).'</option>';
+		}
 
-        return $out;
-    }
+
+
+		$out .= '</select>';
+
+		return $out;
+	}
 
 
     public function makeViciCampaignDD($name, $selected, $css, $onchange)
     {
-        $cache_area_name = 'vici_campaign_code';
+		$cache_area_name = 'vici_campaign_code';
 
         if (!$_SESSION['cached_data']) {
             $_SESSION['cached_data'] = array();
@@ -1853,19 +1858,33 @@ $(function() {
 
             // SEND IT
             if ($mail->send($row['email_address'], $mail_header, $mail_body) != true) {
-                echo date("H:i:s m/d/Y")." - ERROR: Mail::send() call failed sending to ".$row['email_address'];
-            } else {
-                echo date("H:i:s m/d/Y")." - Successfully emailed ".$row['email_address']." - ".$subject."\n";
+				echo date("H:i:s m/d/Y")." - ERROR: Mail::send() call failed sending to ".$row['email_address'];
 
-                // UPDATE last_ran TIME
+			}else{
+				echo date("H:i:s m/d/Y")." - Successfully emailed ".$row['email_address']." - ".$subject."\n";
 
-                $dat = array();
-                $dat['last_ran'] = $curtime;
-                aedit($row['id'], $dat, "report_emails");
-            }
-        } // END WHILE (report emails)
+				// UPDATE last_ran TIME
+
+				$dat = array();
+				$dat['last_ran'] = $curtime;
+				aedit($row['id'], $dat, "report_emails");
 
 
-        echo date("H:i:s m/d/Y")." - Finished sendReportEmails()\n";
-    }
+			}
+
+
+
+		} // END WHILE (report emails)
+
+
+		echo date("H:i:s m/d/Y")." - Finished sendReportEmails()\n";
+
+	}
+
+
+
+
+
+
+
 } // END OF CLASS
