@@ -20,58 +20,66 @@
 
 		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
 	}
-
+	
 	if($uri != null){
 		header("Location: ".$uri);
 		exit;
 	}
-
-
-//print_r($_SERVER);
-
-
+	
+	//print_r($_SERVER);
+	
+	
 	/**
 	 * Database connection made here
 	 */
 	include_once("site_config.php");
-
+	
 	// GENERIC DB FUNCTIONS
 	include_once("db.inc.php");
 	include_once("utils/microtime.php");
 	include_once("dbapi/dbapi.inc.php");
-
-
+		
 	/**
 	 * Additional includes/requires go here
 	 */
 	include_once("utils/jsfunc.php");
 	include_once("utils/stripurl.php");
-
-
+	
 	include_once("utils/format_phone.php");
 	include_once("utils/rendertime.php");
 	include_once("utils/DropDowns.php");
 	include_once("utils/functions.php");
 	include_once("utils/feature_functions.php");
 	include_once("utils/db_utils.php");
-
-
+	
+	
 	include_once("classes/genericDD.inc.php");
 	include_once("classes/interface.inc.php");
 	include_once("classes/languages.inc.php");
-
-
+	
+	
 	// DESTROY THE SESSION/LOGOUT ?o
 	if(isset($_REQUEST['o'])){
-
+		
 		session_unset();
-
-
+		
+		
 		jsRedirect("index.php");
 		exit;
-
+		
 	}
+	
+	
+	
+/*?><!DOCTYPE HTML>
+<html>
+<head>
+    <title>Project X - Management Tools and Reports</title>
 
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
+    <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/><?**/
 
 
 
@@ -90,10 +98,10 @@
 
 			<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
 
-<META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
+			<META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
 
 
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+			<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
 
 			<link rel="stylesheet" type="text/css" href="css/style.css" />
 			<link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
@@ -273,7 +281,6 @@
 				include_once("classes/home.inc.php");
 				$_SESSION['home']->handleFLOW();
 
-
 				break;
 			case 'activity_log':
 
@@ -336,8 +343,17 @@
 					}
 					break;
 
+			case 'form_builder':
+				if (checkAccess('campaigns')) {
+					include_once("classes/form_builder.inc.php");
+					$_SESSION['form_builder']->handleFLOW();
+				} else {
+					accessDenied("Campaigns");
+				}
+				break;
+					
+					
 			case 'scripts':
-
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['scripts'] == 'yes') // MANAGERS WITH SCRIPT ACCESS

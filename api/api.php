@@ -1,7 +1,7 @@
 <?php
 /**
  * API Gateway - XML interface between front end and database
- * Written by: Jonathan Will, Digital Node LLC.
+ * Written by: Jonathan Will
  *
  *
  * globals:
@@ -187,7 +187,13 @@
 			$obj = new API_UserGroupsMaster();
 			$obj->handleSecondaryAjax();
 			break;
-			
+
+        case 'form_builder':
+			include_once($basedir . "api/form_builder.api.php");
+			$obj = new API_FormBuilder();
+			$obj->handleSecondaryAjax();
+			break;
+	
 		case 'action_log':
 
 			include_once($basedir."api/action_log.api.php");
@@ -277,12 +283,13 @@
 		include_once($basedir."api/campaigns.api.php");
 		$campaigns = new API_Campaigns();
 		$campaigns->handleAPI();
-        break;
+      		break;
 
-        case 'campaign_parents':
-            include_once($basedir."api/cmpgn_parents.api.php");
-            $campaign_parents = new API_CampaignParents();
-            $campaign_parents->handleAPI();
+	case 'campaign_parents':
+		
+		include_once($basedir."api/cmpgn_parents.api.php");
+		$campaign_parents = new API_CampaignParents();
+		$campaign_parents->handleAPI();
 		break;
 
 	case 'extensions':
@@ -415,6 +422,12 @@
 		$obj = new API_UserGroupsMaster();
 		$obj->handleAPI();
 		break;
+
+	case 'form_builder':
+		include_once($basedir . "api/form_builder.api.php");
+		$obj = new API_FormBuilder();
+		$obj->handleAPI();
+		break;
 		
 	case 'change_password':
 
@@ -491,4 +504,3 @@
 
 		break;
 	}
-

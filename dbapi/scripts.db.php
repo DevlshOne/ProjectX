@@ -8,6 +8,7 @@
 class ScriptsAPI{
 
 	var $table = "scripts";
+	var $voices_files_table = "voices_files";
 
 
 
@@ -33,6 +34,20 @@ class ScriptsAPI{
 
 					);
 	}
+
+	/**
+	 * Get a voice file by ID
+	 * @param 	$voice_file_id		The database ID of the record
+	 * @return	assoc-array of the database record
+	 */
+	function getVoiceFileByID($voice_file_id){
+		$voice_file_id = intval($voice_file_id);
+
+		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->voices_files_table."` ".
+						" WHERE id='".$voice_file_id."' "
+
+					);
+	}	
 
 
 	/**
