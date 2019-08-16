@@ -178,15 +178,15 @@ frmField.prototype = {
             '  $("#fieldAsForm' + this.idx + '").ready(function() {' +
             '      $("#field_type' + this.idx + '").val(' + this.fldType + ');' +
             '      $("#field_step' + this.idx + '").val(' + this.callStep + ');' +
-            '      $("#value' + this.idx + '").val(' + this.fldValue + ');' +
+            '      $("#value' + this.idx + '").val("' + this.fldValue + '");' +
             '      $("#tool_tip' + this.idx + '").val(' + this.tooltip + ');' +
             '      $("#place_holder' + this.idx + '").val(' + this.placeHolder + ');' +
-            '      $("#css_class' + this.idx + '").val(' + this.cssName + ');' +
-            '      $("#special_mode' + this.idx + '").val(' + this.fldSpecial + ');' +
-            '      $("#options' + this.idx + '").val(' + this.fldOptions + ');' +
-            '      $("#db_table' + this.idx + '").val(' + this.dbTable + ');' +
-            '      $("#db_field' + this.idx + '").val(' + this.dbField + ');' +
-            '      $("#variables' + this.idx + '").val(' + this.fldVariables + ');' +
+            '      $("#css_class' + this.idx + '").val("' + this.cssName + '");' +
+            '      $("#special_mode' + this.idx + '").val("' + this.fldSpecial + '");' +
+            '      $("#options' + this.idx + '").val("' + this.fldOptions + '");' +
+            '      $("#db_table' + this.idx + '").val("' + this.dbTable + '");' +
+            '      $("#db_field' + this.idx + '").val("' + this.dbField + '");' +
+            '      $("#variables' + this.idx + '").val("' + this.fldVariables + '");' +
             '      $("#campaign_id' + this.idx + '").val(' + this.campID + ');' +
             '      $("#is_required' + this.idx + '").prop("checked", function() {' +
             '        return (this.isRequired == 0 ? "checked" : "");' +

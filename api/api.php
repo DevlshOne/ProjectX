@@ -188,11 +188,11 @@
 			$obj->handleSecondaryAjax();
 			break;
 
-                case 'form_builder':
-                    include_once($basedir . "api/form_builder.api.php");
-                    $obj = new API_FormBuilder();
-                    $obj->handleSecondaryAjax();
-                    break;
+        case 'form_builder':
+			include_once($basedir . "api/form_builder.api.php");
+			$obj = new API_FormBuilder();
+			$obj->handleSecondaryAjax();
+			break;
 	
 		case 'action_log':
 
@@ -285,11 +285,11 @@
 		$campaigns->handleAPI();
       		break;
 
-        case 'campaign_parents':
-            include_once($basedir."api/cmpgn_parents.api.php");
-            $campaign_parents = new API_CampaignParents();
-            $campaign_parents->handleAPI();
-
+	case 'campaign_parents':
+		
+		include_once($basedir."api/cmpgn_parents.api.php");
+		$campaign_parents = new API_CampaignParents();
+		$campaign_parents->handleAPI();
 		break;
 
 	case 'extensions':
@@ -423,11 +423,11 @@
 		$obj->handleAPI();
 		break;
 
-        case 'form_builder':
-            include_once($basedir . "api/form_builder.api.php");
-            $obj = new API_FormBuilder();
-            $obj->handleAPI();
-            break;
+	case 'form_builder':
+		include_once($basedir . "api/form_builder.api.php");
+		$obj = new API_FormBuilder();
+		$obj->handleAPI();
+		break;
 		
 	case 'change_password':
 

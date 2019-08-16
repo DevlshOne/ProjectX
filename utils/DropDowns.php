@@ -405,6 +405,8 @@
         $out .= '</select>';
         return $out;    }
 
+        
+        /**
     function makeTimebar($basename="time_", $mode=0, $selarr=null, $stack=false, $timestamp=0, $extra_attr="")
     {
         connectPXDB();
@@ -423,7 +425,7 @@
         }
         $out .= '</select>';
         return $out;
-    }
+    }**/
 
     function makeNoFormsCampaignDD($name, $selected, $css, $onchange, $blank_option = 1)
     {

@@ -134,6 +134,8 @@ class DBAPI {
     public $quiz_questions;
     public $list_tool_tasks;
     public $dialer_sales;
+    
+    public $form_builder;
 
 
     /**
@@ -361,6 +363,10 @@ class DBAPI {
 
 		include_once($_SESSION['site_config']['basedir']."dbapi/accounts.db.php");
 		$this->accounts = new AccountsAPI();
+		
+		
+		include_once($_SESSION['site_config']['basedir']."dbapi/form_builder.db.php");
+		$this->form_builder = new FormBuilderAPI();
 
 	}
 
@@ -436,30 +442,31 @@ class DBAPI {
 				$_SESSION['site_config']['pxdb_lb'][$mod]['sqllogin'],
 				$_SESSION['site_config']['pxdb_lb'][$mod]['sqlpass'],
 				$_SESSION['site_config']['pxdb_lb'][$mod]['sqldb']
-				) or $failover=true;
-				//
-				if($failover){
-					$_SESSION['db_load_balance_index']++;
-					
-					$_SESSION['pxdb_lb_failcount']++;
-					
-					// ATTEMPT TO CONNECT TO THE OTHER DB!
-					return $this->connect();
-				}
-				
-				$this->db_ip = gethostbyname( $_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']);
-				
-				
-				//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
-				
-				if($this->debug_db_connection)echo "<!-- Successfully connected to Load Balanced DB : ".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']." -->\n";
-				
-				$_SESSION['db_load_balance_index']++;
-				
-				$_SESSION['pxdb_lb_failcount'] = 0;
-				
-				//		mysql_select_db($_SESSION['site_config']['pxdb']['sqldb'],$this->db)
-				//			or die("Could not select database ".$_SESSION['site_config']['pxdb']['sqldb']);
+		) or $failover=true;
+		
+		//
+		if($failover){
+			$_SESSION['db_load_balance_index']++;
+			
+			$_SESSION['pxdb_lb_failcount']++;
+			
+			// ATTEMPT TO CONNECT TO THE OTHER DB!
+			return $this->connect();
+		}
+		
+		$this->db_ip = gethostbyname( $_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']);
+		
+		
+		//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
+		
+		if($this->debug_db_connection)echo "<!-- Successfully connected to Load Balanced DB : ".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']." -->\n";
+		
+		$_SESSION['db_load_balance_index']++;
+		
+		$_SESSION['pxdb_lb_failcount'] = 0;
+		
+		//		mysql_select_db($_SESSION['site_config']['pxdb']['sqldb'],$this->db)
+		//			or die("Could not select database ".$_SESSION['site_config']['pxdb']['sqldb']);
 				
 	}
 	
@@ -543,9 +550,12 @@ class DBAPI {
 	 */
 	function disconnect(){
 		
-		mysqli_close($this->db);
-		
-		unset($this->db);
+		if(isset($this->db)){
+			
+			mysqli_close($this->db);
+			unset($this->db);
+			
+		}
 		
 		if(isset($this->db_readslave)){
 			
@@ -762,6 +772,12 @@ class DBAPI {
 	function ROqueryROWS($cmd)	{ 	return $this->ROQuery($cmd,5);}	# Returns the number of rows in a result set
 	function ROfetchROW($cmd)	{ 	return $this->ROQuery($cmd,6);}	# Returns an associative array that corresponds to the fetched row, or FALSE if there are no more rows.
 	
+	
+	public function fetchAllAssoc($cmd) {
+		return $this->query($cmd, 8);
+		# Returns all results as an associative array
+	}
+	
 	/**
 	 * Runs READ ONLY queries against the read slaves, mostly for reports, to spread out the load
 	 * @param unknown $cmd
@@ -868,6 +884,8 @@ class DBAPI {
 			return mysqli_num_rows($res);
 		}else if($mode == 6){
 			return mysqli_fetch_assoc($res);
+		}else if ($mode == 8) {
+			return mysqli_fetch_all($res, MYSQLI_ASSOC);
 		}
 	}
 }

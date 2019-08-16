@@ -3,33 +3,48 @@
  * Campaign Parents SQL Functions
  */
 
-class CampaignParentsAPI
-{
+class CampaignParentsAPI{
+	
+	
     public $table = "campaign_parents";
+    
+    
+    
+    
     /**
      * Marks a campaign as deleted
      */
-    public function delete($id)
-    {
+    public function delete($id){
         unset($dat);
         $dat['deleted'] = '1';
         return $_SESSION['dbapi']->aedit($id, $dat, $this->table);
     }
+    
+    
+    
+    
     /**
+     *
      * Get a campaign by ID
      * @param 	$campaign_id		The database ID of the record
      * 	 * @return	assoc-array of the database record
      */
-    public function getByID($campaign_id)
-    {
+    public function getByID($campaign_id){
         $campaign_id = intval($campaign_id);
         return $_SESSION['dbapi']->querySQL(
             "SELECT * FROM `".$this->table."` ".
                         " WHERE id='".$campaign_id."' "
                     );
     }
-    public function getName($campaign_id)
-    {
+    
+    function getCodeByID($campaign_id){
+    	$campaign_id=intval($campaign_id);
+    	list($name) = $_SESSION['dbapi']->queryROW("SELECT code FROM `".$this->table."` WHERE id='".$campaign_id."' ");
+    	return $name;
+    }
+    
+    public function getName($campaign_id){
+    	
         $campaign_id=intval($campaign_id);
         list($name) = $_SESSION['dbapi']->queryROW("SELECT name FROM `".$this->table."` ".
                         " WHERE id='".$campaign_id."' ");
