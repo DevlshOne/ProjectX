@@ -645,7 +645,7 @@ class ListToolTasks{
 
 					connectPXDB();
 
-					echo $_SESSION['dbapi']->campaigns->getViciID($config['campaign_id']);
+					echo $_SESSION['dbapi']->campaign_parents->getCodeByID($config['campaign_id']);///$_SESSION['dbapi']->campaigns->getViciID($config['campaign_id']);
 
 					echo '<br /><br />Cross campaign:'.(($config['check_cross_campaign'] > 0)?'Yes':'No');
 
