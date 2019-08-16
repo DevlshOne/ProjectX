@@ -772,6 +772,12 @@ class DBAPI {
 	function ROqueryROWS($cmd)	{ 	return $this->ROQuery($cmd,5);}	# Returns the number of rows in a result set
 	function ROfetchROW($cmd)	{ 	return $this->ROQuery($cmd,6);}	# Returns an associative array that corresponds to the fetched row, or FALSE if there are no more rows.
 	
+	
+	public function fetchAllAssoc($cmd) {
+		return $this->query($cmd, 8);
+		# Returns all results as an associative array
+	}
+	
 	/**
 	 * Runs READ ONLY queries against the read slaves, mostly for reports, to spread out the load
 	 * @param unknown $cmd
@@ -878,6 +884,8 @@ class DBAPI {
 			return mysqli_num_rows($res);
 		}else if($mode == 6){
 			return mysqli_fetch_assoc($res);
+		}else if ($mode == 8) {
+			return mysqli_fetch_all($res, MYSQLI_ASSOC);
 		}
 	}
 }
