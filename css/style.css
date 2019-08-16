@@ -185,18 +185,11 @@ a:hover {
 .ht30 {
 	height: 30px;
 }
-
 .ht40 {
 	height: 40px;
 }
 .pd10 {
 	padding: 10px;
-
-#dragZone, #dropZone {
-	border: 1px solid #eee;
-	margin: 0;
-	padding: 5px 0 0 0;
-	margin-right: 10px;
 }
 #dragZone {
 	list-style-type: none;
@@ -211,7 +204,6 @@ a:hover {
 	float:left;
     display: inline-block;
 	width: 100%;
-
 	position: relative;
 	min-height: 600px;
 	overflow-y: auto;
@@ -226,9 +218,6 @@ a:hover {
 	position: relative;
 	font-size: 0.8em;
 	color: orangered;
-
-	/*text-decoration: underline;*/
-
 	float: left;
 }
 .fldHolder {
@@ -262,10 +251,7 @@ a:hover {
 	font-weight: 600;
 }
 .fafLabel {
-
     min-width: 15%;
-    /**min-width: 8%;**/
-
     display: inline-block;
 }
 .tightTable {
@@ -283,11 +269,7 @@ a:hover {
 }
 #previewBox {
 	position: relative;
-    /*overflow-y: visible;*/
-    /*height: auto;*/
-	/*margin-right: 10px;*/
 }
-
 .labelDIV {
     border: 1px solid firebrick;
     display: block;
@@ -332,5 +314,4 @@ a:hover {
 .checkboxField {
 	background-image: url("../images/form_builder_checkbox.png");
 	background-repeat: no-repeat;
-
 }
