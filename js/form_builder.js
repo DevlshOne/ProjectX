@@ -112,34 +112,43 @@ frmField.prototype = {
             '<td><label class="fafLabel" for="name">Label : </label><input class="pct75" id="name' + this.idx + '"  name="name" type="text" value="' + this.txtLabel + '" /></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="label_width">Label Width : </label><input class="pct75" id="label_width' + this.idx + '"  name="label_width" type="number" min="0" max="500" value="' + this.lblWidth + '" /></td>' +
+            	'<td class="pad_top">'+
+            	
+            		'<table border="0" width="100%">'+
+            		'<tr><td>'+
+            	
+		            	'<table border="0"><tr><td><label class="fafLabel" for="label_width">Label Size : </label></td><td>'+
+		            	 '<input id="label_width' + this.idx + '"  name="label_width" type="number" min="-100" max="2048"  value="' + this.lblWidth + '" /> x <input  id="label_height' + this.idx + '"  name="label_height" type="number" min="-100" max="2048" value="' + this.lblHeight + '" /> (in pixels)'+
+		            	 '</td></tr></table>'+
+		            	 
+		            '</td><td>'+
+		            
+			            '<table border="0"><tr><td><label class="fafLabel" for="field_width">Field Size : </label></td><td>'+
+	            		'<input  id="field_width' + this.idx + '" name="field_width" type="number" min="0" max="2048" value="' + this.fldWidth + '" /> x <input  id="field_height' + this.idx + '" name="field_height" type="number" min="0" max="2048" value="' + this.fldHeight + '" /> (in pixels)'+
+	            		'</td></tr></table>'+
+            			
+		            '</td></tr>'+
+	            	'<tr><td>'+	
+	            	
+		            	'<table border="0"><tr><td><label class="fafLabel" for="label_x">Label Position : </label></td><td>'+
+		    			'(<input id="label_x' + this.idx + '"  name="label_x" min="-100" max="2048" type="number" value="' + this.lblPosX + '" />,<input  id="label_y' + this.idx + '" min="-100" max="2048"  name="label_y" type="number" value="' + this.lblPosY + '" />) (x,y coords)'+
+		    			'</td></tr></table>'+
+		    			
+	            	'</td><td>'+
+	            	
+		            	'<table border="0"><tr><td><label class="fafLabel" for="field_x">Field Position : </label></td><td>'+
+	            		'(<input id="field_x' + this.idx + '" name="field_x" type="number" min="-100" max="2048" value="' + this.fldPosX + '" />,<input  id="field_y' + this.idx + '" name="field_y" type="number" min="0" max="2048" value="' + this.fldPosY + '" />) (x,y coords)'+
+	            		'</td></tr></table>'+
+	            	
+	            	'</td></tr></table>'+
+		            	
+	            '</td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="label_height">Label Height : </label><input class="pct75" id="label_height' + this.idx + '"  name="label_height" type="number" min="0" max="500" value="' + this.lblHeight + '" /></td>' +
+            	'<td class="pad_top"><label class="fafLabel" for="field_step">Field Step : </label><input id="field_step' + this.idx + '" name="field_step" type="number" value = "' + this.callStep + '"/></td>' +
             '</tr>' +
             '<tr>' +
-            '<td><label class="fafLabel" for="label_x">Label X : </label><input class="pct75" id="label_x' + this.idx + '"  name="label_x" type="number" min="0" max="1024" value="' + this.lblPosX + '" /></td>' +
-            '</tr>' +
-            '<tr>' +
-            '<td><label class="fafLabel" for="label_y">Label Y : </label><input class="pct75" id="label_y' + this.idx + '"  name="label_y" type="text" value="' + this.lblPosY + '" /></td>' +
-            '</tr>' +
-            '<tr>' +
-            '<td><label class="fafLabel" for="field_width">Field Width : </label><input class="pct75" id="field_width' + this.idx + '" name="field_width" type="number" min="0" max="500" value="' + this.fldWidth + '" /></td>' +
-            '</tr>' +
-            '<tr>' +
-            '<td><label class="fafLabel" for="field_height">Field Height : </label><input class="pct75" id="field_height' + this.idx + '" name="field_height" type="number" min="0" max="500" value="' + this.fldHeight + '" /></td>' +
-            '</tr>' +
-            '<tr>' +
-            '<td><label class="fafLabel" for="field_x">Field X : </label><input class="pct75" id="field_x' + this.idx + '" name="field_x" type="number" min="0" max="1024" value="' + this.fldPosX + '" /></td>' +
-            '</tr>' +
-            '<tr>' +
-            '<td><label class="fafLabel" for="field_y">Field Y : </label><input class="pct75" id="field_y' + this.idx + '" name="field_y" type="number" min="0" max="1024" value="' + this.fldPosY + '" /></td>' +
-            '</tr>' +
-            '<tr>' +
-            '<td><label class="fafLabel" for="field_step">Field Step : </label><input id="field_step' + this.idx + '" name="field_step" type="number" value = "' + this.callStep + '"/></td>' +
-            '</tr>' +
-            '<tr>' +
-            '<td><label class="fafLabel" for="is_required">Required : </label><input id="is_required' + this.idx + '" name="is_required" type="checkbox" /></td>' +
+            	'<td><label class="fafLabel" for="is_required">Required : </label><input id="is_required' + this.idx + '" name="is_required" type="checkbox" /></td>' +
             '</tr>' +
             '<tr>' +
             '<td><label class="fafLabel" for="tool_tip">Tooltip : </label><input class="pct75" id="tool_tip' + this.idx + '" name="tool_tip" type="text" value="' + this.toolTip + '" />' +

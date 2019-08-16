@@ -252,6 +252,7 @@ a:hover {
 }
 .fafLabel {
     min-width: 15%;
+    width:100px;
     display: inline-block;
 }
 .tightTable {
