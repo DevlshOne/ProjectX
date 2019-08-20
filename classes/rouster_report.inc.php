@@ -75,7 +75,6 @@ class RousterReport{
 		$user_group_sql = ''; // USED FOR THE VICI PART OF THE QUERY
 
 		if(is_array($call_group)){
-//
 
 			if(php_sapi_name() != "cli") {
 
@@ -92,9 +91,6 @@ class RousterReport{
 				}
 			}
 
-
-//print_r($call_group);
-
 			$x=0;
 
 			foreach($call_group as $group){
@@ -105,7 +101,7 @@ class RousterReport{
 						($_SESSION['user']['priv'] < 5) &&
 						($_SESSION['user']['allow_all_offices'] != 'yes')
 					) && is_array($_SESSION['assigned_groups']) && !in_array($group, $_SESSION['assigned_groups'], false)){
-					//echo "skipping $group";
+					
 					continue;
 				}
 
@@ -200,8 +196,7 @@ class RousterReport{
 		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 			$userzstack[] = strtoupper($row['username']);
 		}
-//
-//print_r($userstack);
+
 
 		$agent_array = array();
 		$stmicro = $stime * 1000;
@@ -224,14 +219,13 @@ class RousterReport{
 
 						;
 
-//echo $sql.'<br /><br />';
+
 	//		$sql = "SELECT * FROM `activity_log` WHERE `account_id`='".$_SESSION['account']['id']."' ".
 	//						(($stime && $etime)?" AND `time_started` BETWEEN '$stime' AND '$etime' ":'').
 	//						(($cluster_id > 0)?" AND vici_cluster_id='$cluster_id' ":"").
 	//						$extra_sql;
 
 
-			//echo $sql;exit;
 
 			// GET A LIST OF TEH AGENTS
 			// ACTIVITY LOG: THE AGENTS THAT ARE WORKING TODAY
@@ -244,16 +238,13 @@ class RousterReport{
 
 			while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 
-//	print_r($row);
-//	echo '<br /><br />';
-
 				$username = strtoupper($row['username']);
 
 
 				if($combine_users == true && $username[strlen($username)-1] == '2'){
 
 					$username = substr($username,0, strlen($username) - 1);
-//echo "New user:".$username;
+
 				}
 
 
@@ -261,7 +252,6 @@ class RousterReport{
 
 					// SKIPP THEM!!!!
 					if(in_array($username, $ignore_arr)){
-//						echo "Skipping user on ignore list.\n";
 
 						continue;
 					}
@@ -274,8 +264,6 @@ class RousterReport{
 				// USER ON THE STACK ALREADY
 				if(isset($agent_array[$username]) && $agent_array[$username]){
 
-
-//					echo "Agent $username found in stack.<br />\n";
 
 					$agent_array[$username]['activity_time'] += $row['activity_time'];
 					$agent_array[$username]['paid_time'] += $row['paid_time'];
@@ -330,8 +318,6 @@ class RousterReport{
 
 				$curdate = date("m/d/Y", $row['time_started']);
 
-//echo "Creating new agent record for $username at $curdate\n";
-
 				$agent_array[$username] = $row;
 				$agent_array[$username]['agent_count'] = 1;
 
@@ -346,7 +332,6 @@ class RousterReport{
 //				$agent_array[$username]['total_activity_time'] = intval($row['TotalTime']);//$row['seconds_INCALL'] + $row['seconds_READY'] + $row['seconds_QUEUE'] + $row['seconds_PAUSED'];
 //				$agent_array[$username]['daily_activity_time'] = intval($row['DailyActivityTime']);
 
-//print_r($agent_array);
 				// GET TOTAL SALES COUNTS FROM PX
 				$sql = "SELECT COUNT(`id`) FROM `sales` ".
 										" WHERE `sale_time` BETWEEN '$stime' AND '$etime' ".
@@ -362,7 +347,7 @@ class RousterReport{
 
 
 										"";//" AND `call_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."'";
-	//			echo $sql."\n";
+
 				list($cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
 				list($paid_sales_cnt) = $_SESSION['dbapi']->ROqueryROW($sql." AND `is_paid` IN('yes','roustedcc') ");
 
@@ -380,7 +365,7 @@ class RousterReport{
 
 
 										" AND `is_paid` IN('yes','roustedcc') ";//" AND `call_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."'";
-				//echo $sql."\n";
+
 				list($paid_sales_amount) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 
@@ -482,12 +467,9 @@ class RousterReport{
 									$xfer_where.
 									" AND (verifier_dispo IN('PAIDCC','SALECC')) ".
 									" AND verifier_amount > agent_amount ";
-				//echo $sql;
+
 				list($bump_count) = $_SESSION['dbapi']->ROqueryROW($sql);
 
-
-
-			//	echo $username.' '.$agent_amount_total.' '.$verifier_amount_total."<br>\n";
 
 				list($agent_array[$username]['reviewcnt']) = $_SESSION['dbapi']->ROqueryROW("SELECT COUNT(`id`) FROM `dispo_log` ".
 											" WHERE `dispo` = 'REVIEW' ".
@@ -536,15 +518,12 @@ class RousterReport{
 
 
 
-//echo nl2br(print_r($agent_array,1));exit;
-
 		// GET THE HOURS FROM VICI CLUSTER NOW
 		/// RESOLVE DB IDX FROM CLUSTER ID
 		$vici_idx = getClusterIndex($cluster_id);
 
 		// CONNECT VICI CLUSTER BY IDX
 		connectViciDB($vici_idx);
-//echo "Cluster ID#".$cluster_id."\n";
 
 		$out = array();
 
@@ -666,8 +645,6 @@ class RousterReport{
 			      		 (($call_group != null)?  $user_group_sql:'').
 			    	  	"";
 
-//echo $sql;
-
 			$res = query($sql,1);
 
 			$t_max = 0;
@@ -679,8 +656,6 @@ class RousterReport{
 				$t_time += $tmpttime;
 
 				if($combine_users){
-
-//					echo $row['user'].' vs '.$username."<br />\n";
 
 					// FIRST USER
 					if(strtolower(trim($row['user'])) == strtolower(trim($username))){
@@ -708,8 +683,6 @@ class RousterReport{
 
 				$t_call_count++;
 			}
-
-//			echo $username.' TMAX:'.($t_max/3600).' VS '.($t_max2/3600)."<br />\n";
 
 			$out[$x] = array();
 			$out[$x]['username'] = $username;
@@ -742,9 +715,6 @@ class RousterReport{
 
 			$x++;
 		}
-
-
-//print_r($out);
 
 		return $out;
 	}
@@ -862,35 +832,7 @@ class RousterReport{
 
 			</tr>
 			</thead>
-			<?/**<tr style="font-style: italic;">
-				<th style="border-bottom:1px solid #000" align="left">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">7:30+</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th nowrap style="border-bottom:1px solid #000" align="right">30 or less</th>
-				<th nowrap style="border-bottom:1px solid #000" align="right">1:10 - 1:20</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th nowrap style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="center">&nbsp;</th>
-
-				<th style="border-bottom:1px solid #000" align="center">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="center">&nbsp;</th>
-				<th style="border-bottom:1px solid #000" align="center">&nbsp;</th>
-			</tr>**/?>
-
 			<tbody><?
-			//
 
 			$stmicro = $stime * 1000;
 			$etmicro = $etime * 1000;
@@ -947,7 +889,6 @@ class RousterReport{
 					$act_total_time += $ttime;
 				}
 
-//echo nl2br(print_r($row,1));
 //				$activity_time = $row['agent']['daily_activity_time'];//($row['agent']['seconds_INCALL'] + $row['agent']['seconds_READY'] + $row['agent']['seconds_QUEUE'] );//+ $row['agent']['seconds_PAUSED']
 //				$act_total_time = $row['agent']['total_activity_time'];//($row['agent']['seconds_INCALL'] + $row['agent']['seconds_READY'] + $row['agent']['seconds_QUEUE'] + $row['agent']['seconds_PAUSED']);
 
@@ -1035,8 +976,6 @@ class RousterReport{
 
 				$running_t_max += $row['t_time_max'];
 
-//echo $row['paid_sale_cnt']." / ".($row['paid_time']/60);
-
 				//$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_cnt'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
 				$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_total'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
 
@@ -1049,8 +988,6 @@ class RousterReport{
 // 				echo 'Paid total: '.$row['paid_sale_total'].'<br />';
 // 				echo ($row['paid_time']/60).' vs '.($act_total_time/3600).'<br /><br />';
 				
-//print_r($row);
-//echo '<br /><br />';
 //				if($combine_users){
 //
 //					$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / (($row['t_time']/intval($row['agent']['agent_count']))/3600));
@@ -1065,16 +1002,11 @@ class RousterReport{
 				$running_total_paid_avg_per_hour += $paidcc_per_hour;
 				$running_total_worked_avg_per_hour += $paidcc_per_worked_hour;
 
-//floor($activity_time / 3600)
-
-
 				$running_total_bumps += $row['agent']['bump_count'];
 
 
 				$running_total_pos_bump_agent_amount += $row['agent']['positive_agent_amount_total'];
 				$running_total_pos_bump_verifier_amount += $row['agent']['positive_verifier_amount_total'];
-
-
 
 
 
@@ -1095,7 +1027,6 @@ class RousterReport{
 
 						echo number_format($row['call_cnt'])
 
-					//		number_format($row['t_call_count'])
 					?></td>
 					<?/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format(($row['sale_cnt']-$row['paid_sale_cnt']))?></td>*/?>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['paid_sale_cnt'])?></td>
@@ -1276,8 +1207,6 @@ class RousterReport{
 
 
 				?></tr><?
-
-
 
 				$tcount++;
 			}
