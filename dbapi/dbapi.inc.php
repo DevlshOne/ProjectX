@@ -136,6 +136,8 @@ class DBAPI {
     public $dialer_sales;
     
     public $form_builder;
+    
+    public $user_prefs;
 
 
     /**
@@ -368,6 +370,8 @@ class DBAPI {
 		include_once($_SESSION['site_config']['basedir']."dbapi/form_builder.db.php");
 		$this->form_builder = new FormBuilderAPI();
 
+		include_once($_SESSION['site_config']['basedir']."dbapi/user_preferences.db.php");
+		$this->user_prefs = new UserPreferencesAPI();
 	}
 
 
