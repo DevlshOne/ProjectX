@@ -21,14 +21,13 @@ class RousterReport{
 
 	var $pause_limit = 1800;
 
+	var $report_order_field = "";
+	var $report_order_dir = "DESC";
+
 	function RousterReport(){
 
-//		include_once("site_config.php");
-//		include_once("dbapi/dbapi.inc.php");
-//		include_once("db.inc.php");
-//		include_once('util/db_utils.php');
-		## REQURES DB CONNECTION!
 		$this->handlePOST();
+
 	}
 
 
@@ -41,7 +40,6 @@ class RousterReport{
 
 		if(!checkAccess('rouster_report')){
 
-
 			accessDenied("Rouster Report");
 
 			return;
@@ -53,8 +51,6 @@ class RousterReport{
 		}
 
 	}
-
-
 
 
 	function generateData($cluster_id, $stime, $etime, $call_group = null, $use_archive_by_default = false, $ignore_arr = null, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = null, $combine_users = false){
@@ -851,9 +847,6 @@ class RousterReport{
 			$running_total_pos_bump_verifier_amount = 0;
 
 
-
-
-
 			$running_paid_time = 0;
 			$running_t_max=0;
 			$running_t_time = 0;
@@ -866,21 +859,24 @@ class RousterReport{
 
 			$tcount = 0;
 			$x1=0;
+
+
+			## REPORT DATA ARRAY HANDLING
+			## THIS WAS CREATED SO WE CAN SORT THE DATA BEFORE IT GOES INTO THE DATATABLE
+			## USE $report_order_field FOR DEFAULT SORT FIELD AND $report_order_dir FOR DIRECTION (ASC/DESC)
+
+			## CREATE NEW ARRAY TO USE FOR REPORT DATA
+			$report_data = [];
+
+			## LOOP THROUGH GENERATED REPORT DATA AS USUAL BUT PUT DATATABLE VALUES INTO AN ARRAY
 			foreach($data as $row){
 
+				## RUN CALCULATIONS ON REPORT DATA BEFORE ADDING TO REPORT DATA ARRAY
 
-				if($combine_users){
-
-					$row['t_time'] = $row['t_time_max'];
-
-				}
-
-
-//				$row['agent']['total_activity_date_time_array'][date("m/d/Y", $row['time_started'])]
-//				$row['agent']['total_activity_date_daily_array'][date("m/d/Y", $row['time_started'])]
-
+				## ACTIVITY AND TOTAL ACTIVITY TIME
 				$activity_time = 0;
 				$act_total_time = 0;
+
 				foreach($row['agent']['total_activity_date_time_array'] as $tdate=>$ttime){
 					$activity_time += $ttime;
 				}
@@ -889,81 +885,100 @@ class RousterReport{
 					$act_total_time += $ttime;
 				}
 
-//				$activity_time = $row['agent']['daily_activity_time'];//($row['agent']['seconds_INCALL'] + $row['agent']['seconds_READY'] + $row['agent']['seconds_QUEUE'] );//+ $row['agent']['seconds_PAUSED']
-//				$act_total_time = $row['agent']['total_activity_time'];//($row['agent']['seconds_INCALL'] + $row['agent']['seconds_READY'] + $row['agent']['seconds_QUEUE'] + $row['agent']['seconds_PAUSED']);
+				## PAIDCC PER HOUR
+				//$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_cnt'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
+				$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_total'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
 
+				## PAIDCC PER WORKED HOUR
+				// I feel like we're going back and forth here, so I'm marking the request/date/time
+				// NICOLE: can we make it use activity for worked/hr (8/13/2019)
+				$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($activity_time/3600));
+				//$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($act_total_time/3600));
 
-				$running_total_total_time += $act_total_time;
-				$running_total_activity_time += $activity_time;
-
+				## TOTAL ACTIVITY TIME
 				$tmphours = floor($activity_time / 3600);
 				$tmpmin = floor( ($activity_time - ($tmphours * 3600)) / 60 );
 				$total_activity_time = $tmphours.':'.(($tmpmin <= 9)?'0'.$tmpmin:$tmpmin);
 
+				## TOTAL INCALL TIME
 				$incall_time = $row['agent']['seconds_INCALL'];
 				$tmphours = floor($incall_time / 3600);
 				$tmpmin = floor( ($incall_time - ($tmphours * 3600)) / 60 );
 				$total_incall_time = $tmphours.':'.(($tmpmin <= 9)?'0'.$tmpmin:$tmpmin);
 
-				$running_total_incall_time += $incall_time;
-
-				$running_t_dead += $row['t_dead'];
-
-
+				## TOTAL TIME
 				$tmphours = floor($act_total_time / 3600);
 				$tmpmin = floor( ($act_total_time - ($tmphours * 3600)) / 60 );
-// 				$tmphours = floor($row['agent']['total_activity_time'] / 3600);
-//				$tmpmin = floor( ($row['agent']['total_activity_time'] - ($tmphours * 3600)) / 60 );
-
-//				$tmphours = floor($row['t_time'] / 3600);
-//				$tmpmin = floor( ($row['t_time'] - ($tmphours * 3600)) / 60 );
 				$total_time = $tmphours.':'.(($tmpmin <= 9)?'0'.$tmpmin:$tmpmin);
 
+				## PAID TIME
+				$ptime = ($row['paid_time'] );
+				$tmpmin = floor($ptime/60);
+				$tmpsec = ($ptime%60);
+				$total_ptime = $tmpmin.':'.(($tmpsec < 10)?'0'.$tmpsec:$tmpsec);
 
+				## TOTAL PAUSE TIME
 				$tmpmin = floor($row['t_pause']/60);
 				$tmpsec = ($row['t_pause']%60);
 				$total_pause = $tmpmin.':'.(($tmpsec < 10)?'0'.$tmpsec:$tmpsec);
 
-
-				// GOTTA AVG THE TALK TIMES, NOT ADD
+				## TOTAL TALK TIME
 				$tmptalktime = intval($row['t_talk']);
+				$talktimeavg = ($row['call_cnt'] <= 0)?0:($tmptalktime / intval($row['call_cnt']));
+				$total_talk = renderTimeFormatted($talktimeavg);
+
+				## TOTAL DEAD TIME
+				$total_dead = renderTimeFormatted($row['t_dead']);
+
+				## ADD AGENT REPORT DATA TO REPORT DATA ARRAY
+				$report_data[$x1]['agent_username'] 			= $row['username'];
+				$report_data[$x1]['call_cnt'] 					= $row['call_cnt'];
+				$report_data[$x1]['paid_sale_cnt'] 				= $row['paid_sale_cnt'];
+				$report_data[$x1]['paidcc_per_hour'] 			= $paidcc_per_hour;
+				$report_data[$x1]['paidcc_per_worked_hour'] 	= $paidcc_per_worked_hour;
+				$report_data[$x1]['paid_sale_total'] 			= $row['paid_sale_total'];
+				$report_data[$x1]['total_activity_time'] 		= $total_activity_time;
+				$report_data[$x1]['total_incall_time'] 			= $total_incall_time;
+				$report_data[$x1]['total_time'] 				= $total_time;
+				$report_data[$x1]['total_ptime'] 				= $total_ptime;
+				$report_data[$x1]['total_pause'] 				= $total_pause;
+				$report_data[$x1]['total_talk'] 				= $total_talk;
+				$report_data[$x1]['total_dead'] 				= $total_dead;
+				$report_data[$x1]['agent_bump_amount'] 			= $row['agent']['bump_amount'];
+				$report_data[$x1]['agent_bump_percent'] 		= $row['agent']['bump_percent'];
+				$report_data[$x1]['agent_num_of_bumps'] 		= $row['agent']['bump_count'];
+				$report_data[$x1]['agent_pos_bump_amount'] 		= $row['agent']['pos_bump_amount'];
+				$report_data[$x1]['agent_pos_bump_percent'] 	= $row['agent']['pos_bump_percent'];
+
+
+				if($combine_users){
+
+					$row['t_time'] = $row['t_time_max'];
+
+				}
+
+				$running_total_total_time += $act_total_time;
+
+				$running_total_activity_time += $activity_time;
+
+				$running_total_incall_time += $incall_time;
+
+				$running_t_dead += $row['t_dead'];
 
 				$running_total_talk_time += $tmptalktime;
 
-
-				//$talktimeavg = $tmptalktime / intval($row['t_call_count']);
-				$talktimeavg = ($row['call_cnt'] <= 0)?0:($tmptalktime / intval($row['call_cnt']));
-
-				$total_talk = renderTimeFormatted($talktimeavg);
-
-				$total_dead = renderTimeFormatted($row['t_dead']);
-
-
-				//$close_percent = number_format( round( (($row['sale_cnt']) / ($row['t_call_count'])) * 100, 2), 2);
 				$close_percent = ($row['call_cnt'] <= 0)?0: number_format( round( (($row['sale_cnt']) / ($row['call_cnt'])) * 100, 2), 2);
 
 				$adjusted_close_percent = (($row['call_cnt']-$row['hangup_cnt']) <= 0)?0:number_format( round( (($row['sale_cnt']) / ($row['call_cnt']-$row['hangup_cnt'])) * 100, 2), 2);
 
-
 				$hangup_percent = ($row['call_cnt'] <= 0)?0:number_format( round( (($row['hangup_cnt']) / ($row['call_cnt'])) * 100, 2), 2);
 
-				// DISPO LOGGGGGGG
 				$reviewcnt = $row['reviewcnt'];
-//				list($reviewcnt) = $_SESSION['dbapi']->queryROW("SELECT COUNT(`id`) FROM `dispo_log` ".
-//										" WHERE `agent_username`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$row['username'])."' ".
-//										" AND `micro_time` BETWEEN '$stmicro' AND '$etmicro' ".
-//										" AND `dispo` = 'REVIEW' ".
-//										" AND `result`='success' ");
-
-
 
 				$running_total_calls += $row['call_cnt'];
 				$running_total_sales += ($row['sale_cnt'] );
 				$running_total_paid_sales += $row['paid_sale_cnt'];
 				$running_total_reviews += $reviewcnt;
-
-//				$running_total_hangups += $row['hangup_cnt'];
-//				$running_total_declines += $row['decline_cnt'];
 
 				$running_paid_time += $row['paid_time'];
 
@@ -976,28 +991,6 @@ class RousterReport{
 
 				$running_t_max += $row['t_time_max'];
 
-				//$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_cnt'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
-				$paidcc_per_hour = ($row['paid_time'] <= 0)?0:($row['paid_sale_total'] / ($row['paid_time']/60));//($row['t_time'] / 3600);
-
-				// I feel like we're going back and forth here, so I'm marking the request/date/time
-				// NICOLE: can we make it use activity for worked/hr (8/13/2019)
-				$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($activity_time/3600));
-				//$paidcc_per_worked_hour = ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($act_total_time/3600));
-				
-// 				echo $paidcc_per_hour.' vs '.$paidcc_per_worked_hour."<br />";
-// 				echo 'Paid total: '.$row['paid_sale_total'].'<br />';
-// 				echo ($row['paid_time']/60).' vs '.($act_total_time/3600).'<br /><br />';
-				
-//				if($combine_users){
-//
-//					$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / (($row['t_time']/intval($row['agent']['agent_count']))/3600));
-//
-//				}else{
-//
-//					$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / ($row['t_time']/3600));
-//
-//				}
-
 
 				$running_total_paid_avg_per_hour += $paidcc_per_hour;
 				$running_total_worked_avg_per_hour += $paidcc_per_worked_hour;
@@ -1009,6 +1002,57 @@ class RousterReport{
 				$running_total_pos_bump_verifier_amount += $row['agent']['positive_verifier_amount_total'];
 
 
+				$tcount++;
+				$x1++;
+
+			}
+
+
+
+
+			## OLD COMMENTED OUT CODE JUST INCASE WE MAY NEED IT LATER
+			## THESE WERE IN THE FORLOOP ABOVE FOR VARIOUS ROW CALCULATIONS
+
+			//				$row['agent']['total_activity_date_time_array'][date("m/d/Y", $row['time_started'])]
+			//				$row['agent']['total_activity_date_daily_array'][date("m/d/Y", $row['time_started'])]
+			
+			// 				$tmphours = floor($row['agent']['total_activity_time'] / 3600);
+			//				$tmpmin = floor( ($row['agent']['total_activity_time'] - ($tmphours * 3600)) / 60 );
+
+			//				$tmphours = floor($row['t_time'] / 3600);
+			//				$tmpmin = floor( ($row['t_time'] - ($tmphours * 3600)) / 60 );
+
+			//				$close_percent = number_format( round( (($row['sale_cnt']) / ($row['t_call_count'])) * 100, 2), 2);
+
+			//				list($reviewcnt) = $_SESSION['dbapi']->queryROW("SELECT COUNT(`id`) FROM `dispo_log` ".
+			//										" WHERE `agent_username`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$row['username'])."' ".
+			//										" AND `micro_time` BETWEEN '$stmicro' AND '$etmicro' ".
+			//										" AND `dispo` = 'REVIEW' ".
+			//										" AND `result`='success' ");
+			
+			//				$running_total_hangups += $row['hangup_cnt'];
+			//				$running_total_declines += $row['decline_cnt'];
+
+			// 				echo $paidcc_per_hour.' vs '.$paidcc_per_worked_hour."<br />";
+			// 				echo 'Paid total: '.$row['paid_sale_total'].'<br />';
+			// 				echo ($row['paid_time']/60).' vs '.($act_total_time/3600).'<br /><br />';
+				
+			//				if($combine_users){
+			//
+			//					$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / (($row['t_time']/intval($row['agent']['agent_count']))/3600));
+			//
+			//				}else{
+			//
+			//					$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / ($row['t_time']/3600));
+			//
+			//				}
+
+
+			## LOOP THROUGH REPORT DATA ARRAY AND OUTPUT DATA FOR DATATABLE
+			## NO NEED TO DO ANY CALCULATIONS, WE DID THOSE ABOVE!
+
+			foreach($report_data as $report_data_row){
+
 
 				?><tr><?
 
@@ -1017,92 +1061,85 @@ class RousterReport{
 
 							?><td style="border-right:1px dotted #CCC;padding-right:3px">
 
-								<a href="#" onclick="addUserToIgnore('<?=htmlentities(strtoupper($row['username']))?>');return false;">[Ignore]</a>
+								<a href="#" onclick="addUserToIgnore('<?=htmlentities(strtoupper($report_data_row['agent_username']))?>');return false;">[Ignore]</a>
 
 							</td><?
 						}
 
-					?><td style="border-right:1px dotted #CCC;padding-right:3px"><?=strtoupper($row['username'])?></td>
+					?><td style="border-right:1px dotted #CCC;padding-right:3px"><?=strtoupper($report_data_row['agent_username'])?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-						echo number_format($row['call_cnt'])
+						echo number_format($report_data_row['call_cnt'])
 
 					?></td>
 					<?/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format(($row['sale_cnt']-$row['paid_sale_cnt']))?></td>*/?>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['paid_sale_cnt'])?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['paid_sale_cnt'])?></td>
 					<?/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($percent_paidcc_calls)?> %</td>*/?>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($paidcc_per_hour,2)?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paidcc_per_hour'],2)?></td>
 
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right" >
-						$<?=number_format($paidcc_per_worked_hour,2)?>
+						$<?=number_format($report_data_row['paidcc_per_worked_hour'],2)?>
 					</td>
 
 
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($row['paid_sale_total'],2)?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paid_sale_total'],2)?></td>
 
-<?/**
+			<?/**
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['hangup_cnt'])?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['decline_cnt'])?></td>
-*/?>
+			*/?>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-						echo $total_activity_time;
+						echo $report_data_row['total_activity_time'];
 
 					?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-						echo $total_incall_time;
+						echo $report_data_row['total_incall_time'];
 
 					?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-//						if($row['t_time'] >= $this->time_limit){
+			//						if($row['t_time'] >= $this->time_limit){
 
-							echo '<span style="background-color:transparent">'.$total_time.'</span>';
-//						}else{
-//							echo '<span style="background-color:yellow">'.$total_time.'</span>';
-//
-//
-//						}
+							echo '<span style="background-color:transparent">'.$report_data_row['total_time'].'</span>';
+			//						}else{
+			//							echo '<span style="background-color:yellow">'.$total_time.'</span>';
+			//
+			//
+			//						}
 					?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-						// PAID TIME
-						$ptime = ($row['paid_time'] );
-						$tmpmin = floor($ptime/60);
-						$tmpsec = ($ptime%60);
-						$total_ptime = $tmpmin.':'.(($tmpsec < 10)?'0'.$tmpsec:$tmpsec);
-						echo $total_ptime;
-
+						echo $report_data_row['total_ptime'];
 
 					?></td>
 
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-//						if($row['t_pause'] <= $this->pause_limit){
+			//						if($row['t_pause'] <= $this->pause_limit){
 
-							echo '<span style="background-color:transparent">'.$total_pause.'</span>';
-//						}else{
+							echo '<span style="background-color:transparent">'.$report_data_row['total_pause'].'</span>';
+			//						}else{
 
-//							echo '<span style="background-color:yellow">'.$total_pause.'</span>';
-//						}
+			//							echo '<span style="background-color:yellow">'.$total_pause.'</span>';
+			//						}
 
 
 
 					?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
-						$talktimeavg = floor($talktimeavg);
 
 						//echo $talktimeavg.' vs '.$this->talk_lower_limit.' ';
 
 
-//						if($talktimeavg >= $this->talk_lower_limit && $talktimeavg <= $this->talk_upper_limit){
+			//						if($talktimeavg >= $this->talk_lower_limit && $talktimeavg <= $this->talk_upper_limit){
 
-							echo '<span style="background-color:transparent">'.$total_talk.'</span>';
-//						}else{
+							echo '<span style="background-color:transparent">'.$report_data_row['total_talk'].'</span>';
+			//						}else{
 
-//							echo '<span style="background-color:yellow">'.$total_talk.'</span>';
-//						}
+			//							echo '<span style="background-color:yellow">'.$total_talk.'</span>';
+			//						}
 
 
 
@@ -1110,12 +1147,12 @@ class RousterReport{
 					?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-//						if($row['t_dead'] > $this->dead_time_limit){
-//
-//							echo '<span style="background-color:yellow">'.$total_dead.'</span>';
-//						}else{
-							echo '<span style="background-color:transparent">'.$total_dead.'</span>';
-//						}
+			//						if($row['t_dead'] > $this->dead_time_limit){
+			//
+			//							echo '<span style="background-color:yellow">'.$total_dead.'</span>';
+			//						}else{
+							echo '<span style="background-color:transparent">'.$report_data_row['total_dead'].'</span>';
+			//						}
 
 
 
@@ -1125,25 +1162,25 @@ class RousterReport{
 					<?/**
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-//						if(intval($close_percent) >= $this->close_percent_limit){
+			//						if(intval($close_percent) >= $this->close_percent_limit){
 
 							echo '<span style="background-color:transparent">'.$close_percent.'%</span>';
-//						}else{
+			//						}else{
 
-//							echo '<span style="background-color:yellow">'.$close_percent.'%</span>';
+			//							echo '<span style="background-color:yellow">'.$close_percent.'%</span>';
 
-//						}
+			//						}
 
 					?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
-//						if(intval($adjusted_close_percent) >= $this->close_percent_limit){
+			//						if(intval($adjusted_close_percent) >= $this->close_percent_limit){
 
 							echo '<span style="background-color:transparent">'.$adjusted_close_percent.'%</span>';
 
-//						}else{
-//							echo '<span style="background-color:yellow">'.$adjusted_close_percent.'%</span>';
-//						}
+			//						}else{
+			//							echo '<span style="background-color:yellow">'.$adjusted_close_percent.'%</span>';
+			//						}
 
 					?></td>
 
@@ -1168,48 +1205,53 @@ class RousterReport{
 
 					<td align="right"><?
 
-						echo '$'.number_format($row['agent']['bump_amount']);
+						echo '$'.number_format($report_data_row['agent_bump_amount']);
 
 					?></td>
 
 
 					<td align="right"><?
 
-						echo number_format($row['agent']['bump_percent'],2).'%';
+						echo number_format($report_data_row['agent_bump_percent'],2).'%';
 
 					?></td>
 					<td align="right"><?
 
-						echo number_format($row['agent']['bump_count']);
+						echo number_format($report_data_row['agent_bump_count']);
 
 					?></td>
 
 					<td align="right"><?
 
-						echo '$'.number_format($row['agent']['pos_bump_amount']);
+						echo '$'.number_format($report_data_row['agent_pos_bump_amount']);
 
 					?></td>
 
 
 					<td align="right"><?
 
-						echo number_format($row['agent']['pos_bump_percent'],2).'%';
+						echo number_format($report_data_row['agent_pos_bump_percent'],2).'%';
 
 					?></td><?
 
 
-/*
+			/*
 			$agent_array[$username]['positive_agent_amount_total'] = $positive_agent_amount_total;
 			$agent_array[$username]['positive_verifier_amount_total'] = $positive_verifier_amount_total;
 			$agent_array[$username]['pos_bump_amount'] = $positive_verifier_amount_total - $positive_agent_amount_total;
 			$agent_array[$username]['pos_bump_percent'] = ($positive_agent_amount_total <= 0)?0:round(($positive_verifier_amount_total / $positive_agent_amount_total) * 100, 2);
-*/
+			*/
 
 
 				?></tr><?
 
-				$tcount++;
+				##$tcount++;
 			}
+
+
+
+
+
 
 			?></tbody><?
 
