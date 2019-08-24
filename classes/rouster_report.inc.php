@@ -21,7 +21,7 @@ class RousterReport{
 
 	var $pause_limit = 1800;
 
-	var $report_order_field = "";
+	var $report_order_field = 'paidcc_per_hour';
 	var $report_order_dir = "DESC";
 
 	function RousterReport(){
@@ -912,7 +912,7 @@ class RousterReport{
 				$total_time = $tmphours.':'.(($tmpmin <= 9)?'0'.$tmpmin:$tmpmin);
 
 				## PAID TIME
-				$ptime = ($row['paid_time'] );
+				$ptime = ($row['paid_time']);
 				$tmpmin = floor($ptime/60);
 				$tmpsec = ($ptime%60);
 				$total_ptime = $tmpmin.':'.(($tmpsec < 10)?'0'.$tmpsec:$tmpsec);
@@ -949,6 +949,34 @@ class RousterReport{
 				$report_data[$x1]['agent_num_of_bumps'] 		= $row['agent']['bump_count'];
 				$report_data[$x1]['agent_pos_bump_amount'] 		= $row['agent']['pos_bump_amount'];
 				$report_data[$x1]['agent_pos_bump_percent'] 	= $row['agent']['pos_bump_percent'];
+
+
+				## REPORT DATA ARRAY SORT HANDLING
+				## TAKE $report_order_field AND $report_order_dir AS OPTIONS TO SORT THE REPORT DATA ARRAY
+
+				switch($this->report_order_dir) {
+
+					default:
+					case "DESC":
+
+						usort($report_data, function ($item1, $item2) {
+							return $item2[$this->report_order_dir] <=> $item1[$this->report_order_dir];
+						});
+						print("<pre>".print_r($report_data,true)."</pre>");
+						exit;
+						break;
+
+					case "ASC":
+
+						usort($report_data, function ($item1, $item2) {
+							return $item1[$this->report_order_dir] <=> $item2[$this->report_order_dir];
+						});
+						break;
+
+				}
+
+
+
 
 
 				if($combine_users){
