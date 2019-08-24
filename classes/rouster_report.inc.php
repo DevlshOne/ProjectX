@@ -962,9 +962,6 @@ class RousterReport{
 						usort($report_data, function ($item1, $item2) {
 							return $item2[$this->report_order_dir] <=> $item1[$this->report_order_dir];
 						});
-						print("<pre>".print_r($report_data,true)."</pre>");
-						exit;
-						break;
 
 					case "ASC":
 
