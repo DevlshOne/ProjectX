@@ -963,6 +963,9 @@ class RousterReport{
 							return $item2[$this->report_order_dir] <=> $item1[$this->report_order_dir];
 						});
 
+						print("<pre>".print_r($report_data,true)."</pre>");
+						exit;
+
 					case "ASC":
 
 						usort($report_data, function ($item1, $item2) {
@@ -1072,119 +1075,43 @@ class RousterReport{
 			//
 			//				}
 
-
-			## LOOP THROUGH REPORT DATA ARRAY AND OUTPUT DATA FOR DATATABLE
-			## NO NEED TO DO ANY CALCULATIONS, WE DID THOSE ABOVE!
-
-			foreach($report_data as $report_data_row){
-
-
-				?><tr><?
-
-						// CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
-						if($_SESSION['user']['priv'] > 3){
-
-							?><td style="border-right:1px dotted #CCC;padding-right:3px">
-
-								<a href="#" onclick="addUserToIgnore('<?=htmlentities(strtoupper($report_data_row['agent_username']))?>');return false;">[Ignore]</a>
-
-							</td><?
-						}
-
-					?><td style="border-right:1px dotted #CCC;padding-right:3px"><?=strtoupper($report_data_row['agent_username'])?></td>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
-
-						echo number_format($report_data_row['call_cnt'])
-
-					?></td>
-					<?/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format(($row['sale_cnt']-$row['paid_sale_cnt']))?></td>*/?>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['paid_sale_cnt'])?></td>
-					<?/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($percent_paidcc_calls)?> %</td>*/?>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paidcc_per_hour'],2)?></td>
-
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right" >
-						$<?=number_format($report_data_row['paidcc_per_worked_hour'],2)?>
-					</td>
-
-
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paid_sale_total'],2)?></td>
-
-			<?/**
+			/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format(($row['sale_cnt']-$row['paid_sale_cnt']))?></td>*/
+			/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($percent_paidcc_calls)?> %</td>*/
+			/**
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['hangup_cnt'])?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['decline_cnt'])?></td>
-			*/?>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
-
-						echo $report_data_row['total_activity_time'];
-
-					?></td>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
-
-						echo $report_data_row['total_incall_time'];
-
-					?></td>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+			*/
 
 			//						if($row['t_time'] >= $this->time_limit){
-
-							echo '<span style="background-color:transparent">'.$report_data_row['total_time'].'</span>';
 			//						}else{
 			//							echo '<span style="background-color:yellow">'.$total_time.'</span>';
 			//
 			//
 			//						}
-					?></td>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
-
-						echo $report_data_row['total_ptime'];
-
-					?></td>
-
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
 			//						if($row['t_pause'] <= $this->pause_limit){
-
-							echo '<span style="background-color:transparent">'.$report_data_row['total_pause'].'</span>';
 			//						}else{
 
 			//							echo '<span style="background-color:yellow">'.$total_pause.'</span>';
-			//						}
+			//						}				
+
+			//echo $talktimeavg.' vs '.$this->talk_lower_limit.' ';
 
 
-
-					?></td>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
-
-						//echo $talktimeavg.' vs '.$this->talk_lower_limit.' ';
-
-
-			//						if($talktimeavg >= $this->talk_lower_limit && $talktimeavg <= $this->talk_upper_limit){
-
-							echo '<span style="background-color:transparent">'.$report_data_row['total_talk'].'</span>';
+			//						if($talktimeavg >= $this->talk_lower_limit && $talktimeavg <= $this->talk_upper_limit){	
+				
 			//						}else{
 
 			//							echo '<span style="background-color:yellow">'.$total_talk.'</span>';
-			//						}
-
-
-
-
-					?></td>
-					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+			//						}				
 
 			//						if($row['t_dead'] > $this->dead_time_limit){
 			//
 			//							echo '<span style="background-color:yellow">'.$total_dead.'</span>';
 			//						}else{
-							echo '<span style="background-color:transparent">'.$report_data_row['total_dead'].'</span>';
-			//						}
-
-
-
-
-					?></td>
-
-					<?/**
+			//						}	
+			
+			/**
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
 			//						if(intval($close_percent) >= $this->close_percent_limit){
@@ -1225,16 +1152,69 @@ class RousterReport{
 						echo number_format($reviewcnt);
 
 					?></td>
-					**/?>
+			**/
+
+			/*
+			$agent_array[$username]['positive_agent_amount_total'] = $positive_agent_amount_total;
+			$agent_array[$username]['positive_verifier_amount_total'] = $positive_verifier_amount_total;
+			$agent_array[$username]['pos_bump_amount'] = $positive_verifier_amount_total - $positive_agent_amount_total;
+			$agent_array[$username]['pos_bump_percent'] = ($positive_agent_amount_total <= 0)?0:round(($positive_verifier_amount_total / $positive_agent_amount_total) * 100, 2);
+			*/
+
+			##$tcount++;
+
+			## LOOP THROUGH REPORT DATA ARRAY AND OUTPUT DATA FOR DATATABLE
+			## NO NEED TO DO ANY CALCULATIONS, WE DID THOSE ABOVE!
+
+			foreach($report_data as $report_data_row){
 
 
+				?><tr><?
+
+						// CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
+						if($_SESSION['user']['priv'] > 3){
+
+							?><td style="border-right:1px dotted #CCC;padding-right:3px">
+
+								<a href="#" onclick="addUserToIgnore('<?=htmlentities(strtoupper($report_data_row['agent_username']))?>');return false;">[Ignore]</a>
+
+							</td><?
+						}
+
+					?><td style="border-right:1px dotted #CCC;padding-right:3px"><?=strtoupper($report_data_row['agent_username'])?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['call_cnt'])?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['paid_sale_cnt'])?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paidcc_per_hour'],2)?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paidcc_per_worked_hour'],2)?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paid_sale_total'],2)?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=$report_data_row['total_activity_time']?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=$report_data_row['total_incall_time']?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+
+							echo '<span style="background-color:transparent">'.$report_data_row['total_time'].'</span>';
+
+					?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=$report_data_row['total_ptime']?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+
+							echo '<span style="background-color:transparent">'.$report_data_row['total_pause'].'</span>';
+
+					?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+
+							echo '<span style="background-color:transparent">'.$report_data_row['total_talk'].'</span>';
+
+					?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+
+							echo '<span style="background-color:transparent">'.$report_data_row['total_dead'].'</span>';
+
+					?></td>
 					<td align="right"><?
 
 						echo '$'.number_format($report_data_row['agent_bump_amount']);
 
 					?></td>
-
-
 					<td align="right"><?
 
 						echo number_format($report_data_row['agent_bump_percent'],2).'%';
@@ -1251,30 +1231,15 @@ class RousterReport{
 						echo '$'.number_format($report_data_row['agent_pos_bump_amount']);
 
 					?></td>
-
-
 					<td align="right"><?
 
 						echo number_format($report_data_row['agent_pos_bump_percent'],2).'%';
 
-					?></td><?
+					?></td>
+				</tr><?
 
 
-			/*
-			$agent_array[$username]['positive_agent_amount_total'] = $positive_agent_amount_total;
-			$agent_array[$username]['positive_verifier_amount_total'] = $positive_verifier_amount_total;
-			$agent_array[$username]['pos_bump_amount'] = $positive_verifier_amount_total - $positive_agent_amount_total;
-			$agent_array[$username]['pos_bump_percent'] = ($positive_agent_amount_total <= 0)?0:round(($positive_verifier_amount_total / $positive_agent_amount_total) * 100, 2);
-			*/
-
-
-				?></tr><?
-
-				##$tcount++;
 			}
-
-
-
 
 
 
