@@ -74,6 +74,8 @@ class DBAPI {
 	// MASTER SWITCH TO DISABLE/ENABLE READ SLAVES. (The array of connections must be correctly specified and working, or this will set itself back to FALSE for the each page load)
 	public $use_read_slaves = true;
 	
+	public $max_slave_behind_time = 60; // IN SECONDS, HOW FAR BEHIND THE MASTER A SLAVE CAN BE, BEFORE ITS SKIPPED IN THE POOL
+	
 	
 	// TURNING THIS ON, WILL OUTPUT HTML COMMENTS CONTAINING INFO ABOUT WHICH DB CONNECTIONS WERE USED.
 	// BE CAREFUL! THIS WILL OUTPUT THE HTML COMMENTS AS THE FIRST LINES OF CVS EXPORTS AND API REPLIES TOO!
@@ -101,6 +103,8 @@ class DBAPI {
 	public $page_query_count = 0;
 	
 	public $read_slave_query_count = 0;
+	
+	public $read_slave_behind_master_time = 0;
 	
 	// API OBJECTS
 	public $accounts;
@@ -136,6 +140,8 @@ class DBAPI {
     public $dialer_sales;
     
     public $form_builder;
+    
+    public $user_prefs;
 
 
     /**
@@ -368,6 +374,8 @@ class DBAPI {
 		include_once($_SESSION['site_config']['basedir']."dbapi/form_builder.db.php");
 		$this->form_builder = new FormBuilderAPI();
 
+		include_once($_SESSION['site_config']['basedir']."dbapi/user_preferences.db.php");
+		$this->user_prefs = new UserPreferencesAPI();
 	}
 
 
@@ -517,32 +525,67 @@ class DBAPI {
 				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqllogin'],
 				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlpass'],
 				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqldb']
-				) or $failover=true;
-				//
+		) or $failover=true;
+		
+		
+		
+
+		if($failover || !$this->checkSlaveStatus() ){
+			
+			
+			if($this->debug_db_connection){
 				if($failover){
-					$_SESSION['db_ro_balance_index']++;
-					
-					$_SESSION['pxdb_ro_failcount']++;
-					
-					// ATTEMPT TO CONNECT TO THE OTHER DB!
-					return $this->connectReadSlave();
+					echo "<!-- READ SLAVE connection failed to ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
+				}else{
+					echo "<!-- READ SLAVE skipped - too far behind master (".$this->read_slave_behind_master_time." seconds is greater than limit of ".$this->max_slave_behind_time."): ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
 				}
-				
-				
-				$this->db_ro_ip = gethostbyname( $_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']);
-				
-				if($this->debug_db_connection)echo "<!-- Successfully connected to READ SLAVE : ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
-				
-				//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
-				
-				
-				$_SESSION['db_ro_balance_index']++;
-				$_SESSION['pxdb_ro_failcount'] = 0;
+			}
+			
+			
+			$_SESSION['db_ro_balance_index']++;
+			
+			$_SESSION['pxdb_ro_failcount']++;
+			
+			// ATTEMPT TO CONNECT TO THE OTHER DB!
+			return $this->connectReadSlave();
+		}
+		
+		
+		$this->db_ro_ip = gethostbyname( $_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']);
+		
+		if($this->debug_db_connection)echo "<!-- Successfully connected to READ SLAVE (".$this->read_slave_behind_master_time." sec. behind master): ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
+		
+		//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
+		
+		
+		$_SESSION['db_ro_balance_index']++;
+		$_SESSION['pxdb_ro_failcount'] = 0;
 				
 	}
 	
 	
-	
+	function checkSlaveStatus(){
+		
+		$status = $this->ROquerySQL("SHOW SLAVE STATUS");
+		
+// 		print_r($status);
+		
+		$secbehind = intval($status['Seconds_Behind_Master']);
+		
+		$this->read_slave_behind_master_time = $secbehind;
+		
+		//echo $secbehind." vs ".$this->max_slave_behind_time;
+		
+		if($secbehind > $this->max_slave_behind_time){
+			
+			return false;
+		}else{
+			
+			
+			return true;
+		}
+		
+	}
 	
 	
 	/**

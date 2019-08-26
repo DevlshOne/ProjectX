@@ -937,7 +937,7 @@ class Scripts{
 					</th>
 				</tr>
 				<tr>
-					<th align="left">Voice File Description</th>
+					<th align="left">New Voice File's Description</th>
 					<td colspan="2">
 					<textarea name="file_description" rows="4" cols="35"></textarea>
 					</td>
