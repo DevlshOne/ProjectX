@@ -951,34 +951,6 @@ class RousterReport{
 				$report_data[$x1]['agent_pos_bump_percent'] 	= $row['agent']['pos_bump_percent'];
 
 
-				## REPORT DATA ARRAY SORT HANDLING
-				## TAKE $report_order_field AND $report_order_dir AS OPTIONS TO SORT THE REPORT DATA ARRAY
-
-				switch($this->report_order_dir) {
-
-					default:
-					case "DESC":
-
-						usort($report_data, function ($item1, $item2) {
-							return $item2[$this->report_order_dir] <=> $item1[$this->report_order_dir];
-						});
-
-						print("<pre>".print_r($report_data,true)."</pre>");
-						exit;
-
-					case "ASC":
-
-						usort($report_data, function ($item1, $item2) {
-							return $item1[$this->report_order_dir] <=> $item2[$this->report_order_dir];
-						});
-						break;
-
-				}
-
-
-
-
-
 				if($combine_users){
 
 					$row['t_time'] = $row['t_time_max'];
@@ -1036,6 +1008,30 @@ class RousterReport{
 			}
 
 
+			## REPORT DATA ARRAY SORT HANDLING
+			## TAKE $report_order_field AND $report_order_dir AS OPTIONS TO SORT THE REPORT DATA ARRAY
+
+			switch($this->report_order_dir) {
+
+				default:
+				case "DESC":
+
+					usort($report_data, function ($item1, $item2) {
+						return $item2[$this->report_order_dir] <=> $item1[$this->report_order_dir];
+					});
+
+					print("<pre>".print_r($report_data,true)."</pre>");
+					break;
+					exit;
+
+				case "ASC":
+
+					usort($report_data, function ($item1, $item2) {
+						return $item1[$this->report_order_dir] <=> $item2[$this->report_order_dir];
+					});
+					break;
+
+			}
 
 
 			## OLD COMMENTED OUT CODE JUST INCASE WE MAY NEED IT LATER
