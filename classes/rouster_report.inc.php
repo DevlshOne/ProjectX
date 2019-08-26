@@ -1017,7 +1017,7 @@ class RousterReport{
 				case "DESC":
 
 					usort($report_data, function ($item1, $item2) {
-						return $item2[$this->report_order_dir] <=> $item1[$this->report_order_dir];
+						return $item2[$this->report_order_field] <=> $item1[$this->report_order_field];
 					});
 
 					print("<pre>".print_r($report_data,true)."</pre>");
@@ -1027,7 +1027,7 @@ class RousterReport{
 				case "ASC":
 
 					usort($report_data, function ($item1, $item2) {
-						return $item1[$this->report_order_dir] <=> $item2[$this->report_order_dir];
+						return $item1[$this->report_order_field] <=> $item2[$this->report_order_field];
 					});
 					break;
 
