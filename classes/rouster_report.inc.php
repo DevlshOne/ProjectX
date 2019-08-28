@@ -1011,17 +1011,23 @@ class RousterReport{
 			## REPORT DATA ARRAY SORT HANDLING
 			## TAKE $report_order_field AND $report_order_dir AS OPTIONS TO SORT THE REPORT DATA ARRAY
 
+			# SORT BASED ON CLASS VARIABLE FOR ORDER DIRECTION
 			switch($this->report_order_dir) {
 
+				# DEFAULT TO DESCENDING (LARGE TO SMALL)
 				default:
 				case "DESC":
 
+					# RUN THE SORT WITH CLASS VARIABLE FOR ARRAY ORDER FIELD
 					usort($report_data, function ($item1, $item2) {
 						return $item2[$this->report_order_field] <=> $item1[$this->report_order_field];
 					});
+					break;
 
+				# ASCENDING (SMALL TO LARGE)
 				case "ASC":
 
+					# RUN THE SORT WITH CLASS VARIABLE FOR ARRAY ORDER FIELD
 					usort($report_data, function ($item1, $item2) {
 						return $item1[$this->report_order_field] <=> $item2[$this->report_order_field];
 					});
