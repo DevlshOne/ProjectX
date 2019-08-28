@@ -1020,10 +1020,6 @@ class RousterReport{
 						return $item2[$this->report_order_field] <=> $item1[$this->report_order_field];
 					});
 
-					print("<pre>".print_r($report_data,true)."</pre>");
-					break;
-					exit;
-
 				case "ASC":
 
 					usort($report_data, function ($item1, $item2) {
@@ -1070,6 +1066,9 @@ class RousterReport{
 			//					$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / ($row['t_time']/3600));
 			//
 			//				}
+
+			## OLD COMMENTED OUT CODE JUST INCASE WE MAY NEED IT LATER
+			## THESE WERE IN THE TABLE BELOW FOR DIFFERENT COLUMNS/OUTPUTS
 
 			/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format(($row['sale_cnt']-$row['paid_sale_cnt']))?></td>*/
 			/*<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($percent_paidcc_calls)?> %</td>*/
