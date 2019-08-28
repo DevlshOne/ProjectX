@@ -946,7 +946,7 @@ class RousterReport{
 				$report_data[$x1]['total_dead'] 				= $total_dead;
 				$report_data[$x1]['agent_bump_amount'] 			= $row['agent']['bump_amount'];
 				$report_data[$x1]['agent_bump_percent'] 		= $row['agent']['bump_percent'];
-				$report_data[$x1]['agent_num_of_bumps'] 		= $row['agent']['bump_count'];
+				$report_data[$x1]['agent_bump_count'] 			= $row['agent']['bump_count'];
 				$report_data[$x1]['agent_pos_bump_amount'] 		= $row['agent']['pos_bump_amount'];
 				$report_data[$x1]['agent_pos_bump_percent'] 	= $row['agent']['pos_bump_percent'];
 
