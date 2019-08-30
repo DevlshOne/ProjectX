@@ -809,17 +809,22 @@ class DBAPI {
 	function queryROWS($cmd){ 	return $this->query($cmd,5);}	# Returns the number of rows in a result set
 	function fetchROW($cmd)	{ 	return $this->query($cmd,6);}	# Returns an associative array that corresponds to the fetched row, or FALSE if there are no more rows.
 	
+	public function fetchAllAssoc($cmd) {
+		return $this->query($cmd, 8);
+		# Returns all results as an associative array
+	}
+	
 	function ROqueryROW($cmd)	{	return $this->ROQuery($cmd,2);}	# Returns an array of 1 result
 	function ROqueryOBJ($cmd)	{	return $this->ROQuery($cmd,3);}	# Returns an object of first result
 	function ROquerySQL($cmd)	{	return $this->ROQuery($cmd,4);}	# Returns as associative-array(hash) of 1 result
 	function ROqueryROWS($cmd)	{ 	return $this->ROQuery($cmd,5);}	# Returns the number of rows in a result set
 	function ROfetchROW($cmd)	{ 	return $this->ROQuery($cmd,6);}	# Returns an associative array that corresponds to the fetched row, or FALSE if there are no more rows.
 	
-	
-	public function fetchAllAssoc($cmd) {
-		return $this->query($cmd, 8);
+	public function ROfetchAllAssoc($cmd) {
+		return $this->ROquery($cmd, 8);
 		# Returns all results as an associative array
 	}
+
 	
 	/**
 	 * Runs READ ONLY queries against the read slaves, mostly for reports, to spread out the load

@@ -55,6 +55,23 @@ default:
 	die("No mode specified.");
 	break;
 
+case 'capacity_report':
+	
+	
+	include_once($_SESSION['site_config']['basedir']."db.inc.php");
+	include_once($_SESSION['site_config']['basedir']."utils/db_utils.php");
+	include_once($_SESSION['site_config']['basedir']."utils/functions.php");
+	
+	include_once($_SESSION['site_config']['basedir']."classes/capacity_report.inc.php");
+	
+	
+	$stime = mktime(0,0,0);
+	$etime = $stime + 86399;
+	
+	echo $_SESSION['capacity_report']->generateChartData('day', $stime, $etime);
+	
+	
+	break;
 
 case 'download_fec_form':
 

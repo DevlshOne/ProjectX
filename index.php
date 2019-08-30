@@ -128,6 +128,7 @@
 
 			<script src="js/jquery.dataTables.min.js"></script>
 
+			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 
 			<script src="js/ajax_functions.js"></script>
@@ -973,6 +974,14 @@
 
 				break;
 
+			case 'capacity_report':
+				
+				include_once("classes/capacity_report.inc.php");
+				$_SESSION['capacity_report']->handleFLOW();
+				
+				
+				break;
+				
 //			case 'fec_filer':
 //
 //				include_once("classes/fec_filer.inc.php");

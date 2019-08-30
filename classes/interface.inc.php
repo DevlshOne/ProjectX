@@ -276,7 +276,13 @@
                                             <li><a href="?area=dispo_log&no_script=1"
                                                    onclick="loadSection(this.href);return false">Dispo Log</a></li><?
                                         }
-
+                                        
+                                        if (checkAccess('capacity_report')) {
+                                        	?>
+                                            <li><a href="?area=capacity_report&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Capacity Report</a></li><?
+                                        }
+                                        
                                         if (checkAccess('report_emails')) {
                                             ?>
                                             <li><a href="?area=report_emails&no_script=1"
