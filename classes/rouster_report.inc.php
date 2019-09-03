@@ -421,6 +421,15 @@ class RousterReport{
 
 
 
+				## GET TOTAL DISPO COUNT FOR USE IN CONTACT %
+
+				$sql = "SELECT COUNT(`id`) FROM `lead_tracking` ".
+							$lead_where.
+							" AND (dispo IN('NI', 'VOID', 'DNC', 'SALE', 'PAIDCC', 'SALECC')) ";
+				list($contact_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
+
+
+
 				## DECLINES - OUT OF ALL THE TRANSFERS, HOW MANY WHERE DECLINED
 				$sql = "SELECT COUNT(`id`) FROM `lead_tracking` ".
 							$lead_where.
@@ -486,6 +495,7 @@ class RousterReport{
 				$agent_array[$username]['paid_sale_cnt'] = $paid_sales_cnt;
 				$agent_array[$username]['call_cnt'] = $call_cnt;
 				$agent_array[$username]['hangup_cnt'] = $hangup_cnt;
+				$agent_array[$username]['contact_cnt'] = $contact_cnt;
 				$agent_array[$username]['decline_cnt'] = $decline_cnt;
 
 	//			$agent_array[$username]['total_amount'] = '';
@@ -691,6 +701,7 @@ class RousterReport{
 
 			$out[$x]['call_cnt'] = $agent['call_cnt'];
 			$out[$x]['hangup_cnt'] = $agent['hangup_cnt'];
+			$out[$x]['contact_cnt'] = $agent['contact_cnt'];
 			$out[$x]['decline_cnt'] = $agent['decline_cnt'];
 
 			$out[$x]['paid_time'] = $agent['paid_time'];
@@ -803,6 +814,7 @@ class RousterReport{
 
 				?><th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="left">Agent</th>
 				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right"># of Calls</th>
+				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Contact %</th>
 				<?/*<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Sales</th>*/?>
 				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">PaidCC</th>
 				<?/**<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">%PaidCC</th>**/?>
@@ -837,6 +849,7 @@ class RousterReport{
 			$running_total_sales = 0;
 			$running_total_hangups = 0;
 			$running_total_declines = 0;
+			$running_total_contacts = 0;
 			$running_total_reviews = 0;
 			$running_total_paid_sales = 0;
 			$running_total_activity_time = 0;
@@ -930,9 +943,15 @@ class RousterReport{
 				## TOTAL DEAD TIME
 				$total_dead = renderTimeFormatted($row['t_dead']);
 
+				## CONTACT %
+				$contact_percent = intval($row['contact_cnt']) / intval($row['call_cnt']);
+				$running_total_contacts += $row['contact_cnt'];
+
+
 				## ADD AGENT REPORT DATA TO REPORT DATA ARRAY
 				$report_data[$x1]['agent_username'] 			= $row['username'];
 				$report_data[$x1]['call_cnt'] 					= $row['call_cnt'];
+				$report_data[$x1]['contact_percent'] 			= $contact_percent;
 				$report_data[$x1]['paid_sale_cnt'] 				= $row['paid_sale_cnt'];
 				$report_data[$x1]['paidcc_per_hour'] 			= $paidcc_per_hour;
 				$report_data[$x1]['paidcc_per_worked_hour'] 	= $paidcc_per_worked_hour;
@@ -1184,6 +1203,11 @@ class RousterReport{
 
 					?><td style="border-right:1px dotted #CCC;padding-right:3px"><?=strtoupper($report_data_row['agent_username'])?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['call_cnt'])?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+
+						echo number_format($report_data_row['contact_percent'],2).'%';
+
+					?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['paid_sale_cnt'])?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paidcc_per_hour'],2)?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?=number_format($report_data_row['paidcc_per_worked_hour'],2)?></td>
@@ -1252,6 +1276,8 @@ class RousterReport{
 
 			$total_hangup_percent = (($running_total_calls <= 0)?0:number_format( round( (($running_total_hangups) / ($running_total_calls)) * 100, 2), 2));
 
+			$total_contact_percent = (($running_total_calls <= 0)?0:number_format( round( (($running_total_contacts) / ($running_total_calls)) * 100, 2), 2));
+
 
 			$total_percent_paidcc_calls = (($running_total_sales <= 0)?0:($running_total_paid_sales / $running_total_sales) * 100);
 
@@ -1292,6 +1318,7 @@ class RousterReport{
 
 
 				?><td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_calls)?></td>
+				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=$total_contact_percent?>%</td>
 				<?/*<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format(($running_total_sales-$running_total_paid_sales))?></td>*/?>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_paid_sales)?></td>
 				<?/**<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($total_percent_paidcc_calls)?>%</td>**/?>
