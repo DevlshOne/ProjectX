@@ -422,7 +422,6 @@ class RousterReport{
 
 
 				## GET TOTAL DISPO COUNT FOR USE IN CONTACT %
-
 				$sql = "SELECT COUNT(`id`) FROM `lead_tracking` ".
 							$lead_where.
 							" AND (dispo IN('NI', 'VOID', 'DNC', 'SALE', 'PAIDCC', 'SALECC')) ";
@@ -944,7 +943,7 @@ class RousterReport{
 				$total_dead = renderTimeFormatted($row['t_dead']);
 
 				## CONTACT %
-				$contact_percent = intval($row['contact_cnt']) / intval($row['call_cnt']);
+				$contact_percent = ($row['call_cnt'] <= 0)?0:number_format( round( (($row['contact_cnt']) / ($row['call_cnt'])) * 100, 2), 2);
 				$running_total_contacts += $row['contact_cnt'];
 
 
