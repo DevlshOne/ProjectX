@@ -226,6 +226,17 @@
 				function applyUniformity(){
 					$("input:submit, button, input:button").button();
 					$("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
+
+
+					$('.priorityRender').each(function( index ) {
+
+						$(this).html( 
+								
+							priorityProcessing( $(this).html() )
+							 
+						);
+						 // console.log( index + ": " + $( this ).text() );
+					});
 				}
 
 

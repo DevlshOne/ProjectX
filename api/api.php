@@ -503,4 +503,14 @@
 		$obj->handleAPI();
 
 		break;
+		
+		
+	case 'my_notes':
+	case 'notes':
+	case 'note':
+		include_once($basedir."api/home_tile_notes.api.php");
+		$obj = new API_MyNotes();
+		$obj->handleAPI();
+		
+		break;
 	}
