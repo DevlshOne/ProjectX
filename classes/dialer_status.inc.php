@@ -229,10 +229,6 @@
                             }
                         });
 
-                        function openViciCredsDialog() {
-                            $('#dialog-modal-vici-credentials').dialog('open');
-                        }
-
                         $('#dialog-modal-vici-credentials').dialog({
                             autoOpen: true,
                             width: 400,
