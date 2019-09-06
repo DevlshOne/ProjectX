@@ -5,12 +5,6 @@
 
         function curlClusterData($webIP, $groups, $user_groups, $curlUP) {
             $curlResponse = [];
-            /*
-             * TEMPORARY
-             */ //            $curlUP = "dmednick:changeme";
-            /*
-             * TEMPORARY
-             */
             $curl = curl_init();
             $curlURL = 'http://' . $webIP . '/vicidial/AST_timeonVDADall.php?RTajax=1&AGENTtimeSTATS=1' . $groups . $user_groups;
             curl_setopt($curl, CURLOPT_URL, $curlURL);
@@ -28,17 +22,17 @@
                     break;
             }
             curl_close($curl);
-            if (!is_dir($this->cacheDir)) {
-                mkdir($this->cacheDir, 777);
-                clearstatcache();
-            }
-            $fileOut = [];
-            $cacheFile = fopen($_SESSION['site_config']['basedir'] . $this->cacheDir . "/" . str_replace('.', '', $webIP) . ".json", "w") or print_r(error_get_last());
-            $fileOut['groups'] = $groups;
-            $fileOut['usergroups'] = $user_groups;
-            $fileOut['data'] = $data;
-            fwrite($cacheFile, json_encode($fileOut, JSON_PRETTY_PRINT));
-            fclose($cacheFile);
+//            if (!is_dir($this->cacheDir)) {
+//                mkdir($this->cacheDir, 777);
+//                clearstatcache();
+//            }
+//            $fileOut = [];
+//            $cacheFile = fopen($_SESSION['site_config']['basedir'] . $this->cacheDir . "/" . str_replace('.', '', $webIP) . ".json", "w") or print_r(error_get_last());
+//            $fileOut['groups'] = $groups;
+//            $fileOut['usergroups'] = $user_groups;
+//            $fileOut['data'] = $data;
+//            fwrite($cacheFile, json_encode($fileOut, JSON_PRETTY_PRINT));
+//            fclose($cacheFile);
             return $data;
         }
 
@@ -53,6 +47,7 @@
                     $strGroups = '';
                     $strUserGroups = '';
                     $webip = trim($_REQUEST['webip']);
+                    $saveUserPrefs = trim($_REQUEST['saveUserPrefs']);
                     $groups = $_GET['groups'];
                     if (isset($groups)) {
                         foreach ($groups as $v) {
@@ -83,6 +78,7 @@
                     $res = query("DELETE FROM `vicidial_hopper` WHERE `status` IN ('READY','QUEUE','DONE')");
                     $out = '';
                     connectPXDB();
+                    logAction('flush_hopper', 'dialer_status', $clusterid);
                     break;
                 case 'stopDialer':
                     $clusterid = trim($_REQUEST['clusterid']);
@@ -92,6 +88,7 @@
                     $res = query("DELETE FROM `vicidial_hopper` WHERE `status` IN ('READY','QUEUE','DONE')");
                     $out = '';
                     connectPXDB();
+                    logAction('stop_dialer', 'dialer_status', $clusterid);
                     break;
                 case 'getAvailableUserGroups':
                     $clusterid = trim($_REQUEST['clusterid']);
@@ -99,13 +96,22 @@
                     $out = json_encode($res);
                     break;
                 case 'setViciCreds':
-                    if(isset($_REQUEST['vici_username'])) {
+                    if (isset($_REQUEST['vici_username'])) {
                         $vUsername = trim($_REQUEST['vici_username']);
                     }
-                    if(isset($_REQUEST['vici_password'])) {
+                    if (isset($_REQUEST['vici_password'])) {
                         $vPassword = trim($_REQUEST['vici_password']);
                         $_SESSION['user']['vici_password'] = $vPassword;
                     }
+                    $out = '';
+                    break;
+                case 'saveUserPrefs':
+                    $json_str = $_REQUEST['prefs'];
+                    $_SESSION['dbapi']->user_prefs->update('dialer_status', $json_str);
+                    $out = '';
+                    break;
+                case 'loadUserPrefs':
+                    $out = $_SESSION['dbapi']->user_prefs->getData("dialer_status");
                     break;
             }
             echo $out;

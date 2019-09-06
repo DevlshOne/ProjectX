@@ -56,16 +56,20 @@
             <div id="dialog-modal-first-confirm" title="Confirmation Required" class="nod"></div>
             <div id="dialog-modal-second-confirm" title="Confirmation Required" class="nod"></div>
             <div id="dialog-modal-vici-credentials" title="Vici Username/Password Required" class="nod">
-                <form action="api/api.php?get=dialer_status&mode=json&action=setViciCreds" method="post">
-                    <table class="tightTable">
+                <form method="post">
+                    <table class="tightTable pct100">
                         <tbody>
                         <tr>
-                            <td><label for="vici_username">Username :</label></td>
-                            <td><input type="text" id="vici_username" name="vici_username" /></td>
+                            <td class="align_left"><label for="vici_username">Username :</label></td>
+                            <td class="align_right"><input type="text" id="vici_username" name="vici_username"/></td>
                         </tr>
                         <tr>
-                            <td><label for="vici_password">Password :</label></td>
-                            <td><input type="password" id="vici_password" name="vici_password" required /></td>
+                            <td class="align_left"><label for="vici_password">Password :</label></td>
+                            <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
+                        </tr>
+                        <tr>
+                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>
+                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked /></td>
                         </tr>
                         </tbody>
                     </table>
@@ -99,6 +103,34 @@
                                     $('#clusterSelection option:selected').each(function () {
                                         selectedClusters.push(this.value);
                                     });
+                                    if ($('#savePrefs').is(':checked')) {
+                                        let tmpJSON = {};
+                                        let tmpGroups = [];
+                                        let tmpUserGroups = [];
+                                        $.each(selectedClusters, function (i, v) {
+                                            tmpJSON[i] = [];
+                                            $.each(clusterInfo[v]['sel_campaigns'], function (j, w) {
+                                                tmpGroups.push(w.groups);
+                                            });
+                                            $.each(clusterInfo[v]['sel_user_groups'], function (j, w) {
+                                                tmpUserGroups.push(w.user_group_filter);
+                                            });
+                                            tmpJSON[i].push({
+                                                cluster_id : v,
+                                                groups : tmpGroups,
+                                                usergroups : tmpUserGroups
+                                            });
+                                        });
+                                        let tmpPrefs = JSON.stringify(tmpJSON);
+                                        $.ajax({
+                                            type: "POST",
+                                            cache: false,
+                                            async: false,
+                                            crossDomain: false,
+                                            crossOrigin: false,
+                                            url: 'api/api.php?get=dialer_status&mode=json&action=saveUserPrefs&prefs=' + tmpPrefs
+                                        });
+                                    }
                                     $(this).dialog('close');
                                     $('#dialerStatusZone').empty();
                                     initScreen();
@@ -249,6 +281,34 @@
                                             console.log('FAILURE - ' + response);
                                         }
                                     });
+                                    if ($('#loadPrefs').is(':checked')) {
+                                        $.ajax({
+                                            type: "GET",
+                                            cache: false,
+                                            async: false,
+                                            crossDomain: false,
+                                            crossOrigin: false,
+                                            url: 'api/api.php?get=dialer_status&mode=json&action=loadUserPrefs',
+                                            success: function (prefs) {
+                                                alert('User Preferences loaded');
+                                                let tmpJSON = JSON.parse(prefs);
+                                                // $.each(prefs, function (i, v) {
+                                                //     tmpJSON[i] = [];
+                                                //     $.each(clusterInfo[v]['sel_campaigns'], function (j, w) {
+                                                //         tmpGroups.push(w.groups);
+                                                //     });
+                                                //     $.each(clusterInfo[v]['sel_user_groups'], function (j, w) {
+                                                //         tmpUserGroups.push(w.user_group_filter);
+                                                //     });
+                                                //     tmpJSON[i].push({
+                                                //         cluster_id : v,
+                                                //         groups : tmpGroups,
+                                                //         usergroups : tmpUserGroups
+                                                //     });
+                                                // });
+                                            }
+                                        });
+                                    }
                                     $(this).dialog('close');
                                 }
                             }
@@ -271,7 +331,7 @@
                                 });
                                 clusterSelect += '</select>';
                                 dlgObj.dialog('open');
-                                dlgObj.html('<table class="pct100 align_center tightTable"><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td>' + clusterSelect + '</td></tr></table>');
+                                dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td>' + clusterSelect + '</td></tr><tr><td class="align_left"><label class="align_left" for="savePrefs">Save User Preferences : </label></td><td class="align_left"><input type="checkbox" name="savePrefs" id="savePrefs" checked /></td></tr></tbody></table>');
                                 $('#clusterSelection').val(selectedClusters);
                             });
                             applyUniformity();
@@ -280,7 +340,7 @@
                         $('#refreshRateButton').on('click', function (e, ui) {
                             dlgObj = $('#dialog-modal-change-refresh');
                             dlgObj.dialog('open');
-                            dlgObj.html('<table class="pct100 align_center tightTable"><tr><td><label class="align_left" for="refreshRate">Refresh (seconds) : </label><input class="align_right" id="refreshRate" name="refreshRate" type="number" min="4" max="300" value="' + refreshInterval + '" /></td></tr><tr><td><label class="align_left" for="refreshEnabled">Disable refresh : </label><input class="align_right" id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
+                            dlgObj.html('<table class="pct100 tightTable"><tr><td><label class="align_left" for="refreshRate">Refresh (seconds) : </label><input class="align_right" id="refreshRate" name="refreshRate" type="number" min="4" max="300" value="' + refreshInterval + '" /></td></tr><tr><td><label class="align_left" for="refreshEnabled">Disable refresh : </label><input class="align_right" id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
                         });
                         $('#forceHopperButton').on('click', function (e, ui) {
                             dlgObj = $('#dialog-modal-first-confirm');
