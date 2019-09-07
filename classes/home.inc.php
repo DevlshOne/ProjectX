@@ -48,7 +48,7 @@ class HomeClass{
 	public $orig_prefs = null; // IDEA: USED TO TELL IF PREFERENCES HAVE SAVED SINCE LOADED
 	
 	
-	
+	// CONSTRUCTOR
 	function HomeClass(){
 
 		// LOAD HOME SCREEN PREFERENCES ON INIT
@@ -62,6 +62,12 @@ class HomeClass{
 			$this->prefs['tiles'][] = array(
 					
 				'type' => 'my_notes',
+					
+			);
+			
+			$this->prefs['tiles'][] = array(
+					
+					'type' => 'user_count',
 					
 			);
 			
@@ -100,7 +106,21 @@ class HomeClass{
 			$_SESSION['home_tile_notes']->makeAdd($note_id);
 			
 			break;
+		case 'user_count':
 			
+			
+			include_once("classes/home_tile_user_count.inc.php");
+			
+			if(isset($_REQUEST['edit_config'])){
+				
+				$_SESSION['home_tile_user_count']->makeConfigure();
+				
+			}else{
+				
+				echo "User Count Action not specified.";
+			}
+			
+			break;
 		}
 
 
@@ -137,6 +157,12 @@ class HomeClass{
 			
 			include_once("classes/home_tile_notes.inc.php");
 			$_SESSION['home_tile_notes']->handleFLOW($tidx, $tile);
+			
+			break;
+		case 'user_count':
+			
+			include_once("classes/home_tile_user_count.inc.php");
+			$_SESSION['home_tile_user_count']->handleFLOW($tidx, $tile);
 			
 			break;
 		}

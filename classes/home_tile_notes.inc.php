@@ -144,7 +144,7 @@ class HomeTileNotesClass{
 							//loadSection("?area=home");
 							
 							
-							alert(result['message']);
+							//alert(result['message']);
 						}
 	
 					}

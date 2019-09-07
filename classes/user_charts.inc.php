@@ -48,7 +48,7 @@ class UserCharts{
 	 * @param	$stime			(int)					Timestamp of the first second of the timeframe you want to generate
 	 * @param	$max_mode		true/false				Get the max values for the timeframe, instead of the Average (default)
 	 */
-	function generateData($time_frame,  $stime, $max_mode = false){
+	function generateData($time_frame,  $stime, $max_mode = false, $short_mode = false){
 
 		$px_server_id = intval($px_server_id);
 		$stime = intval($stime);
@@ -92,7 +92,7 @@ class UserCharts{
 									//(($px_server_id > 0)?" AND server_id='$px_server_id' ":"")
 						,1);
 
-				$tmparr = array( (($x%4 == 0)?date("ga", $tmpstime):''), $x/4, 0);
+				$tmparr = array( (($x%4 == 0)?date(  (($short_mode)?"g":"ga")  , $tmpstime):''), $x/4, 0);
 				$idx = 2;
 				while($row = mysqli_fetch_row($res)){
 
