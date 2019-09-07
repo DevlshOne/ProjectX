@@ -102,11 +102,25 @@ class UserPreferencesAPI{
 	 */
 	function update($section, $json_str){
 		
+		$where = " WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND section='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'";
 		
-		return $_SESSION['dbapi']->execSQL("UPDATE `".$this->table."` ".
+		list($test) = $_SESSION['dbapi']->queryROW("SELECT id FROM `".$this->table."` ".$where);
+		
+		if($test > 0){
+			return $_SESSION['dbapi']->execSQL("UPDATE `".$this->table."` ".
 				" SET time_updated=UNIX_TIMESTAMP(), json_data='".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_str)."' ".
-				" WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND section='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'");
-		
+				$where);
+		}else{
+			
+			$dat = array(
+					'user_id' 		=> $_SESSION['user']['id'],
+					'section' 		=> $section,
+					'time_updated'	=> time(),
+					'json_data'		=> $json_str
+			);
+			
+			return $_SESSION['dbapi']->aadd($dat, $this->table);
+		}
 	}
 
 	/**
@@ -118,11 +132,25 @@ class UserPreferencesAPI{
 	 */
 	function updateByArray($section, $json_arr, $json_options=0){
 		
+		$where = " WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND section='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'";
 		
-		return $_SESSION['dbapi']->execSQL("UPDATE `".$this->table."` ".
+		list($test) = $_SESSION['dbapi']->queryROW("SELECT id FROM `".$this->table."` ".$where);
+		
+		if($test > 0){
+			return $_SESSION['dbapi']->execSQL("UPDATE `".$this->table."` ".
 				" SET time_updated=UNIX_TIMESTAMP(), json_data='".mysqli_real_escape_string($_SESSION['dbapi']->db, json_encode($json_arr, $json_options))."' ".
 				" WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND section='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'");
-		
+		}else{
+			
+			$dat = array(
+					'user_id' 		=> $_SESSION['user']['id'],
+					'section' 		=> $section,
+					'time_updated'	=> time(),
+					'json_data'		=> json_encode($json_arr, $json_options)
+			);
+			
+			return $_SESSION['dbapi']->aadd($dat, $this->table);
+		}
 	}
 
 
