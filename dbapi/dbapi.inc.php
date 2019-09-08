@@ -295,6 +295,9 @@ class DBAPI {
 		include_once($_SESSION['site_config']['basedir']."dbapi/voices.db.php");
 		$this->voices = new VoicesAPI();
 
+		## USER PREFERENCES
+        include_once($_SESSION['site_config']['basedir']."dbapi/user_preferences.db.php");
+        $this->user_prefs = new UserPreferencesAPI();
 
 
 

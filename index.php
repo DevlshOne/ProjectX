@@ -182,6 +182,8 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 
         function loadSection(url) {
             $('#main_content').load(url);
+            $('body').css('background-color', '#FFFFFF');
+            $('body').css('color', '#000000');
             $('.cd-side-nav').find('.hover').removeClass('hover');
             $('.cd-side-nav').find('.selected').removeClass('selected');
             $('.cd-side-nav').removeClass('nav-is-visible');

@@ -108,6 +108,7 @@
                                     }
                                     $(this).dialog('close');
                                     $('#dialerStatusZone').empty();
+                                    applyUniformity();
                                     initScreen();
                                     getDialerStatusData();
                                 },
@@ -173,6 +174,7 @@
                                     }
                                     $(this).dialog('close');
                                     $('#dialerStatusZone').empty();
+                                    applyUniformity();
                                     initScreen();
                                     getDialerStatusData();
                                 },
@@ -285,6 +287,7 @@
                                             let objTmp = {};
                                             refreshInterval = v.refreshInterval;
                                             refreshEnabled = v.refreshEnabled;
+                                            highContrast = v.highContrast;
                                             selectedClusters = [];
                                             selectedClusters.push(tmpCLID);
                                             clusterInfo[tmpCLID]['sel_campaigns'] = [];
@@ -308,6 +311,7 @@
                             let tmpJSON = {};
                             tmpJSON.refreshInterval = refreshInterval;
                             tmpJSON.refreshEnabled = refreshEnabled;
+                            tmpJSON.highContrast = highContrast;
                             let tmpGroups = [];
                             let tmpUserGroups = [];
                             $.each(selectedClusters, function (i, v) {
@@ -589,9 +593,6 @@
                             }
                             let objClusterData = Object.assign({}, clusterValues);
                             let objSummaryData = Object.assign({}, summaryValues);
-                            let $titleBar = $('#clusterTile_' + clid).find('.clusterTitle');
-                            let closeButton = '<button id="removeCluster_' + clid + '" class="removeClusterButton ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only" role="button" aria-disabled="false" title="Remove this Cluster"><span class="ui-button-icon-primary ui-icon ui-icon-closethick"></span></button>';
-                            $titleBar.append(closeButton);
                             let $newLayout = $('<table class="clusterDataTable"><tbody></tbody></table>');
                             $newLayout.tooltip();
                             if (tdValues.length > 1) {
@@ -619,7 +620,7 @@
                         }
 
                         function parseDialerStatusData(clusterID, dialerStatusData) {
-                            let titleRow = '<div class="clusterTitle">' + clusterInfo[clusterID]['name'] + '</div>';
+                            let titleRow = '<div class="clusterTitle">' + clusterInfo[clusterID]['name'] + '<a id="removeCluster_' + clusterID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
                             let $tile = $('#clusterTile_' + clusterID);
                             $tile.empty();
                             $tile.append(titleRow);

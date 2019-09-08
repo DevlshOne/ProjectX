@@ -379,6 +379,9 @@ a:hover {
 .removeClusterButton {
     float: right;
 }
+.removeClusterButton:hover {
+	color:yellow;
+}
 .firstConfirmation {
 	color: firebrick;
 	font-size: 14px;
