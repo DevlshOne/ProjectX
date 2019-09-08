@@ -104,32 +104,7 @@
                                         selectedClusters.push(this.value);
                                     });
                                     if ($('#savePrefs').is(':checked')) {
-                                        let tmpJSON = {};
-                                        let tmpGroups = [];
-                                        let tmpUserGroups = [];
-                                        $.each(selectedClusters, function (i, v) {
-                                            tmpJSON[i] = [];
-                                            $.each(clusterInfo[v]['sel_campaigns'], function (j, w) {
-                                                tmpGroups.push(w.groups);
-                                            });
-                                            $.each(clusterInfo[v]['sel_user_groups'], function (j, w) {
-                                                tmpUserGroups.push(w.user_group_filter);
-                                            });
-                                            tmpJSON[i].push({
-                                                cluster_id : v,
-                                                groups : tmpGroups,
-                                                usergroups : tmpUserGroups
-                                            });
-                                        });
-                                        let tmpPrefs = JSON.stringify(tmpJSON);
-                                        $.ajax({
-                                            type: "POST",
-                                            cache: false,
-                                            async: false,
-                                            crossDomain: false,
-                                            crossOrigin: false,
-                                            url: 'api/api.php?get=dialer_status&mode=json&action=saveUserPrefs&prefs=' + tmpPrefs
-                                        });
+                                        saveUserPrefs();
                                     }
                                     $(this).dialog('close');
                                     $('#dialerStatusZone').empty();
@@ -193,6 +168,9 @@
                                         objTmp['user_group_filter'] = v.innerText;
                                         clusterInfo[clusterid]['sel_user_groups'].push(objTmp);
                                     });
+                                    if ($('#savePrefs').is(':checked')) {
+                                        saveUserPrefs();
+                                    }
                                     $(this).dialog('close');
                                     $('#dialerStatusZone').empty();
                                     initScreen();
@@ -282,37 +260,83 @@
                                         }
                                     });
                                     if ($('#loadPrefs').is(':checked')) {
-                                        $.ajax({
-                                            type: "GET",
-                                            cache: false,
-                                            async: false,
-                                            crossDomain: false,
-                                            crossOrigin: false,
-                                            url: 'api/api.php?get=dialer_status&mode=json&action=loadUserPrefs',
-                                            success: function (prefs) {
-                                                alert('User Preferences loaded');
-                                                let tmpJSON = JSON.parse(prefs);
-                                                // $.each(prefs, function (i, v) {
-                                                //     tmpJSON[i] = [];
-                                                //     $.each(clusterInfo[v]['sel_campaigns'], function (j, w) {
-                                                //         tmpGroups.push(w.groups);
-                                                //     });
-                                                //     $.each(clusterInfo[v]['sel_user_groups'], function (j, w) {
-                                                //         tmpUserGroups.push(w.user_group_filter);
-                                                //     });
-                                                //     tmpJSON[i].push({
-                                                //         cluster_id : v,
-                                                //         groups : tmpGroups,
-                                                //         usergroups : tmpUserGroups
-                                                //     });
-                                                // });
-                                            }
-                                        });
+                                        loadUserPrefs();
                                     }
                                     $(this).dialog('close');
                                 }
                             }
                         });
+
+                        function loadUserPrefs() {
+                            $.ajax({
+                                type: "GET",
+                                cache: false,
+                                async: false,
+                                crossDomain: false,
+                                crossOrigin: false,
+                                url: 'api/api.php?get=dialer_status&mode=json&action=loadUserPrefs',
+                                success: function (prefs) {
+                                    if (prefs.length) {
+                                        let tmpJSON = JSON.parse(prefs);
+                                        $.each(prefs, function (i, v) {
+                                            let tmpCLID = v.cluster_id;
+                                            let tmpGroups = v.groups;
+                                            let tmpUserGroups = v.usergroups;
+                                            let objTmp = {};
+                                            refreshInterval = v.refreshInterval;
+                                            refreshEnabled = v.refreshEnabled;
+                                            selectedClusters = [];
+                                            selectedClusters.push(tmpCLID);
+                                            clusterInfo[tmpCLID]['sel_campaigns'] = [];
+                                            $(tmpGroups).each(function (j, w) {
+                                                objTmp['groups'] = w;
+                                                clusterInfo[tmpCLID]['sel_campaigns'].push(objTmp);
+                                            });
+                                            clusterInfo[tmpCLID]['sel_user_groups'] = [];
+                                            $(tmpUserGroups).each(function (j, w) {
+                                                objTmp['user_group_filter'] = w;
+                                                clusterInfo[tmpCLID]['sel_user_groups'].push(objTmp);
+                                            });
+                                        });
+                                        alert('User Preferences loaded');
+                                    }
+                                }
+                            });
+                        }
+
+                        function saveUserPrefs() {
+                            let tmpJSON = {};
+                            tmpJSON.refreshInterval = refreshInterval;
+                            tmpJSON.refreshEnabled = refreshEnabled;
+                            let tmpGroups = [];
+                            let tmpUserGroups = [];
+                            $.each(selectedClusters, function (i, v) {
+                                tmpJSON[i] = [];
+                                $.each(clusterInfo[v]['sel_campaigns'], function (j, w) {
+                                    tmpGroups.push(w.groups);
+                                });
+                                $.each(clusterInfo[v]['sel_user_groups'], function (j, w) {
+                                    tmpUserGroups.push(w.user_group_filter);
+                                });
+                                tmpJSON[i].push({
+                                    cluster_id : v,
+                                    groups : tmpGroups,
+                                    usergroups : tmpUserGroups
+                                });
+                            });
+                            let tmpPrefs = JSON.stringify(tmpJSON);
+                            $.ajax({
+                                type: "POST",
+                                cache: false,
+                                async: false,
+                                crossDomain: false,
+                                crossOrigin: false,
+                                url: 'api/api.php?get=dialer_status&mode=json&action=saveUserPrefs&prefs=' + tmpPrefs,
+                                success: function() {
+                                    alert('User Preferences saved');
+                                }
+                            });
+                        }
 
                         function initScreen() {
                             $.each(selectedClusters, function (i, v) {
@@ -331,7 +355,7 @@
                                 });
                                 clusterSelect += '</select>';
                                 dlgObj.dialog('open');
-                                dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td>' + clusterSelect + '</td></tr><tr><td class="align_left"><label class="align_left" for="savePrefs">Save User Preferences : </label></td><td class="align_left"><input type="checkbox" name="savePrefs" id="savePrefs" checked /></td></tr></tbody></table>');
+                                dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td class="align_right">' + clusterSelect + '</td></tr><tr><td class="align_left"><label for="savePrefs">Save User Preferences : </label></td><td class="align_right"><input type="checkbox" name="savePrefs" id="savePrefs" checked /></td></tr></tbody></table>');
                                 $('#clusterSelection').val(selectedClusters);
                             });
                             applyUniformity();
@@ -340,7 +364,7 @@
                         $('#refreshRateButton').on('click', function (e, ui) {
                             dlgObj = $('#dialog-modal-change-refresh');
                             dlgObj.dialog('open');
-                            dlgObj.html('<table class="pct100 tightTable"><tr><td><label class="align_left" for="refreshRate">Refresh (seconds) : </label><input class="align_right" id="refreshRate" name="refreshRate" type="number" min="4" max="300" value="' + refreshInterval + '" /></td></tr><tr><td><label class="align_left" for="refreshEnabled">Disable refresh : </label><input class="align_right" id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
+                            dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="refreshRate">Refresh (seconds) : </label><td class="align_right"><input id="refreshRate" name="refreshRate" type="number" min="4" max="300" value="' + refreshInterval + '" /></td></tr><tr><td class="align_left"><label for="refreshEnabled">Disable refresh : </label><td class="align_right"><input id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
                         });
                         $('#forceHopperButton').on('click', function (e, ui) {
                             dlgObj = $('#dialog-modal-first-confirm');
@@ -387,7 +411,7 @@
                                 ugSelect += '<option>' + v.user_group_filter + '</option>';
                             });
                             ugSelect += '</select>';
-                            dlgObj.html('<table class="pct100 align_center tightTable"><tr><td class="align_left"><label class="align_left" for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_left">' + campaignSelect + '</td></tr><tr><td class="align_left"><label class="align_left" for="usergroupFilter">Select User Group(s) : </label></td><td class="align_left">' + ugSelect + '</td></tr></table>');
+                            dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr><tr><td class="align_left"><label for="savePrefs">Save User Preferences : </label></td><td class="align_right"><input type="checkbox" name="savePrefs" id="savePrefs" checked /></td></tr></table>');
                             let arrSelTemp = [];
                             $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
                                 arrSelTemp.push(v.groups);
