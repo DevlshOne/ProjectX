@@ -134,6 +134,7 @@ class DBAPI {
     public $list_tool_tasks;
     public $dialer_sales;
     public $dialer_status;
+    public $user_prefs;
 
 
     /**
@@ -298,10 +299,6 @@ class DBAPI {
 		## USER PREFERENCES
         include_once($_SESSION['site_config']['basedir']."dbapi/user_preferences.db.php");
         $this->user_prefs = new UserPreferencesAPI();
-
-
-
-
 
 	// MERGED FROM REPORT SYSTEM
 		## RINGING CALLS

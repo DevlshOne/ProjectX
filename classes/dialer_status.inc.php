@@ -80,7 +80,7 @@
 
                         var refreshInterval = 4;
                         var refreshEnabled = true;
-                        dispTimer = false;
+                        var dispTimer = false;
                         var clusterInfo = <?=json_encode($this->clusterInfo);?>;
                         var availableClusters = <?=json_encode($this->availableClusterIDs);?>;
                         var selectedClusters = <?=json_encode($this->availableClusterIDs);?>;
@@ -127,7 +127,7 @@
                             resizable: false,
                             title: 'Change Refresh Rate',
                             buttons: {
-                                'Save': function (e) {
+                                'Save': function () {
                                     refreshInterval = $('#refreshRate').val();
                                     refreshEnabled = !$('#refreshEnabled').is(':checked');
                                     if (!refreshEnabled) {
@@ -136,10 +136,10 @@
                                         $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [' + refreshInterval + ']');
                                         getDialerStatusData();
                                     }
-                                    dlgObj.dialog('close');
+                                    $(this).dialog('close');
                                 },
                                 'Cancel': function () {
-                                    dlgObj.dialog('close');
+                                    $(this).dialog('close');
                                 }
                             },
                             position: 'center'
@@ -156,6 +156,7 @@
                                 'Save': function (e) {
                                     if (dispTimer) {
                                         clearTimeout(dispTimer);
+                                        applyUniformity();
                                     }
                                     let clusterid = $(this).data('cluster_id');
                                     let objTmp = {};
@@ -174,7 +175,6 @@
                                     }
                                     $(this).dialog('close');
                                     $('#dialerStatusZone').empty();
-                                    applyUniformity();
                                     initScreen();
                                     getDialerStatusData();
                                 },
@@ -242,7 +242,7 @@
                         });
 
                         $('#dialog-modal-vici-credentials').dialog({
-                            autoOpen: true,
+                            autoOpen: false,
                             width: 400,
                             title: 'Vici Username/Password Required',
                             modal: true,
@@ -274,13 +274,14 @@
                                 type: "GET",
                                 cache: false,
                                 async: false,
+                                dataType: 'json',
                                 crossDomain: false,
                                 crossOrigin: false,
                                 url: 'api/api.php?get=dialer_status&mode=json&action=loadUserPrefs',
                                 success: function (prefs) {
                                     if (prefs.length) {
                                         let tmpJSON = JSON.parse(prefs);
-                                        $.each(prefs, function (i, v) {
+                                        $.each(tmpJSON, function (i, v) {
                                             let tmpCLID = v.cluster_id;
                                             let tmpGroups = v.groups;
                                             let tmpUserGroups = v.usergroups;
@@ -288,6 +289,13 @@
                                             refreshInterval = v.refreshInterval;
                                             refreshEnabled = v.refreshEnabled;
                                             highContrast = v.highContrast;
+                                            if(highContrast) {
+                                                $('body').css('background-color', '#000000');
+                                                $('body').css('color', '#FFFFFF');
+                                                $('#dialerStatusZone').css('background-color', '#000000');
+                                                $('.clusterTile').css('background-color', 'black');
+                                                $('#switchContrast').button('option', 'label', 'Normal Mode');
+                                            }
                                             selectedClusters = [];
                                             selectedClusters.push(tmpCLID);
                                             clusterInfo[tmpCLID]['sel_campaigns'] = [];
@@ -309,9 +317,6 @@
 
                         function saveUserPrefs() {
                             let tmpJSON = {};
-                            tmpJSON.refreshInterval = refreshInterval;
-                            tmpJSON.refreshEnabled = refreshEnabled;
-                            tmpJSON.highContrast = highContrast;
                             let tmpGroups = [];
                             let tmpUserGroups = [];
                             $.each(selectedClusters, function (i, v) {
@@ -325,7 +330,12 @@
                                 tmpJSON[i].push({
                                     cluster_id : v,
                                     groups : tmpGroups,
-                                    usergroups : tmpUserGroups
+                                    usergroups : tmpUserGroups,
+                                    refreshInterval : refreshInterval,
+                                    refreshEnabled : refreshEnabled,
+                                    highContrast : highContrast,
+                                    viciUsername : '<?=$_SESSION['user']['username'];?>',
+                                    viciPassword : '<?=$_SESSION['user']['vici_password'];?>'
                                 });
                             });
                             let tmpPrefs = JSON.stringify(tmpJSON);
@@ -346,8 +356,8 @@
                             $.each(selectedClusters, function (i, v) {
                                 $('#dialerStatusZone').append('<li id="clusterTile_' + v + '" class="clusterTile"></li>');
                             });
-                            $('#dialerStatusZone').sortable();
-                            $('#dialerStatusZone').disableSelection();
+                            // $('#dialerStatusZone').sortable();
+                            // $('#dialerStatusZone').disableSelection();
                             $('#dialerStatusZone').sortable({
                                 cancel: '#clusterTileAdder'
                             });
@@ -429,7 +439,7 @@
                         });
 
                         $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
-                            let clid = $(this).closest('button').attr('id').split('_')[1];
+                            let clid = $(this).closest('a').attr('id').split('_')[1];
                             $('#clusterTile_' + clid).remove();
                             let i = $.inArray(parseInt(clid), selectedClusters);
                             if (i !== -1) {
