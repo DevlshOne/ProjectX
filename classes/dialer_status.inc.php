@@ -132,11 +132,13 @@
                                     refreshEnabled = !$('#refreshEnabled').is(':checked');
                                     if (!refreshEnabled) {
                                         $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [OFF]');
+                                        clearTimeout(dispTimer);
                                     } else {
                                         $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [' + refreshInterval + ']');
                                         clearTimeout(dispTimer);
                                         getDialerStatusData();
                                     }
+                                    applyUniformity();
                                     $(this).dialog('close');
                                 },
                                 'Cancel': function () {
@@ -155,23 +157,17 @@
                             title: 'Change Cluster Filters',
                             buttons: {
                                 'Save': function (e) {
-                                    if (dispTimer) {
-                                        clearTimeout(dispTimer);
-                                        applyUniformity();
-                                    }
                                     let clusterid = $(this).data('cluster_id');
-                                    let objTmp = {};
-                                    clusterInfo[clusterid].sel_campaigns = [];
+                                    let tmpArr = [];
                                     $('#campaignFilter option:selected').each(function (i, v) {
-                                        objTmp.groups.push(v.innerText);
+                                        tmpArr.push(v.innerText);
                                     });
-                                    clusterInfo[clusterid].sel_campaigns.push(objTmp);
-                                    objTmp = {};
-                                    clusterInfo[clusterid].sel_user_groups = [];
+                                    clusterInfo[clusterid]['sel_campaigns'] = tmpArr;
+                                    tmpArr = [];
                                     $('#usergroupFilter option:selected').each(function (i, v) {
-                                        objTmp.user_group_filter.push(v.innerText);
+                                        tmpArr.push(v.innerText);
                                     });
-                                    clusterInfo[clusterid].sel_user_groups.push(objTmp);
+                                    clusterInfo[clusterid]['sel_user_groups'] = tmpArr;
                                     if ($('#savePrefs').is(':checked')) {
                                         saveUserPrefs();
                                     }
@@ -671,9 +667,9 @@
                                 }, (refreshInterval * 1000));
                             }
                         }
-
                         initScreen();
                         getDialerStatusData();
+                        applyUniformity();
                     }
                 )
                 ;
