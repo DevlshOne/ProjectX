@@ -79,25 +79,25 @@ case 'user_charts':
 	case 'day':
 
 		# Main plot title:
-		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users Logged in - '.date("m/d/Y", $stime) );
+		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users - '.date("m/d/Y", $stime) );
 
 		break;
 	case 'week':
 
 		# Main plot title:
-		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users Logged in - Week starting '.date("m/d/Y", $stime) );
+		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users - Week ending '.date("m/d/Y", $stime) );
 
 
 		break;
 	case 'month':
 
 		# Main plot title:
-		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users Logged in - Month of '.date("F Y", $stime) );
+		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users - Month of '.date("F Y", $stime) );
 		break;
 	case 'year':
 
 		# Main plot title:
-		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users Logged in - '.date("Y", $stime). ' Year');
+		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users - '.date("Y", $stime). ' Year');
 
 		break;
 	}

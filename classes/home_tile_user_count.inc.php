@@ -62,9 +62,9 @@ class HomeTileUserCountClass{
 			<td><select name="timeframe">
 			
 				<option value="day">Day</option>
-				<option value="week"<?=(	$this->prefs['timeframe'] == 'week')?" SELECTED ":""?>>Week</option>
-				<option value="month"<?=(	$this->prefs['timeframe'] == 'month')?" SELECTED ":""?>>Month</option>
-				<option value="year"<?=(	$this->prefs['timeframe'] == 'year')?" SELECTED ":""?>>Year</option>
+				<option value="week"<?=(	$_SESSION['home']->prefs['tiles'][$this->prefs_idx]['timeframe'] == 'week')?" SELECTED ":""?>>Week</option>
+				<option value="month"<?=(	$_SESSION['home']->prefs['tiles'][$this->prefs_idx]['timeframe'] == 'month')?" SELECTED ":""?>>Month</option>
+				<option value="year"<?=(	$_SESSION['home']->prefs['tiles'][$this->prefs_idx]['timeframe'] == 'year')?" SELECTED ":""?>>Year</option>
 			
 			</select></td>
 		</tr>
@@ -90,7 +90,7 @@ class HomeTileUserCountClass{
 
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
 
-				$('#'+objname).load("index.php?area=home&sub_section=<?=$this->area_name?>&edit_config=<?=$this->tile_idx?>&printable=1&no_script=1");
+				$('#'+objname).load("index.php?area=home&sub_section=<?=$this->area_name?>&edit_config=<?=$this->prefs_idx?>&printable=1&no_script=1");
 
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
@@ -123,7 +123,9 @@ class HomeTileUserCountClass{
 						}else{
 
 							$('#dialog-modal-edit_config').dialog("close");
-						
+
+							loadSection("?area=home");
+							
 							alert(result['message']);
 						}
 	

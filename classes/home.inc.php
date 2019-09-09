@@ -52,7 +52,7 @@ class HomeClass{
 	function HomeClass(){
 
 		// LOAD HOME SCREEN PREFERENCES ON INIT
-		$this->prefs = $_SESSION['dbapi']->user_prefs->getData($this->area_name);
+		$this->prefs = $_SESSION['dbapi']->user_prefs->getData($this->area_name, TRUE);
 		
 		// FIRST TIME INIT PREFS
 		if(count($this->prefs['tiles']) <= 0){
@@ -78,6 +78,9 @@ class HomeClass{
 				'user_groups' => array(), // ALL USER GROUPS
 				'timeframe' => 'day'
 			);
+			
+			$this->savePreferences();
+			
 		}
 		
 		$this->handlePOST();
