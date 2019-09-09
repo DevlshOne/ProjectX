@@ -153,8 +153,18 @@ class API_Lead_Management{
 	
 	
 	function syncDataChangesToDRIPP($lead_tracking_id){
+	
+		
+// PRODUCTION URL, DISABLED FOR TESTING A BUG 		
+//		$url = "https://dripp.advancedtci.com/dripp/pages/update_transaction.php";
+
+// TESTING URL		
+//		//$url = "http://10.101.15.101/dripp/pages/update_transaction.php";
+		
 		
 		$url = "https://dripp.advancedtci.com/dripp/pages/update_transaction.php";
+		
+		
 		
 		$lead_tracking_id = intval($lead_tracking_id);
 		
@@ -1087,8 +1097,30 @@ class API_Lead_Management{
 				
 				//}
 				
+				if($xfer_id > 0){
+					$new_xfer =	$_SESSION['dbapi']->querySQL("SELECT * FROM transfers WHERE id='$xfer_id'");
+					$new_sale = $_SESSION['dbapi']->querySQL("SELECT * FROM sales WHERE transfer_id='$xfer_id'");
+					
+					$additional_changes_tracked = "";
+					
+					$differences = recordCompare($xfer, $new_xfer);
+					if($differences != null && strlen(trim($differences)) > 0){
+						$additional_changes_tracked .= "XFER Compare:\n".$differences;
+					}
+					
+					$differences = recordCompare($sale, $new_sale);
+					if($differences != null && strlen(trim($differences)) > 0){
+						$additional_changes_tracked .= "SALE Compare:\n".$differences;
+					}
+					
+				}
+		
+				$new_row = $_SESSION['dbapi']->lead_management->getByID($id);
 				
-				logAction('create_sale', 'lead_management', $id,"");
+				
+
+				
+				logAction('create_sale', 'lead_management', $id,"", $row, $new_row, $additional_changes_tracked);
 				
 				// SYNC CHANGES TO DRIPP
 				$this->syncDataChangesToDRIPP($id);

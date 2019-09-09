@@ -334,7 +334,7 @@ class ActionLog{
 
 			$("#dialog-modal-view-action").dialog({
 				autoOpen: false,
-				width: 500,
+				width: 600,
 				height: 300,
 				modal: false,
 				draggable:true,
@@ -362,11 +362,12 @@ class ActionLog{
 		?><table border="0" width="100%">
 		<tr>
 			<th class="row2">User</th>
+			<th class="row2">Action</th>
 			<th class="row2">Time</th>
 			<th class="row2">Changes</th>
 		</tr><?
 
-		$colspan= 3;
+		$colspan= 4;
 
 		if(mysqli_num_rows($res) <= 0){
 
@@ -379,6 +380,7 @@ class ActionLog{
 			?><tr valign="top">
 				<td class="<?=$class?>" align="left"><?=$row['user']?></td>
 				<td class="<?=$class?>" align="center"><?=date("g:i:sa m/d/Y", $row['time'])?></td>
+				<td class="<?=$class?>" align="center"><?=$row['action']?></td>
 				<td class="<?=$class?>" align="left"><?=nl2br(htmlentities($row['changes_tracked']))?></td>
 			</tr><?
 
