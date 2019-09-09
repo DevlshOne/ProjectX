@@ -67,7 +67,8 @@ class HomeClass{
 			
 			$this->prefs['tiles'][] = array(
 					
-					'type' => 'user_count',
+				'type' => 'user_count',
+				'timeframe' => 'day'
 					
 			);
 			
@@ -113,7 +114,9 @@ class HomeClass{
 			
 			if(isset($_REQUEST['edit_config'])){
 				
-				$_SESSION['home_tile_user_count']->makeConfigure();
+				$tidx = intval($_REQUEST['edit_config']);
+				
+				$_SESSION['home_tile_user_count']->makeConfigure($tidx);
 				
 			}else{
 				

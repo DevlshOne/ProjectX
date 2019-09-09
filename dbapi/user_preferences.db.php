@@ -132,14 +132,14 @@ class UserPreferencesAPI{
 	 */
 	function updateByArray($section, $json_arr, $json_options=0){
 		
-		$where = " WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND section='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'";
+		$where = " WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND `section`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'";
 		
 		list($test) = $_SESSION['dbapi']->queryROW("SELECT id FROM `".$this->table."` ".$where);
 		
 		if($test > 0){
 			return $_SESSION['dbapi']->execSQL("UPDATE `".$this->table."` ".
 				" SET time_updated=UNIX_TIMESTAMP(), json_data='".mysqli_real_escape_string($_SESSION['dbapi']->db, json_encode($json_arr, $json_options))."' ".
-				" WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND section='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'");
+				$where);
 		}else{
 			
 			$dat = array(

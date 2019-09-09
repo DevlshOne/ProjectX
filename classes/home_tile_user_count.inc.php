@@ -48,17 +48,28 @@ class HomeTileUserCountClass{
 
 	}
 	
-	function makeConfigure(){
+	function makeConfigure($tile_idx){
 		
+		$this->prefs_idx = $tile_idx;
 		
 		?><form method="POST" action="<?=stripurl('')?>" onsubmit="saveConfigPrefs(this); return false">
 			<input type="hidden" name="saving_config" value="<?=$this->area_name?>" />
-
+			<input type="hidden" name="tile_idx" value="<?=$this->prefs_idx?>" />
 			
 		<table border="0" width="100%" height="100%">
-
 		<tr>
-			<td align="center">
+			<th>Timeframe:</th>
+			<td><select name="timeframe">
+			
+				<option value="day">Day</option>
+				<option value="week"<?=(	$this->prefs['timeframe'] == 'week')?" SELECTED ":""?>>Week</option>
+				<option value="month"<?=(	$this->prefs['timeframe'] == 'month')?" SELECTED ":""?>>Month</option>
+				<option value="year"<?=(	$this->prefs['timeframe'] == 'year')?" SELECTED ":""?>>Year</option>
+			
+			</select></td>
+		</tr>
+		<tr>
+			<td colspan="2" align="center">
 				<input type="submit" value="Save" />
 			</td>
 		</tr>
@@ -79,7 +90,7 @@ class HomeTileUserCountClass{
 
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
 
-				$('#'+objname).load("index.php?area=home&sub_section=<?=$this->area_name?>&edit_config&printable=1&no_script=1");
+				$('#'+objname).load("index.php?area=home&sub_section=<?=$this->area_name?>&edit_config=<?=$this->tile_idx?>&printable=1&no_script=1");
 
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
@@ -145,7 +156,7 @@ class HomeTileUserCountClass{
 			</tr>
 			<tr>
 				<td>
-					<img src="graph.php?area=user_charts&max_mode=1&time_frame=day&width=<?=($this->tile_width-6)?>&height=<?=($this->tile_height-30)?>" border="0" height="<?=($this->tile_height-30)?>" width="<?=($this->tile_width-6)?>">
+					<img src="graph.php?area=user_charts&max_mode=1&time_frame=<?=($this->prefs['timeframe'])?$this->prefs['timeframe']:'day'?>&width=<?=($this->tile_width-6)?>&height=<?=($this->tile_height-30)?>" border="0" height="<?=($this->tile_height-30)?>" width="<?=($this->tile_width-6)?>">
 				</td>
 			</tr>
 			</table>

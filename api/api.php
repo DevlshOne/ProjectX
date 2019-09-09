@@ -513,4 +513,13 @@
 		$obj->handleAPI();
 		
 		break;
+		
+		
+	case 'user_count':
+
+		include_once($basedir."api/home_tile_user_count.api.php");
+		$obj = new API_HomeTileUserCount();
+		$obj->handleAPI();
+		
+		break;
 	}
