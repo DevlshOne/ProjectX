@@ -47,7 +47,6 @@
                     $strGroups = '';
                     $strUserGroups = '';
                     $webip = trim($_REQUEST['webip']);
-                    $saveUserPrefs = trim($_REQUEST['saveUserPrefs']);
                     $groups = $_GET['groups'];
                     if (isset($groups)) {
                         foreach ($groups as $v) {

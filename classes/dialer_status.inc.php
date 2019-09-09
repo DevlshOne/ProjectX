@@ -134,6 +134,7 @@
                                         $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [OFF]');
                                     } else {
                                         $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [' + refreshInterval + ']');
+                                        clearTimeout(dispTimer);
                                         getDialerStatusData();
                                     }
                                     $(this).dialog('close');
@@ -160,16 +161,17 @@
                                     }
                                     let clusterid = $(this).data('cluster_id');
                                     let objTmp = {};
-                                    clusterInfo[clusterid]['sel_campaigns'] = [];
+                                    clusterInfo[clusterid].sel_campaigns = [];
                                     $('#campaignFilter option:selected').each(function (i, v) {
-                                        objTmp['groups'] = v.innerText;
-                                        clusterInfo[clusterid]['sel_campaigns'].push(objTmp);
+                                        objTmp.groups.push(v.innerText);
                                     });
-                                    clusterInfo[clusterid]['sel_user_groups'] = [];
+                                    clusterInfo[clusterid].sel_campaigns.push(objTmp);
+                                    objTmp = {};
+                                    clusterInfo[clusterid].sel_user_groups = [];
                                     $('#usergroupFilter option:selected').each(function (i, v) {
-                                        objTmp['user_group_filter'] = v.innerText;
-                                        clusterInfo[clusterid]['sel_user_groups'].push(objTmp);
+                                        objTmp.user_group_filter.push(v.innerText);
                                     });
+                                    clusterInfo[clusterid].sel_user_groups.push(objTmp);
                                     if ($('#savePrefs').is(':checked')) {
                                         saveUserPrefs();
                                     }
@@ -316,18 +318,18 @@
                         }
 
                         function saveUserPrefs() {
-                            let tmpJSON = {};
-                            let tmpGroups = [];
-                            let tmpUserGroups = [];
+                            let tmpJSON = [];
                             $.each(selectedClusters, function (i, v) {
-                                tmpJSON[i] = [];
-                                $.each(clusterInfo[v]['sel_campaigns'], function (j, w) {
+                                let tmpGroups = [];
+                                let tmpUserGroups = [];
+                                let tmpData = [];
+                                $.each(clusterInfo[v].sel_campaigns, function (j, w) {
                                     tmpGroups.push(w.groups);
                                 });
-                                $.each(clusterInfo[v]['sel_user_groups'], function (j, w) {
+                                $.each(clusterInfo[v].sel_user_groups, function (j, w) {
                                     tmpUserGroups.push(w.user_group_filter);
                                 });
-                                tmpJSON[i].push({
+                                tmpData.push({
                                     cluster_id : v,
                                     groups : tmpGroups,
                                     usergroups : tmpUserGroups,
@@ -337,6 +339,7 @@
                                     viciUsername : '<?=$_SESSION['user']['username'];?>',
                                     viciPassword : '<?=$_SESSION['user']['vici_password'];?>'
                                 });
+                                tmpJSON.push(tmpData);
                             });
                             let tmpPrefs = JSON.stringify(tmpJSON);
                             $.ajax({
@@ -356,8 +359,6 @@
                             $.each(selectedClusters, function (i, v) {
                                 $('#dialerStatusZone').append('<li id="clusterTile_' + v + '" class="clusterTile"></li>');
                             });
-                            // $('#dialerStatusZone').sortable();
-                            // $('#dialerStatusZone').disableSelection();
                             $('#dialerStatusZone').sortable({
                                 cancel: '#clusterTileAdder'
                             });
