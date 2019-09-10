@@ -34,6 +34,8 @@
                 $this->clusterInfo[$v]['ip'] = getClusterWebHost($v);
                 $this->clusterInfo[$v]['sel_campaigns'] = getClusterCampaigns($v);
                 $this->clusterInfo[$v]['sel_user_groups'] = getClusterUserGroups($v);
+                $this->clusterInfo[$v]['campaign_options'] = getClusterCampaigns($v);
+                $this->clusterInfo[$v]['usergroup_options'] = getClusterUserGroups($v);
             }
         }
 
@@ -419,12 +421,12 @@
                             dlgObj.dialog('open');
                             dlgObj.dialog({title: 'Change Cluster Filters - ' + clusterInfo[clid]['name']});
                             let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option>ALL-ACTIVE</option>';
-                            $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
+                            $.each(clusterInfo[clid]['campaign_options'], function (i, v) {
                                 campaignSelect += '<option>' + v.groups + '</option>';
                             });
                             campaignSelect += '</select>';
                             let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8"><option>ALL-GROUPS</option>';
-                            $.each(clusterInfo[clid]['sel_user_groups'], function (i, v) {
+                            $.each(clusterInfo[clid]['usergroup_options'], function (i, v) {
                                 ugSelect += '<option>' + v.user_group_filter + '</option>';
                             });
                             ugSelect += '</select>';
@@ -433,11 +435,17 @@
                             $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
                                 arrSelTemp.push(v.groups);
                             });
+                            if(clusterInfo[clid]['campaign_options'].length === clusterInfo[clid]['sel_campaigns'].length) {
+                                arrSelTemp.push('ALL-ACTIVE');
+                            }
                             $('#campaignFilter').val(arrSelTemp);
                             arrSelTemp = [];
                             $.each(clusterInfo[clid]['sel_user_groups'], function (i, v) {
                                 arrSelTemp.push(v.user_group_filter);
                             });
+                            if(clusterInfo[clid]['usergroup_options'].length === clusterInfo[clid]['sel_user_groups'].length) {
+                                arrSelTemp.push('ALL-GROUPS');
+                            }
                             $('#usergroupFilter').val(arrSelTemp);
                         });
 
