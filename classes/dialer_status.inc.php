@@ -32,8 +32,6 @@
                 $this->clusterInfo[$v]['type'] = getClusterType($v);
                 $this->clusterInfo[$v]['name'] = getClusterName($v);
                 $this->clusterInfo[$v]['ip'] = getClusterWebHost($v);
-                $this->clusterInfo[$v]['campaigns'] = getClusterCampaigns($v);
-                $this->clusterInfo[$v]['user_groups'] = getClusterUserGroups($v);
                 $this->clusterInfo[$v]['sel_campaigns'] = getClusterCampaigns($v);
                 $this->clusterInfo[$v]['sel_user_groups'] = getClusterUserGroups($v);
             }
@@ -86,6 +84,10 @@
                         var selectedClusters = <?=json_encode($this->availableClusterIDs);?>;
                         var dlgObj = {};
                         var highContrast = false;
+                        var viciMisMatch = false;
+                        //if ("<?//=$_SESSION['user']['vici_password'];?>//" !== "<?//=$_SESSION['user']['password'];?>//") {
+                        //    viciMisMatch = true;
+                        //}
                         var scriptRoot = '<?=$_SESSION['site_config']['basedir'];?>';
                         var useCache = true;
                         var cacheDebug = false;
@@ -107,10 +109,10 @@
                                         saveUserPrefs();
                                     }
                                     $(this).dialog('close');
-                                    $('#dialerStatusZone').empty();
-                                    applyUniformity();
-                                    initScreen();
-                                    getDialerStatusData();
+                                    // $('#dialerStatusZone').empty();
+                                    // applyUniformity();
+                                    // initScreen();
+                                    // getDialerStatusData();
                                 },
                                 'Cancel': function () {
                                     $(this).dialog('close');
@@ -160,21 +162,25 @@
                                     let clusterid = $(this).data('cluster_id');
                                     let tmpArr = [];
                                     $('#campaignFilter option:selected').each(function (i, v) {
-                                        tmpArr.push(v.innerText);
+                                        tmpArr.push({
+                                            groups: v.innerText
+                                        });
                                     });
                                     clusterInfo[clusterid]['sel_campaigns'] = tmpArr;
                                     tmpArr = [];
                                     $('#usergroupFilter option:selected').each(function (i, v) {
-                                        tmpArr.push(v.innerText);
+                                        tmpArr.push({
+                                            user_group_filter: v.innerText
+                                        });
                                     });
                                     clusterInfo[clusterid]['sel_user_groups'] = tmpArr;
                                     if ($('#savePrefs').is(':checked')) {
                                         saveUserPrefs();
                                     }
                                     $(this).dialog('close');
-                                    $('#dialerStatusZone').empty();
-                                    initScreen();
-                                    getDialerStatusData();
+                                    // $('#dialerStatusZone').empty();
+                                    // initScreen();
+                                    // getDialerStatusData();
                                 },
                                 'Cancel': function () {
                                     $(this).dialog('close');
@@ -240,7 +246,7 @@
                         });
 
                         $('#dialog-modal-vici-credentials').dialog({
-                            autoOpen: false,
+                            autoOpen: viciMisMatch,
                             width: 400,
                             title: 'Vici Username/Password Required',
                             modal: true,
@@ -412,13 +418,13 @@
                             dlgObj.data('cluster_id', clid);
                             dlgObj.dialog('open');
                             dlgObj.dialog({title: 'Change Cluster Filters - ' + clusterInfo[clid]['name']});
-                            let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6">';
-                            $.each(clusterInfo[clid]['campaigns'], function (i, v) {
+                            let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option>ALL-ACTIVE</option>';
+                            $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
                                 campaignSelect += '<option>' + v.groups + '</option>';
                             });
                             campaignSelect += '</select>';
-                            let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8">';
-                            $.each(clusterInfo[clid]['user_groups'], function (i, v) {
+                            let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8"><option>ALL-GROUPS</option>';
+                            $.each(clusterInfo[clid]['sel_user_groups'], function (i, v) {
                                 ugSelect += '<option>' + v.user_group_filter + '</option>';
                             });
                             ugSelect += '</select>';
@@ -442,9 +448,9 @@
                             if (i !== -1) {
                                 selectedClusters.splice(i, 1);
                             }
-                            $('#dialerStatusZone').empty();
-                            initScreen();
-                            getDialerStatusData();
+                            // $('#dialerStatusZone').empty();
+                            // initScreen();
+                            // getDialerStatusData();
                         });
 
                         $('#dialerStatusZone').on('click', '.stopDialersButton', function () {
