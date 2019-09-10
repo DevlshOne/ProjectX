@@ -55,6 +55,7 @@
             <div id="dialog-modal-cluster-filters" title="Filters" class="nod"></div>
             <div id="dialog-modal-first-confirm" title="Confirmation Required" class="nod"></div>
             <div id="dialog-modal-second-confirm" title="Confirmation Required" class="nod"></div>
+            <div id="dialog-modal-cluster-action-confirm" title="Confirmation Required" class="nod"></div>
             <div id="dialog-modal-vici-credentials" title="Vici Username/Password Required" class="nod">
                 <form method="post">
                     <table class="tightTable pct100">
@@ -111,9 +112,9 @@
                                         saveUserPrefs();
                                     }
                                     $(this).dialog('close');
-                                    // $('#dialerStatusZone').empty();
+                                    $('#dialerStatusZone').empty();
                                     // applyUniformity();
-                                    // initScreen();
+                                    initScreen();
                                     // getDialerStatusData();
                                 },
                                 'Cancel': function () {
@@ -180,8 +181,8 @@
                                         saveUserPrefs();
                                     }
                                     $(this).dialog('close');
-                                    // $('#dialerStatusZone').empty();
-                                    // initScreen();
+                                    $('#dialerStatusZone').empty();
+                                    initScreen();
                                     // getDialerStatusData();
                                 },
                                 'Cancel': function () {
@@ -189,6 +190,34 @@
                                 }
                             },
                             position: 'center'
+                        });
+
+                        $('#dialog-modal-cluster-action-confirm').dialog({
+                            autoOpen: false,
+                            width: 400,
+                            modal: true,
+                            draggable: false,
+                            resizable: false,
+                            buttons: {
+                                'Cancel': function () {
+                                    $(this).dialog('close');
+                                },
+                                'Confirm': function () {
+                                    let theAction = $(this).data('myAction');
+                                    let clusterID = $(this).data('clusterID');
+                                    $(this).dialog('close');
+                                    switch (theAction) {
+                                        case 'forceHopper':
+                                            forceHopper(clusterID);
+                                            break;
+                                        case 'stopDialers':
+                                            stopDialers(clusterID);
+                                            break;
+                                        default:
+                                            break;
+                                    }
+                                }
+                            }
                         });
 
                         $('#dialog-modal-second-confirm').dialog({
@@ -456,19 +485,27 @@
                             if (i !== -1) {
                                 selectedClusters.splice(i, 1);
                             }
-                            // $('#dialerStatusZone').empty();
-                            // initScreen();
+                            $('#dialerStatusZone').empty();
+                            initScreen();
                             // getDialerStatusData();
                         });
 
                         $('#dialerStatusZone').on('click', '.stopDialersButton', function () {
                             let clid = $(this).closest('button').attr('id').split('_')[1];
-                            stopDialers(clid);
+                            dlgObj = $('#dialog-modal-cluster-action-confirm');
+                            dlgObj.data('myAction', 'stopDialers');
+                            dlgObj.data('clusterID', clid);
+                            dlgObj.html('<div class="firstConfirmation">This will STOP all dialing for cluster ' + clid + ', are you sure?</div>');
+                            dlgObj.dialog('open');
                         });
 
                         $('#dialerStatusZone').on('click', '.forceHopperButton', function () {
                             let clid = $(this).closest('button').attr('id').split('_')[1];
-                            forceHopper(clid);
+                            dlgObj = $('#dialog-modal-cluster-action-confirm');
+                            dlgObj.data('myAction', 'forceHopper');
+                            dlgObj.data('clusterID', clid);
+                            dlgObj.html('<div class="firstConfirmation">This will RESET the hopper for cluster ' + clid + ', are you sure?</div>');
+                            dlgObj.dialog('open');
                         });
 
                         function stopDialers(clid) {
@@ -483,6 +520,7 @@
                                         url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + i
                                     });
                                 });
+                                alert('ALL dialers have been stopped!');
                             } else {
                                 $.ajax({
                                     type: "POST",
@@ -492,6 +530,7 @@
                                     crossOrigin: false,
                                     url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + clid
                                 });
+                                alert('Dialer for Cluster ' + clid + ' is stopped!');
                             }
                         }
 
@@ -507,6 +546,7 @@
                                         url: 'api/api.php?get=dialer_status&mode=json&action=forceHopperReset&clusterid=' + i
                                     });
                                 });
+                                alert('All hoppers have been reset!');
                             } else {
                                 $.ajax({
                                     type: "POST",
@@ -516,6 +556,7 @@
                                     crossOrigin: false,
                                     url: 'api/api.php?get=dialer_status&mode=json&action=forceHopperReset&clusterid=' + clid
                                 });
+                                alert('Hopper for Cluster ' + clid + ' has been reset!');
                             }
                         }
 
@@ -679,14 +720,14 @@
                                     getDialerStatusData();
                                     applyUniformity();
                                 }, (refreshInterval * 1000));
+                            } else {
+                                clearTimeout(dispTimer);
                             }
                         }
                         initScreen();
                         getDialerStatusData();
                         applyUniformity();
-                    }
-                )
-                ;
+                    });
             </script>
             <table class="pct100 tightTable">
                 <tr>
