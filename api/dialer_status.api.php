@@ -110,7 +110,7 @@
                     $out = '';
                     break;
                 case 'loadUserPrefs':
-                    $out = $_SESSION['dbapi']->user_prefs->getData("dialer_status");
+                    $out = $_SESSION['dbapi']->user_prefs->getRaw("dialer_status");
                     break;
             }
             echo $out;
