@@ -124,9 +124,7 @@
                                 }
                                 $(this).dialog('close');
                                 $('#dialerStatusZone').empty();
-                                // applyUniformity();
                                 initScreen();
-                                // getDialerStatusData();
                             },
                             'Cancel': function () {
                                 $(this).dialog('close');
@@ -154,6 +152,7 @@
                                     clearTimeout(dispTimer);
                                     getDialerStatusData();
                                 }
+                                saveUserPrefs();
                                 applyUniformity();
                                 $(this).dialog('close');
                             },
@@ -316,7 +315,7 @@
                     });
 
                     $('#dialog-modal-load-userprefs').dialog({
-                        autoOpen: true,
+                        autoOpen: false,
                         width: 400,
                         title: 'Load User Preferences',
                         modal: true,
@@ -345,14 +344,20 @@
                             url: 'api/api.php?get=dialer_status&mode=json&action=loadUserPrefs',
                             success: function (prefs) {
                                 if (prefs.length) {
-                                    let tmpJSON = JSON.parse(prefs);
-                                    $.each(tmpJSON, function (i, v) {
+                                    $.each(prefs, function (i, v) {
                                         let tmpCLID = v.cluster_id;
                                         let tmpGroups = v.groups;
                                         let tmpUserGroups = v.usergroups;
-                                        let objTmp = {};
                                         refreshInterval = v.refreshInterval;
                                         refreshEnabled = v.refreshEnabled;
+                                        if (!refreshEnabled) {
+                                            $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [OFF]');
+                                            clearTimeout(dispTimer);
+                                        } else {
+                                            $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [' + refreshInterval + ']');
+                                            clearTimeout(dispTimer);
+                                            getDialerStatusData();
+                                        }
                                         highContrast = v.highContrast;
                                         if (highContrast) {
                                             $('body').css('background-color', '#000000');
@@ -361,20 +366,22 @@
                                             $('.clusterTile').css('background-color', 'black');
                                             $('#switchContrast').button('option', 'label', 'Normal Mode');
                                         }
-                                        selectedClusters = [];
-                                        selectedClusters.push(tmpCLID);
+                                        // selectedClusters = [];
+                                        selectedClusters[i] = tmpCLID;
                                         clusterInfo[tmpCLID]['sel_campaigns'] = [];
                                         $(tmpGroups).each(function (j, w) {
-                                            objTmp['groups'] = w;
-                                            clusterInfo[tmpCLID]['sel_campaigns'].push(objTmp);
+                                            clusterInfo[tmpCLID]['sel_campaigns'].push({
+                                                groups: w
+                                            });
                                         });
                                         clusterInfo[tmpCLID]['sel_user_groups'] = [];
                                         $(tmpUserGroups).each(function (j, w) {
-                                            objTmp['user_group_filter'] = w;
-                                            clusterInfo[tmpCLID]['sel_user_groups'].push(objTmp);
+                                            clusterInfo[tmpCLID]['sel_user_groups'].push({
+                                                user_group_filter: w
+                                            });
                                         });
                                     });
-                                    alert('User Preferences loaded');
+                                    console.log('User Preferences loaded');
                                 }
                             }
                         });
@@ -385,14 +392,13 @@
                         $.each(selectedClusters, function (i, v) {
                             let tmpGroups = [];
                             let tmpUserGroups = [];
-                            let tmpData = [];
                             $.each(clusterInfo[v].sel_campaigns, function (j, w) {
                                 tmpGroups.push(w.groups);
                             });
                             $.each(clusterInfo[v].sel_user_groups, function (j, w) {
                                 tmpUserGroups.push(w.user_group_filter);
                             });
-                            tmpData.push({
+                            tmpJSON.push({
                                 cluster_id: v,
                                 groups: tmpGroups,
                                 usergroups: tmpUserGroups,
@@ -402,7 +408,6 @@
                                 viciUsername: '<?=$_SESSION['user']['username'];?>',
                                 viciPassword: '<?=$_SESSION['user']['vici_password'];?>'
                             });
-                            tmpJSON.push(tmpData);
                         });
                         let tmpPrefs = JSON.stringify(tmpJSON);
                         $.ajax({
@@ -413,7 +418,7 @@
                             crossOrigin: false,
                             url: 'api/api.php?get=dialer_status&mode=json&action=saveUserPrefs&prefs=' + tmpPrefs,
                             success: function () {
-                                alert('User Preferences saved');
+                                console.log('User Preferences saved');
                             }
                         });
                     }
@@ -422,8 +427,26 @@
                         $.each(selectedClusters, function (i, v) {
                             $('#dialerStatusZone').append('<li id="clusterTile_' + v + '" class="clusterTile"></li>');
                         });
+                        if (highContrast) {
+                            $('body').css('background-color', '#000000');
+                            $('body').css('color', '#FFFFFF');
+                            $('#dialerStatusZone').css('background-color', '#000000');
+                            $('.clusterTile').css('background-color', 'black');
+                        }
                         $('#dialerStatusZone').sortable({
-                            cancel: '#clusterTileAdder'
+                            cancel: '#clusterTileAdder',
+                            stop: function (e, ui) {
+                                // the sort order has been changed - now re-arrange the selectedClusters array accordingly
+                                let clusterTiles = $('#dialerStatusZone').children();
+                                let newTileOrder = [];
+                                $.each(clusterTiles, function (i, v) {
+                                    newTileOrder[i] = $(v).attr('id').split('_')[1];
+                                });
+                                selectedClusters.sort(function (a, b) {
+                                    return newTileOrder.indexOf(a) - newTileOrder.indexOf(b);
+                                });
+                                saveUserPrefs();
+                            }
                         });
                         $('#clusterSelectButton').on('click', function (e, ui) {
                             dlgObj = $('#dialog-modal-select-clusters');
@@ -472,6 +495,7 @@
                             $(this).button('option', 'label', 'Dark Mode');
                             highContrast = false;
                         }
+                        saveUserPrefs();
                     });
                     $('#dialerStatusZone').on('click', '.selectFiltersButton', function () {
                         let clid = $(this).closest('button').attr('id').split('_')[1];
@@ -517,7 +541,6 @@
                         }
                         $('#dialerStatusZone').empty();
                         initScreen();
-                        // getDialerStatusData();
                     });
 
                     $('#dialerStatusZone').on('click', '.stopDialersButton', function () {
@@ -690,7 +713,8 @@
                         if (tdValues.length > 1) {
                             $newLayout.append('<tr><td class="align_left">Server Time: </td><td class="clusterTime align_right">' + objClusterData.time + '</td></tr>');
                             if (cltype === 'cold') {
-                                $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '&#10;Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads (Trunk: ' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + ')</td></tr>');
+                                $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
+                                $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
                             }
                             if (cltype === 'taps') {
@@ -764,6 +788,7 @@
                     }
 
                     initScreen();
+                    loadUserPrefs();
                     getDialerStatusData();
                     applyUniformity();
                 });
