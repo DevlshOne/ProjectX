@@ -292,14 +292,14 @@
                                 </li><?
                             }
 
-                            if ($_SESSION['user']['priv'] >= 5) {
+                            if (checkAccess('pac_web_donations')) {
                                 ?>
                                 <li class="has-children comments">
                                 <a href="#0">PACs Maintenance </a>
 
                                 <ul><?
 
-                                        if ($_SESSION['user']['priv'] >= 5) {
+                              			if (checkAccess('pac_web_donations')) {
                                             ?>
                                             <li><a href="?area=pac_reports&no_script=1"
                                                    onclick="loadSection(this.href);return false">Web Donations</a>
