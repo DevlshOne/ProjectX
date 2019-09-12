@@ -153,7 +153,7 @@
                                     getDialerStatusData();
                                 }
                                 saveUserPrefs();
-                                applyUniformity();
+                                // applyUniformity();
                                 $(this).dialog('close');
                             },
                             'Cancel': function () {
@@ -366,8 +366,10 @@
                                             $('.clusterTile').css('background-color', 'black');
                                             $('#switchContrast').button('option', 'label', 'Normal Mode');
                                         }
-                                        // selectedClusters = [];
+                                        selectedClusters = [];
                                         selectedClusters[i] = tmpCLID;
+                                        // clusterInfo[tmpCLID]['campaign_options'] = [];
+                                        // clusterInfo[tmpCLID]['usergroup_options'] = [];
                                         clusterInfo[tmpCLID]['sel_campaigns'] = [];
                                         $(tmpGroups).each(function (j, w) {
                                             clusterInfo[tmpCLID]['sel_campaigns'].push({
@@ -459,7 +461,7 @@
                             dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td class="align_right">' + clusterSelect + '</td></tr><tr><td class="align_left"><label for="savePrefs">Save User Preferences : </label></td><td class="align_right"><input type="checkbox" name="savePrefs" id="savePrefs" checked /></td></tr></tbody></table>');
                             $('#clusterSelection').val(selectedClusters);
                         });
-                        applyUniformity();
+                        // applyUniformity();
                     }
 
                     $('#refreshRateButton').on('click', function (e, ui) {
@@ -533,13 +535,14 @@
                     });
 
                     $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
-                        let clid = $(this).closest('a').attr('id').split('_')[1];
+                        let clid = $(this).attr('id').split('_')[1].toString();
                         $('#clusterTile_' + clid).remove();
-                        let i = $.inArray(parseInt(clid), selectedClusters);
+                        let i = selectedClusters.indexOf(clid);
                         if (i !== -1) {
                             selectedClusters.splice(i, 1);
                         }
                         $('#dialerStatusZone').empty();
+                        saveUserPrefs();
                         initScreen();
                     });
 
@@ -746,6 +749,7 @@
 
                     function getDialerStatusData() {
                         $.each(selectedClusters, function (i, v) {
+                                // $('#dialerStatusZone').append('<li id="clusterTile_' + v + '" class="clusterTile"></li>');
                             let tmpGroups = '';
                             if (clusterInfo[v]['campaign_options'].length === clusterInfo[v]['sel_campaigns'].length) {
                                 tmpGroups = '&groups[]=ALL-ACTIVE';
@@ -780,17 +784,16 @@
                         if (refreshEnabled) {
                             dispTimer = setTimeout(function () {
                                 getDialerStatusData();
-                                applyUniformity();
                             }, (refreshInterval * 1000));
                         } else {
                             clearTimeout(dispTimer);
                         }
+                        applyUniformity();
                     }
-
                     initScreen();
                     loadUserPrefs();
                     getDialerStatusData();
-                    applyUniformity();
+                    // applyUniformity();
                 });
             </script>
             <table class="pct100 tightTable">
