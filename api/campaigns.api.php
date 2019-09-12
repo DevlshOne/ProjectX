@@ -106,6 +106,9 @@ class API_Campaigns{
 				$dat['warm_transfers'] = ($_POST['warm_transfers'] == 'yes')?'yes':'no';
 			}
 
+			$dat['type'] = trim($_POST['type']);
+			
+			
 
 			if($id){
 

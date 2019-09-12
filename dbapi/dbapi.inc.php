@@ -143,6 +143,7 @@ class DBAPI {
     
     public $user_prefs;
 
+    public $my_notes;
 
     /**
      * DBAPI Constructor
@@ -376,6 +377,11 @@ class DBAPI {
 
 		include_once($_SESSION['site_config']['basedir']."dbapi/user_preferences.db.php");
 		$this->user_prefs = new UserPreferencesAPI();
+		
+		
+		include_once($_SESSION['site_config']['basedir']."dbapi/home_tile_notes.db.php");
+		$this->my_notes = new MyNotesDBAPI();
+		
 	}
 
 

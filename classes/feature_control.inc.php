@@ -553,6 +553,13 @@ class FeatureControl{
 						$this->renderFeatureRow('dispo_log', 'Dispo Log', ($row['dispo_log'] == 'yes')?true:false );
 
 						?><tr>
+							<th colspan="2" class="row2">PAC Maintenance</th>
+						</tr><?
+						
+						$this->renderFeatureRow('pac_web_donations', 'Web Donations', ($row['pac_web_donations'] == 'yes')?true:false );
+						
+						
+						?><tr>
 							<th colspan="2" class="row2">Users</th>
 						</tr><?
 

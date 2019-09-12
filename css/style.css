@@ -55,13 +55,16 @@ table{
 
 
 .row0{
-	background-color:#cccccc;
+	background-color:#e6F2f9;
+	/**border-bottom:1px dotted #ccc;**/
 	padding:2px;
 	color:#000000;
 }
 
 .row1{
 	background-color:#fff;
+	
+	/**border-bottom:1px dotted #ccc;**/
 	padding:2px;
 	color:#000000;
 }
@@ -316,3 +319,29 @@ a:hover {
 	background-image: url("../images/form_builder_checkbox.png");
 	background-repeat: no-repeat;
 }
+
+
+.homeScreenTile {
+    border-radius: 15px;
+    background-color: #e6F2f9;
+    padding: 4px;
+    min-height: 170px;
+    border: 2px solid grey;
+    margin: 2px;
+    float: left;
+}
+
+.homeScreenTitle {
+    width: 100%;
+    font-size: 14px;
+    font-weight: 800;
+    color: #000;
+    text-align: left;
+    padding-left: 15px;
+    cursor: move;
+    float: left;
+    vertical-align: middle;
+    border-bottom: 1px dotted #000;
+}
+#home_sortable { list-style-type: none; margin: 0; padding: 0; }
+#home_sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 100px; height: 90px; font-size: 4em; text-align: center; }

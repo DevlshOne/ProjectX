@@ -115,7 +115,7 @@
 		return $out;
 	}
 
-	function logAction($action, $area, $record_id, $description = null, $orig_record = null, $new_record = null){
+	function logAction($action, $area, $record_id, $description = null, $orig_record = null, $new_record = null, $additional_changes_tracked=null){
 
 		$dat = array();
 		$dat['time'] = time();
@@ -146,6 +146,11 @@
 		}
 
 
+		if($additional_changes_tracked != null && strlen($additional_changes_tracked) > 0){
+			
+			$dat['changes_tracked'] .= $additional_changes_tracked;
+		}
+		
 //			switch($area){
 //			default:
 //				// IGNORE/SKIP
