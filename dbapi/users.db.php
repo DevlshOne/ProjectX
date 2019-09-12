@@ -358,6 +358,8 @@ class UsersAPI{
 		$dat['result']		= $res;
 		$dat['time']		= time();
 		$dat['ip']			= $_SERVER["REMOTE_ADDR"];
+		$dat['browser']		= $_SERVER['HTTP_USER_AGENT'];
+		
 		$dat['section'] = 'admin';
 
 		$dat['details'] = $details;
