@@ -162,7 +162,7 @@
     function getClusterIDs() {
         $clusterIDs = [];
         foreach ($_SESSION['site_config']['db'] as $k => $v) {
-            array_push($clusterIDs, $v['cluster_id']);
+            array_push($clusterIDs, strval($v['cluster_id']));
         }
         return $clusterIDs;
     }
