@@ -292,14 +292,14 @@
                                 </li><?
                             }
 
-                            if ($_SESSION['user']['priv'] >= 5) {
+                            if (checkAccess('pac_web_donations')) {
                                 ?>
                                 <li class="has-children comments">
                                 <a href="#0">PACs Maintenance </a>
 
                                 <ul><?
 
-                                        if ($_SESSION['user']['priv'] >= 5) {
+                              			if (checkAccess('pac_web_donations')) {
                                             ?>
                                             <li><a href="?area=pac_reports&no_script=1"
                                                    onclick="loadSection(this.href);return false">Web Donations</a>
@@ -398,8 +398,13 @@
 
 
                 <div class="content-wrapper" id="main_content">
-
-                    <center>
+				<?
+					include_once("classes/home.inc.php");
+					$_SESSION['home']->handleFLOW();
+					
+				
+					/**
+					 *<center>
                         <img src="graph.php?area=user_charts&max_mode=1&time_frame=day&width=650&height=300" border="0"
                              height="300" width="650">
                         <br/>
@@ -407,6 +412,7 @@
                         <img src="graph.php?area=user_charts&max_mode=1&time_frame=week&start_time=<?= (time() - 604800) ?>&width=650&height=300"
                              border="0" height="300" width="650">
                     </center>
+               **/?>
 
                 </div> <!-- .content-wrapper -->
             </main> <!-- .cd-main-content -->

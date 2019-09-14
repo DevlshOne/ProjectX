@@ -2185,10 +2185,16 @@ class ListToolsClass{
 				}
 
 
+
+				$('#upload_import_button').hide();
+				
 				// NINJA FORM SUBMIT
 				//ninjaUploadList();
 				generateAuthKey();
 
+
+				setTimeout(function(){ $('#upload_import_button').show(); }, 30000);
+				
 				return false;
 			}
 
@@ -2250,6 +2256,8 @@ class ListToolsClass{
 
 				stopKeepAlive();
 
+				$('#upload_import_button').show();
+				
 				var msg = "ERROR! Upload failed:\n"+res;
 
 				$('#upload_status_cell').html(res);
@@ -2261,6 +2269,8 @@ class ListToolsClass{
 
 				stopKeepAlive();
 
+				$('#upload_import_button').show();
+				
 			//	warning_messages = $.trim(warning_messages);
 
 				$('#upload_status_cell').html('Success');
@@ -2476,7 +2486,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="submit" value="Upload &amp; Import" />
+						<input type="submit" id="upload_import_button" value="Upload &amp; Import" />
 
 					</td>
 				</tr>

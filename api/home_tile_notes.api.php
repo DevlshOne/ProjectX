@@ -2,28 +2,31 @@
 
 
 
-class API_PACReports{
+class API_MyNotes{
 
-	var $xml_parent_tagname = "Pacs";
-	var $xml_record_tagname = "Pac";
-
-	var $json_parent_tagname = "ResultSet";
-	var $json_record_tagname = "Result";
+	var $xml_parent_tagname = "Notes";
+	var $xml_record_tagname = "Note";
 
 
 	function handleAPI(){
 
 
 
-		if(!checkAccess('pac_web_donations')){
+// 		if(!checkAccess('names')){
 
 
-			$_SESSION['api']->errorOut('Access denied to Web Donations');
+// 			$_SESSION['api']->errorOut('Access denied to Names');
 
-			return;
-		}
+// 			return;
+// 		}
 
-
+//		if($_SESSION['user']['priv'] < 5){
+//
+//
+//			$_SESSION['api']->errorOut('Access denied to non admins.');
+//
+//			return;
+//		}
 
 		switch($_REQUEST['action']){
 		case 'delete':
@@ -33,9 +36,9 @@ class API_PACReports{
 			//$row = $_SESSION['dbapi']->campaigns->getByID($id);
 
 
-			$_SESSION['dbapi']->pac_reports->delete($id);
+			$_SESSION['dbapi']->my_notes->delete($id);
 
-			logAction('delete', 'pac_reports', $id, "");
+			logAction('delete', 'my_notes', $id, "");
 
 
 			$_SESSION['api']->outputDeleteSuccess();
@@ -48,7 +51,7 @@ class API_PACReports{
 
 			$id = intval($_REQUEST['id']);
 
-			$row = $_SESSION['dbapi']->pac_reports->getByID($id);
+			$row = $_SESSION['dbapi']->my_notes->getByID($id);
 
 
 
@@ -79,49 +82,49 @@ class API_PACReports{
 			break;
 		case 'edit':
 
-			$id = intval($_POST['adding_pac']);
+			$id = intval($_POST['note_id']);
 
 
 			unset($dat);
 
 
-			$dat['first_name'] = trim($_POST['first_name']);
-			$dat['last_name'] = trim($_POST['last_name']);
-
-			$dat['address1'] = trim($_POST['address1']);
-			$dat['address2'] = trim($_POST['address2']);
-
-			$dat['city']	= trim($_POST['city']);
-			$dat['state']	= trim($_POST['state']);
-			$dat['zip']		= trim($_POST['zip']);
-			$dat['country']	= trim($_POST['country']);
-
-			$dat['phone']	= trim($_POST['phone']);
-			$dat['employer']	= trim($_POST['employer']);
-			$dat['profession']	= trim($_POST['profession']);
-
-			$dat['payment_gateway']	= trim($_POST['payment_gateway']);
+			$dat['notes'] = trim($_POST['note_text']);
+			$dat['time'] = time();
 
 			if($id){
+		
+				$row = $_SESSION['dbapi']->my_notes->getByID($id);
+				
+				if($row['user_id'] != $_SESSION['user']['id']){
+					
+					$_SESSION['api']->errorOut("ERROR: You do not own this note.",$die=true, -1);
+					exit;
+				}
+				
+				
+				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->my_notes->table);
 
-				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->pac_reports->table);
-
-				logAction('edit', 'pac_reports', $id, "Name=".$dat['first_name']." ".$dat['last_name']);
+				$newrow = $_SESSION['dbapi']->my_notes->getByID($id);
+				
+				logAction('edit', 'my_notes', $id, "", $row, $newrow);
+				
 
 			}else{
 
+				$dat['user_id'] = $_SESSION['user']['id'];
 
 
-				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->pac_reports->table);
+				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->my_notes->table);
 				$id = mysqli_insert_id($_SESSION['dbapi']->db);
 
+				$newrow = $_SESSION['dbapi']->my_notes->getByID($id);
 
-				logAction('add', 'pac_reports', $id, "Name=".$dat['first_name']." ".$dat['last_name']);
+				logAction('add', 'my_notes', $id, "", array(), $newrow);
 			}
 
 
 
-
+			
 			$_SESSION['api']->outputEditSuccess($id);
 
 
@@ -141,30 +144,17 @@ class API_PACReports{
 
 
 
-			## PROJECT SEARCH
-			if($_REQUEST['s_project']){
+			## ID SEARCH
+			if($_REQUEST['s_id']){
 
-				$dat['project'] = trim($_REQUEST['s_project']);
-
-			}
-
-			if($_REQUEST['s_gateway']){
-
-				$dat['payment_gateway'] = trim($_REQUEST['s_gateway']);
+				$dat['id'] = intval($_REQUEST['s_id']);
 
 			}
 
-			## AMOUNT SEARCH
-			if($_REQUEST['s_amount']){
+			## USERNAME SEARCH
+			if($_REQUEST['s_notes']){
 
-				$dat['amount'] = preg_replace("/[^0-9]/",'',$_REQUEST['s_amount']);
-
-			}
-
-
-			if($_REQUEST['s_phone']){
-
-				$dat['phone'] = preg_replace("/[^0-9]/",'',$_REQUEST['s_phone']);
+				$dat['notes'] = trim($_REQUEST['s_notes']);
 
 			}
 
@@ -176,7 +166,7 @@ class API_PACReports{
 
 				$cntdat = $dat;
 				$cntdat['fields'] = 'COUNT(id)';
-				list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->pac_reports->getResults($cntdat));
+				list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->my_notes->getResults($cntdat));
 
 				$dat['limit'] = array(
 									"offset"=>intval($_REQUEST['index']),
@@ -196,7 +186,7 @@ class API_PACReports{
 
 
 
-			$res = $_SESSION['dbapi']->pac_reports->getResults($dat);
+			$res = $_SESSION['dbapi']->my_notes->getResults($dat);
 
 
 
@@ -262,19 +252,19 @@ class API_PACReports{
 				$out_stack[$idx] = -1;
 
 				break;
-//			case 'voice_name':
-//
-//				// COULD BE REPLACED LATER WITH A CUSOMIZABLE SCREEN DB TABLE
-//				if($tmparr[2] <= 0){
-//					$out_stack[$idx] = '-';
-//				}else{
-//
-//					//echo "ID#".$tmparr[2];
-//
-//					$out_stack[$idx] = $_SESSION['dbapi']->voices->getName($tmparr[2]);
-//				}
+// 			case 'voice_name':
 
-				break;
+// 				// COULD BE REPLACED LATER WITH A CUSOMIZABLE SCREEN DB TABLE
+// 				if($tmparr[2] <= 0){
+// 					$out_stack[$idx] = '-';
+// 				}else{
+
+// 					//echo "ID#".$tmparr[2];
+
+// 					$out_stack[$idx] = $_SESSION['dbapi']->voices->getName($tmparr[2]);
+// 				}
+
+// 				break;
 
 			}## END SWITCH
 

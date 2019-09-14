@@ -170,7 +170,7 @@ class API_Functions{
 			}
 			$out .= $taghead;
 			foreach($row as $key=>$val){
-				$val = preg_replace('/[^a-zA-Z0-9.,-=_ $@#^&:;\'"\n\?]/','', $val);
+				$val = preg_replace('/[^a-zA-Z0-9.,-=_ $!@#^&:;\'"\n\?]/','', $val);
 				if($tagname == 'Account' && $key == 'name'){
 					// SOME NINJA SHIT I HAD TO DO, FOR THE NEW TAB SYSTEM
 					// ( TO POPULATE THE TABS NAME CONTENT )
