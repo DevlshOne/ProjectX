@@ -1,4 +1,4 @@
-﻿id,timing_quiz_id,question,answerKey,description,recording,active
+id,timing_quiz_id,question,answerKey,description,recording,active
 1957,88,a,a,,NULL,1
 1958,88,b,b,,NULL,1
 1959,88,c,c,,NULL,1
