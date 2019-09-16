@@ -1,5 +1,5 @@
 <?	/***************************************************************
-	 *	Names - Handles list/search/import names
+	 *	Address Verification system
 	 *	Written By: Jonathan Will
 	 ***************************************************************/
 

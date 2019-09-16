@@ -1,7 +1,8 @@
-<?	/***************************************************************
-	 *	Campaigns - handles listing and editing campaigns
-	 *	Written By: Jonathan Will
-	 ***************************************************************/
+<?php
+/***************************************************************
+ *	Campaigns - handles listing and editing campaigns
+ *	Written By: Jonathan Will
+ ***************************************************************/
 
 $_SESSION['campaigns'] = new Campaigns;
 

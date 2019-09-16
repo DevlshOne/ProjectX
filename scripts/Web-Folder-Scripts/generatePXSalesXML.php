@@ -1,6 +1,6 @@
 #!/usr/bin/php
-<?
-	require_once("/var/www/db.inc.php");
+<?php
+	require_once("/var/www/html/db.inc.php");
 
 
 

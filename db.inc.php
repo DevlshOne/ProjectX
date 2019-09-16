@@ -1,4 +1,4 @@
-<?
+<?php
 
 	include_once("site_config.php");
 
@@ -194,25 +194,37 @@
 	function querySQL($cmd)	{	return query($cmd,4);} # Returns as associative-array(hash) of 1 result
 	function queryROWS($cmd){ 	return query($cmd,5); }# Returns the number of rows in a result set
 	function fetchROW($cmd)	{ 	return query($cmd,6); }# Returns an associative array that corresponds to the fetched row, or FALSE if there are no more rows.
-
+    function fetchAllAssoc($cmd) {
+        return query($cmd, 7);
+    } # Returns an associative array with all rows
 
 	/***************************************/
 	function query($cmd, $mode=0){			# with mode = 0 or 1, it will return the result set, all the records returned.
 		##print $cmd."<br>";
 		$res = mysqli_query($_SESSION['db'],$cmd);
-		if(!$mode || $mode == 1){
-			return $res;
-		}else if($mode == 2){
-			return (mysqli_num_rows($res) > 0)?mysqli_fetch_row($res):null;
-		}else if($mode == 3){
-			return mysqli_fetch_object($res);
-		}else if($mode == 4){
-			return mysqli_fetch_array($res);
-		}else if($mode == 5){
-			return mysqli_num_rows($res);
-		}else if($mode == 6){
-			return mysqli_fetch_assoc($res);
-		}
+		switch ($mode) {
+            default:
+                return $res;
+                break;
+            case 2:
+                return (mysqli_num_rows($res) > 0) ? mysqli_fetch_row($res) : NULL;
+                break;
+            case 3:
+                return mysqli_fetch_object($res);
+                break;
+            case 4:
+                return mysqli_fetch_array($res);
+                break;
+            case 5:
+                return mysqli_num_rows($res);
+                break;
+            case 6:
+                return mysqli_fetch_assoc($res);
+                break;
+            case 7:
+                return mysqli_fetch_all($res, MYSQLI_ASSOC);
+                break;
+        }
 	}
 	/***************************************/
 	function execSQL($cmd, $ignore_error = false){

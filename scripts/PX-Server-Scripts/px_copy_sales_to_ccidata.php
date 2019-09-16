@@ -1,5 +1,6 @@
 #!/usr/bin/php
 <?php
+
 	$basedir = "/var/www/html/reports/";
 
 	include_once($basedir."db.inc.php");

@@ -1,5 +1,6 @@
-<?	/***************************************************************
-	 *	Campaigns - handles listing and editing campaigns
+<?php
+	/***************************************************************
+	 *	Scripts - Handles GUI functions for managing Scripts and the files associated
 	 *	Written By: Jonathan Will
 	 ***************************************************************/
 

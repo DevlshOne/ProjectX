@@ -138,9 +138,8 @@ class DBAPI {
     public $quiz_questions;
     public $list_tool_tasks;
     public $dialer_sales;
-    
+    public $dialer_status;
     public $form_builder;
-    
     public $user_prefs;
 
     public $my_notes;
@@ -268,6 +267,10 @@ class DBAPI {
         ## CAMPAIGN PARENTS
         include_once($_SESSION['site_config']['basedir']."dbapi/cmpgn_parents.db.php");
         $this->campaign_parents = new CampaignParentsAPI();
+
+        ## DIALER STATUS
+        include_once($_SESSION['site_config']['basedir']."dbapi/dialer_status.db.php");
+        $this->dialer_status = new DialerStatusAPI();
 
 		## EXTENSIONS
 		include_once($_SESSION['site_config']['basedir']."dbapi/extensions.db.php");

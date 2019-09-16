@@ -1,6 +1,5 @@
 <?php
 
-
 	function filter09($str, $max_length = 0){
 
 		$out = preg_replace("/[^0-9]/",'',$str);

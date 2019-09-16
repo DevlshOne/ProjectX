@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * User Preferences SQL Functions
  * 
@@ -72,6 +73,19 @@ class UserPreferencesAPI{
 	}
 
 	/**
+    * Get a user_preference record/row by section name
+    * @param	$section		The section name/preference to grab
+    * @return	raw json string containing preferences
+    */
+    function getRaw($section){
+            $user_id = intval($_SESSION['user']['id']);
+            $ret = $_SESSION['dbapi']->querySQL(
+                "SELECT * FROM `".$this->table."` ".
+                " WHERE user_id='".$user_id."' AND `section`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'");
+            return $ret['json_data'];
+    }
+
+    /**
 	 * Gets the parsed JSON data direclty, ready to use, by the section name.
 	 * @param	$section	String		The section name/preference to grab
 	 * @param	$assoc	TRUE/FALSE		When TRUE, returned objects will be converted into associative arrays

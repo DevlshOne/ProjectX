@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * Scripts SQL Functions
  */

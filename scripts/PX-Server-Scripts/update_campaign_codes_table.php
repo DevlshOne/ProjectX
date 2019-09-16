@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-        $base_dir = "/var/www/html/dev/";
+        $base_dir = "/var/www/html/reports/";
 
         include_once($base_dir."site_config.php");
         include_once($base_dir."db.inc.php");
