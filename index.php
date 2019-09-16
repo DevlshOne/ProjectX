@@ -127,7 +127,7 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
     <script src="js/jquery.menu-aim.js"></script>
     <script src="js/main.js"></script> <!-- Resource jQuery -->
     <script>
-        var dispTimer;
+        var dispTimer = false;
         function genReport(frm, area, printable) {
             if (area) {
                 $('#' + area + '_submit_report_button').hide();
