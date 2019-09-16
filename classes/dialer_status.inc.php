@@ -114,7 +114,7 @@
                 $('#dialerStatusZone').ready(function () {
                     var refreshInterval = 4;
                     var refreshEnabled = true;
-                    var frontEnd_debug = true;
+                    var frontEnd_debug = false;
                     dispTimer = false;
                     var clusterInfo = <?=json_encode($this->clusterInfo);?>;
                     var availableClusters = <?=json_encode($this->availableClusterIDs);?>;
