@@ -149,6 +149,8 @@
                                     console.log('Clusters have just been changed :: ', selectedClusters);
                                 }
                                 saveUserPrefs();
+                                initScreen();
+                                getDialerStatusData();
                                 $(this).dialog('close');
                             },
                             'Cancel': function () {
