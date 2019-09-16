@@ -50,6 +50,29 @@
             $this->availableClusterIDs = getClusterIDs();
             $this->getClusterInfo();
             ?>
+            <table class="pct100 tightTable">
+                <tr>
+                    <td class="ht40 pad_left ui-widget-header">
+                        <table class="pct100 tightTable">
+                            <tr>
+                                <td class="pct100">
+                                    <div class="align_center" style="float:left;margin:7px;">Dialer Status Dashboard</div>
+                                    <button id="clusterSelectButton" class="align_center ui-state-highlight" style="float:right;">Select Clusters</button>
+                                    <button id="refreshRateButton" class="align_center refreshButton" style="float:right;">Change Refresh [4]</button>
+                                    <button id="stopDialersButton" class="align_center ui-state-error" style="float:right;">Stop All Dialing</button>
+                                    <button id="forceHopperButton" class="align_center" style="float:right;">Force Hopper</button>
+                                    <button id="switchContrast" class="align_center" style="float:right;" value="Dark Mode" onclick="">Dark Mode</button>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <ul id="dialerStatusZone"></ul>
+                    </td>
+                </tr>
+            </table>
             <div id="dialog-modal-select-clusters" title="Cluster selection" class="nod"></div>
             <div id="dialog-modal-change-refresh" title="Modify refresh rate" class="nod"></div>
             <div id="dialog-modal-cluster-filters" title="Filters" class="nod"></div>
@@ -89,7 +112,6 @@
             </div>
             <script>
                 $('#dialerStatusZone').ready(function () {
-
                     var refreshInterval = 4;
                     var refreshEnabled = true;
                     var dispTimer = false;
@@ -122,8 +144,6 @@
                                 if ($('#savePrefs').is(':checked')) {
                                     saveUserPrefs();
                                 }
-                                $('#dialerStatusZone').empty();
-                                initScreen();
                                 $(this).dialog('close');
                             },
                             'Cancel': function () {
@@ -142,15 +162,14 @@
                         title: 'Change Refresh Rate',
                         buttons: {
                             'Save': function () {
+                                clearInterval(dispTimer);
                                 refreshInterval = $('#refreshRate').val();
                                 refreshEnabled = !$('#refreshEnabled').is(':checked');
                                 if (!refreshEnabled) {
                                     $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [OFF]');
-                                    clearTimeout(dispTimer);
                                 } else {
                                     $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [' + refreshInterval + ']');
-                                    clearTimeout(dispTimer);
-                                    getDialerStatusData();
+                                    dispTimer = setInterval(getDialerStatusData, (refreshInterval * 1000));
                                 }
                                 saveUserPrefs();
                                 $(this).dialog('close');
@@ -189,8 +208,6 @@
                                 if ($('#savePrefs').is(':checked')) {
                                     saveUserPrefs();
                                 }
-                                $('#dialerStatusZone').empty();
-                                initScreen();
                                 $(this).dialog('close');
                             },
                             'Cancel': function () {
@@ -342,21 +359,14 @@
                             url: 'api/api.php?get=dialer_status&mode=json&action=loadUserPrefs',
                             success: function (prefs) {
                                 if (prefs.length) {
+                                    let guiPrefs = prefs.pop();
+                                    refreshInterval = guiPrefs.refreshInterval;
+                                    refreshEnabled = guiPrefs.refreshEnabled;
+                                    highContrast = guiPrefs.highContrast;
                                     $.each(prefs, function (i, v) {
                                         let tmpCLID = v.cluster_id.toString();
                                         let tmpGroups = v.groups;
                                         let tmpUserGroups = v.usergroups;
-                                        refreshInterval = v.refreshInterval;
-                                        refreshEnabled = v.refreshEnabled;
-                                        if (!refreshEnabled) {
-                                            $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [OFF]');
-                                            clearTimeout(dispTimer);
-                                        } else {
-                                            $('#refreshRateButton').find('.ui-button-text').text('Change Refresh [' + refreshInterval + ']');
-                                            clearTimeout(dispTimer);
-                                            // getDialerStatusData();
-                                        }
-                                        highContrast = v.highContrast;
                                         selectedClusters = [];
                                         selectedClusters.push(tmpCLID.toString());
                                         clusterInfo[tmpCLID]['sel_campaigns'] = [];
@@ -393,12 +403,14 @@
                                 cluster_id: v,
                                 groups: tmpGroups,
                                 usergroups: tmpUserGroups,
-                                refreshInterval: refreshInterval,
-                                refreshEnabled: refreshEnabled,
-                                highContrast: highContrast,
-                                viciUsername: '<?=$_SESSION['user']['username'];?>',
-                                viciPassword: '<?=$_SESSION['user']['vici_password'];?>'
                             });
+                        });
+                        tmpJSON.push({
+                            refreshInterval: refreshInterval,
+                            refreshEnabled: refreshEnabled,
+                            highContrast: highContrast,
+                            viciUsername: '<?=$_SESSION['user']['username'];?>',
+                            viciPassword: '<?=$_SESSION['user']['vici_password'];?>'
                         });
                         let tmpPrefs = JSON.stringify(tmpJSON);
                         $.ajax({
@@ -416,6 +428,7 @@
 
                     $('#dialerStatusZone').sortable({
                         cancel: '#clusterTileAdder',
+                        refreshPositions: true,
                         stop: function (e, ui) {
                             // the sort order has been changed - now re-arrange the selectedClusters array accordingly
                             let clusterTiles = $('#dialerStatusZone').children();
@@ -432,9 +445,6 @@
 
                     function initScreen() {
                         $('#dialerStatusZone').empty();
-                        $.each(selectedClusters, function (i, v) {
-                            $('#dialerStatusZone').append('<li id="clusterTile_' + v + '" class="clusterTile">Loading data, standby...</li>');
-                        });
                     }
 
                     $('#clusterSelectButton').on('click', function (e, ui) {
@@ -471,7 +481,7 @@
                             $('body').css('color', '#FFFFFF');
                             $('#dialerStatusZone').css('background-color', '#000000');
                             $('.clusterTile').css('background-color', 'black');
-                            $(this).button('option', 'label', 'Normal Mode');
+                            $(this).button('option', 'label', 'Light Mode');
                             highContrast = true;
                         } else {
                             $('body').css('background-color', '#FFFFFF');
@@ -525,9 +535,7 @@
                         if (i !== -1) {
                             selectedClusters.splice(i, 1);
                         }
-                        $('#dialerStatusZone').empty();
                         saveUserPrefs();
-                        // initScreen();
                     });
 
                     $('#dialerStatusZone').on('click', '.stopDialersButton', function () {
@@ -535,7 +543,7 @@
                         dlgObj = $('#dialog-modal-cluster-action-confirm');
                         dlgObj.data('myAction', 'stopDialers');
                         dlgObj.data('clusterID', clid);
-                        dlgObj.html('<div class="firstConfirmation">This will STOP all dialing for cluster ' + clid + ', are you sure?</div>');
+                        dlgObj.html('<div class="firstConfirmation">This will STOP all dialing for ' + clusterInfo[clid]['name'] + ', are you sure?</div>');
                         dlgObj.dialog('open');
                     });
 
@@ -544,7 +552,7 @@
                         dlgObj = $('#dialog-modal-cluster-action-confirm');
                         dlgObj.data('myAction', 'forceHopper');
                         dlgObj.data('clusterID', clid);
-                        dlgObj.html('<div class="firstConfirmation">This will RESET the hopper for cluster ' + clid + ', are you sure?</div>');
+                        dlgObj.html('<div class="firstConfirmation">This will RESET the hopper for ' + clusterInfo[clid]['name'] + ', are you sure?</div>');
                         dlgObj.dialog('open');
                     });
 
@@ -735,6 +743,9 @@
                         $.each(selectedClusters, function (i, v) {
                             let tmpGroups = '';
                             let strV = v.toString();
+                            if ($('li#clusterTile_' + strV).length === 0) {
+                                $('#dialerStatusZone').append('<li id="clusterTile_' + strV + '" class="clusterTile"><span class="centerMessage">Loading data, standby...</span></li>');
+                            }
                             if (clusterInfo[strV]['campaign_options'].length === clusterInfo[strV]['sel_campaigns'].length) {
                                 tmpGroups = '&groups[]=ALL-ACTIVE';
                             } else {
@@ -765,56 +776,28 @@
                                 }
                             });
                         });
-                        if (refreshEnabled) {
-                            dispTimer = setTimeout(function () {
-                                getDialerStatusData();
-                            }, (refreshInterval * 1000));
-                        } else {
-                            clearTimeout(dispTimer);
-                        }
+                        applyUniformity();
                         if (highContrast) {
                             $('body').css('background-color', '#000000');
                             $('body').css('color', '#FFFFFF');
                             $('#dialerStatusZone').css('background-color', '#000000');
                             $('.clusterTile').css('background-color', 'black');
-                            $('#switchContrast').find('span.ui-button-text').text('Normal Mode');
-                        } else {
-                            $('body').css('background-color', '#FFFFFF');
-                            $('body').css('color', '#000000');
-                            $('#dialerStatusZone').css('background-color', '#FFFFFF');
-                            $('.clusterTile').css('background-color', 'navy');
-                            $('#switchContrast').find('span.ui-button-text').text('Dark Mode');
+                            $('button#switchContrast').button('option', 'label', 'Light Mode');
                         }
-                        applyUniformity();
+                        if (refreshEnabled) {
+                            $('button#refreshRateButton').button('option', 'label', 'Change Refresh [' + refreshInterval + ']');
+                            clearInterval(dispTimer);
+                            dispTimer = setInterval(getDialerStatusData, (refreshInterval * 1000));
+                        } else {
+                            $('button#refreshRateButton').button('option', 'label', 'Change Refresh [OFF]');
+                            clearInterval(dispTimer);
+                        }
                     }
                     initScreen();
                     loadUserPrefs();
                     getDialerStatusData();
                 });
             </script>
-            <table class="pct100 tightTable">
-                <tr>
-                    <td class="ht40 pad_left ui-widget-header">
-                        <table class="pct100 tightTable">
-                            <tr>
-                                <td class="pct100">
-                                    <div class="align_center" style="float:left;margin:7px;">Dialer Status Dashboard</div>
-                                    <button type="button" id="clusterSelectButton" class="align_center ui-state-highlight" style="float:right;">Select Clusters</button>
-                                    <button type="button" id="refreshRateButton" class="align_center refreshButton" style="float:right;">Change Refresh [4]</button>
-                                    <button type="button" id="stopDialersButton" class="align_center ui-state-error" style="float:right;">Stop All Dialing</button>
-                                    <button type="button" id="forceHopperButton" class="align_center" style="float:right;">Force Hopper</button>
-                                    <button type="button" id="switchContrast" class="align_center" style="float:right;" value="Dark Mode" onclick="">Dark Mode</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <ul id="dialerStatusZone"></ul>
-                    </td>
-                </tr>
-            </table>
             <?
         }
     }

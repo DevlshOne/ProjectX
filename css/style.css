@@ -378,6 +378,7 @@ a:hover {
 }
 .removeClusterButton {
     float: right;
+	color:white;
 }
 .removeClusterButton:hover {
 	color:yellow;
@@ -391,4 +392,10 @@ a:hover {
 	color: firebrick;
 	font-size: 16px;
 	font-weight: 900;
+}
+.centerMessage {
+	margin: 0 auto;
+	text-align:center;
+	top:40%
+
 }

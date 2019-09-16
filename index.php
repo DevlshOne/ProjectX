@@ -189,7 +189,7 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
             $('.cd-side-nav').removeClass('nav-is-visible');
             $('.cd-main-header').find('.nav-is-visible').removeClass('nav-is-visible');
             if(dispTimer) {
-                clearTimeout(dispTimer);
+                clearInterval(dispTimer);
                 dispTimer = false;
             }
         }
