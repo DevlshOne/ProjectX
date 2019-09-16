@@ -59,7 +59,7 @@
                             $strUserGroups .= '&usergroup[]=' . urlencode($v);
                         }
                     }
-                    $curlUP = $_SESSION['user']['username'] . ":" . $_SESSION['user']['vici_password'];
+                    $curlUP = (($_SESSION['user']['vici_username'])?$_SESSION['user']['vici_username']:$_SESSION['user']['username']) . ":" . $_SESSION['user']['vici_password'];
                     $out = $this->curlClusterData($webip, $strGroups, $strUserGroups, $curlUP);
                     break;
                 case 'getAvailableCampaigns':
@@ -97,6 +97,7 @@
                 case 'setViciCreds':
                     if (isset($_REQUEST['vici_username'])) {
                         $vUsername = trim($_REQUEST['vici_username']);
+                        $_SESSION['user']['vici_username'] = $vUsername;
                     }
                     if (isset($_REQUEST['vici_password'])) {
                         $vPassword = trim($_REQUEST['vici_password']);
