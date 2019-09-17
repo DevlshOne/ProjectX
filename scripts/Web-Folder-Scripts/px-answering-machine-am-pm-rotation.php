@@ -9,7 +9,7 @@
 	$basedir = "/var/www/html/dev2/";
 
 	include_once($basedir."db.inc.php");
-	include_once($basedir."util/db_utils.php");
+	include_once($basedir."utils/db_utils.php");
 	include_once($basedir."classes/answering_machines.inc.php");
 
 

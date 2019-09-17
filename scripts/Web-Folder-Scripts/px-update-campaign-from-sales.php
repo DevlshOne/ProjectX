@@ -3,7 +3,7 @@
         $basedir = "/var/www/dev/";
 
         include_once($basedir."db.inc.php");
-        include_once($basedir."util/db_utils.php");
+        include_once($basedir."utils/db_utils.php");
 
 
 
