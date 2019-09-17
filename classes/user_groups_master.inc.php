@@ -414,7 +414,7 @@ class UserGroupsMaster{
                         <td>
                             <select name="time_shift">
                                 <option>AM</option>
-                                <option>PM</option>
+                                <option <?=($row['time_shift'] == 'PM')?" SELECTED ":''?>>PM</option>
                             </select>
                         </td>
                     </tr>
@@ -422,15 +422,15 @@ class UserGroupsMaster{
                         <th align="left" height="30">Agent Type:</th>
                         <td>
                             <select name="agent_type">
-                                <option>cold</option>
-                                <option>taps</option>
-                                <option>verifier</option>
-                                <option>manager</option>
-                                <option>monitor</option>
-                                <option>coldtaps</option>
-                                <option>training</option>
-                                <option>admin</option>
-                                <option>all</option>
+                                <option <?=($row['agent_type'] == 'cold')?" SELECTED ":''?>>cold</option>
+                                <option <?=($row['agent_type'] == 'taps')?" SELECTED ":''?>>taps</option>
+                                <option <?=($row['agent_type'] == 'verifier')?" SELECTED ":''?>>verifier</option>
+                                <option <?=($row['agent_type'] == 'manager')?" SELECTED ":''?>>manager</option>
+                                <option <?=($row['agent_type'] == 'monitor')?" SELECTED ":''?>>monitor</option>
+                                <option <?=($row['agent_type'] == 'coldtaps')?" SELECTED ":''?>>coldtaps</option>
+                                <option <?=($row['agent_type'] == 'training')?" SELECTED ":''?>>training</option>
+                                <option <?=($row['agent_type'] == 'admin')?" SELECTED ":''?>>admin</option>
+                                <option <?=($row['agent_type'] == 'all')?" SELECTED ":''?>>all</option>
                             </select>
                         </td>
                     </tr>

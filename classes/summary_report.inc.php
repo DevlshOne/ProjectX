@@ -28,7 +28,8 @@ class SummaryReport{
 		include_once($_SESSION['site_config']['basedir']."classes/agent_call_stats.inc.php");
 
 		include_once($_SESSION['site_config']['basedir']."classes/sales_analysis.inc.php");
-
+		
+	//	include_once($_SESSION['site_config']['basedir']."classes/rouster_report.inc.php");
 //		if(!checkAccess('sales_analysis')){
 //
 //
@@ -71,6 +72,8 @@ class SummaryReport{
 
 				$output[$company_id]['user_groups'][$x] = $group;
 
+				
+				//generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null)
 				$output[$company_id]['user_groups'][$x]['data'] = $_SESSION['sales_analysis']->generateData($stime, $etime, null, -1, true, $group['user_group'], null);
 
 
