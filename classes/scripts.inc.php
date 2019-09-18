@@ -1216,10 +1216,10 @@ class Scripts{
 
 	function PlayVoiceFile($file){
 
-		# Play voice file function - it will display audio player with play_voice_file.php as source
+		# Play audio file function - it will display audio player with play_audio_file.php as source
 		?>
 		<audio id="audio_obj" autoplay controls>
-			<source src="play_voice_file.php?file=<?=$file?>" type="audio/wav" />
+			<source src="play_audio_file.php?file=<?=$file?>" type="audio/wav" />
 			Your browser does not support the audio element.
 		</audio><br>
 		<a href="#" onclick="parent.hideAudio();return false">[Hide Player]</a>
