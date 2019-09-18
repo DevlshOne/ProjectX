@@ -91,10 +91,10 @@
                             <td class="align_left"><label for="vici_password">Password :</label></td>
                             <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
                         </tr>
-<!--                        <tr>-->
-<!--                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>-->
-<!--                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked/></td>-->
-<!--                        </tr>-->
+                        <!--                        <tr>-->
+                        <!--                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>-->
+                        <!--                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked/></td>-->
+                        <!--                        </tr>-->
                         </tbody>
                     </table>
                 </form>
@@ -527,6 +527,7 @@
                         let arrSelTemp = [];
                         if (clusterInfo[clid]['campaign_options'].length === clusterInfo[clid]['sel_campaigns'].length) {
                             arrSelTemp.push('ALL-ACTIVE');
+                            saveUserPrefs();
                         } else {
                             $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
                                 arrSelTemp.push(v.groups);
@@ -536,6 +537,7 @@
                         arrSelTemp = [];
                         if (clusterInfo[clid]['usergroup_options'].length === clusterInfo[clid]['sel_user_groups'].length) {
                             arrSelTemp.push('ALL-GROUPS');
+                            saveUserPrefs();
                         } else {
                             $.each(clusterInfo[clid]['sel_user_groups'], function (i, v) {
                                 arrSelTemp.push(v.user_group_filter);
@@ -678,6 +680,8 @@
                         let tdValues = [];
                         let clusterValues = [];
                         let summaryValues = [];
+                        let noCalls = false;
+                        let noAgents = false;
                         $(clusterData).find('TD').each(function (i, n) {
                             if (i === 0 || (i % 2) === 0) {
                                 tdLabels.push(n.innerText.trim());
@@ -707,7 +711,9 @@
                             }
                         });
                         if (summaryData.length > 8) {
-                            if (summaryData.includes('NO AGENTS ON CALLS') && summaryData.includes('NO LIVE CALLS')) {
+                            noCalls = summaryData.includes('NO LIVE CALLS');
+                            noAgents = summaryData.includes('NO AGENTS ON CALLS');
+                            if (noAgents && noCalls) {
                                 // handling the edge case for NO AGENTS ON CALLS or NO LIVE CALLS by loading up all 0s
                                 $.each(clusterSummaryFields, function (i) {
                                     summaryValues[clusterSummaryFields[i]] = '0';
@@ -715,7 +721,18 @@
                             } else {
                                 $(summaryData).find('font').each(function (i, n) {
                                     summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
+                                    // debugger;
                                 });
+                                if (noCalls) {
+                                    for (let i = 0; i <= 3; i++) {
+                                        summaryValues[clusterSummaryFields[i]] = '0';
+                                    }
+                                }
+                                if (noAgents) {
+                                    for (let i = 4; i <= 9; i++) {
+                                        summaryValues[clusterSummaryFields[i]] = '0';
+                                    }
+                                }
                                 summaryValues.pop();
                                 delete summaryValues['undefined'];
                             }
@@ -801,6 +818,7 @@
                             clearInterval(dispTimer);
                         }
                     }
+
                     initScreen();
                     loadUserPrefs();
                     getDialerStatusData();
