@@ -70,6 +70,10 @@ class Scripts{
 
 				$this->EditVoiceFile($_REQUEST['edit_voice_file']);
 
+			}elseif(isset($_REQUEST['play_voice_file'])) {
+
+				$this->PlayVoiceFile($_REQUEST['play_voice_file']);				
+
 			}else{
 
 				$this->listEntrys();
@@ -889,7 +893,7 @@ class Scripts{
 				var objname = 'dialog-modal-edit-voicefile';
 
 				$('#'+objname).dialog( "option", "title", 'Editing Voice File #'+voicefileid );
-				$('#'+objname).dialog( "option", "height", '225' );
+				$('#'+objname).dialog( "option", "height", '250' );
 				$('#'+objname).dialog( "option", "width", '400' );
 
 				$('#'+objname).dialog("open");
@@ -912,7 +916,7 @@ class Scripts{
 			// Edit voice file dialog spec
 			$("#dialog-modal-edit-voicefile").dialog({
 				autoOpen: false,
-				height: 225,
+				height: 250,
 				width: 400,
 				modal: false,
 				draggable:true,
@@ -1143,6 +1147,43 @@ class Scripts{
 
 			}
 
+			function playAudio(file){
+
+
+				//$('#media_player').dialog("open");
+
+				$('#media_player').children().filter("audio").each(function(){
+					this.pause(); // can't hurt
+					delete(this); // @sparkey reports that this did the trick!
+					$(this).remove(); // not sure if this works after null assignment
+				});
+				$('#media_player').empty();
+
+				$('#media_player').load("index.php?area=scripts&play_voice_file="+file+"&printable=1&no_script=1");
+				// $('#media_player').load("test.php");
+
+				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
+				$('#media_player').unbind("dialogclose");
+				$('#media_player').bind('dialogclose', function(event) {
+
+					hideAudio();
+
+				});
+
+
+				}
+
+			function hideAudio(){
+				$('#media_player').children().filter("audio").each(function(){
+					this.pause();
+					delete(this);
+					$(this).remove();
+
+				});
+
+				$('#media_player').empty();
+			}
+
 
 		</script>
 		
@@ -1161,11 +1202,31 @@ class Scripts{
 		<tr>
 			<td align="center" colspan="2" height="50">
 				<input type="submit" value="Save Changes">
-				<input type="button" value="Cancel" onclick="HideEditVoiceFile(); return false;">
+				<input type="button" value="Cancel" onclick="hideAudio(); HideEditVoiceFile(); return false;">
+				<input type="button" value="Listen" onclick="playAudio('<?=htmlentities($row['file'])?>')">
 			</td>
 		</tr>
+
+		<center><div id="media_player" title="Playing Call Recording"></center>
 		<?
 
+
+	}
+
+
+	function PlayVoiceFile($file){
+
+		# Play voice file function - it will display audio player with play_voice_file.php as source
+		?>
+		<audio id="audio_obj" autoplay controls>
+			<source src="play_voice_file.php?file=<?=$file?>" type="audio/wav" />
+			Your browser does not support the audio element.
+		</audio><br>
+		<a href="#" onclick="parent.hideAudio();return false">[Hide Player]</a>
+		
+		<script>
+			parent.applyUniformity();
+		</script><?
 
 	}
 
