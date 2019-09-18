@@ -705,7 +705,7 @@
                             }
                         });
                         if (summaryData.length > 8) {
-                            if (!summaryData.includes('NO AGENTS ON CALLS') && !clusterData.includes('NO AGENTS ON CALLS') && !summaryData.includes('NO LIVE CALLS') && !clusterData.includes('NO LIVE CALLS')) {
+                            if (!summaryData.includes('NO AGENTS ON CALLS') && !summaryData.includes('NO LIVE CALLS')) {
                                 $(summaryData).find('font').each(function (i, n) {
                                     summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
                                 });
@@ -728,8 +728,7 @@
                                 $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
                                 $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
-                            }else if (cltype === 'taps') {
-                                //$newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '&#10;Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 200, 500) + ' leads (Trunk: ' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + ')</td></tr>');
+                            } else if (cltype === 'taps') {
                                 $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
                                 $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
@@ -762,33 +761,19 @@
                             console.log('Tiles are about to render :: ', selectedClusters);
                         }
                         $.each(selectedClusters, function (i, v) {
-                            let tmpGroups = '';
                             let strV = v.toString();
                             if ($('li#clusterTile_' + strV).length === 0) {
                                 $('#dialerStatusZone').append('<li id="clusterTile_' + strV + '" class="clusterTile"><span class="centerMessage">Loading data, standby...</span></li>');
                             }
-                            if (clusterInfo[strV]['campaign_options'].length === clusterInfo[strV]['sel_campaigns'].length) {
-                                tmpGroups = '&groups[]=ALL-ACTIVE';
-                            } else {
-                                $.each(clusterInfo[strV]['sel_campaigns'], function (j, w) {
-                                    tmpGroups += '&groups[]=' + w.groups;
-                                });
-                            }
-                            let tmpUserGroups = '';
-                            if (clusterInfo[strV]['usergroup_options'].length === clusterInfo[strV]['sel_user_groups'].length) {
-                                tmpUserGroups = '&usergroup[]=ALL-GROUPS';
-                            } else {
-                                $.each(clusterInfo[strV]['sel_user_groups'], function (j, w) {
-                                    tmpUserGroups += '&usergroup[]=' + w.user_group_filter;
-                                });
-                            }
                             $.ajax({
-                                type: "POST",
+                                type: 'POST',
                                 cache: false,
                                 async: false,
-                                crossDomain: true,
-                                crossOrigin: true,
-                                url: 'api/api.php?get=dialer_status&mode=json&action=getClusterData&webip=' + clusterInfo[strV]['ip'] + tmpGroups + tmpUserGroups,
+                                dataType: 'json',
+                                contentType: 'application/x-www-form-urlencoded',
+                                crossDomain: false,
+                                crossOrigin: false,
+                                url: 'api/api.php?get=dialer_status&mode=json&action=getClusterDataByUserPrefs&c=' + strV,
                                 success: function (response) {
                                     parseDialerStatusData(v, response);
                                 },
