@@ -721,17 +721,20 @@
                             } else {
                                 $(summaryData).find('font').each(function (i, n) {
                                     summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
-                                    // debugger;
                                 });
                                 if (noCalls) {
-                                    for (let i = 0; i <= 3; i++) {
-                                        summaryValues[clusterSummaryFields[i]] = '0';
-                                    }
+                                    summaryValues['calls_active'] = '0';
+                                    summaryValues['calls_ringing'] = '0';
+                                    summaryValues['calls_waiting'] = '0';
+                                    summaryValues['calls_ivr'] = '0';
                                 }
                                 if (noAgents) {
-                                    for (let i = 4; i <= 9; i++) {
-                                        summaryValues[clusterSummaryFields[i]] = '0';
-                                    }
+                                    summaryValues['agents_on'] = '0';
+                                    summaryValues['agents_active'] = '0';
+                                    summaryValues['agents_waiting'] = '0';
+                                    summaryValues['agents_paused'] = '0';
+                                    summaryValues['agents_dead'] = '0';
+                                    summaryValues['agents_dispo'] = '0';
                                 }
                                 summaryValues.pop();
                                 delete summaryValues['undefined'];
