@@ -58,7 +58,7 @@
                                 <td class="pct100">
                                     <div class="align_center" style="float:left;margin:7px;">Dialer Status Dashboard</div>
                                     <button id="clusterSelectButton" class="align_center ui-state-highlight" style="float:right;">Select Clusters</button>
-                                    <button id="refreshRateButton" class="align_center refreshButton" style="float:right;">Change Refresh [4]</button>
+                                    <button id="refreshRateButton" class="align_center refreshButton" style="float:right;">Change Refresh [40]</button>
                                     <button id="stopDialersButton" class="align_center ui-state-error" style="float:right;">Stop All Dialing</button>
                                     <button id="forceHopperButton" class="align_center" style="float:right;">Force Hopper</button>
                                     <button id="switchContrast" class="align_center" style="float:right;" value="Dark Mode" onclick="">Dark Mode</button>
@@ -91,10 +91,10 @@
                             <td class="align_left"><label for="vici_password">Password :</label></td>
                             <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
                         </tr>
-                        <tr>
-                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>
-                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked/></td>
-                        </tr>
+<!--                        <tr>-->
+<!--                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>-->
+<!--                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked/></td>-->
+<!--                        </tr>-->
                         </tbody>
                     </table>
                 </form>
@@ -112,7 +112,7 @@
             </div>
             <script>
                 $('#dialerStatusZone').ready(function () {
-                    var refreshInterval = 4;
+                    var refreshInterval = 40;
                     var refreshEnabled = true;
                     var frontEnd_debug = false;
                     dispTimer = false;
@@ -326,9 +326,7 @@
                                         console.log('FAILURE - ' + response);
                                     }
                                 });
-                                if ($('#loadPrefs').is(':checked')) {
-                                    loadUserPrefs();
-                                }
+                                getDialerStatusData();
                                 $(this).dialog('close');
                             }
                         }
@@ -475,7 +473,9 @@
                     $('#refreshRateButton').on('click', function (e, ui) {
                         dlgObj = $('#dialog-modal-change-refresh');
                         dlgObj.dialog('open');
-                        dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="refreshRate">Refresh (seconds) : </label><td class="align_right"><input id="refreshRate" name="refreshRate" type="number" min="4" max="300" value="' + refreshInterval + '" /></td></tr><tr><td class="align_left"><label for="refreshEnabled">Disable refresh : </label><td class="align_right"><input id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
+                        let refreshOptions = '<option value="4">4 seconds</option><option value="10">10 seconds</option><option value="20">20 seconds</option><option value="30">30 seconds</option><option value="40">40 seconds</option><option value="60">60 seconds</option><option value="120">2 minutes</option><option value="300">5 minutes</option><option value="600">10 minutes</option><option value="1200">20 minutes</option><option value="1800">30 minutes</option><option value="3600">60 minutes</option><option value="7200">120 minutes</option>';
+                        dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="refreshRate">Refresh Rate : </label><td class="align_right"><select id="refreshRate" name="refreshRate">' + refreshOptions + '</select></td></tr><tr><td class="align_left"><label for="refreshEnabled">Disable refresh : </label><td class="align_right"><input id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
+                        $('#refreshRate').val(refreshInterval);
                     });
                     $('#forceHopperButton').on('click', function (e, ui) {
                         dlgObj = $('#dialog-modal-first-confirm');
@@ -525,19 +525,21 @@
                         ugSelect += '</select>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
                         let arrSelTemp = [];
-                        $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
-                            arrSelTemp.push(v.groups);
-                        });
                         if (clusterInfo[clid]['campaign_options'].length === clusterInfo[clid]['sel_campaigns'].length) {
                             arrSelTemp.push('ALL-ACTIVE');
+                        } else {
+                            $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
+                                arrSelTemp.push(v.groups);
+                            });
                         }
                         $('#campaignFilter').val(arrSelTemp);
                         arrSelTemp = [];
-                        $.each(clusterInfo[clid]['sel_user_groups'], function (i, v) {
-                            arrSelTemp.push(v.user_group_filter);
-                        });
                         if (clusterInfo[clid]['usergroup_options'].length === clusterInfo[clid]['sel_user_groups'].length) {
                             arrSelTemp.push('ALL-GROUPS');
+                        } else {
+                            $.each(clusterInfo[clid]['sel_user_groups'], function (i, v) {
+                                arrSelTemp.push(v.user_group_filter);
+                            });
                         }
                         $('#usergroupFilter').val(arrSelTemp);
                     });
@@ -705,17 +707,17 @@
                             }
                         });
                         if (summaryData.length > 8) {
-                            if (!summaryData.includes('NO AGENTS ON CALLS') && !summaryData.includes('NO LIVE CALLS')) {
+                            if (summaryData.includes('NO AGENTS ON CALLS') && summaryData.includes('NO LIVE CALLS')) {
+                                // handling the edge case for NO AGENTS ON CALLS or NO LIVE CALLS by loading up all 0s
+                                $.each(clusterSummaryFields, function (i) {
+                                    summaryValues[clusterSummaryFields[i]] = '0';
+                                });
+                            } else {
                                 $(summaryData).find('font').each(function (i, n) {
                                     summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
                                 });
                                 summaryValues.pop();
                                 delete summaryValues['undefined'];
-                            } else {
-                                // handling the edge case for NO AGENTS ON CALLS or NO LIVE CALLS by loading up all 0s
-                                $.each(clusterSummaryFields, function (i) {
-                                    summaryValues[clusterSummaryFields[i]] = '0';
-                                });
                             }
                         }
                         let objClusterData = Object.assign({}, clusterValues);
