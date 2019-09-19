@@ -32,8 +32,8 @@
                 $this->clusterInfo[$v]['type'] = getClusterType($v);
                 $this->clusterInfo[$v]['name'] = getClusterName($v);
                 $this->clusterInfo[$v]['ip'] = getClusterWebHost($v);
-                $this->clusterInfo[$v]['sel_campaigns'] = getClusterCampaigns($v);
-                $this->clusterInfo[$v]['sel_user_groups'] = getClusterUserGroups($v);
+                $this->clusterInfo[$v]['sel_campaigns'] = array("ALL-ACTIVE");//getClusterCampaigns($v);
+                $this->clusterInfo[$v]['sel_user_groups'] = array("ALL-GROUPS");//getClusterUserGroups($v);
                 $this->clusterInfo[$v]['campaign_options'] = getClusterCampaigns($v);
                 $this->clusterInfo[$v]['usergroup_options'] = getClusterUserGroups($v);
             }
@@ -385,6 +385,9 @@
                                             });
                                         });
                                     });
+
+
+                                    
                                     if (frontEnd_debug) {
                                         console.log('Prefs have just been loaded :: ', selectedClusters);
                                         console.log('User Preferences loaded');
@@ -525,7 +528,10 @@
                         ugSelect += '</select>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
                         let arrSelTemp = [];
-                        if (clusterInfo[clid]['campaign_options'].length === clusterInfo[clid]['sel_campaigns'].length) {
+                        if (
+                                clusterInfo[clid]['campaign_options'].length === clusterInfo[clid]['sel_campaigns'].length ||
+                        		clusterInfo[clid]['sel_campaigns'].length == 0) {
+                    		
                             arrSelTemp.push('ALL-ACTIVE');
                             saveUserPrefs();
                         } else {
@@ -535,7 +541,10 @@
                         }
                         $('#campaignFilter').val(arrSelTemp);
                         arrSelTemp = [];
-                        if (clusterInfo[clid]['usergroup_options'].length === clusterInfo[clid]['sel_user_groups'].length) {
+                        if (
+                                clusterInfo[clid]['usergroup_options'].length === clusterInfo[clid]['sel_user_groups'].length ||
+                        		clusterInfo[clid]['sel_user_groups'].length == 0
+                        ) {
                             arrSelTemp.push('ALL-GROUPS');
                             saveUserPrefs();
                         } else {
