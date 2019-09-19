@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Core functions for the API system
  *

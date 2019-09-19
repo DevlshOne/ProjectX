@@ -142,6 +142,7 @@
 			<script src="js/jquery.menu-aim.js"></script>
 			<script src="js/main.js"></script> <!-- Resource jQuery -->
 			<script>
+        		var dispTimer = false;
 				function genReport(frm, area, printable){
 					if(area){
 						$('#'+area+'_submit_report_button').hide();
@@ -197,14 +198,16 @@
 				function loadSection(url){
 
 					$('#main_content').load(url);
-
-
+            		$('body').css('background-color', '#FFFFFF');
+            		$('body').css('color', '#000000');
 					$('.cd-side-nav').find('.hover').removeClass('hover');
 					$('.cd-side-nav').find('.selected').removeClass('selected');
 					$('.cd-side-nav').removeClass('nav-is-visible');
 					$('.cd-main-header').find('.nav-is-visible').removeClass('nav-is-visible');
-					 //$("#menu").mouseleaveMenu();
-
+            		if(dispTimer) {
+                		clearInterval(dispTimer);
+						dispTimer = false;
+            		}
 				}
 
 
@@ -729,6 +732,11 @@
                 case 'dialer_sales':
                     include_once("classes/dialer_sales.inc.php");
                     $_SESSION['dialer_sales']->handleFlow();
+                    break;
+
+                case 'dialer_status':
+                    include_once("classes/dialer_status.inc.php");
+                    $_SESSION['dialer_status']->handleFlow();
                     break;
 
 			case 'employee_hours':

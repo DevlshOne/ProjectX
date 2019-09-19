@@ -152,6 +152,12 @@
                                             </li><?
                                         }
 
+                                        if ($_SESSION['user']['priv'] >= 5) {
+                                            ?>
+                                            <li><a href="?area=dialer_status&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Dialer Status</a></li><?
+                                        }
+
                                         if (checkAccess('server_status')) {
                                             ?>
                                             <li><a href="?area=server_status&no_script=1"

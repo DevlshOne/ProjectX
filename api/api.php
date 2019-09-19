@@ -292,6 +292,12 @@
 		$campaign_parents->handleAPI();
 		break;
 
+	case 'dialer_status':
+		include_once($basedir . "api/dialer_status.api.php");
+		$dialer_status = new API_DialerStatus();
+		$dialer_status->handleAPI();
+		break;
+		
 	case 'extensions':
 
 		include_once($basedir."api/extensions.api.php");

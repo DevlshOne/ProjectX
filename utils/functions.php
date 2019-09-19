@@ -1,6 +1,5 @@
 <?php
 
-
 	function filter09($str, $max_length = 0){
 
 		$out = preg_replace("/[^0-9]/",'',$str);
@@ -100,7 +99,7 @@
 
 			// IF A KEY IS IN THE NEW STACK THAT ISNT IN THE OLD ONE, KEY/FIELD WAS ADDED
 			//if($nval != null && !isset($old[$nkey])){
-			if(!array_key_exists($nkey, $old)){
+			if($old != null && !array_key_exists($nkey, $old)){
 				$out .= "$nkey added.\n";
 			}
 		}

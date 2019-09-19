@@ -1,6 +1,7 @@
-<?
+<?php
+
 /**
- * Ringing Calls Report SQL Functions
+ * Lead Management - Database functions
  */
 
 

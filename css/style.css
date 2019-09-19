@@ -191,8 +191,11 @@ a:hover {
 .ht40 {
 	height: 40px;
 }
-.pd10 {
-	padding: 10px;
+#dragZone, #dropZone {
+	border: 1px solid #eee;
+	margin: 0;
+	padding: 5px 0 0 0;
+	margin-right: 10px;
 }
 #dragZone {
 	list-style-type: none;
@@ -207,9 +210,6 @@ a:hover {
 	float:left;
     display: inline-block;
 	width: 100%;
-	position: relative;
-	min-height: 600px;
-	overflow-y: auto;
 }
 .fldMaker {
 	margin: 0 5px 5px 5px;
@@ -254,25 +254,28 @@ a:hover {
 	font-weight: 600;
 }
 .fafLabel {
-    min-width: 15%;
-    width:100px;
+    min-width: 8%;
     display: inline-block;
 }
 .tightTable {
     padding: 4px;
+	border: none;
+	border-spacing: 0;
+	border-collapse: collapse;
 }
 .fieldPreview {
 	position: absolute;
 	display: block;
-	vertical-align: middle;
 }
 .labelPreview {
 	position: absolute;
 	display: block;
-	vertical-align: middle;
+	/*margin-right: 10px;*/
 }
 #previewBox {
 	position: relative;
+    /*overflow-y: visible;*/
+    /*height: auto;*/
 }
 .labelDIV {
     border: 1px solid firebrick;
@@ -292,20 +295,101 @@ a:hover {
     display: inline-block;
 }
 .dragMe {
-	float:left;
-	padding: 0;
-	cursor: move;
-	vertical-align: middle;
-	overflow: hidden;
 	background-blend-mode: overlay;
+	background-color: lightpink;
+	float:left;
+	padding: 4px;
 }
-.dragMe.dragL {
-	background-color: darkgrey;
-	border: 1px dotted #cd0a0a;
+#dialerStatusZone {
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	background-color: white;
+	list-style-type: none;
 }
-.dragMe.dragF {
-	background-color: lightgrey;
-	border: 1px dotted #cd0a0a;
+.clusterTile {
+	border-radius: 25px;
+	background-color: navy;
+	padding: 4px;
+	width: 380px;
+	min-height: 140px;
+	border: 5px solid grey;
+    margin: 8px;
+    float: left;
+}
+.clusterDataLabel {
+	font-size: 12px;
+	color: #3baae3;
+	font-weight: 800;
+	float: right;
+}
+.clusterDataText {
+	font-size: 11px;
+	color: #FFFFFF;
+	font-weight: normal;
+	float: left;
+}
+.clusterTitle {
+	width: 100%;
+	font-size: 14px;
+	font-weight: 800;
+	color: white;
+	text-align: left;
+	padding: 4px;
+	cursor: move;
+	float: left;
+	border-bottom: 1px solid white;
+	vertical-align: middle;
+}
+.clusterTime {
+    font-size: 13px;
+    font-weight: 800;
+	color: lightgoldenrodyellow;
+}
+.clusterError {
+	font-size:large;
+	text-align:center;
+	font-weight:800;
+	color:red;
+	padding: auto;
+}
+.clusterDataTable {
+	margin: 8px 6px auto;
+	color: white;
+	font-size: 12px;
+	font-weight: 800;
+	width: 95%;
+	cursor: help;
+	position: relative;
+}
+.clusterDataTable td {
+	padding: 1px;
+}
+.ui-tooltip {
+	white-space: pre-line;
+}
+.removeClusterButton {
+    float: right;
+	color:white;
+}
+.removeClusterButton:hover {
+	color:yellow;
+}
+.firstConfirmation {
+	color: firebrick;
+	font-size: 14px;
+	font-weight: 700;
+}
+.secondConfirmation {
+	color: firebrick;
+	font-size: 16px;
+	font-weight: 900;
+}
+.centerMessage {
+	margin: 0 auto;
+	text-align:center;
+	top:40%
+
 }
 .textField {
 	background-image: url("../images/form_builder_text.png");

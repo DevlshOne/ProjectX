@@ -1,6 +1,6 @@
-<?
+<?php
 /**
- * Names SQL Functions
+ * Problems Tracking - DB functions
  */
 
 

@@ -818,6 +818,7 @@ function priorityProcessing(inputstr){
 	return inputstr;
 }
 
+
 /**
  * Wrapper for list click functions
  * @param area_name The XML tag name basically, first letter uppercase (see the top of parseXMLData())

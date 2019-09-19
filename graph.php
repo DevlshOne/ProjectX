@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * GRAPH GENERATOR - OUTPUTS A GRAPHIC, NOT TEXT!
  */

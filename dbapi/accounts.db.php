@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * ACCOUNTS SQL Functions
  */
