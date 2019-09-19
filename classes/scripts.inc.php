@@ -1,7 +1,8 @@
-<?	/***************************************************************
-	 *	Campaigns - handles listing and editing campaigns
-	 *	Written By: Jonathan Will
-	 ***************************************************************/
+<?php
+/***************************************************************
+ *	Script Management - Handles File uploads, and variable/custom programming.
+ *	Written By: Jonathan Will
+ ***************************************************************/
 
 $_SESSION['scripts'] = new Scripts;
 
