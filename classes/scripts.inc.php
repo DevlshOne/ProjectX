@@ -1152,19 +1152,19 @@ class Scripts{
 
 				//$('#media_player').dialog("open");
 
-				$('#media_player').children().filter("audio").each(function(){
+				$('#script_media_player').children().filter("audio").each(function(){
 					this.pause(); // can't hurt
 					delete(this); // @sparkey reports that this did the trick!
 					$(this).remove(); // not sure if this works after null assignment
 				});
-				$('#media_player').empty();
+				$('#script_media_player').empty();
 
-				$('#media_player').load("index.php?area=scripts&play_voice_file="+id+"&printable=1&no_script=1");
+				$('#script_media_player').load("index.php?area=scripts&play_voice_file="+id+"&printable=1&no_script=1");
 				// $('#media_player').load("test.php");
 
 				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
-				$('#media_player').unbind("dialogclose");
-				$('#media_player').bind('dialogclose', function(event) {
+				$('#script_media_player').unbind("dialogclose");
+				$('#script_media_player').bind('dialogclose', function(event) {
 
 					hideAudio();
 
@@ -1174,19 +1174,19 @@ class Scripts{
 				}
 
 			function hideAudio(){
-				$('#media_player').children().filter("audio").each(function(){
+				$('#script_media_player').children().filter("audio").each(function(){
 					this.pause();
 					delete(this);
 					$(this).remove();
 
 				});
 
-				$('#media_player').empty();
+				$('#script_media_player').empty();
 			}
 
 
 		</script>
-		
+		<center><div id="script_media_player" title="Playing Call Recording"></center>
 		<form method="POST" id="scr_edit_vfile" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkVoiceEditFrm(this); return false">
 			<input type="hidden" id="editing_vfile" name="editing_vfile" value="<?=$id?>" >
 
@@ -1207,7 +1207,7 @@ class Scripts{
 			</td>
 		</tr>
 
-		<center><div id="media_player" title="Playing Call Recording"></center>
+		
 		<?
 
 

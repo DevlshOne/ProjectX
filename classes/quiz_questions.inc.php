@@ -462,19 +462,19 @@ class QuizQuestions{
 
 				//$('#media_player').dialog("open");
 
-				$('#media_player').children().filter("audio").each(function(){
+				$('#quiz_media_player').children().filter("audio").each(function(){
 					this.pause(); // can't hurt
 					delete(this); // @sparkey reports that this did the trick!
 					$(this).remove(); // not sure if this works after null assignment
 				});
-				$('#media_player').empty();
+				$('#quiz_media_player').empty();
 
-				$('#media_player').load("index.php?area=quiz_questions&play_quiz_file="+id+"&printable=1&no_script=1");
+				$('#quiz_media_player').load("index.php?area=quiz_questions&play_quiz_file="+id+"&printable=1&no_script=1");
 				// $('#media_player').load("test.php");
 
 				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
-				$('#media_player').unbind("dialogclose");
-				$('#media_player').bind('dialogclose', function(event) {
+				$('#quiz_media_player').unbind("dialogclose");
+				$('#quiz_media_player').bind('dialogclose', function(event) {
 
 					hideAudio();
 
@@ -484,14 +484,14 @@ class QuizQuestions{
 			}
 
 			function hideAudio(){
-				$('#media_player').children().filter("audio").each(function(){
+				$('#quiz_media_player').children().filter("audio").each(function(){
 					this.pause();
 					delete(this);
 					$(this).remove();
 
 				});
 
-				$('#media_player').empty();
+				$('#quiz_media_player').empty();
 
 			}
 
@@ -502,7 +502,7 @@ class QuizQuestions{
 
 
 		</script>
-		<center><div id="media_player" title="Playing Quiz File"></center>
+		<center><div id="quiz_media_player" title="Playing Quiz File"></center>
 		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkQuestionFrm(this); return false">
 			<input type="hidden" id="adding_question" name="adding_question" value="<?=$id?>" >
 
