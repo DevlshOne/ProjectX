@@ -4,7 +4,6 @@
         private $cacheDir = 'fcache';
 
         function curlClusterData($webIP, $groups, $user_groups, $curlUP) {
-            $curlResponse = [];
             $curl = curl_init();
             $curlURL = 'http://' . $webIP . '/vicidial/AST_timeonVDADall.php?RTajax=1&AGENTtimeSTATS=1' . $groups . $user_groups;
             curl_setopt($curl, CURLOPT_URL, $curlURL);
@@ -47,20 +46,40 @@
                     $strGroups = '';
                     $strUserGroups = '';
                     $webip = trim($_REQUEST['webip']);
-                    $groups = $_GET['groups'];
+                    $groups = $_REQUEST['groups'];
                     if (isset($groups)) {
                         foreach ($groups as $v) {
                             $strGroups .= '&groups[]=' . urlencode($v);
                         }
                     }
-                    $user_group_filters = $_GET['usergroup'];
+                    $user_group_filters = $_REQUEST['usergroup'];
                     if (isset($user_group_filters)) {
                         foreach ($user_group_filters as $v) {
-                            $strUserGroups .= '&usergroup[]=' . urlencode($v);
+                            $strUserGroups .= '&user_group_filter[]=' . urlencode($v);
                         }
                     }
-                    $curlUP = (($_SESSION['user']['vici_username'])?$_SESSION['user']['vici_username']:$_SESSION['user']['username']) . ":" . $_SESSION['user']['vici_password'];
+                    $curlUP = (($_SESSION['user']['vici_username']) ? $_SESSION['user']['vici_username'] : $_SESSION['user']['username']) . ":" . $_SESSION['user']['vici_password'];
                     $out = $this->curlClusterData($webip, $strGroups, $strUserGroups, $curlUP);
+                    break;
+                case 'getClusterDataByUserPrefs':
+                    $user_preferences = json_decode($_SESSION['dbapi']->user_prefs->getRaw("dialer_status"), true);
+                    $desiredCluster = trim($_REQUEST['c']);
+                    array_pop($user_preferences);
+                    foreach ($user_preferences as $k => $v) {
+                        $strGroups = '';
+                        $strUserGroups = '';
+                        $cluster_id = $v['cluster_id'];
+                        if ($desiredCluster !== $cluster_id) continue;
+                        $webip = getClusterWebHost($cluster_id);
+                        foreach ($v['groups'] as $w) {
+                            $strGroups .= '&groups[]=' . urlencode($w);
+                        }
+                        foreach ($v['usergroups'] as $w) {
+                            $strUserGroups .= '&user_group_filter[]=' . urlencode($w);
+                        }
+                        $curlUP = (($_SESSION['user']['vici_username']) ? $_SESSION['user']['vici_username'] : $_SESSION['user']['username']) . ":" . $_SESSION['user']['vici_password'];
+                        $out = json_encode($this->curlClusterData($webip, $strGroups, $strUserGroups, $curlUP));
+                    }
                     break;
                 case 'getAvailableCampaigns':
                     $clusterid = trim($_REQUEST['clusterid']);

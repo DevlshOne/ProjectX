@@ -58,7 +58,7 @@
                                 <td class="pct100">
                                     <div class="align_center" style="float:left;margin:7px;">Dialer Status Dashboard</div>
                                     <button id="clusterSelectButton" class="align_center ui-state-highlight" style="float:right;">Select Clusters</button>
-                                    <button id="refreshRateButton" class="align_center refreshButton" style="float:right;">Change Refresh [4]</button>
+                                    <button id="refreshRateButton" class="align_center refreshButton" style="float:right;">Change Refresh [40]</button>
                                     <button id="stopDialersButton" class="align_center ui-state-error" style="float:right;">Stop All Dialing</button>
                                     <button id="forceHopperButton" class="align_center" style="float:right;">Force Hopper</button>
                                     <button id="switchContrast" class="align_center" style="float:right;" value="Dark Mode" onclick="">Dark Mode</button>
@@ -91,10 +91,10 @@
                             <td class="align_left"><label for="vici_password">Password :</label></td>
                             <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
                         </tr>
-                        <tr>
-                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>
-                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked/></td>
-                        </tr>
+                        <!--                        <tr>-->
+                        <!--                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>-->
+                        <!--                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked/></td>-->
+                        <!--                        </tr>-->
                         </tbody>
                     </table>
                 </form>
@@ -112,7 +112,7 @@
             </div>
             <script>
                 $('#dialerStatusZone').ready(function () {
-                    var refreshInterval = 4;
+                    var refreshInterval = 40;
                     var refreshEnabled = true;
                     var frontEnd_debug = false;
                     dispTimer = false;
@@ -326,9 +326,7 @@
                                         console.log('FAILURE - ' + response);
                                     }
                                 });
-                                if ($('#loadPrefs').is(':checked')) {
-                                    loadUserPrefs();
-                                }
+                                getDialerStatusData();
                                 $(this).dialog('close');
                             }
                         }
@@ -372,7 +370,7 @@
                                     $.each(prefs, function (i, v) {
                                         let tmpCLID = v.cluster_id.toString();
                                         let tmpGroups = v.groups;
-                                        let tmpUserGroups = v.usergroups;
+                                        let tmpUserGroups = v.user_group_filter;
                                         selectedClusters.push(tmpCLID.toString());
                                         clusterInfo[tmpCLID]['sel_campaigns'] = [];
                                         $(tmpGroups).each(function (j, w) {
@@ -410,7 +408,7 @@
                             tmpJSON.push({
                                 cluster_id: v,
                                 groups: tmpGroups,
-                                usergroups: tmpUserGroups,
+                                user_group_filter: tmpUserGroups,
                             });
                         });
                         tmpJSON.push({
@@ -475,7 +473,9 @@
                     $('#refreshRateButton').on('click', function (e, ui) {
                         dlgObj = $('#dialog-modal-change-refresh');
                         dlgObj.dialog('open');
-                        dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="refreshRate">Refresh (seconds) : </label><td class="align_right"><input id="refreshRate" name="refreshRate" type="number" min="4" max="300" value="' + refreshInterval + '" /></td></tr><tr><td class="align_left"><label for="refreshEnabled">Disable refresh : </label><td class="align_right"><input id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
+                        let refreshOptions = '<option value="4">4 seconds</option><option value="10">10 seconds</option><option value="20">20 seconds</option><option value="30">30 seconds</option><option value="40">40 seconds</option><option value="60">60 seconds</option><option value="120">2 minutes</option><option value="300">5 minutes</option><option value="600">10 minutes</option><option value="1200">20 minutes</option><option value="1800">30 minutes</option><option value="3600">60 minutes</option><option value="7200">120 minutes</option>';
+                        dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="refreshRate">Refresh Rate : </label><td class="align_right"><select id="refreshRate" name="refreshRate">' + refreshOptions + '</select></td></tr><tr><td class="align_left"><label for="refreshEnabled">Disable refresh : </label><td class="align_right"><input id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
+                        $('#refreshRate').val(refreshInterval);
                     });
                     $('#forceHopperButton').on('click', function (e, ui) {
                         dlgObj = $('#dialog-modal-first-confirm');
@@ -525,19 +525,23 @@
                         ugSelect += '</select>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
                         let arrSelTemp = [];
-                        $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
-                            arrSelTemp.push(v.groups);
-                        });
                         if (clusterInfo[clid]['campaign_options'].length === clusterInfo[clid]['sel_campaigns'].length) {
                             arrSelTemp.push('ALL-ACTIVE');
+                            saveUserPrefs();
+                        } else {
+                            $.each(clusterInfo[clid]['sel_campaigns'], function (i, v) {
+                                arrSelTemp.push(v.groups);
+                            });
                         }
                         $('#campaignFilter').val(arrSelTemp);
                         arrSelTemp = [];
-                        $.each(clusterInfo[clid]['sel_user_groups'], function (i, v) {
-                            arrSelTemp.push(v.user_group_filter);
-                        });
                         if (clusterInfo[clid]['usergroup_options'].length === clusterInfo[clid]['sel_user_groups'].length) {
                             arrSelTemp.push('ALL-GROUPS');
+                            saveUserPrefs();
+                        } else {
+                            $.each(clusterInfo[clid]['sel_user_groups'], function (i, v) {
+                                arrSelTemp.push(v.user_group_filter);
+                            });
                         }
                         $('#usergroupFilter').val(arrSelTemp);
                     });
@@ -676,6 +680,8 @@
                         let tdValues = [];
                         let clusterValues = [];
                         let summaryValues = [];
+                        let noCalls = false;
+                        let noAgents = false;
                         $(clusterData).find('TD').each(function (i, n) {
                             if (i === 0 || (i % 2) === 0) {
                                 tdLabels.push(n.innerText.trim());
@@ -705,17 +711,33 @@
                             }
                         });
                         if (summaryData.length > 8) {
-                            if (!summaryData.includes('NO AGENTS ON CALLS') && !clusterData.includes('NO AGENTS ON CALLS') && !summaryData.includes('NO LIVE CALLS') && !clusterData.includes('NO LIVE CALLS')) {
-                                $(summaryData).find('font').each(function (i, n) {
-                                    summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
-                                });
-                                summaryValues.pop();
-                                delete summaryValues['undefined'];
-                            } else {
+                            noCalls = summaryData.includes('NO LIVE CALLS');
+                            noAgents = summaryData.includes('NO AGENTS ON CALLS');
+                            if (noAgents && noCalls) {
                                 // handling the edge case for NO AGENTS ON CALLS or NO LIVE CALLS by loading up all 0s
                                 $.each(clusterSummaryFields, function (i) {
                                     summaryValues[clusterSummaryFields[i]] = '0';
                                 });
+                            } else {
+                                $(summaryData).find('font').each(function (i, n) {
+                                    summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
+                                });
+                                if (noCalls) {
+                                    summaryValues['calls_active'] = '0';
+                                    summaryValues['calls_ringing'] = '0';
+                                    summaryValues['calls_waiting'] = '0';
+                                    summaryValues['calls_ivr'] = '0';
+                                }
+                                if (noAgents) {
+                                    summaryValues['agents_on'] = '0';
+                                    summaryValues['agents_active'] = '0';
+                                    summaryValues['agents_waiting'] = '0';
+                                    summaryValues['agents_paused'] = '0';
+                                    summaryValues['agents_dead'] = '0';
+                                    summaryValues['agents_dispo'] = '0';
+                                }
+                                summaryValues.pop();
+                                delete summaryValues['undefined'];
                             }
                         }
                         let objClusterData = Object.assign({}, clusterValues);
@@ -728,8 +750,7 @@
                                 $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
                                 $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
-                            }else if (cltype === 'taps') {
-                                //$newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '&#10;Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 200, 500) + ' leads (Trunk: ' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + ')</td></tr>');
+                            } else if (cltype === 'taps') {
                                 $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
                                 $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
@@ -762,33 +783,19 @@
                             console.log('Tiles are about to render :: ', selectedClusters);
                         }
                         $.each(selectedClusters, function (i, v) {
-                            let tmpGroups = '';
                             let strV = v.toString();
                             if ($('li#clusterTile_' + strV).length === 0) {
                                 $('#dialerStatusZone').append('<li id="clusterTile_' + strV + '" class="clusterTile"><span class="centerMessage">Loading data, standby...</span></li>');
                             }
-                            if (clusterInfo[strV]['campaign_options'].length === clusterInfo[strV]['sel_campaigns'].length) {
-                                tmpGroups = '&groups[]=ALL-ACTIVE';
-                            } else {
-                                $.each(clusterInfo[strV]['sel_campaigns'], function (j, w) {
-                                    tmpGroups += '&groups[]=' + w.groups;
-                                });
-                            }
-                            let tmpUserGroups = '';
-                            if (clusterInfo[strV]['usergroup_options'].length === clusterInfo[strV]['sel_user_groups'].length) {
-                                tmpUserGroups = '&usergroup[]=ALL-GROUPS';
-                            } else {
-                                $.each(clusterInfo[strV]['sel_user_groups'], function (j, w) {
-                                    tmpUserGroups += '&usergroup[]=' + w.user_group_filter;
-                                });
-                            }
                             $.ajax({
-                                type: "POST",
+                                type: 'POST',
                                 cache: false,
                                 async: false,
-                                crossDomain: true,
-                                crossOrigin: true,
-                                url: 'api/api.php?get=dialer_status&mode=json&action=getClusterData&webip=' + clusterInfo[strV]['ip'] + tmpGroups + tmpUserGroups,
+                                dataType: 'json',
+                                contentType: 'application/x-www-form-urlencoded',
+                                crossDomain: false,
+                                crossOrigin: false,
+                                url: 'api/api.php?get=dialer_status&mode=json&action=getClusterDataByUserPrefs&c=' + strV,
                                 success: function (response) {
                                     parseDialerStatusData(v, response);
                                 },
@@ -814,6 +821,7 @@
                             clearInterval(dispTimer);
                         }
                     }
+
                     initScreen();
                     loadUserPrefs();
                     getDialerStatusData();
