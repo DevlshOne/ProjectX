@@ -153,7 +153,14 @@ class API_LoginTracker{
 
 				$dat['ip'] = trim($_REQUEST['s_ip']);
 
-			}			
+			}		
+			
+			## BROWSER SEARCH
+			if($_REQUEST['s_browser']){
+
+				$dat['browser'] = trim($_REQUEST['s_browser']);
+
+			}	
 
 			## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
 			if(isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])){

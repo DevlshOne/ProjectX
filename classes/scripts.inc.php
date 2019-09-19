@@ -1,6 +1,5 @@
-<?php
-	/***************************************************************
-	 *	Scripts - Handles GUI functions for managing Scripts and the files associated
+<?	/***************************************************************
+	 *	Campaigns - handles listing and editing campaigns
 	 *	Written By: Jonathan Will
 	 ***************************************************************/
 
@@ -70,6 +69,10 @@ class Scripts{
 			}elseif(isset($_REQUEST['edit_voice_file'])) {
 
 				$this->EditVoiceFile($_REQUEST['edit_voice_file']);
+
+			}elseif(isset($_REQUEST['play_voice_file'])) {
+
+				$this->PlayVoiceFile($_REQUEST['play_voice_file']);				
 
 			}else{
 
@@ -890,7 +893,7 @@ class Scripts{
 				var objname = 'dialog-modal-edit-voicefile';
 
 				$('#'+objname).dialog( "option", "title", 'Editing Voice File #'+voicefileid );
-				$('#'+objname).dialog( "option", "height", '225' );
+				$('#'+objname).dialog( "option", "height", '250' );
 				$('#'+objname).dialog( "option", "width", '400' );
 
 				$('#'+objname).dialog("open");
@@ -913,7 +916,7 @@ class Scripts{
 			// Edit voice file dialog spec
 			$("#dialog-modal-edit-voicefile").dialog({
 				autoOpen: false,
-				height: 225,
+				height: 250,
 				width: 400,
 				modal: false,
 				draggable:true,
@@ -1144,9 +1147,46 @@ class Scripts{
 
 			}
 
+			function playAudio(id){
+
+
+				//$('#media_player').dialog("open");
+
+				$('#script_media_player').children().filter("audio").each(function(){
+					this.pause(); // can't hurt
+					delete(this); // @sparkey reports that this did the trick!
+					$(this).remove(); // not sure if this works after null assignment
+				});
+				$('#script_media_player').empty();
+
+				$('#script_media_player').load("index.php?area=scripts&play_voice_file="+id+"&printable=1&no_script=1");
+				// $('#media_player').load("test.php");
+
+				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
+				$('#script_media_player').unbind("dialogclose");
+				$('#script_media_player').bind('dialogclose', function(event) {
+
+					hideAudio();
+
+				});
+
+
+				}
+
+			function hideAudio(){
+				$('#script_media_player').children().filter("audio").each(function(){
+					this.pause();
+					delete(this);
+					$(this).remove();
+
+				});
+
+				$('#script_media_player').empty();
+			}
+
 
 		</script>
-		
+		<center><div id="script_media_player" title="Playing Call Recording"></center>
 		<form method="POST" id="scr_edit_vfile" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkVoiceEditFrm(this); return false">
 			<input type="hidden" id="editing_vfile" name="editing_vfile" value="<?=$id?>" >
 
@@ -1162,11 +1202,40 @@ class Scripts{
 		<tr>
 			<td align="center" colspan="2" height="50">
 				<input type="submit" value="Save Changes">
-				<input type="button" value="Cancel" onclick="HideEditVoiceFile(); return false;">
+				<input type="button" value="Cancel" onclick="hideAudio(); HideEditVoiceFile(); return false;">
+				<input type="button" value="Listen" onclick="playAudio('<?=$row['id']?>')">
 			</td>
 		</tr>
+
+		
 		<?
 
+
+	}
+
+
+	function PlayVoiceFile($id){
+
+		# Play audio file function - it will display audio player with play_audio_file.php as source
+
+		$id=intval($id);
+
+		if($id){
+
+			# Grab voice file db record
+			$row = $_SESSION['dbapi']->scripts->getVoiceFileByID($id);
+
+		}
+		?>
+		<audio id="audio_obj" autoplay controls>
+			<source src="play_audio_file.php?file=<?=htmlentities($row['file'])?>" type="audio/wav" />
+			Your browser does not support the audio element.
+		</audio><br>
+		<a href="#" onclick="parent.hideAudio();return false">[Hide Player]</a>
+		
+		<script>
+			parent.applyUniformity();
+		</script><?
 
 	}
 

@@ -1,5 +1,4 @@
-<?php
-
+<?
 /**
  * Login Tracker SQL Functions
  */
@@ -165,12 +164,34 @@ class LoginTrackerAPI{
 
 			$sql .= ") ";
 
-		## SINGLE SECTION SEARCH
+		## SINGLE IP SEARCH
 		}else if($info['ip']){
 
 			$sql .= " AND `ip` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['ip'])."%' ";
 
-		}		
+		}	
+		
+		### BROWSER SEARCH
+		## ARRAY OF STRINGS, OR SEPERATED SEARCH
+		if(is_array($info['browser'])){
+
+			$sql .= " AND (";
+
+			$x=0;
+			foreach($info['browser'] as $idx=>$n){
+				if($x++ > 0)$sql .= " OR ";
+
+				$sql .= "`browser` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
+			}
+
+			$sql .= ") ";
+
+		## SINGLE BROWSER SEARCH
+		}else if($info['browser']){
+
+			$sql .= " AND `browser` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['browser'])."%' ";
+
+		}
 
 
 		## SKIP/IGNORE ID's

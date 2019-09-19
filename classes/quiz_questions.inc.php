@@ -56,6 +56,10 @@ class QuizQuestions{
 
 				$this->makeAdd($_REQUEST['add_question']);
 
+			}elseif(isset($_REQUEST['play_quiz_file'])){
+
+				$this->PlayQuizFile($_REQUEST['play_quiz_file']);
+
 			}else{
 				$this->listEntrys();
 			}
@@ -201,6 +205,7 @@ class QuizQuestions{
 				$('#'+objname).load("index.php?area=quiz_questions&add_question="+id+"&printable=1&no_script=1");
 
 				$('#'+objname).dialog('option', 'position', 'center');
+				$('#'+objname).dialog('option', 'height', '250' );
 			}
 
 			function resetQuestionForm(frm){
@@ -313,7 +318,7 @@ class QuizQuestions{
 			$("#dialog-modal-add-question").dialog({
 				autoOpen: false,
 				width: 500,
-				height: 200,
+				height: 250,
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -339,6 +344,16 @@ class QuizQuestions{
 		}
 
 		?><script>
+
+			// Used by dialog box Cancel button
+			function HideAddQuestion(){
+
+				var objname = 'dialog-modal-add-question';
+
+				$('#'+objname).dialog("close");
+
+			}
+
 
 			function validateQuestionField(name,value,frm){
 
@@ -442,7 +457,43 @@ class QuizQuestions{
 
 			}
 
+			function playAudio(id){
 
+
+				//$('#media_player').dialog("open");
+
+				$('#quiz_media_player').children().filter("audio").each(function(){
+					this.pause(); // can't hurt
+					delete(this); // @sparkey reports that this did the trick!
+					$(this).remove(); // not sure if this works after null assignment
+				});
+				$('#quiz_media_player').empty();
+
+				$('#quiz_media_player').load("index.php?area=quiz_questions&play_quiz_file="+id+"&printable=1&no_script=1");
+				// $('#media_player').load("test.php");
+
+				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
+				$('#quiz_media_player').unbind("dialogclose");
+				$('#quiz_media_player').bind('dialogclose', function(event) {
+
+					hideAudio();
+
+				});
+
+
+			}
+
+			function hideAudio(){
+				$('#quiz_media_player').children().filter("audio").each(function(){
+					this.pause();
+					delete(this);
+					$(this).remove();
+
+				});
+
+				$('#quiz_media_player').empty();
+
+			}
 
 
 			// SET TITLEBAR
@@ -451,6 +502,7 @@ class QuizQuestions{
 
 
 		</script>
+		<center><div id="quiz_media_player" title="Playing Quiz File"></center>
 		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkQuestionFrm(this); return false">
 			<input type="hidden" id="adding_question" name="adding_question" value="<?=$id?>" >
 
@@ -477,13 +529,42 @@ class QuizQuestions{
 			<td><input name="file" type="text" size="50" value="<?=htmlentities($row['file'])?>"></td>
 		</tr>
 		<tr>
-			<th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
+			<th colspan="2" align="center"><input type="submit" value="Save Changes">
+			<input type="button" value="Cancel" onclick="hideAudio(); HideAddQuestion(); return false;">
+			<input type="button" value="Listen" onclick="playAudio('<?=$row['id']?>')"></th>
 		</tr>
 		</form>
-		</table><?
+		</table>
+		
+		<?
 
 
 	}
+
+	function PlayQuizFile($id){
+
+		# Play audio file function - it will display audio player with play_audio_file.php as source
+
+		$id=intval($id);
+
+		if($id){
+
+			$row = $_SESSION['dbapi']->quiz_questions->getByID($id);
+
+		}
+
+		?>
+		<audio id="audio_obj" autoplay controls>
+			<source src="play_audio_file.php?file=<?=htmlentities($row['file'])?>" type="audio/wav" />
+			Your browser does not support the audio element.
+		</audio><br>
+		<a href="#" onclick="parent.hideAudio();return false">[Hide Player]</a>
+		
+		<script>
+			parent.applyUniformity();
+		</script><?
+
+	}	
 
 
 	function makeDD($name,$sel,$class,$onchange,$size, $blank_entry=1){
