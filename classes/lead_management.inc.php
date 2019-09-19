@@ -1146,8 +1146,12 @@ class LeadManagement{
 	}
 
 	function makeResendSale($leadrow, $sale_id){
-
+		
+		$sale_id = intval($sale_id);
+		
 		connectPXDB();
+		
+		$sale = querySQL("SELECT * FROM `sales` WHERE id='$sale_id' ")
 
 		?><script>
 
@@ -1240,8 +1244,20 @@ class LeadManagement{
 		<table id="change_dispo_table" border="0" align="center">
 		<tr>
 			<th class="ui-widget-header" height="30" colspan="2">Resend Sale</th>
-		</tr>
-		<tr>
+		</tr><?
+		
+		if($sale['is_paid'] != 'no'){
+		
+			?><tr>
+				<td colspan="2" align="center" style="font-size:14px;color:#ff0000">
+				
+					WARNING: Resubmitting Credit card sales is not supported.
+				
+				</td>
+			</tr><?
+		}
+		
+		?><tr>
 			<th>Sale ID#</th>
 			<td><?=$sale_id?></td>
 		</tr>

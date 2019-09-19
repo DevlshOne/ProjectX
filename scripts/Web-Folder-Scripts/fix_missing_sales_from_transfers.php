@@ -5,10 +5,10 @@
 
 	include_once($basedir."db.inc.php");
 	include_once($basedir."dbapi/dbapi.inc.php");
-	include_once($basedir."util/microtime.php");
-	include_once($basedir."util/format_phone.php");
-	include_once($basedir."util/functions.php");
-	include_once($basedir."util/db_utils.php");
+	include_once($basedir."utils/microtime.php");
+	include_once($basedir."utils/format_phone.php");
+	include_once($basedir."utils/functions.php");
+	include_once($basedir."utils/db_utils.php");
 
 	$stime = mktime(0,0,0) ;
 	$etime = $stime + 86399;
