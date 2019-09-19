@@ -672,7 +672,12 @@ class LeadManagement{
 					height: 420,
 					modal: false,
 					draggable:true,
-					resizable: false
+					resizable: false,
+					close: function(event, ui){
+
+						hideAudio();
+						
+					}
 				});
 
 				<?
@@ -722,8 +727,8 @@ class LeadManagement{
 
 
 				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
-				$('#media_player').unbind("dialogclose");
-				$('#media_player').bind('dialogclose', function(event) {
+				$('#media_player').off("dialogclose");
+				$('#media_player').on('dialogclose', function(event) {
 
 					hideAudio();
 

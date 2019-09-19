@@ -321,7 +321,12 @@ class QuizQuestions{
 				height: 250,
 				modal: false,
 				draggable:true,
-				resizable: false
+				resizable: false,
+				close: function(event, ui){
+
+					hideAudio();
+					
+				}
 			});
 
 			loadQuestions();
@@ -473,8 +478,8 @@ class QuizQuestions{
 				// $('#media_player').load("test.php");
 
 				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
-				$('#quiz_media_player').unbind("dialogclose");
-				$('#quiz_media_player').bind('dialogclose', function(event) {
+				$('#quiz_media_player').off("dialogclose");
+				$('#quiz_media_player').on('dialogclose', function(event) {
 
 					hideAudio();
 
