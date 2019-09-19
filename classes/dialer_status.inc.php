@@ -370,7 +370,7 @@
                                     $.each(prefs, function (i, v) {
                                         let tmpCLID = v.cluster_id.toString();
                                         let tmpGroups = v.groups;
-                                        let tmpUserGroups = v.usergroups;
+                                        let tmpUserGroups = v.user_group_filter;
                                         selectedClusters.push(tmpCLID.toString());
                                         clusterInfo[tmpCLID]['sel_campaigns'] = [];
                                         $(tmpGroups).each(function (j, w) {
@@ -408,7 +408,7 @@
                             tmpJSON.push({
                                 cluster_id: v,
                                 groups: tmpGroups,
-                                usergroups: tmpUserGroups,
+                                user_group_filter: tmpUserGroups,
                             });
                         });
                         tmpJSON.push({

@@ -55,7 +55,7 @@
                     $user_group_filters = $_REQUEST['usergroup'];
                     if (isset($user_group_filters)) {
                         foreach ($user_group_filters as $v) {
-                            $strUserGroups .= '&usergroup[]=' . urlencode($v);
+                            $strUserGroups .= '&user_group_filter[]=' . urlencode($v);
                         }
                     }
                     $curlUP = (($_SESSION['user']['vici_username']) ? $_SESSION['user']['vici_username'] : $_SESSION['user']['username']) . ":" . $_SESSION['user']['vici_password'];
@@ -75,7 +75,7 @@
                             $strGroups .= '&groups[]=' . urlencode($w);
                         }
                         foreach ($v['usergroups'] as $w) {
-                            $strUserGroups .= '&usergroup[]=' . urlencode($w);
+                            $strUserGroups .= '&user_group_filter[]=' . urlencode($w);
                         }
                         $curlUP = (($_SESSION['user']['vici_username']) ? $_SESSION['user']['vici_username'] : $_SESSION['user']['username']) . ":" . $_SESSION['user']['vici_password'];
                         $out = json_encode($this->curlClusterData($webip, $strGroups, $strUserGroups, $curlUP));
