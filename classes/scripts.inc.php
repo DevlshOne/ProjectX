@@ -1147,7 +1147,7 @@ class Scripts{
 
 			}
 
-			function playAudio(file){
+			function playAudio(id){
 
 
 				//$('#media_player').dialog("open");
@@ -1159,7 +1159,7 @@ class Scripts{
 				});
 				$('#media_player').empty();
 
-				$('#media_player').load("index.php?area=scripts&play_voice_file="+file+"&printable=1&no_script=1");
+				$('#media_player').load("index.php?area=scripts&play_voice_file="+id+"&printable=1&no_script=1");
 				// $('#media_player').load("test.php");
 
 				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
@@ -1203,7 +1203,7 @@ class Scripts{
 			<td align="center" colspan="2" height="50">
 				<input type="submit" value="Save Changes">
 				<input type="button" value="Cancel" onclick="hideAudio(); HideEditVoiceFile(); return false;">
-				<input type="button" value="Listen" onclick="playAudio('<?=htmlentities($row['file'])?>')">
+				<input type="button" value="Listen" onclick="playAudio('<?=$row['id']?>')">
 			</td>
 		</tr>
 
@@ -1214,12 +1214,21 @@ class Scripts{
 	}
 
 
-	function PlayVoiceFile($file){
+	function PlayVoiceFile($id){
 
 		# Play audio file function - it will display audio player with play_audio_file.php as source
+
+		$id=intval($id);
+
+		if($id){
+
+			# Grab voice file db record
+			$row = $_SESSION['dbapi']->scripts->getVoiceFileByID($id);
+
+		}
 		?>
 		<audio id="audio_obj" autoplay controls>
-			<source src="play_audio_file.php?file=<?=$file?>" type="audio/wav" />
+			<source src="play_audio_file.php?file=<?=htmlentities($row['file'])?>" type="audio/wav" />
 			Your browser does not support the audio element.
 		</audio><br>
 		<a href="#" onclick="parent.hideAudio();return false">[Hide Player]</a>
