@@ -210,6 +210,9 @@ a:hover {
 	float:left;
     display: inline-block;
 	width: 100%;
+	position: relative;
+	min-height: 600px;
+	overflow-y: auto;
 }
 .fldMaker {
 	margin: 0 5px 5px 5px;
@@ -300,6 +303,16 @@ a:hover {
 	float:left;
 	padding: 4px;
 }
+
+.dragMe.dragL {
+	background-color: darkgrey;
+	border: 1px dotted #cd0a0a;
+}
+.dragMe.dragF {
+	background-color: lightgrey;
+	border: 1px dotted #cd0a0a;
+}
+
 #dialerStatusZone {
 	width: 100%;
 	height: 100%;
