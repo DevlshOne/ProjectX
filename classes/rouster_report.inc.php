@@ -862,6 +862,7 @@ class RousterReport{
 			$running_total_sales = 0;
 			$running_total_hangups = 0;
 			$running_total_declines = 0;
+			$running_total_ans = 0;
 			$running_total_contacts = 0;
 			$running_total_reviews = 0;
 			$running_total_paid_sales = 0;
@@ -1010,6 +1011,7 @@ class RousterReport{
 				$reviewcnt = $row['reviewcnt'];
 
 				$running_total_calls += $row['call_cnt'];
+				$running_total_ans += $row['ans_cnt'];
 				$running_total_sales += ($row['sale_cnt'] );
 				$running_total_paid_sales += $row['paid_sale_cnt'];
 				$running_total_reviews += $reviewcnt;
@@ -1299,6 +1301,8 @@ class RousterReport{
 
 			$total_contact_percent = (($running_total_calls <= 0)?0:number_format( round( (($running_total_contacts) / ($running_total_calls)) * 100, 2), 2));
 
+			$total_ans_percent = (($running_total_calls <= 0)?0:number_format( round( (($running_total_ans) / ($running_total_calls)) * 100, 2), 2));
+
 
 			$total_percent_paidcc_calls = (($running_total_sales <= 0)?0:($running_total_paid_sales / $running_total_sales) * 100);
 
@@ -1339,8 +1343,8 @@ class RousterReport{
 
 
 				?><td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_calls)?></td>
-				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"></td>
-				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right">%</td>
+				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_ans)?></td>
+				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=$total_ans_percent?>%</td>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=$total_contact_percent?>%</td>
 				<?/*<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format(($running_total_sales-$running_total_paid_sales))?></td>*/?>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_paid_sales)?></td>
