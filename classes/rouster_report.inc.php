@@ -505,7 +505,7 @@ class RousterReport{
 				$agent_array[$username]['contact_cnt'] = $contact_cnt;
 				$agent_array[$username]['decline_cnt'] = $decline_cnt;
 				$agent_array[$username]['ans_cnt'] = $ans_cnt;
-				$agent_array[$username]['ans_percent'] = ($call_cnt <=0)?0:round(($ans_machine_cnt / $call_cnt) * 100, 2);
+				$agent_array[$username]['ans_percent'] = ($call_cnt <=0)?0:round(($ans_cnt / $call_cnt) * 100, 2);
 
 	//			$agent_array[$username]['total_amount'] = '';
 
@@ -712,6 +712,8 @@ class RousterReport{
 			$out[$x]['hangup_cnt'] = $agent['hangup_cnt'];
 			$out[$x]['contact_cnt'] = $agent['contact_cnt'];
 			$out[$x]['decline_cnt'] = $agent['decline_cnt'];
+			$out[$x]['ans_cnt'] = $agent['ans_cnt'];
+			$out[$x]['ans_percent'] = $agent['ans_percent'];
 
 			$out[$x]['paid_time'] = $agent['paid_time'];
 
