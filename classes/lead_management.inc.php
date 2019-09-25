@@ -152,7 +152,49 @@ class LeadManagement{
 
 
 
+			function playAudio(url){
 
+
+					//$('#media_player').dialog("open");
+
+					$('#media_player').children().filter("audio").each(function(){
+					    this.pause(); // can't hurt
+					    delete(this); // @sparkey reports that this did the trick!
+					    $(this).remove(); // not sure if this works after null assignment
+					});
+					$('#media_player').empty();
+
+					$('#media_player').load("play_rec.php?play_url="+url);
+
+					// RESET OTHERS
+					//resetImages();
+					// CHANGE IMAGE
+					//markPlayButton(call_id);
+
+
+
+					// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
+					$('#media_player').off("dialogclose");
+					$('#media_player').on('dialogclose', function(event) {
+
+						hideAudio();
+
+						//alert("pausing");
+					});
+
+
+				}
+
+				function hideAudio(){
+					$('#media_player').children().filter("audio").each(function(){
+				    	this.pause();
+				    	delete(this);
+				    	$(this).remove();
+
+					});
+
+					$('#media_player').empty();
+				}
 
 
 			/**
@@ -704,7 +746,8 @@ class LeadManagement{
 	function makeRecordingSection($row){
 
 
-		?><script>
+	/***	THESE FUNCTIONS WERE MOVED TO "listEntrys()" function instead
+	 * ?><script>
 			function playAudio(url){
 
 
@@ -750,7 +793,10 @@ class LeadManagement{
 			}
 
 		</script>
-		<div id="media_player" title="Playing Call Recording">
+		<?***/
+	
+	
+		?><div id="media_player" title="Playing Call Recording">
 
 
 		</div><?

@@ -200,6 +200,10 @@
 					$('#main_content').load(url);
             		$('body').css('background-color', '#FFFFFF');
             		$('body').css('color', '#000000');
+
+            		$('#main_content').css('background-color', '#FFFFFF');
+                    $('#main_content').css('color', '#000000');
+            		
 					$('.cd-side-nav').find('.hover').removeClass('hover');
 					$('.cd-side-nav').find('.selected').removeClass('selected');
 					$('.cd-side-nav').removeClass('nav-is-visible');

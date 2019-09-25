@@ -404,6 +404,10 @@ a:hover {
 	top:40%
 
 }
+.fullsize {
+	width:100%;
+	height:100%;
+}
 .textField {
 	background-image: url("../images/form_builder_text.png");
 	background-repeat: no-repeat;

@@ -83,6 +83,34 @@
                     /// NO NEED TO POP ANYMORE, JUST MADE IT SKIP IF THE 'cluster_id' ISNT SPECIFIED
                     ///array_pop($user_preferences);
                     	
+                    if(!$user_preferences || count($user_preferences) < 1){
+                    	
+                    	$user_preferences = array();
+                    	
+                    	
+                    	foreach (getClusterIDs() as $i => $v) {
+                    		
+                    		$user_preferences[] = array(
+                    				'cluster_id' 		=> 	$v,
+                    				'groups' 			=> array(0 => "ALL-ACTIVE"),
+                    				'user_group_filter'	=> array(0 => "ALL-GROUPS")
+                    		);
+                    		
+                    	}
+                    	
+                    	$user_preferences[] = array(
+                    			
+                    			'refreshInterval' => 40,
+                    			'refreshEnabled' => true,
+                    			'highContrast' => false
+                    			
+                    	);
+                    	
+                    	
+                    	$out = json_encode($user_preferences);
+                    	$_SESSION['dbapi']->user_prefs->update('dialer_status', $out);
+                    	
+                    }
                  
                     
                     // print_r($user_preferences);exit;
