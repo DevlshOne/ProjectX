@@ -508,6 +508,9 @@ class FeatureControl{
 						</tr><?
 
 						$this->renderFeatureRow('lead_management', 'Lead Management', ($row['lead_management'] == 'yes')?true:false );
+						$this->renderFeatureRow('sales_management', 'Sales Management', ($row['sales_management'] == 'yes')?true:false );
+						
+						
 						$this->renderFeatureRow('employee_hours', 'Employee Hours', ($row['employee_hours'] == 'yes')?true:false );
 
 						$this->renderFeatureRow('phone_lookup', 'DRIPP Phone lookup', ($row['phone_lookup'] == 'yes')?true:false );
