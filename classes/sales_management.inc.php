@@ -90,13 +90,14 @@ class SalesManagement{
 
 
 			var SalesTableFormat = [
-				['id','align_center'],
+				//['id','align_center'],
 				['lead_tracking_id','align_center'],
 				['agent_lead_id','align_center'],
 				['[get:cluster_name:agent_cluster_id]','align_center'],
 				['campaign_code','align_center'],
 				['[concat:agent_username:verifier_username]','align_center'],
 				['[time:sale_time]','align_center'],
+				['amount','align_center'],
 				['phone','align_center'],
 
 				//['[duration:agent_duration]','align_center'],
@@ -145,7 +146,7 @@ class SalesManagement{
 
 								's_city='+escape(frm.s_city.value)+"&"+
 								's_state='+escape(frm.s_state.value)+"&"+
-
+								's_amount='+escape(frm.s_amount.value)+"&"+
 								's_office_id='+escape(frm.s_office_id.value)+"&"+
 
 								's_date_month='+escape(frm.stime_month.value)+"&"+'s_date_day='+escape(frm.stime_day.value)+"&"+'s_date_year='+escape(frm.stime_year.value)+"&"+
@@ -511,6 +512,7 @@ class SalesManagement{
 					<th class="row2">Phone</th>
 					<th class="row2">City</th>
 					<th class="row2">State</th>
+					<th class="row2">Amount</th>
 					<th class="row2">Office</th>
 				</tr>
 				<tr>
@@ -526,8 +528,8 @@ class SalesManagement{
 
 					<td align="center"><input type="text" name="s_phone" size="10" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
 					<td align="center"><input type="text" name="s_city" size="10" value="<?=htmlentities($_REQUEST['s_city'])?>"></td>
-					<td align="center"><input type="text" name="s_state" size="10" value="<?=htmlentities($_REQUEST['s_state'])?>"></td>
-
+					<td align="center"><input type="text" name="s_state" size="3" value="<?=htmlentities($_REQUEST['s_state'])?>"></td>
+					<td align="center"><input type="text" name="s_amount" size="3" value="<?=htmlentities($_REQUEST['s_amount'])?>"></td>
 
 					<td align="center"><?
 
@@ -586,14 +588,16 @@ class SalesManagement{
 
 				['call_group'],
 				['office'],**/
-				?>
-				<th class="row2"><?=$this->getOrderLink('id')?>ID</a></th>
-				<th class="row2"><?=$this->getOrderLink('lead_tracking_id')?>PX ID</a></th>
+				/**?>
+				<th class="row2"><?=$this->getOrderLink('id')?>ID</a></th>**/
+					
+				?><th class="row2"><?=$this->getOrderLink('lead_tracking_id')?>PX ID</a></th>
 				<th class="row2"><?=$this->getOrderLink('agent_lead_id')?>Lead ID</a></th>
 				<th class="row2"><?=$this->getOrderLink('agent_cluster_id')?>Cluster</a></th>
 				<th class="row2"><?=$this->getOrderLink('campaign_id')?>Campaign</a></th>
 				<th class="row2"><?=$this->getOrderLink('agent_username')?>Agent</a>/<?=$this->getOrderLink('verifier_username')?>Verifier</a></th>
 				<th class="row2"><?=$this->getOrderLink('sale_time')?>Sale Time</a></th>
+				<th class="row2"><?=$this->getOrderLink('amount')?>Amount</a></th>
 				<th class="row2"><?=$this->getOrderLink('phone')?>Phone Number</a></th>
 				<th class="row2">Is Paid</th>
 				<th class="row2"><?=$this->getOrderLink('first_name')?>First</a>/<?=$this->getOrderLink('last_name')?>Last</a> Name</a></th>

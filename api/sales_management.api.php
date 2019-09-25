@@ -272,6 +272,11 @@ class API_Sales_Management{
 					
 				}
 				
+				if($_REQUEST['s_amount']){
+					
+					$dat['amount'] = intval($_REQUEST['s_amount']);
+					
+				}
 				
 				
 				// DISPO STATUS SEARCH

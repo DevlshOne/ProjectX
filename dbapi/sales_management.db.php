@@ -184,7 +184,27 @@ class SalesManagementAPI{
 		}
 
 
-
+		if(is_array($info['amount'])){
+			
+			$sql .= " AND (";
+			
+			$x=0;
+			foreach($info['amount'] as $idx=>$sid){
+				if($x++ > 0)$sql .= " OR ";
+				
+				$sql .= "`amount`='".intval($sid)."' ";
+			}
+			
+			$sql .= ") ";
+			
+			## SINGLE CAMPAIGN ID SEARCH
+		}else if($info['amount']){
+			
+			$sql .= " AND `amount`='".intval($info['amount'])."' ";
+			
+		}
+		
+		
 	## CAMPAIGN ID
 		if(is_array($info['campaign_id'])){
 
@@ -311,7 +331,7 @@ class SalesManagementAPI{
 		## SINGLE PHONE SEARCH
 		}else if($info['firstname']){
 
-			$sql .= " AND `first_name` LIKE '".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['firstname'])."' ";
+			$sql .= " AND `first_name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['firstname'])."%' ";
 
 		}
 
@@ -333,7 +353,7 @@ class SalesManagementAPI{
 		## SINGLE PHONE SEARCH
 		}else if($info['lastname']){
 
-			$sql .= " AND `last_name` LIKE '".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['lastname'])."' ";
+			$sql .= " AND `last_name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['lastname'])."%' ";
 
 		}
 
@@ -356,7 +376,7 @@ class SalesManagementAPI{
 		## SINGLE PHONE SEARCH
 		}else if($info['city']){
 
-			$sql .= " AND `city` LIKE '".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['city'])."' ";
+			$sql .= " AND `city` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['city'])."%' ";
 
 		}
 
@@ -377,7 +397,7 @@ class SalesManagementAPI{
 		## SINGLE PHONE SEARCH
 		}else if($info['state']){
 
-			$sql .= " AND `state` LIKE '".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['state'])."' ";
+			$sql .= " AND `state` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['state'])."%' ";
 
 		}
 
@@ -400,7 +420,7 @@ class SalesManagementAPI{
 		## SINGLE PHONE SEARCH
 		}else if($info['phone']){
 
-			$sql .= " AND `phone` LIKE '".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['phone'])."' ";
+			$sql .= " AND `phone` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['phone'])."%' ";
 
 		}
 

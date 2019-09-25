@@ -105,7 +105,15 @@
                                 </li><?
                             }
 
-                            if (checkAccess('sales_management') || checkAccess('lead_management') || checkAccess('employee_hours') || checkAccess('ringing_calls') || checkAccess('messages') || checkAccess('server_status') || checkAccess('extensions')) {
+                            if(
+                            		checkAccess('sales_management') || 
+                            		checkAccess('lead_management') || 
+                            		checkAccess('employee_hours') || 
+                            		checkAccess('ringing_calls') || 
+                            		checkAccess('messages') || 
+                            		checkAccess('server_status') || 
+                            		checkAccess('extensions')
+                            ) {
                                 ?>
                                 <li class="has-children bookmarks">
                                 <a href="#0">Management Tools</a>
