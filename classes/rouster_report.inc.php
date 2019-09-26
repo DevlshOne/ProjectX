@@ -455,8 +455,8 @@ class RousterReport{
 					//" AND (vici_cluster_id='$cluster_id') ".
 					"";
 
-				$sql = "SELECT SUM(paid_time),SUM(activity_time),SUM(calls_today) FROM `activity_log` ".$calls_hour_where;
-				list($activity_paid,$activity_wrkd,$activity_num_calls) = $_SESSION['dbapi']->ROqueryROW($sql);
+				$sql = "SELECT SUM(activity_time),SUM(calls_today) FROM `activity_log` ".$calls_hour_where;
+				list($activity_wrkd,$activity_num_calls) = $_SESSION['dbapi']->ROqueryROW($sql);
 
 				$activity_worked = $activity_wrkd/60;
 				$worked_calls_hr = ($activity_worked <= 0)?0:(($activity_num_calls)/$activity_worked);
