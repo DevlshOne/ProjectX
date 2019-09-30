@@ -779,11 +779,11 @@ class SalesManagement{
 						</tr>*/?>
 						<tr>
 							<th align="left" height="25">Occupation:</th>
-							<td><?=($lead_row)?(($lead_row['occupation'])?htmlentities($lead_row['occupation']):'-Not Specified-'):'-Lead Record Not Found-'?></td>
+							<td><?=($lead_row)?(($lead_row['occupation'])?htmlentities($lead_row['occupation']):'-Not Specified-'):(($row['occupation'])?htmlentities($row['occupation']):'-Not Specified-')?></td>
 						</tr>
 						<tr>
 							<th align="left" height="25">Employer:</th>
-							<td><?=($lead_row)?(($lead_row['employer'])?htmlentities($lead_row['employer']):'-Not Specified-'):'-Lead Record Not Found-'?></td>
+							<td><?=($lead_row)?(($lead_row['employer'])?htmlentities($lead_row['employer']):'-Not Specified-'):(($row['employer'])?htmlentities($row['employer']):'-Not Specified-')?></td>
 						</tr>
 						
 						<tr>
