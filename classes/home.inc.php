@@ -39,51 +39,51 @@ $_SESSION['home'] = new HomeClass;
 class HomeClass{
 
 	public $area_name = "home_screen";
-	
+
 	public $prefs = null;
-	
-	
+
+
 	public $tile_width = 350; // TILE WIDTH IN PIXELS
 	public $tile_height = 170; // TILE HEIGHT
-	
+
 	public $orig_prefs = null; // IDEA: USED TO TELL IF PREFERENCES HAVE SAVED SINCE LOADED
-	
-	
+
+
 	// CONSTRUCTOR
 	function HomeClass(){
 
 		// LOAD HOME SCREEN PREFERENCES ON INIT
 		$this->prefs = $_SESSION['dbapi']->user_prefs->getData($this->area_name, TRUE);
-		
+
 		// FIRST TIME INIT PREFS
 		if(count($this->prefs['tiles']) <= 0){
-			
+
 			$this->prefs['tiles'] = array();
-			
+
 			$this->prefs['tiles'][] = array(
-					
+
 				'type' => 'my_notes',
-					
+
 			);
-			
+
 			$this->prefs['tiles'][] = array(
-					
+
 				'type' => 'user_count',
 				'timeframe' => 'day'
-					
+
 			);
-			
+
 			$this->prefs['tiles'][] =array(
 				'type' => 'sales_overview',
 				'clusters' => array(23, 25),
 				'user_groups' => array(), // ALL USER GROUPS
 				'timeframe' => 'day'
 			);
-			
+
 			$this->savePreferences();
-			
+
 		}
-		
+
 		$this->handlePOST();
 	}
 
@@ -99,34 +99,34 @@ class HomeClass{
 
 		switch($_REQUEST['sub_section']){
 		default:
-			
+
 			$this->makeHome();
-			
+
 			break;
 		case 'my_notes':
-			
+
 			$note_id = intval($_REQUEST['edit_note']);
-			
+
 			include_once("classes/home_tile_notes.inc.php");
 			$_SESSION['home_tile_notes']->makeAdd($note_id);
-			
+
 			break;
 		case 'user_count':
-			
-			
+
+
 			include_once("classes/home_tile_user_count.inc.php");
-			
+
 			if(isset($_REQUEST['edit_config'])){
-				
+
 				$tidx = intval($_REQUEST['edit_config']);
-				
+
 				$_SESSION['home_tile_user_count']->makeConfigure($tidx);
-				
+
 			}else{
-				
+
 				echo "User Count Action not specified.";
 			}
-			
+
 			break;
 		}
 
@@ -134,19 +134,19 @@ class HomeClass{
 	}
 
 	function savePreferences(){
-		
+
 		return $_SESSION['dbapi']->user_prefs->updateByArray($this->area_name, $this->prefs);
-		
+
 	}
-	
-	
+
+
 	function renderTile($tidx, $tile){
-		
-		
+
+
 		switch($tile['type']){
 		default:
-			
-			?><li class="homeScreenTile"  style="width:<?=$this->tile_width?>px">
+
+			?><li id="tile_<?=$tidx?>" class="homeScreenTile" style="width:<?=$this->tile_width?>px">
 				<table border="0">
 				<tr>
 					<td class="homeScreenTitle">
@@ -154,49 +154,49 @@ class HomeClass{
 					</td>
 				</tr>
 				</table>
-			
+
 			</li><?
-			
+
 			break;
-		
-			
+
+
 		case 'my_notes':
-			
+
 			include_once("classes/home_tile_notes.inc.php");
 			$_SESSION['home_tile_notes']->handleFLOW($tidx, $tile);
-			
+
 			break;
 		case 'user_count':
-			
+
 			include_once("classes/home_tile_user_count.inc.php");
 			$_SESSION['home_tile_user_count']->handleFLOW($tidx, $tile);
-			
+
 			break;
 		}
-		
+
 	}
-		
-	
+
+
 
 	function makeHome(){
 
 		?><table style="width:100%;border:0">
 		<tr>
 			<td id="home_sortable"><?
-			
-			
+
+
 				foreach($this->prefs['tiles'] as $tidx=>$tile){
-					
+
 					$this->renderTile($tidx, $tile);
-					
+
 				}
-			
-			
-			
+
+
+
 			?>
-			
-				<li id="homescr_tile_add" class="homeScreenTile" style="width:50px">
-				
+
+				<li id="tile_add" class="homeScreenTile" style="width:50px">
+
 					<table border="0" width="100%" height="100%" class="hand" onclick="alert('Add new mini report here')">
 					<tr>
 						<td align="center">
@@ -204,19 +204,42 @@ class HomeClass{
 						</td>
 					</tr>
 					</table>
-				
+
 				<li>
 			</td>
-		</tr>		
+		</tr>
 		</table>
-		
+
 		<script>
-		
+
 			$( function() {
-			    $( "#home_sortable" ).sortable();
-			    $( "#home_sortable" ).disableSelection();
-			} );
-			
+			    var $sortArea = $("#home_sortable");
+			    var homeTiles = [];
+			    var newTileOrder = [];
+			    $sortArea.sortable({
+                    items: 'li:not(#tile_add)',
+                    refreshPositions: true,
+                    stop: function (e, ui) {
+                        let sortedTileIDs = $sortArea.sortable('serialize', {key: 'tile'});
+                        homeTiles = $sortArea.children('li');
+                        newTileOrder = [];
+                        console.log(homeTiles);
+                        $.each(homeTiles, function (i, v) {
+                            let tileIndex = $(v).attr('id').split('_')[1];
+                            if (tileIndex !== 'add') {
+                                newTileOrder[i] = tileIndex;
+                            }
+                        });
+                        homeTiles.sort(function (a, b) {
+                            return newTileOrder.indexOf(a) - newTileOrder.indexOf(b);
+                        });
+                        <?$this->savePreferences();?>
+                    }
+                });
+                $sortArea.disableSelection();
+
+            } );
+
 		</script><?
 
 	}
