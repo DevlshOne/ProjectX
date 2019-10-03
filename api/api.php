@@ -91,7 +91,7 @@
 			$login_tracker = new API_LoginTracker();
 			$login_tracker->handleSecondaryAjax();
 
-			break;				
+			break;
 		case 'voice':
 
 			include_once($basedir."api/voices.api.php");
@@ -181,7 +181,7 @@
 			$obj->handleSecondaryAjax();
 
 			break;
-			
+
 		case 'user_groups_master':
 			include_once($basedir . "api/user_groups_master.api.php");
 			$obj = new API_UserGroupsMaster();
@@ -193,7 +193,7 @@
 			$obj = new API_FormBuilder();
 			$obj->handleSecondaryAjax();
 			break;
-	
+
 		case 'action_log':
 
 			include_once($basedir."api/action_log.api.php");
@@ -286,7 +286,7 @@
       		break;
 
 	case 'campaign_parents':
-		
+
 		include_once($basedir."api/cmpgn_parents.api.php");
 		$campaign_parents = new API_CampaignParents();
 		$campaign_parents->handleAPI();
@@ -297,7 +297,13 @@
 		$dialer_status = new API_DialerStatus();
 		$dialer_status->handleAPI();
 		break;
-		
+
+        case 'home':
+            include_once($basedir . "api/home.api.php");
+            $home_screen = new API_Home();
+            $home_screen->handleAPI();
+            break;
+
 	case 'extensions':
 
 		include_once($basedir."api/extensions.api.php");
@@ -326,7 +332,7 @@
 		$login_tracker = new API_LoginTracker();
 		$login_tracker->handleAPI();
 
-		break;		
+		break;
 
 	case 'problems':
 
@@ -422,7 +428,7 @@
 		$obj->handleAPI();
 
 		break;
-		
+
 	case 'user_groups_master':
 		include_once($basedir . "api/user_groups_master.api.php");
 		$obj = new API_UserGroupsMaster();
@@ -434,7 +440,7 @@
 		$obj = new API_FormBuilder();
 		$obj->handleAPI();
 		break;
-		
+
 	case 'change_password':
 
 		include_once($basedir."api/change_password.api.php");
@@ -509,23 +515,23 @@
 		$obj->handleAPI();
 
 		break;
-		
-		
+
+
 	case 'my_notes':
 	case 'notes':
 	case 'note':
 		include_once($basedir."api/home_tile_notes.api.php");
 		$obj = new API_MyNotes();
 		$obj->handleAPI();
-		
+
 		break;
-		
-		
+
+
 	case 'user_count':
 		include_once($basedir."classes/home.inc.php");
 		include_once($basedir."api/home_tile_user_count.api.php");
 		$obj = new API_HomeTileUserCount();
 		$obj->handleAPI();
-		
+
 		break;
 	}

@@ -2,40 +2,40 @@
 
 /**
  * User Preferences SQL Functions
- * 
- * 
- * 
+ *
+ *
+ *
  * USAGE:
- * 
- * 
- 
+ *
+ *
+
 /// EASY MODE/BASICS
- 
+
  // LOAD PREFERENCES
  $json_object = $_SESSION['dbapi']->user_prefs->getData("dialer_status");
 
  // SAVE PREFERENCES (using object/array)
  $_SESSION['dbapi']->user_prefs->updateByArray("dialer_status", $json_object);
- 
- 
- 
-/// ADVANCED OPTIONS  
+
+
+
+/// ADVANCED OPTIONS
 
  // LOAD PREFERENCES ROW/DB record
  $row = $_SESSION['dbapi']->user_prefs->get("dialer_status");
 
  // SAVE PREFERENCES (by raw flat string such as json thats already been encoded, or XML data)
  $_SESSION['dbapi']->user_prefs->update("dialer_status", "{\"dial_level\":\"4.500\",\"trunk_short\":\"0\",...");
- 
- 
- 
- 
- * 
- * 
- * 
- * 
- * 
- * 
+
+
+
+
+ *
+ *
+ *
+ *
+ *
+ *
  */
 
 
@@ -66,7 +66,7 @@ class UserPreferencesAPI{
 		$user_id = intval($_SESSION['user']['id']);
 
 		return $_SESSION['dbapi']->querySQL(
-				
+
 				"SELECT * FROM `".$this->table."` ".
 				" WHERE user_id='".$user_id."' AND `section`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'"
 		);
@@ -93,7 +93,6 @@ class UserPreferencesAPI{
 	 */
 	function getData($section, $assoc = FALSE){
 		$user_id = intval($_SESSION['user']['id']);
-		
 		list($json_str) = $_SESSION['dbapi']->queryROW(
 									"SELECT json_data FROM `".$this->table."` ".
 									" WHERE user_id='".$user_id."' AND `section`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'"
@@ -109,60 +108,60 @@ class UserPreferencesAPI{
 
 	/**
 	 * Update a preference record for current user, by section, and unparsed JSON string
-	 * 
+	 *
 	 * @param unknown $section		The section name/preference to grab
-	 * @param unknown $json_str		A flat string containing the JSON/String to be saved. 
+	 * @param unknown $json_str		A flat string containing the JSON/String to be saved.
 	 * @return Number of records that were modified by the update
 	 */
 	function update($section, $json_str){
-		
+
 		$where = " WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND section='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'";
-		
+
 		list($test) = $_SESSION['dbapi']->queryROW("SELECT id FROM `".$this->table."` ".$where);
-		
+
 		if($test > 0){
 			return $_SESSION['dbapi']->execSQL("UPDATE `".$this->table."` ".
 				" SET time_updated=UNIX_TIMESTAMP(), json_data='".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_str)."' ".
 				$where);
 		}else{
-			
+
 			$dat = array(
 					'user_id' 		=> $_SESSION['user']['id'],
 					'section' 		=> $section,
 					'time_updated'	=> time(),
 					'json_data'		=> $json_str
 			);
-			
+
 			return $_SESSION['dbapi']->aadd($dat, $this->table);
 		}
 	}
 
 	/**
-	 * Updates a preference record for current user, by section, and an object/array, that is to be converted to JSON to be saved. 
+	 * Updates a preference record for current user, by section, and an object/array, that is to be converted to JSON to be saved.
 	 * @param unknown $section		The section name/preference to grab
 	 * @param unknown $json_arr		An array/object to be JSON encoded and saved
-	 * @param number $json_options	Bitmask consisting of JSON_FORCE_OBJECT, JSON_HEX_QUOT, JSON_HEX_TAG, JSON_HEX_AMP, JSON_HEX_APOS, JSON_INVALID_UTF8_IGNORE, JSON_INVALID_UTF8_SUBSTITUTE, JSON_NUMERIC_CHECK, JSON_PARTIAL_OUTPUT_ON_ERROR, JSON_PRESERVE_ZERO_FRACTION, JSON_PRETTY_PRINT, JSON_UNESCAPED_LINE_TERMINATORS, JSON_UNESCAPED_SLASHES, JSON_UNESCAPED_UNICODE, JSON_THROW_ON_ERROR. 
+	 * @param number $json_options	Bitmask consisting of JSON_FORCE_OBJECT, JSON_HEX_QUOT, JSON_HEX_TAG, JSON_HEX_AMP, JSON_HEX_APOS, JSON_INVALID_UTF8_IGNORE, JSON_INVALID_UTF8_SUBSTITUTE, JSON_NUMERIC_CHECK, JSON_PARTIAL_OUTPUT_ON_ERROR, JSON_PRESERVE_ZERO_FRACTION, JSON_PRETTY_PRINT, JSON_UNESCAPED_LINE_TERMINATORS, JSON_UNESCAPED_SLASHES, JSON_UNESCAPED_UNICODE, JSON_THROW_ON_ERROR.
 	 * @return Number of records that were modified by the update
 	 */
 	function updateByArray($section, $json_arr, $json_options=0){
-		
+
 		$where = " WHERE `user_id`='".intval($_SESSION['user']['id'])."' AND `section`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $section)."'";
-		
+
 		list($test) = $_SESSION['dbapi']->queryROW("SELECT id FROM `".$this->table."` ".$where);
-		
+
 		if($test > 0){
 			return $_SESSION['dbapi']->execSQL("UPDATE `".$this->table."` ".
 				" SET time_updated=UNIX_TIMESTAMP(), json_data='".mysqli_real_escape_string($_SESSION['dbapi']->db, json_encode($json_arr, $json_options))."' ".
 				$where);
 		}else{
-			
+
 			$dat = array(
 					'user_id' 		=> $_SESSION['user']['id'],
 					'section' 		=> $section,
 					'time_updated'	=> time(),
 					'json_data'		=> json_encode($json_arr, $json_options)
 			);
-			
+
 			return $_SESSION['dbapi']->aadd($dat, $this->table);
 		}
 	}
