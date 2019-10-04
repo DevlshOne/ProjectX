@@ -508,7 +508,10 @@ class FeatureControl{
 						</tr><?
 
 						$this->renderFeatureRow('lead_management', 'Lead Management', ($row['lead_management'] == 'yes')?true:false );
+						$this->renderFeatureRow('lmt_edit_lead', '|--&gt;Edit Lead', ($row['lmt_edit_lead'] == 'yes')?true:false );
 						$this->renderFeatureRow('lmt_change_dispo', '|--&gt;Change Dispo', ($row['lmt_change_dispo'] == 'yes')?true:false );
+						$this->renderFeatureRow('lmt_create_sale', '|--&gt;Create Sale', ($row['lmt_create_sale'] == 'yes')?true:false );
+						
 						$this->renderFeatureRow('sales_management', 'Sales Management', ($row['sales_management'] == 'yes')?true:false );
 						
 						

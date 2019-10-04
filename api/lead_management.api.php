@@ -400,6 +400,13 @@ class API_Lead_Management{
 		switch($_REQUEST['action']){
 			case 'delete':
 				
+				if(!checkAccess('lmt_edit_lead')){
+					
+					$_SESSION['api']->errorOut('Access denied to EDIT LEAD');
+					
+					return;
+				}
+				
 				$id = intval($_REQUEST['id']);
 				
 				//$row = $_SESSION['dbapi']->campaigns->getByID($id);
@@ -452,6 +459,15 @@ class API_Lead_Management{
 				
 				break;
 			case 'edit':
+				 
+				
+				if(!checkAccess('lmt_edit_lead')){
+					
+					$_SESSION['api']->errorOut('Access denied to EDIT LEAD');
+					
+					return;
+				}
+				
 				
 				$id = intval($_POST['editing_lead']);
 				
@@ -616,9 +632,9 @@ class API_Lead_Management{
 				
 			case 'resend_sale':
 				
-				if(!checkAccess('lmt_change_dispo')){
+				if(!checkAccess('lmt_create_sale')){
 					
-					$_SESSION['api']->errorOut('Access denied to CHANGE DISPO');
+					$_SESSION['api']->errorOut('Access denied to CREATE SALE');
 					
 					return;
 				}
@@ -639,9 +655,9 @@ class API_Lead_Management{
 				break;
 			case 'create_sale':
 				
-				if(!checkAccess('lmt_change_dispo')){
+				if(!checkAccess('lmt_create_sale')){
 					
-					$_SESSION['api']->errorOut('Access denied to CHANGE DISPO');
+					$_SESSION['api']->errorOut('Access denied to CREATE SALE');
 					
 					return;
 				}
