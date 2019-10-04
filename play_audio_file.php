@@ -16,13 +16,18 @@
     if(file_exists($wavfile)){
         $handle = fopen($wavfile, "rb");
 
+        if(!$handle){
+        	header("HTTP/1.0 404 Not Found");
+        	exit;
+        }
+        
         header('Content-Description: File Transfer');
         header("Content-Transfer-Encoding: binary"); 
         header('Content-Type: '.$mime_type);
         header('Content-length: ' . filesize($wavfile));
         header('Content-Disposition: attachment;filename="' . $file.'"');
 
-        while (!feof($handle)) {
+        while ($handle && !feof($handle)) {
             echo fread($handle, 4096);
             flush();
         }

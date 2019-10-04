@@ -200,6 +200,10 @@
 					$('#main_content').load(url);
             		$('body').css('background-color', '#FFFFFF');
             		$('body').css('color', '#000000');
+
+            		$('#main_content').css('background-color', '#FFFFFF');
+                    $('#main_content').css('color', '#000000');
+            		
 					$('.cd-side-nav').find('.hover').removeClass('hover');
 					$('.cd-side-nav').find('.selected').removeClass('selected');
 					$('.cd-side-nav').removeClass('nav-is-visible');
@@ -677,11 +681,31 @@
 
 
 				break;
+			
+			case 'sales_management':
+				
+				if(	checkAccess('sales_management') // MANAGERS WITH LEAD MANAGEMENT ACCESS
+				){
+					
+					
+					include_once("classes/sales_management.inc.php");
+					
+					$_SESSION['sales_management']->handleFLOW();
+					
+					
+					
+				}else{
+					
+					accessDenied("Sales Management");
+					
+				}
+				
+				break;
+				
 			case 'lead_management':
 
 
-				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
-					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['lead_management'] == 'yes') // MANAGERS WITH LEAD MANAGEMENT ACCESS
+				if(	checkAccess('lead_management') // MANAGERS WITH LEAD MANAGEMENT ACCESS
 				){
 
 

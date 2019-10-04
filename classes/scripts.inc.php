@@ -921,7 +921,12 @@ class Scripts{
 				width: 400,
 				modal: false,
 				draggable:true,
-				resizable: false
+				resizable: false,
+				close: function(event, ui){
+
+					hideAudio();
+					
+				}
 			});
 
 			</script>
@@ -1164,15 +1169,16 @@ class Scripts{
 				// $('#media_player').load("test.php");
 
 				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
-				$('#script_media_player').unbind("dialogclose");
-				$('#script_media_player').bind('dialogclose', function(event) {
+				$('#script_media_player').off("dialogclose");
+				$('#script_media_player').on('dialogclose', function(event) {
 
 					hideAudio();
 
 				});
 
 
-				}
+
+			}
 
 			function hideAudio(){
 				$('#script_media_player').children().filter("audio").each(function(){

@@ -436,6 +436,33 @@ class RousterReport{
 							" AND dispo='DEC' ";
 				list($decline_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
 
+
+				## ANSWERING MACHINE COUNT - HOW MANY ANSWERING MACHINE TRANSFERS?
+				$sql = "SELECT COUNT(`id`) FROM `lead_tracking` ".
+				$lead_where.
+				" AND (`dispo`='A' OR `dispo`='a') ";
+				list($ans_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
+
+
+
+				## CALLS/HR COUNT - FORMULA PULLED FROM SALES ANALYSIS REPORT
+				$calls_hour_where = "WHERE time_started BETWEEN '$stime' AND '$etime' ".
+
+					(($combine_users)?
+									" AND (username='".mysqli_real_escape_string($_SESSION['db'],$username)."'  OR username='".mysqli_real_escape_string($_SESSION['db'],$username)."2') ":
+									" AND (username='".mysqli_real_escape_string($_SESSION['db'],$username)."') "
+								).
+					//" AND (vici_cluster_id='$cluster_id') ".
+					"";
+
+				$sql = "SELECT SUM(activity_time),SUM(calls_today) FROM `activity_log` ".$calls_hour_where;
+				list($activity_wrkd,$activity_num_calls) = $_SESSION['dbapi']->ROqueryROW($sql);
+
+				$activity_worked = $activity_wrkd/60;
+				$worked_calls_hr = ($activity_worked <= 0)?0:(($activity_num_calls)/$activity_worked);
+
+
+
 	//			$sql = "SELECT COUNT(`id`) FROM `transfers` ".
 	//						$xfer_where.
 	//						" AND verifier_dispo='DEC' ";
@@ -497,6 +524,9 @@ class RousterReport{
 				$agent_array[$username]['hangup_cnt'] = $hangup_cnt;
 				$agent_array[$username]['contact_cnt'] = $contact_cnt;
 				$agent_array[$username]['decline_cnt'] = $decline_cnt;
+				$agent_array[$username]['ans_cnt'] = $ans_cnt;
+				$agent_array[$username]['ans_percent'] = ($call_cnt <=0)?0:round(($ans_cnt / $call_cnt) * 100, 2);
+				$agent_array[$username]['worked_calls_hr'] = $worked_calls_hr;
 
 	//			$agent_array[$username]['total_amount'] = '';
 
@@ -703,6 +733,10 @@ class RousterReport{
 			$out[$x]['hangup_cnt'] = $agent['hangup_cnt'];
 			$out[$x]['contact_cnt'] = $agent['contact_cnt'];
 			$out[$x]['decline_cnt'] = $agent['decline_cnt'];
+			$out[$x]['ans_cnt'] = $agent['ans_cnt'];
+			$out[$x]['ans_percent'] = $agent['ans_percent'];
+
+			$out[$x]['worked_calls_hr'] = $agent['worked_calls_hr'];
 
 			$out[$x]['paid_time'] = $agent['paid_time'];
 
@@ -814,7 +848,10 @@ class RousterReport{
 
 				?><th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="left">Agent</th>
 				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right"># of Calls</th>
-				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Contact %</th>
+				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">A</th>
+				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">%Ans</th>
+				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Calls/hr</th>
+				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Contact%</th>
 				<?/*<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Sales</th>*/?>
 				<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">PaidCC</th>
 				<?/**<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">%PaidCC</th>**/?>
@@ -849,6 +886,7 @@ class RousterReport{
 			$running_total_sales = 0;
 			$running_total_hangups = 0;
 			$running_total_declines = 0;
+			$running_total_ans = 0;
 			$running_total_contacts = 0;
 			$running_total_reviews = 0;
 			$running_total_paid_sales = 0;
@@ -951,6 +989,9 @@ class RousterReport{
 				## ADD AGENT REPORT DATA TO REPORT DATA ARRAY
 				$report_data[$x1]['agent_username'] 			= $row['username'];
 				$report_data[$x1]['call_cnt'] 					= $row['call_cnt'];
+				$report_data[$x1]['ans_cnt'] 					= $row['ans_cnt'];
+				$report_data[$x1]['ans_percent'] 				= $row['ans_percent'];
+				$report_data[$x1]['worked_calls_hr'] 			= $row['worked_calls_hr'];
 				$report_data[$x1]['contact_percent'] 			= $contact_percent;
 				$report_data[$x1]['paid_sale_cnt'] 				= $row['paid_sale_cnt'];
 				$report_data[$x1]['paidcc_per_hour'] 			= $paidcc_per_hour;
@@ -995,6 +1036,7 @@ class RousterReport{
 				$reviewcnt = $row['reviewcnt'];
 
 				$running_total_calls += $row['call_cnt'];
+				$running_total_ans += $row['ans_cnt'];
 				$running_total_sales += ($row['sale_cnt'] );
 				$running_total_paid_sales += $row['paid_sale_cnt'];
 				$running_total_reviews += $reviewcnt;
@@ -1203,6 +1245,13 @@ class RousterReport{
 
 					?><td style="border-right:1px dotted #CCC;padding-right:3px"><?=strtoupper($report_data_row['agent_username'])?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['call_cnt'])?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['ans_cnt'])?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+
+						echo number_format($report_data_row['ans_percent'],2).'%';
+
+					?></td>
+					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($report_data_row['worked_calls_hr'])?></td>
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
 						echo number_format($report_data_row['contact_percent'],2).'%';
@@ -1278,6 +1327,8 @@ class RousterReport{
 
 			$total_contact_percent = (($running_total_calls <= 0)?0:number_format( round( (($running_total_contacts) / ($running_total_calls)) * 100, 2), 2));
 
+			$total_ans_percent = (($running_total_calls <= 0)?0:number_format( round( (($running_total_ans) / ($running_total_calls)) * 100, 2), 2));
+
 
 			$total_percent_paidcc_calls = (($running_total_sales <= 0)?0:($running_total_paid_sales / $running_total_sales) * 100);
 
@@ -1318,6 +1369,9 @@ class RousterReport{
 
 
 				?><td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_calls)?></td>
+				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_ans)?></td>
+				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=$total_ans_percent?>%</td>
+				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"></td>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=$total_contact_percent?>%</td>
 				<?/*<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format(($running_total_sales-$running_total_paid_sales))?></td>*/?>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_paid_sales)?></td>

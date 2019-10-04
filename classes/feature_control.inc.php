@@ -508,6 +508,9 @@ class FeatureControl{
 						</tr><?
 
 						$this->renderFeatureRow('lead_management', 'Lead Management', ($row['lead_management'] == 'yes')?true:false );
+						$this->renderFeatureRow('sales_management', 'Sales Management', ($row['sales_management'] == 'yes')?true:false );
+						
+						
 						$this->renderFeatureRow('employee_hours', 'Employee Hours', ($row['employee_hours'] == 'yes')?true:false );
 
 						$this->renderFeatureRow('phone_lookup', 'DRIPP Phone lookup', ($row['phone_lookup'] == 'yes')?true:false );
@@ -517,6 +520,9 @@ class FeatureControl{
 						$this->renderFeatureRow('ringing_calls', 'Ring Report', ($row['ringing_calls'] == 'yes')?true:false );
 						$this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes')?true:false );
 						$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
+						
+						
+						$this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes')?true:false );
 						$this->renderFeatureRow('server_status', 'Server Status', ($row['server_status'] == 'yes')?true:false );
 						$this->renderFeatureRow('extensions', 'Extensions', ($row['extensions'] == 'yes')?true:false );
 

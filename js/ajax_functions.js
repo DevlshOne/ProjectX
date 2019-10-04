@@ -543,7 +543,17 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     // CONCAT 2 FIELDS TOGETHER WITH A SPACE SEPERATOR
                 } else if (special_tag.indexOf("concat:") >= 0) {
                     tmparr = special_tag.split(":");
-                    cell.innerHTML = dataarr[x].getAttribute(tmparr[1]) + " " + dataarr[x].getAttribute(tmparr[2]);
+                    
+                    tmpstr = "";
+                    
+
+                    for(var z=1;z < tmparr.length;z++){
+                    	if(z > 1) tmpstr += " ";
+                    	tmpstr += dataarr[x].getAttribute(tmparr[z]);
+                    }
+                    
+                    
+                    cell.innerHTML = tmpstr;//dataarr[x].getAttribute(tmparr[1]) + " " + dataarr[x].getAttribute(tmparr[2]);
                     cell.className = clsname + ' hand' + cur_class;
                     cell.onclick = function () {
                         handleListClick(tagname, this.parentNode.getAttribute('record_id'));

@@ -247,6 +247,17 @@
 
 			break;
 
+		case 'sales_management':
+		case 'sale':
+			
+			include_once($basedir."classes/home.inc.php");
+			include_once($basedir."api/sales_management.api.php");
+			
+			$obj = new API_Sales_Management();
+			$obj->handleSecondaryAjax();
+			
+			break;
+			
 //		case 'account':
 //
 //			include_once($basedir."api/accounts.api.php");
@@ -533,5 +544,13 @@
 		$obj = new API_HomeTileUserCount();
 		$obj->handleAPI();
 
+		break;
+		
+	case 'sales_management':
+		include_once($basedir."classes/home.inc.php");
+		include_once($basedir."api/sales_management.api.php");
+		$obj = new API_Sales_Management();
+		$obj->handleAPI();
+		
 		break;
 	}

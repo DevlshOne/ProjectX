@@ -51,7 +51,7 @@ class LeadManagement{
 			'REVIEWCC'=>"Review CC Sale",
 			'PAIDCC'=>"PAIDCC/DRIPP",
 			'SALE'=>"Sale",
-			'SALE/PAIDCC'=>"Any Sale/PAIDCC/SALECC",
+			'SALECC/PAIDCC'=>"Any CC Sale",
 			'SALECC'=>"Rousted CC Sale",
 			'XFER'=>"Verifier Transfer",
 
@@ -152,7 +152,49 @@ class LeadManagement{
 
 
 
+			function playAudio(url){
 
+
+					//$('#media_player').dialog("open");
+
+					$('#media_player').children().filter("audio").each(function(){
+					    this.pause(); // can't hurt
+					    delete(this); // @sparkey reports that this did the trick!
+					    $(this).remove(); // not sure if this works after null assignment
+					});
+					$('#media_player').empty();
+
+					$('#media_player').load("play_rec.php?play_url="+url);
+
+					// RESET OTHERS
+					//resetImages();
+					// CHANGE IMAGE
+					//markPlayButton(call_id);
+
+
+
+					// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
+					$('#media_player').off("dialogclose");
+					$('#media_player').on('dialogclose', function(event) {
+
+						hideAudio();
+
+						//alert("pausing");
+					});
+
+
+				}
+
+				function hideAudio(){
+					$('#media_player').children().filter("audio").each(function(){
+				    	this.pause();
+				    	delete(this);
+				    	$(this).remove();
+
+					});
+
+					$('#media_player').empty();
+				}
 
 
 			/**
@@ -165,7 +207,7 @@ class LeadManagement{
 				return 'api/api.php'+
 								"?get=lead_management&"+
 								"mode=xml&"+
-
+								's_id='+escape(frm.s_id.value)+"&"+
 								's_lead_id='+escape(frm.s_lead_id.value)+"&"+
 								's_campaign_id='+escape(frm.s_campaign_id.value)+"&"+
 
@@ -329,7 +371,7 @@ class LeadManagement{
 				frm.s_cluster_id.selectedIndex = 0;
 				frm.s_campaign_id.selectedIndex = 0;
 				frm.s_lead_id.value = '';
-
+				frm.s_id.value = '';
 				frm.s_agent_username.value = '';
 				frm.s_verifier_username.value = '';
 
@@ -471,6 +513,7 @@ class LeadManagement{
 					<div id="total_count_div"></div>
 
 				</td>
+				<th class="row2">PX ID</th>
 				<th class="row2">Cluster</th>
 				<th class="row2">Campaign</th>
 				<th class="row2">Dispo</th>
@@ -488,6 +531,7 @@ class LeadManagement{
 				</td>
 			</tr>
 			<tr>
+				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
 				<td align="center">
 					<?
 						echo makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', ""); //loadLeads();
@@ -672,7 +716,12 @@ class LeadManagement{
 					height: 420,
 					modal: false,
 					draggable:true,
-					resizable: false
+					resizable: false,
+					close: function(event, ui){
+
+						hideAudio();
+						
+					}
 				});
 
 				<?
@@ -699,7 +748,8 @@ class LeadManagement{
 	function makeRecordingSection($row){
 
 
-		?><script>
+	/***	THESE FUNCTIONS WERE MOVED TO "listEntrys()" function instead
+	 * ?><script>
 			function playAudio(url){
 
 
@@ -722,8 +772,8 @@ class LeadManagement{
 
 
 				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
-				$('#media_player').unbind("dialogclose");
-				$('#media_player').bind('dialogclose', function(event) {
+				$('#media_player').off("dialogclose");
+				$('#media_player').on('dialogclose', function(event) {
 
 					hideAudio();
 
@@ -745,7 +795,10 @@ class LeadManagement{
 			}
 
 		</script>
-		<div id="media_player" title="Playing Call Recording">
+		<?***/
+	
+	
+		?><div id="media_player" title="Playing Call Recording">
 
 
 		</div><?

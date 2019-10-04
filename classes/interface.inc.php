@@ -105,7 +105,15 @@
                                 </li><?
                             }
 
-                            if (checkAccess('lead_management') || checkAccess('employee_hours') || checkAccess('ringing_calls') || checkAccess('messages') || checkAccess('server_status') || checkAccess('extensions')) {
+                            if(
+                            		checkAccess('sales_management') || 
+                            		checkAccess('lead_management') || 
+                            		checkAccess('employee_hours') || 
+                            		checkAccess('ringing_calls') || 
+                            		checkAccess('messages') || 
+                            		checkAccess('server_status') || 
+                            		checkAccess('extensions')
+                            ) {
                                 ?>
                                 <li class="has-children bookmarks">
                                 <a href="#0">Management Tools</a>
@@ -118,7 +126,13 @@
                                                    onclick="loadSection(this.href);return false">Lead Management</a>
                                             </li><?
                                         }
-
+                                        if (checkAccess('sales_management')) {
+                                        	?>
+                                            <li><a href="?area=sales_management&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Sales Management</a>
+                                            </li><?
+                                        }
+                                        
                                         if (checkAccess('employee_hours')) {
                                             ?>
                                             <li><a href="?area=employee_hours&no_script=1"
@@ -152,7 +166,7 @@
                                             </li><?
                                         }
 
-                                        if ($_SESSION['user']['priv'] >= 5) {
+                                        if (checkAccess('dialer_status')) {
                                             ?>
                                             <li><a href="?area=dialer_status&no_script=1"
                                                    onclick="loadSection(this.href);return false">Dialer Status</a></li><?

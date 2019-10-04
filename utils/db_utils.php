@@ -250,7 +250,7 @@
 	function getClusterCampaigns($vici_cluster_id) {
         $vici_idx = getClusterIndex(intval($vici_cluster_id));
         connectViciDB($vici_idx);
-        $res = fetchAllAssoc("SELECT `campaign_name` AS `groups` FROM `vicidial_campaigns` WHERE `active` = 'Y' ORDER BY `campaign_name`");
+        $res = fetchAllAssoc("SELECT `campaign_id` AS `groups` FROM `vicidial_campaigns` WHERE `active` = 'Y' ORDER BY `campaign_name`");
         connectPXDB();
         return $res;
     }
