@@ -144,6 +144,8 @@ class DBAPI {
 
     public $my_notes;
 
+    public $sales_management;
+    
     /**
      * DBAPI Constructor
      * Initialize the class, connect, etc
@@ -384,6 +386,11 @@ class DBAPI {
 		
 		include_once($_SESSION['site_config']['basedir']."dbapi/home_tile_notes.db.php");
 		$this->my_notes = new MyNotesDBAPI();
+		
+		
+		include_once($_SESSION['site_config']['basedir']."dbapi/sales_management.db.php");
+		$this->sales_management = new SalesManagementAPI();
+		
 		
 	}
 

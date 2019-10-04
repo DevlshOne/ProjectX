@@ -325,7 +325,7 @@ class Campaigns{
 			$("#dialog-modal-add-campaign").dialog({
 				autoOpen: false,
 				width: 480,
-				height: 280,
+				height: 320,
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -529,6 +529,10 @@ function makeAdd($id){
 				<option value="no">Disabled</option>
 				<option value="yes"<?=($row['warm_transfers'] == 'yes')?' SELECTED ':''?>>Enabled</option>
 			</select></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">Variables</th>
+			<td><input name="variables" type="text" size="50" value="<?=htmlentities($row['variables'])?>"></td>
 		</tr>
 		<tr>
 

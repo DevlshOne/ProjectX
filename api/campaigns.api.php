@@ -109,6 +109,8 @@ class API_Campaigns{
 			$dat['type'] = trim($_POST['type']);
 			
 			
+			$dat['variables'] = trim($_REQUEST['variables']);
+			
 
 			if($id){
 
