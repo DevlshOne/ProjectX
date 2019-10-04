@@ -61,6 +61,13 @@
 	// DESTROY THE SESSION/LOGOUT ?o
 	if(isset($_REQUEST['o'])){
 		
+		if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
+			
+			$_SESSION['dbapi']->users->updateLogoutTime();
+			
+		}
+		
+		
 		session_unset();
 		
 		
@@ -273,6 +280,9 @@
 	// USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
 	if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
 
+		$_SESSION['dbapi']->users->updateLastActionTime();
+		
+		
 		// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
 		if(!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])){
 

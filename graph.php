@@ -17,6 +17,15 @@
 	require_once 'utils/phplot-6.2.0/phplot.php';
 
 
+	
+	if($_SESSION['user']['id']){
+		
+		include_once("dbapi/dbapi.inc.php");
+		
+		$_SESSION['dbapi']->users->updateLastActionTime();
+		
+	}
+	
 	connectPXDB();
 
 

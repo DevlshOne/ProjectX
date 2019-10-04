@@ -518,6 +518,13 @@ class API_Lead_Management{
 				
 			case 'change_dispo':
 				
+				if(!checkAccess('lmt_change_dispo')){
+					
+					$_SESSION['api']->errorOut('Access denied to CHANGE DISPO');
+					
+					return;
+				}
+				
 				
 				$id = intval($_POST['editing_lead']);
 				
@@ -608,6 +615,14 @@ class API_Lead_Management{
 				break;
 				
 			case 'resend_sale':
+				
+				if(!checkAccess('lmt_change_dispo')){
+					
+					$_SESSION['api']->errorOut('Access denied to CHANGE DISPO');
+					
+					return;
+				}
+				
 				$id = intval($_REQUEST['editing_lead']);
 				
 				$sale_id = intval($_REQUEST['editing_sale_id']);
@@ -623,6 +638,13 @@ class API_Lead_Management{
 				
 				break;
 			case 'create_sale':
+				
+				if(!checkAccess('lmt_change_dispo')){
+					
+					$_SESSION['api']->errorOut('Access denied to CHANGE DISPO');
+					
+					return;
+				}
 				
 				$id = intval($_REQUEST['editing_lead']);
 				

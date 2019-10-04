@@ -1538,6 +1538,7 @@ class LeadManagement{
 
 		$total = 0;
 
+		$change_dispo_allowed = checkAccess('lmt_change_dispo');
 
 		foreach($rowarr as $xfer){
 
@@ -1549,9 +1550,14 @@ class LeadManagement{
 				<td align="center"><?=htmlentities($xfer['verifier_username'])?> @ $<?=number_format($xfer['verifier_amount'])?></td>
 				<td align="center"><?=htmlentities($xfer['verifier_dispo'])?></td>
 				<td align="center">
-
-					<input type="button" value="Change" onclick="loadSaleSection(<?=$xfer['id']?>)">
-				</td>
+				<?
+				if($change_dispo_allowed){
+					?><input type="button" value="Change" onclick="loadSaleSection(<?=$xfer['id']?>)"><?
+				}else{
+					?>&nbsp;<?
+				}
+				
+				?></td>
 			</tr><?
 
 
@@ -1611,7 +1617,7 @@ class LeadManagement{
 					$curdate = date("m/d/Y");
 					$saledate = date("m/d/Y", $sale['sale_time']);
 
-					if($saledate != $curdate){
+					if($saledate != $curdate && $change_dispo_allowed){
 
 						?><input type="button" value="Resend Sale" onclick="loadSaleResendSection(<?=intval($sale['id'])?>)"><?
 
@@ -1641,12 +1647,17 @@ class LeadManagement{
 		?></table>
 
 		<br />
+		<?
+		
+		if($change_dispo_allowed){
+			?><center>
+				<input type="button" value="Change Dispo" onclick="loadDispoSection()">
 
-		<center>
-			<input type="button" value="Change Dispo" onclick="loadDispoSection()">
-
-			<input type="button" value="Create new XFER and Sale" onclick="loadSaleSection(0)">
-		</center>
+				<input type="button" value="Create new XFER and Sale" onclick="loadSaleSection(0)">
+			</center><?
+			
+		}
+		?>
 
 		<br />
 
@@ -2062,7 +2073,7 @@ class LeadManagement{
 
 						<tr>
 							<th align="left" height="25">Dispo:</th>
-							<td><?=($row['dispo'])?htmlentities($row['dispo']).'&nbsp;&nbsp;<input type="button" value="Change" onclick="$(\'#client_tabs\').tabs( \'option\', \'active\', 1 );">':'-In Call-'?> </td>
+							<td><?=($row['dispo'])?htmlentities($row['dispo']).((checkAccess('lmt_change_dispo'))?'&nbsp;&nbsp;<input type="button" value="Change" onclick="$(\'#client_tabs\').tabs( \'option\', \'active\', 1 );">':''):'-In Call-'?> </td>
 						</tr><?
 
 						if($id > 0){
@@ -2102,7 +2113,11 @@ class LeadManagement{
 
 			case 'change_dispo':
 
-				$this->makeChangeDispo($row);
+				if(checkAccess('lmt_change_dispo')){
+					$this->makeChangeDispo($row);
+				}else{
+					echo "ACCESS DENIED TO CHANGE DISPO";
+				}
 
 				?><script>
 					window.location = '#look_at_me';
@@ -2112,9 +2127,18 @@ class LeadManagement{
 				break;
 			case 'create_sale':
 
-				$xfer_id = intval($_REQUEST['xfer_id']);
+				if(checkAccess('lmt_change_dispo')){
+					
+					
+					$xfer_id = intval($_REQUEST['xfer_id']);
 
-				$this->makeCreateSale($row, $xfer_id);
+					$this->makeCreateSale($row, $xfer_id);
+					
+				}else{
+					
+					echo "ACCESS DENIED TO CHANGE DISPO";
+					
+				}
 
 				//$this->makeChangeDispo($row);
 
