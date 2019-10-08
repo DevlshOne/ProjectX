@@ -45,46 +45,31 @@ class UserStatusReport{
 
 	}
 
+	/**
+	 * Gets list of running servers by cluster ID
+	 * @param $cluster_id	The value of the cluster id search drop down
+	 */
 	function getRunningServers($cluster_id){
 
+		# CHECK IF [ALL] IS SELECTED
 		if($cluster_id > -1){
 				
-			if(is_array($cluster_id)){
-				
-				$sql_cluster = " AND ( ";
-				$x=0;
-				foreach($cluster_id as $cidx){
-					
-					if($x++ > 0)$sql_cluster .= " OR ";
-					
-					$sql_cluster .= " cluster_id='".$_SESSION['site_config']['db'][$cidx]['cluster_id']."' ";
-					
-				}
-				
-				$sql_cluster .= ") ";
-				
-				
-				if($x == 0){
-					$sql_cluster .= "";
-				}
-				
-			}else{
-				
-				$sql_cluster = " AND cluster_id='".$_SESSION['site_config']['db'][$cluster_id]['cluster_id']."' ";
-				
-			}
+			# BUILD CLUSTER ID SEARCH
+			$sql_cluster = " AND cluster_id='".$_SESSION['site_config']['db'][$cluster_id]['cluster_id']."' ";
 			
 		} else {
 
+			# LEAVE BLANK BECAUSE WE WANT ALL SERVERS
 			$sql_cluster = "";
 
 		}
 
+		# GENERATE FULL SQL STATEMENT AND EXECUTE
 		$sql = "SELECT * FROM `servers` WHERE `running`='yes' ".$sql_cluster." ORDER BY `name` ASC";
-
 
 		$res = $_SESSION['dbapi']->query($sql);
 
+		# BUILD ARRAY TO OUTPUT
 		$rowarr = array();
 		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 			$rowarr[] = $row;
@@ -100,23 +85,20 @@ class UserStatusReport{
 	 */
 	function grabServerXML($server){
 
-		// create curl resource
+		# CREATE CURL RESOURCE
 		$ch = curl_init();
-		
-		//curl_setopt($ch, CURLOPT_VERBOSE, true);
-		//curl_setopt($ch, CURLOPT_STDERR, fopen('php://stderr', 'w'));
 
-        // set url
+        # SET URL
         curl_setopt($ch, CURLOPT_URL, "http://".$server['ip_address'].":".$this->infopass_port."/Status?xml_mode=true");
 
-        //return the transfer as a string
+        # SET OPTIONS AND RETURN TRANSFER AS STRING
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 
-        // $output contains the output string
+        # GRAB OUTPUT STRING
 		$output = curl_exec($ch);
 
-        // close curl resource to free up system resources
+        # CLOSE CURL CONNECTION AND RETURN OUTPUT
         curl_close($ch);
 
 		return $output;
@@ -140,8 +122,6 @@ class UserStatusReport{
 			$out .= '>'.htmlentities($db['name']).'</option>';
 		}
 
-
-
 		$out .= '</select>';
 
 		return $out;
@@ -151,12 +131,12 @@ class UserStatusReport{
 	
 	function makeHTMLTable($data_array){
 
-		## LIST THROUGH THE PASS ARRAY AND CREATE THE HTML FOR THE TABLE
+		## LIST THROUGH THE PASSED ARRAY AND CREATE THE HTML FOR THE TABLE
 		if (count($data_array) < 1) {
             return null;
         }
 
-        // ACTIVATE OUTPUT BUFFERING
+        # ACTIVATE OUTPUT BUFFERING AND GENERATE HTML TABLE
         ob_start();
 		ob_clean(); ?><table id="user_status_report_table" style="width:100%" border="0"  cellspacing="1">
 		<thead>
@@ -172,7 +152,7 @@ class UserStatusReport{
 		<tbody><?
 
 
-
+		# LOOP THROUGH EACH ARRAY ENTRY AND DISPLAY DATA
 		foreach($data_array as $pxuser){
 
 			?><tr>			
@@ -189,24 +169,21 @@ class UserStatusReport{
 		?></tbody>
 		</table><?
 
-		// GRAB DATA FROM BUFFER
+		# GRAB DATA FROM BUFFER
 		$data = ob_get_contents();
 
-		// TURN OFF OUTPUT BUFFERING, WITHOUT OUTPUTTING
+		# TURN OFF OUTPUT BUFFERING, WITHOUT OUTPUTTING
 		ob_end_clean();
 
-		// RETURN HTML
+		# RETURN HTML
 		return $data;
-
-
 
 	}
 
 
 	function makeUserStatusReport(){
 
-
-
+		## CREATE SEARCH FORM
 		?><form id="user_status_report" method="POST" action="<?=$_SERVER['PHP_SELF']?>?area=user_status_report&no_script=1" onsubmit="return genReport(this, 'user_status_report')">
 
 		<input type="hidden" name="generate_report">
@@ -252,7 +229,6 @@ class UserStatusReport{
 		##
 
 		if (isset($_POST['generate_report'])) {
-
 
             # SET AGENT CLUSTER ID FROM POST AND GET LIST OF SERVERS
 			$agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
@@ -338,10 +314,10 @@ class UserStatusReport{
 						# LOOP THROUGH SELECTED USER GROUPS AND APPEND TO FILTERED ARRAY IF MATCH
 						foreach($user_group as $group){
 
-							# APPEND TO FILTERED ARRAY USING ARRAY FILTER RETURN
+							# APPEND TO FILTERED ARRAY USING ARRAY FILTER, USING PASSED FUNCTION TO RETURN ON USER GROUP MATCH
 							$filtered_array[] = array_filter($user_data, function ($var) use ($group) {
 
-								# USING STRTOLOWER TO STRIP CASE SENSITIVITY
+								# USING STRTOLOWER TO STRIP CASE AND IGNORE CASE SENSITIVITY
 								return (strtolower($var['user_group']) == strtolower($group));
 
 							});
@@ -359,18 +335,16 @@ class UserStatusReport{
 
 			}
 
-			//print("<pre>".print_r($filtered_array,true)."</pre>");
-
-            ## GENERATE HTML AND DISPLAY DATA
+            ## GENERATE HTML TABLE AND DISPLAY DATA
             $html = $this->makeHTMLTable($filtered_array[0]);
 
             if ($html == null) {
-                echo '<span style="font-size:14px;font-style:italic;"><br />No results found, for the specified values.</span><br />';
+                echo '<span style="font-size:14px;font-style:italic;"><br />No results found for the specified values.</span><br />';
             } else {
                 echo $html;
             }
 
-
+			## DISPLAY DATA TABLE
             if (!isset($_REQUEST['no_nav'])) {
                 ?><script>
 					$(document).ready( function () {
