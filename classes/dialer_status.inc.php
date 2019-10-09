@@ -577,6 +577,12 @@
                         dlgObj.dialog('open');
                     });
 
+                    $('#dialerStatusZone').on('click', '.showAgentsButton', function () {
+                        let clid = $(this).closest('button').attr('id').split('_')[1];
+                        let $agentData = $('#clusterTile_' + clid).find('.agentInfo');
+                        $agentData.toggle();
+                    });
+
                     function stopDialers(clid) {
                         if (clid === 'ALL') {
                             $.each(clusterInfo, function (i) {
@@ -763,6 +769,8 @@
                             }
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Select Filters for this Cluster" id="selectClusterFilters_' + clid + '" class="selectFiltersButton align_center ui-button-text-only">Filters</button><button title="Load in ViciDial" id="loadCluster_' + clid + '" class="loadClusterButton align_center ui-button-text-only"><a target="_blank" href="http://' + clusterInfo[clid]['ip'] + '/vicidial/admin.php?ADD=10">Load</a></button><button title="View Cluster Details" class="ui-button-text-only align_center"><a target="_blank" href="http://' + clusterInfo[clid]['ip'] + '/vicidial/realtime_report.php">Details<a></button></td></tr>');
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Stop Dialing for this Cluster" id="stopDialersButton_' + clid + '" class="stopDialersButton align_center ui-button-text-only">Stop Dialer</button><button title="Force Hopper Reset for this Cluster" class="forceHopperButton ui-button-text-only align_center" id="forceHopperButton_' + clid + '">Force Hopper</button></td></tr>');
+                            $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Show Agent Info" id="showAgentsButton_' + clid + '" class="showAgentsButton align_center ui-button-text-only">Show Agent Info</button></td></tr>');
+                            $newLayout.append('<tr class="agentInfo" style="vertical-align:bottom;"><td colspan="2" class="pct_100 align_center">' + summaryData + '</td></tr>');
                         } else {
                             $newLayout.append(tbl);
                         }
@@ -770,6 +778,7 @@
                     }
 
                     function parseDialerStatusData(clusterID, dialerStatusData) {
+                        // NOTE - all these clusterID instances will need to be 0-based and incremented
                         let titleRow = '<div class="clusterTitle">' + clusterInfo[clusterID]['name'] + '<a id="removeCluster_' + clusterID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
                         let $tile = $('#clusterTile_' + clusterID);
                         $tile.empty();
@@ -782,6 +791,7 @@
                         if (frontEnd_debug) {
                             console.log('Tiles are about to render :: ', selectedClusters);
                         }
+                        // NOTE - all these selectedClusters instances will need to be 0-based and incremented
                         $.each(selectedClusters, function (i, v) {
                             let strV = v.toString();
                             if ($('li#clusterTile_' + strV).length === 0) {
