@@ -58,6 +58,11 @@
 
 
 
+	// UPDATE THE USERS LAST ACTION TIME
+	$_SESSION['dbapi']->users->updateLastActionTime();
+	
+	
+	
 ## SELECT THE DATA TYPES TO RETRIEVE
 	switch($_REQUEST['get']){
 	default:
@@ -86,7 +91,7 @@
 			break;
 
 		case 'login_tracker':
-
+		case 'login':
 			include_once($basedir."api/login_tracker.api.php");
 			$login_tracker = new API_LoginTracker();
 			$login_tracker->handleSecondaryAjax();

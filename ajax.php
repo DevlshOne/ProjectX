@@ -24,6 +24,12 @@
 
 
 	}
+	
+	
+	// UPDATE THE USERS LAST ACTION TIME
+	$_SESSION['dbapi']->users->updateLastActionTime();
+	
+	
 
 
 	function generateFilename($input){
@@ -55,6 +61,36 @@ default:
 	die("No mode specified.");
 	break;
 
+case 'force_logout':
+	
+	
+	if(!checkAccess('login_tracker_kick_user')){
+		
+		die("ERROR: Access to kick users out DENIED");
+	}
+	
+	$login_id = intval($_REQUEST['force_logout_user']);
+	
+	if($login_id <= 0){
+		die("ERROR: Invalid login ID specified");
+	}
+	
+	include_once($_SESSION['site_config']['basedir']."db.inc.php");
+	include_once($_SESSION['site_config']['basedir']."utils/db_utils.php");
+	
+	connectPXDB();
+	
+	if(execSQL("UPDATE `logins` SET `time_out`=UNIX_TIMESTAMP() WHERE id='$login_id'") > 0){
+		echo "Success";
+	}else{
+		
+		echo "ERROR: Record not updated.";
+	}
+	
+
+	exit;
+	
+	break;
 case 'capacity_report':
 	
 	

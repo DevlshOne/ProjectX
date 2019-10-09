@@ -7,6 +7,14 @@
 
     session_start();
 
+    if($_SESSION['user']['id']){
+    	
+    	include_once("dbapi/dbapi.inc.php");
+    	
+    	$_SESSION['dbapi']->users->updateLastActionTime();
+    	
+    }
+    
     # Get wavfile and output with proper encoding and headers
     $wavfile = trim($_REQUEST['file']);
 
