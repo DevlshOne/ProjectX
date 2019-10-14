@@ -4,7 +4,7 @@
  * EXPORT PX's CAMPAIGN SPECIFIC DNC TO EVERY VICI CLUSTER
  * Written By: Jonathan Will
  */
-	$base_dir = "/var/www/html/dev/";
+	$base_dir = "/var/www/html/reports/";
 
 	$max_insert_count = 1000; // HOW MANY RECORDS AT A TIME TO INSERT
 
@@ -59,6 +59,8 @@
 		$dnc_all_campaigns[]['phone_number'] = $row['phone'];
 	}
 
+	
+	
 	$dnc_by_campaign = array();
 	$res = query("SELECT `campaign_code`, `phone` FROM `dnc_campaign_list` WHERE campaign_code != '[ALL]'", 1);
 	$cnt = 0;
