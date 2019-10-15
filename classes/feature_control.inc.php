@@ -516,7 +516,9 @@ class FeatureControl{
 						
 						
 						$this->renderFeatureRow('employee_hours', 'Employee Hours', ($row['employee_hours'] == 'yes')?true:false );
-
+						$this->renderFeatureRow('employee_hours_edit', '|--&gt;Edit Hours', ($row['employee_hours_edit'] == 'yes')?true:false );
+						
+						
 						$this->renderFeatureRow('phone_lookup', 'DRIPP Phone lookup', ($row['phone_lookup'] == 'yes')?true:false );
 
 						$this->renderFeatureRow('quiz_results', 'Quiz Results', ($row['quiz_results'] == 'yes')?true:false );

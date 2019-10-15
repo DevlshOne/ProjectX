@@ -141,6 +141,7 @@ a:hover {
     display:inline-block;
     color: #000000;
 }
+
 #startTimeFilter, #endTimeFilter {
 	float: right;
 	padding-left: 6px;
