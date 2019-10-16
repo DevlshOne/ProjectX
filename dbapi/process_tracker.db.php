@@ -1,6 +1,13 @@
 <?
 /**
  * PROCESS TRACKER - SQL Functions
+ * 
+ * 
+ * 
+ * $procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_code, $result='started', $process_command=null, $process_settings=null, $process_logs=null, $time_ended = null)
+ * 
+ * $_SESSION['dbapi']->process_tracker->logFinishProcess($proc_id, $result, $process_logs)
+ * 
  */
 
 
@@ -285,6 +292,8 @@ class ProcessTrackerAPI{
 		$process_code = filterName($process_code, 32);
 		
 		
+		
+		
 		$dat = array(
 				
 				'time_started' => time(),
@@ -296,6 +305,7 @@ class ProcessTrackerAPI{
 		if($time_ended != null){
 			
 			$dat['time_ended'] = $time_ended;
+			$dat['result'] = ($result == 'started')?'completed':$result;
 			
 		}
 		
@@ -324,7 +334,7 @@ class ProcessTrackerAPI{
 	
 	
 	
-	function logFinishProcess($proc_id, $result, $process_logs){
+	function logFinishProcess($proc_id, $result, $process_logs = ''){
 		
 		$dat = array(
 				'time_ended' 	=> time(),
