@@ -680,10 +680,12 @@
                             'agents_dead',
                             'agents_dispo'
                         ];
-                        let clusterData = '<HTML>' + tbl.split('</FORM>')[0] + '</HTML>';
+
+                        const rgxPre = /<pre>([\s\S]*)<\/pre>/g;
+                        let clusterData = '<HTML>' + tbl.split('</FORM>')[0] + '</HTML>'.replace(rgxPre, '');
                         let summaryData = '<HTML>' + tbl.split('</FORM>')[1] + '</HTML>';
 
-                        let tmpAgentData = '<pre><font size="2">VICIDIAL: Agents Time On Calls Campaign: |ALL-ACTIVE|            2019-10-15 18:01:38\n' +
+                        let preString = '<pre><font size="2">VICIDIAL: Agents Time On Calls Campaign: |ALL-ACTIVE|            2019-10-15 18:01:38\n' +
                             '+----------------+------------------------+-----------+----------+---------+------------+-------+------+------------------\n' +
                             '| STATION        | <a href="#" onclick="update_variables(\'orderby\',\'user\');">USER </a> <a href="#" onclick="update_variables(\'UidORname\',\'\');">SHOW ID </a>  INFO   | SESSIONID | STATUS   | <a href="#" onclick="update_variables(\'orderby\',\'time\');">MM:SS</a>   | <a href="#" onclick="update_variables(\'orderby\',\'campaign\');">CAMPAIGN  </a> | CALLS | HOLD | IN-GROUP \n' +
                             '+----------------+------------------------+-----------+----------+---------+------------+-------+------+------------------\n' +
@@ -759,6 +761,8 @@
                             '  <span class="lime"><b>          </b></span><b> - Agent in 3-WAY &gt; 10 seconds</b>\n' +
                             '  <span class="black"><b>          </b></span><b> - Agent on a dead call</b>\n' +
                             '</font></pre>';
+
+                        let tmpAgentData = preString.match(rgxPre);
 
                         let tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/g).map(function (val) {
                             return val.replace(/<\/?b>/g, '').trim();
