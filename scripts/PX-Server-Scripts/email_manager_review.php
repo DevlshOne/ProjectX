@@ -1,9 +1,21 @@
 #!/usr/bin/php
 <?php
 
-	require_once("/var/www/html/dev/db.inc.php");
+	$base_dir = "/var/www/html/reports/";
 
+	require_once($base_dir."db.inc.php");
 
+	include_once($base_dir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "email_manager_review";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
+	
+	$process_logs = '';
+	
+	
 
 	$verbose = false;
 
@@ -11,7 +23,7 @@
 
 	//$email_to = "jon@revenantlabs.net";
 	$email_to = "manager-review@tpfeinc.com";
-
+	//$email_to = "phreak42x@gmail.com";
 
 	$from_email = "support@advancedtci.com";
 
@@ -37,39 +49,48 @@
 
 	}
 
-	$boundary = md5(uniqid(time()));
+// 	$boundary = md5(uniqid(time()));
 	$extra_sendmail_parms = " -f$from_email ";
 
 	$headers = "From: $from_email \n";
 	$headers .= "Return-Path: $from_email \n";
 	$headers .= "Date: ".date("r")."\n";
-	$headers .= 'Content-Type: multipart/alternative; boundary="' . $boundary . '"' . "\n\n";
-	$headers .= "Email requires HTML. Please enable HTML email viewing. \n";
+// 	$headers .= 'Content-Type: multipart/alternative; boundary="' . $boundary . '"' . "\n\n";
+// 	$headers .= "Email requires HTML. Please enable HTML email viewing. \n";
 
-	$headers .= '--' . $boundary . "\n";
-
-
-	$headers .= 'Content-Type: text/plain; charset=ISO-8859-1' ."\n";
-	$headers .= 'Content-Transfer-Encoding: 8bit'. "\n\n";
+// 	$headers .= '--' . $boundary . "\n";
 
 
+// 	$headers .= 'Content-Type: text/plain; charset=ISO-8859-1' ."\n";
+// 	$headers .= 'Content-Transfer-Encoding: 8bit'. "\n\n";
 
 
-	$headers .= "Manager Sale/Reviews\n\n";
 
-	foreach($reviewsales as $sale){
-		$headers .= $clusters[$sale['vici_cluster_id']]['name']."   Lead ID#".$sale['lead_id']." Verifier:".$sale['verifier_username']."\n";
+
+ 	$html = "Manager Sale/Reviews\n\n";
+
+ 	$x=0;
+ 	
+ 	foreach($reviewsales as $sale){
+ 		
+ 		if($sale['lead_id'] <= 0) continue;
+ 		
+			
+				
+		$html .= $clusters[$sale['vici_cluster_id']]['name']."   Lead ID#".$sale['lead_id']." Phone:".$sale['phone_num']." Verifier:".$sale['verifier_username']."\n";
+		
+		$x++;
 	}
 
 
-	$headers .= "\n";
+	$html .= "\n";
 
 
-	$headers .= '--' . $boundary . "\n";
+// 	$headers .= '--' . $boundary . "\n";
 
-	$headers .= 'Content-Type: text/HTML; charset=ISO-8859-1' ."\n";
-	$headers .= 'Content-Transfer-Encoding: 8bit'. "\n\n";
-
+// 	$headers .= 'Content-Type: text/HTML; charset=ISO-8859-1' ."\n";
+// 	$headers .= 'Content-Transfer-Encoding: 8bit'. "\n\n";
+/**
 	ob_start();
 	ob_clean();
 
@@ -110,19 +131,22 @@
 	</body>
 	</html><?
 
-	$headers .= ob_get_contents()."\n";
+	$html = ob_get_contents()."\n";
 	ob_end_clean();
+**/
 
+// 	$headers .= '--' . $boundary . "--\n";
 
-	$headers .= '--' . $boundary . "--\n";
+	$emailcnt=0;
 
-
-	if($x > 0){//count($reviewsales) > 0){
+	if($x > 0){
 
 
 		## SEND MAIL TO MANAGERS
-		if(mail($email_to,$subject, '',$headers,$extra_sendmail_parms)){
+		if(mail($email_to,$subject, $html,$headers,$extra_sendmail_parms)){
 
+			$emailcnt++;
+			
 			if($verbose)echo date()." Successfully sent\n";
 
 
@@ -139,8 +163,16 @@
 		}
 
 	}else{
-		if($verbose)echo date()." Skipped, no records.\n";
+		if($verbose)echo date("H:i:s m/d/Y")." Skipped, no records.\n";
 	}
-
+	
+	$str = "Send $emailcnt Emails, for $x records.\n";
+	
+	$process_logs .= $str;
+	echo $str;
+	
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
+	
 
 

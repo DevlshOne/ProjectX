@@ -15,20 +15,10 @@
 	include_once($base_dir."site_config.php");
 	include_once($base_dir."db.inc.php");
 
-	include_once($base_dir."utils/db_utils.php");
-	include_once($base_dir."utils/microtime.php");
+	include_once($base_dir."util/db_utils.php");
+	include_once($base_dir."util/microtime.php");
 
-	include_once($base_dir."dbapi/dbapi.inc.php");
-	
-	global $process_name;
-	
-	$process_name = "px-export-vici-campaign-dnc";
-	
-	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
-	
-	$process_logs = '';
-	
-	
+
 	// CONNECT PX DB FIRST
 	connectPXDB();
 
@@ -60,7 +50,7 @@
 
 
 	// GRAB THE DNC DATA FROM PX
-//	connectListDB();
+	connectListDB();
 
 	// FIRST GRAB THE GLOBAL DNC'S AND NIX'S (FOR COLD ONLY)
 	$dnc_all_campaigns = array();
@@ -69,8 +59,6 @@
 		$dnc_all_campaigns[]['phone_number'] = $row['phone'];
 	}
 
-	
-	
 	$dnc_by_campaign = array();
 	$res = query("SELECT `campaign_code`, `phone` FROM `dnc_campaign_list` WHERE campaign_code != '[ALL]'", 1);
 	$cnt = 0;
@@ -86,12 +74,11 @@
 		$cnt++;
 	}
 
-	$str = "Done loading DNCs to memory, ".
+	echo "Done loading DNCs to memory, ".
 			number_format(count($dnc_all_campaigns))." all-campaign DNCs, ".
 			number_format($cnt)." campaign specific dncs total.\n";
 
-	$process_logs .= $str;
-	echo $str;
+
 
 	// STRATIGICALLY LOOP THROUGH IT TO DO MANAGABLE CHUNKS AT A TIME
 
@@ -177,24 +164,18 @@
 	$timer_end = microtime_float();
 	$runtime = $timer_end - $timer_start;
 
-	$str = "Cold Cluster(s) Total: ".number_format($cluster_total)."\n";
+	echo "Cold Cluster(s) Total: ".number_format($cluster_total)."\n";
 
-	$str .= "Run time: ".$runtime." seconds\n";
+	echo "Run time: ".$runtime." seconds\n";
 
 
-	$process_logs .= $str;
-	echo $str;
-	
 	echo "Preparing to process TAPS based servers...\n";
 
 
 	echo "Loading Global DNC's (skipping NIX)...\n";
 
 	// GRAB THE DNC DATA FROM PX
-//	connectListDB();
-
-	// USE THE PX DB INSTEAD OF LIST TOOL
-	connectPXDB();
+	connectListDB();
 
 	$dnc_all_campaigns = array();
 	$res = query("SELECT `phone` FROM `dnc_campaign_list` WHERE campaign_code='[ALL]' AND dnc_type='DNC'", 1);
@@ -204,6 +185,8 @@
 
 
 
+	// POP BACK OVER TO THE PX DB
+	connectPXDB();
 
 	/**
 	 * PREPARE TO PUSH TAPS NULL-CAMPAIGN DNCs
@@ -284,14 +267,10 @@
 	$timer_end = microtime_float();
 	$runtime = $timer_end - $timer_start;
 
-	$str = "TAPS Cluster(s) Total: ".number_format($cluster_total)."\n";
+	echo "TAPS Cluster(s) Total: ".number_format($cluster_total)."\n";
 
-	$str .="Run time: ".$runtime." seconds\n";
+	echo "Run time: ".$runtime." seconds\n";
 
-	
-	$process_logs .= $str;
-	echo $str;
-	
-	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
-	
+
+
 

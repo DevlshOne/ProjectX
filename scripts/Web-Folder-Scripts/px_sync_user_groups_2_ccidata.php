@@ -1,12 +1,24 @@
 #!/usr/bin/php
 <?php
-	$basedir = "/var/www/dev/";
+	$basedir = "/var/www/html/reports/";
 
 	include_once($basedir."db.inc.php");
-	include_once($basedir."utils/microtime.php");
-	include_once($basedir."utils/format_phone.php");
-	include_once($basedir."utils/db_utils.php");
+	include_once($basedir."util/microtime.php");
+	include_once($basedir."util/format_phone.php");
+	include_once($basedir."util/db_utils.php");
 
+	
+	include_once($basedir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px_sync_user_groups_2_ccidata";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
+	
+	$process_logs = '';
+	
+	
 
 	// CONNECT TO PX AND BUILD A DISTINCT LIST OF ALL USER GROUPS
 	connectPXDB();
@@ -42,6 +54,11 @@
 
 	$cnt = execSQL($sql);
 
-	echo date("g:i:sa m/d/Y").' '.$cnt." records inserted\n";
-
+	$str = date("g:i:sa m/d/Y").' '.$cnt." records inserted\n";
+	
+	$process_logs .= $str;
+	echo $str;
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
+	
 

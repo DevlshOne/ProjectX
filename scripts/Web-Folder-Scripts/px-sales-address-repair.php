@@ -4,7 +4,7 @@
 	global $stime;
 	global $etime;
 
-	$base_dir = "/var/www/html/dev2/";
+	$base_dir = "/var/www/html/reports/";
 
 
 	include_once($base_dir."site_config.php");
@@ -34,6 +34,19 @@
 
 	}
 
+	
+	include_once($base_dir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px-sales-address-repair";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv),"Timeframe:".date("H:i:s m/d/Y", $stime)." - ".date("H:i:s m/d/Y", $etime));
+	
+	$process_logs = '';
+	
+	
+	
 
 	echo date("H:i:s m/d/Y")." - Started, looking for sales from ".date("m/d/Y", $stime)."\n";
 
@@ -170,11 +183,16 @@
 
 	} // END WHILE LOOP
 
-	echo date("H:i:s m/d/Y")." - DONE, Updated ".number_format($updatecnt)." records out of ".number_format($total_cnt)."\n";
-	echo date("H:i:s m/d/Y")." - DRIPP fixes: ".number_format($drippfixes)."\n";
+	$str  = date("H:i:s m/d/Y")." - DONE, Updated ".number_format($updatecnt)." records out of ".number_format($total_cnt)."\n";
+	$str .= date("H:i:s m/d/Y")." - DRIPP fixes: ".number_format($drippfixes)."\n";
 
 	$elapsed = time() - $started_time;
 
-	echo "Elapsed time: ".rendertime($elapsed).' ('.$elapsed.' seconds)';
+	$str .= "Elapsed time: ".rendertime($elapsed).' ('.$elapsed.' seconds)';
+	
+	$process_logs .= $str;
+	echo $str;
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
 
 

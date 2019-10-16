@@ -7,8 +7,8 @@
     $basedir = "/var/www/html/dev/";
 
     include_once($basedir."db.inc.php");
-    include_once($basedir."utils/microtime.php");
-    include_once($basedir."utils/db_utils.php");
+    include_once($basedir."util/microtime.php");
+    include_once($basedir."util/db_utils.php");
 
 
 	connectPXDB();
