@@ -432,3 +432,11 @@ a:hover {
 .agentInfo {
 	display: none;
 }
+th.secondsRow {
+	border: 1px solid;
+	border-top: none;
+}
+td.countsRow {
+	border: 1px solid;
+	border-bottom: none;
+}

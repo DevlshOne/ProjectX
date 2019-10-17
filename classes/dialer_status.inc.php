@@ -762,7 +762,7 @@
                             '  <span class="black"><b>          </b></span><b> - Agent on a dead call</b>\n' +
                             '</font></pre>';
 
-                        let tmpAgentData = preString.match(rgxPre);
+                        let tmpAgentData = preString.match(rgxPre)[0];
 
                         let tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/g).map(function (val) {
                             return val.replace(/<\/?b>/g, '').trim();
@@ -795,15 +795,34 @@
                                     break;
                             }
                             colNumber++;
-                            // debugger;
                         }
                         function agentIsReady(v) {
                             return v['ready_status'] === 'READY';
                         }
                         let parsedAgentDataFiltered = parsedAgentData.filter(agentIsReady);
+                        let userCounts = new Array();
+                        for(let i = 0; i < 16; i++) {
+                            userCounts[i] = 0;
+                        }
+                        $(parsedAgentDataFiltered).each(function(i, v) {
+                            let s = parseInt((v['minutes_ready'] * 60) + (v['seconds_ready']));
+                            if(s > 14) {
+                                userCounts[15] = userCounts[15] + 1;
+                            } else {
+                                userCounts[s] = userCounts[s] + 1;
+                            }
+                        });
                         parsedAgentDataFiltered.sort((a,b) => (a['seconds_ready'] > b['seconds_ready']) ? 1 : -1);
-                        let agentDataOutput = '';
-
+                        let agentDataOutput = '<table class="tightTable pct100">';
+                        let secondsRow = '<thead><tr><th class="secondsRow">Wait Time</th>';
+                        let usersRow = '<tbody><tr><td class="countsRow">Users</td>';
+                        for(let i = 0; i < 16; i++) {
+                            secondsRow += '<th class="secondsRow">' + i + '</th>';
+                            usersRow += '<td class="countsRow">' + userCounts[i] + '</td>';
+                        }
+                        secondsRow += '</tr></thead>';
+                        usersRow += '</tr></tbody>';
+                        agentDataOutput += secondsRow + usersRow + '</table>';
                         let tdLabels = [];
                         let tdValues = [];
                         let clusterValues = [];
@@ -889,10 +908,10 @@
                                 $newLayout.append('<tr title="Active Calls: ' + objSummaryData.calls_active + '&#10;Calls Ringing: ' + objSummaryData.calls_ringing + '&#10;Calls Waiting: ' + objSummaryData.calls_waiting + '&#10;Interactive Voice Response: ' + objSummaryData.calls_ivr + '"><td class="align_left">Calls/Ring/Wait/IVR:</td><td class="align_right">' + objSummaryData.calls_active + ' / ' + objSummaryData.calls_ringing + ' / ' + objSummaryData.calls_waiting + ' / ' + objSummaryData.calls_ivr + '</td></tr>');
                                 $newLayout.append('<tr title="Agents Logged In: ' + objSummaryData.agents_on + '&#10;Agents On Calls: ' + objSummaryData.agents_active + '&#10;Agents Waiting: ' + objSummaryData.agents_waiting + '&#10;Agents Paused: ' + objSummaryData.agents_paused + '&#10;Agents Dead: ' + objSummaryData.agents_dead + '&#10;Agents Dispo: ' + objSummaryData.agents_dispo + '"><td class="align_left">Agts/IC/W/P/Dd/Dsp:</td><td class="align_right">' + objSummaryData.agents_on + ' / ' + objSummaryData.agents_active + ' / ' + objSummaryData.agents_waiting + ' / ' + objSummaryData.agents_paused + ' / ' + objSummaryData.agents_dead + ' / ' + objSummaryData.agents_dispo + '</td></tr>');
                             }
+                            $newLayout.append('<tr class="agentInfo" style="vertical-align:bottom;"><td colspan="2" class="pct_100 align_center">' + agentDataOutput + '</td></tr>');
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Select Filters for this Cluster" id="selectClusterFilters_' + clid + '" class="selectFiltersButton align_center ui-button-text-only">Filters</button><button title="Load in ViciDial" id="loadCluster_' + clid + '" class="loadClusterButton align_center ui-button-text-only"><a target="_blank" href="http://' + clusterInfo[clid]['ip'] + '/vicidial/admin.php?ADD=10">Load</a></button><button title="View Cluster Details" class="ui-button-text-only align_center"><a target="_blank" href="http://' + clusterInfo[clid]['ip'] + '/vicidial/realtime_report.php">Details<a></button></td></tr>');
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Stop Dialing for this Cluster" id="stopDialersButton_' + clid + '" class="stopDialersButton align_center ui-button-text-only">Stop Dialer</button><button title="Force Hopper Reset for this Cluster" class="forceHopperButton ui-button-text-only align_center" id="forceHopperButton_' + clid + '">Force Hopper</button></td></tr>');
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Show/Hide Agent Info" id="showAgentsButton_' + clid + '" class="showAgentsButton align_center ui-button-text-only">Toggle Agent Info</button></td></tr>');
-                            $newLayout.append('<tr class="agentInfo" style="vertical-align:bottom;"><td colspan="2" class="pct_100 align_center">' + parsedAgentDataFiltered + '</td></tr>');
                         } else {
                             $newLayout.append(tbl);
                         }
