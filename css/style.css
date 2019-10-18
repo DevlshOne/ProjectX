@@ -429,9 +429,6 @@ a:hover {
 }
 #home_sortable { list-style-type: none; margin: 0; padding: 0; }
 #home_sortable li { margin: 3px 3px 3px 0; padding: 1px; float: left; width: 100px; height: 90px; font-size: 4em; text-align: center; }
-/*.agentInfo {*/
-/*	display: flex;*/
-/*}*/
 th.secondsRow {
 	border: 1px solid;
 	border-top: none;
@@ -439,4 +436,14 @@ th.secondsRow {
 td.countsRow {
 	border: 1px solid;
 	border-bottom: none;
+}
+.cyanThresh {
+}
+.yellowThresh {
+	background-color: yellow;
+	color: black;
+}
+.redThresh {
+	background-color: red;
+	color: white;
 }

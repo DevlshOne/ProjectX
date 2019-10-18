@@ -635,6 +635,31 @@
                         }
                     }
 
+                    function applyAgentsThresh(s, v, cltype) {
+                        let maxGood = 0;
+                        let maxWarn = 0;
+                        switch (cltype) {
+                            default:
+                            case 'cold':
+                                maxGood = 4;
+                                maxWarn = 8;
+                                break;
+                            case 'taps':
+                                maxGood = 8;
+                                maxWarn = 12;
+                                break;
+                        }
+                        if (s <= maxGood && v >= 1) {
+                            return '';
+                        }
+                        if (s > maxGood && s <= maxWarn && v >= 1) {
+                            return 'yellowThresh';
+                        }
+                        if (s > maxWarn && v >=1) {
+                            return 'redThresh';
+                        }
+                    }
+
                     function applyThresh(v, crit, warn) {
                         if (parseInt(v) < crit) {
                             return '<span style="color:red;">' + v.toString() + '</span>';
@@ -680,7 +705,7 @@
                             'agents_dead',
                             'agents_dispo'
                         ];
-                        const rgxPre = /<pre>([\s\S]*)<\/pre>/gi;
+                        const rgxPre = /<PRE>([\s\S]*)<\/PRE>/gi;
                         let preString = '';
                         if (tbl.match(rgxPre) !== null) {
                             preString = tbl.match(rgxPre)[0];
@@ -688,8 +713,8 @@
                             preString = '';
                         }
                         let agentDataOutput = '';
-                        let clusterData = '<HTML>' + tbl.split('</FORM>')[0] + '</HTML>'.replace(rgxPre, '');
-                        let summaryData = '<HTML>' + tbl.split('</FORM>')[1] + '</HTML>';
+                        let clusterData = '<HTML>' + tbl.replace(rgxPre, '').split('</FORM>')[0] + '</HTML>';
+                        let summaryData = '<HTML>' + tbl.replace(rgxPre, '').split('</FORM>')[1] + '</HTML>';
                         if (preString.length > 11) {
                             let tmpAgentData = preString.match(rgxPre)[0];
                             let tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/gi).map(function (val) {
@@ -748,11 +773,11 @@
                             let countsRow = '<tbody><tr><td class="countsRow">Agents</td>';
                             for (let i = 0; i < 16; i++) {
                                 if (i === 15) {
-                                    secondsRow += '<th class="secondsRow">' + i.toString() + '+</th>';
+                                    secondsRow += '<th class="secondsRow ' + applyAgentsThresh(i, userCounts[i], cltype) + '">' + i.toString() + '+</th>';
                                 } else {
-                                    secondsRow += '<th class="secondsRow">' + i.toString() + '</th>';
+                                    secondsRow += '<th class="secondsRow ' + applyAgentsThresh(i, userCounts[i], cltype) + '">' + i.toString() + '</th>';
                                 }
-                                countsRow += '<td class="countsRow">' + userCounts[i] + '</td>';
+                                countsRow += '<td class="countsRow ' + applyAgentsThresh(i, userCounts[i], cltype) + '">' + userCounts[i] + '</td>';
                             }
                             secondsRow += '</tr></thead>';
                             countsRow += '</tr></tbody>';
