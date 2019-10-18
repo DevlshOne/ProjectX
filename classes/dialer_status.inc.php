@@ -650,7 +650,7 @@
                                 break;
                         }
                         if (s <= maxGood && v >= 1) {
-                            return '';
+                            return 'greenThresh';
                         }
                         if (s > maxGood && s <= maxWarn && v >= 1) {
                             return 'yellowThresh';
