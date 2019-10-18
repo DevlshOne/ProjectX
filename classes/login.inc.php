@@ -93,6 +93,7 @@ class LoginClass{
 
 			}else{
 
+				
 
 				// LOAD AND CHECK ACCOUNT STATUS
 				$_SESSION['account'] = $_SESSION['dbapi']->accounts->getByID($row['account_id']);
@@ -118,12 +119,47 @@ class LoginClass{
 
 				}
 
+				
+				// CHECK FOR OTHER USERS FROM DIFFERENT IP ADDRESS LOGGED IN
+				$last_login = $_SESSION['dbapi']->querySQL("SELECT * FROM `logins` ".
+						" WHERE `username`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $row['username'])."' ".
+						
+						// THEY SUCCESSFULLY LOGGED INTO THE ADMIN
+						" AND `result`='success' AND `section`='admin' ".
+						
+						// AND THEY HAVEN'T LOGGED OUT PROPERLY
+						" AND `time_out`=0 ".
+
+						" ORDER BY id DESC LIMIT 1");
+				
+// 				print_r($last_login);
+// 				exit;
+				
+				// IF THEY HAVEN'T LOGGED OUT PROPERLY, AND ARE COMING FROM ANOTHER IP ADDRESS
+				// AND THERE LAST ACTION WAS SOONER THAN 15 MINUTES AGO
+				if($last_login['time_out'] == 0 && 
+						($_SERVER['REMOTE_ADDR'] != $last_login['ip']) && 
+						($last_login['time_last_action'] > (time() - 900) )
+					){
+
+					unset($_SESSION['account']);
+					
+					// REJECT LOGIN!
+					$_SESSION['dbapi']->users->tracklogin(0,$user,$pass,'Failure','User is logged in another station ('.$last_login['ip'].').');
+					
+					jsAlert('ERROR: User is logged in another station ('.$last_login['ip'].')\nLast Action: '.date("H:i:s", $last_login['time_last_action']),1);
+					jsRedirect(stripurl(''));
+					exit;
+					
+				}
 
 
-				$_SESSION['dbapi']->users->tracklogin($row['id'],$user,$pass,'Success');
+				$login_id = $_SESSION['dbapi']->users->tracklogin($row['id'],$user,$pass,'Success');
 
 				## STORE USER RECORD IN SESSION!
 				$_SESSION['user'] = $row;
+				
+				$_SESSION['logins'] = $_SESSION['dbapi']->querySQL("SELECT * FROM `logins` WHERE id='".$login_id."' ");
 
 				## LOAD FEATURES FOR THE USER, IF THEY ARE SET
 
@@ -174,7 +210,7 @@ class LoginClass{
 				## UPDATE THE TIME OF LAST LOGIN
 				$_SESSION['dbapi']->users->updateLastLoginTime();
 
-
+				
 				if($kicktourl){
 
 					$_SESSION['one_time_kick_to'] = $kicktourl;

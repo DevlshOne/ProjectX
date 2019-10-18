@@ -51,8 +51,8 @@
                 $this->prefs['tiles'] = array();
                 $this->prefs['tiles'][] = array('type' => 'my_notes',);
                 $this->prefs['tiles'][] = array('type' => 'user_count', 'timeframe' => 'day');
-                $this->prefs['tiles'][] = array('type' => 'sales_overview', 'clusters' => array(23, 25), 'user_groups' => array(), // ALL USER GROUPS
-                    'timeframe' => 'day');
+               // $this->prefs['tiles'][] = array('type' => 'sales_overview', 'clusters' => array(23, 25), 'user_groups' => array(), // ALL USER GROUPS
+                //    'timeframe' => 'day');
                 $this->savePreferences();
             }
             $this->handlePOST();

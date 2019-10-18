@@ -4,20 +4,20 @@ session_start();
 
 global $delimiter;
 
-$basedir = "/var/www/html/reports/";
+$basedir = "/var/www/html/dev/";
 
 $push_to_cluster_id = 3; // 3 == TAPS CLUSTER
 
+$excluded_vici_cluster_ids = [ 3 ];
+
 $push_to_list_id = "200000";
 
-
-$vici_web_host = "10.101.11.17";
+$vici_web_host = "10.101.11.15";
 
 // $delimiter = "/t";
 $delimiter = "|";
 
 $finshed_dispo = "RECOVR";
-
 
 // THIS WAS A REQUEST MADE BY LEE, SO WE ARE NOT IMMEDIATELY CALLING HTEM BACK
 $minutes_offset = "30"; // HOW MANY MINUTES TO WAIT BEFORE BEING INCLUDED IN THE CALLBACK
@@ -34,7 +34,7 @@ include_once ($basedir . "utils/db_utils.php");
 function escapeCSV($input)
 {
     global $delimiter;
-
+    
     return str_replace($delimiter, "_", $input);
 }
 
@@ -130,9 +130,8 @@ $custom_field_list = array(
     'employer'
 );
 
-
-
 // PULL THE LEADS THAT ARE CLASSIFIED HANGUP ("hangup" or "NOVERI" dispo)
+
 // Changed query to out put matching vicidial data and only what we want.
 // 04-30-2018 changed 'id' to px_id and passing to vici to store with hangups for tracking
 $myquery = "
@@ -169,17 +168,25 @@ WHERE
         #AND `time` BETWEEN UNIX_TIMESTAMP(now() - INTERVAL 24 HOUR) AND UNIX_TIMESTAMP(now())
 
         #?? Stopping looping perhaps? This could cause problems
-        AND `list_id` != '" . mysqli_real_escape_string($_SESSION['db'],$push_to_list_id) . "'
+        AND `list_id` != '" . mysqli_real_escape_string($_SESSION['db'], $push_to_list_id) . "'
         #Remove records that are missing critical data if any of these fields are 0 ignore the record
         AND 0 NOT IN (lead_id , vici_cluster_id, campaign_id)
-       #Using group to remove duplicated records in the dispo log
+	AND vici_cluster_id not in (";
+
+$xx=0;
+
+foreach ($excluded_vici_cluster_ids as $Xid) {
+    $myquery .= ($xx ++ > 0) ? "," : '';
+    
+    $myquery .="'". mysqli_real_escape_string($_SESSION['db'], (string) $Xid)."'";
+}
+
+$myquery .= ")
+        #Using group to remove duplicated records in the dispo log
         GROUP BY vici_cluster_id , lead_id;";
 
-//        AND vici_cluster_id NOT in (3)
-
-#echo $myquery;
-#exit;
-
+ //echo $myquery."\n<br>";
+ //exit;
 
 $res = query($myquery);
 
@@ -193,7 +200,7 @@ if ($rowcnt <= 0) {
 // WRITE THEM TO A TEMP FILE
 $tmpfname = tempnam(sys_get_temp_dir(), 'HangupRecovery'); // good
 
-$fh = fopen($tmpfname, "w");
+$fh = fopen($tmpfname, "w+");
 
 $completed_id_stack = array();
 $line = "";
@@ -202,31 +209,30 @@ while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
     // Get the column headers if we don't allready have them
     if (! isset($header_fields))
         $header_fields = array_keys($row);
-
+    
     // Changed in query to match vici
     // FYI in custom mode order is not important. See the curl comments below for more info
-
+    
     $line = "";
-
+    
     foreach ($row as $key => $val) {
         $line .= escapeCSV($val) . $delimiter;
     }
-
+    
     $line .= "\n";
-
-    // echo "Writing line: " . $line . "\n";
-
+    //echo "Writing line: " . $line . "\n";
+    
     fwrite($fh, $line);
-
+    
     $completed_id_stack[] = $row['vendor_lead_code'];
 }
 
 // CLOSE THE FILE WHEN FINISHED WRITING THE LEADS
 fclose($fh);
+// wait for it to close
+while(is_resource($fh)) echo '*';
 
-echo "Filename: ".$tmpfname."\n";
-
-
+echo "Filename: " . $tmpfname . "\n";
 
 // BUILD THE POST ARRAY
 $post = array(
@@ -235,38 +241,34 @@ $post = array(
     // Overriding list_id is REQUIRED for loading custom fields data so unfortunately one list at a time.
     'list_id_override' => $push_to_list_id,
     'phone_code_override' => "1",
-
+    
     // 'list_id_override' => "in_file",
     // 'phone_code_override' => "in_file",
-
+    
     // Tell API we will be sending data in a custom format
     'file_layout' => "custom",
-
+    
     // Tell API we need to dedupe.. This may need changed to DUPCAMP.
     // We will likely need to DEDUPE all status by vici 'campaign' and purge to 7 days or less unless callback
     // 'dupcheck' => "DUPLIST",
     'dupcheck' => 'DUPCAMP',
-
+    
     // 'dedupe_statuses[]' => "NEW",
-
+    
     'usacan_check' => "NONE",
     'postalgmt' => "POSTAL",
     'OK_to_process' => "OK TO PROCESS",
     // Cause they dont fucking set it right (I know what your thinking... Its the only value that works.. I tried)
-    'lead_file' => '/tmp/vicidial_temp_file.txt'
-//    'leadfile' => '@' . realpath($tmpfname)
+    'lead_file' => '/tmp/vicidial_temp_file.txt',
+    'leadfile' => '@' . realpath($tmpfname)
 );
+echo "\n<br>";
 
-
-if (function_exists('curl_file_create')) { // php 5.5+
-	$post['leadfile'] = curl_file_create(realpath($tmpfname));
-} else { //
-	$post['leadfile'] = '@' . realpath($tmpfname);
-}
-
-
-
-
+//if (function_exists('curl_file_create')) { // php 5.5+
+//    $post['leadfile'] = curl_file_create(realpath($tmpfname));
+//} else { //
+//    $post['leadfile'] = '@' . realpath($tmpfname);
+//}
 
 // Tell API how we are sending the data. -1 means not used
 // Set column order for export
@@ -280,23 +282,23 @@ foreach (array_merge($field_list, $custom_field_list) as $field_name)
     if (! isset($post[$field_name . '_field']))
         $post[$field_name . '_field'] = "-1";
 
-//echo json_encode($post);
+// echo json_encode($post);
 //echo realpath($tmpfname);
-// echo file_get_contents(realpath($tmpfname));
+//echo file_get_contents(realpath($tmpfname));
 // print_r($post);
 // exit();
 
 // $fields_string = http_build_query($post);
 
-//$url = "http://10.101.15.51/dev2/test.php";
-$url = 'http://'.$vici_web_host.'/vicidial/admin_listloader_fourth_gen.php';
+// $url = "http://10.101.15.51/dev2/test.php";
+$url = 'http://' . $vici_web_host . '/vicidial/admin_listloader_fourth_gen.php';
 // $url = 'http://' . $cluster['web_ip'] . '/vicidial/admin_listloader_fourth_gen.php';
 
 // print_r($cluster);
 
 echo "Preparing to CURL POST TO: " . $url . "\n";
 
-//print_r($post);exit;
+print_r($post);exit;
 
 // PUSH THE LEADS TO VICI VIA CURL/API
 $process = curl_init($url);
@@ -312,30 +314,31 @@ if ($errno = curl_errno($process)) {
 }
 
 curl_close($process);
-echo "CURL Results: ".$return."\n";
+echo "CURL Results: " . $return . "\n";
 
 if (count($completed_id_stack) > 0 && $errno == 0) {
     // $sql = "UPDATE `lead_tracking` SET `dispo`='".mysql_real_escape_string($finshed_dispo)."' WHERE `id` IN(";
-
-    $sql = "UPDATE `lead_tracking` SET `list_id`='" . mysqli_real_escape_string($_SESSION['db'],$push_to_list_id) . "' WHERE `id` IN(";
-
+    
+    $sql = "UPDATE `lead_tracking` SET `list_id`='" . mysqli_real_escape_string($_SESSION['db'], $push_to_list_id) . "' WHERE `id` IN(";
+    
     $x = 0;
     foreach ($completed_id_stack as $sid) {
         $sql .= ($x ++ > 0) ? "," : '';
-
+        
         $sql .= $sid;
     }
-
+    
     if ($x > 0) {
-
+        
         $sql .= ")";
-
+        
         echo "Updating `lead_tracking` to mark leads as recycled\n";
-
-        echo $sql."\n";
-	//echo "Skipping query for testing!!!!!!!!!!!\n";
-        execSQL($sql);
+        
+        echo $sql . "\n";
+        // echo "Skipping query for testing!!!!!!!!!!!\n";
+///        execSQL($sql);
     }
+
 }
 
 

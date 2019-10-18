@@ -4,17 +4,23 @@ session_start();
 
 global $delimiter;
 
-$basedir = "/var/www/html/reports/";
+$basedir = "/var/www/html/dev/";
 
 $push_to_cluster_id = 3; // 3 == TAPS CLUSTER
 
 $push_to_list_id = "200000";
 
 
-$vici_web_host = "10.101.11.17";
+$vici_web_host = "10.101.11.15";
 
-// $delimiter = "/t";
-$delimiter = "|";
+// **** Some important shit regarding files, delimiters and varibables ****
+// Due to the way the import tool is written things work A LOT better if you use comma delimited .csv files. 
+// If the file extension is not .csv, .xls, .xlsx, .ods, or .sxc it uses /tmp/vicidial_temp_file.txt as its temp file
+// If it has one of those extensions it will create a file of the same name as the filename posted in the variable somefilename.txt in the system tmp folder
+// The lead_file variable must be posted with the full path to the txt file it will create based on the filename ie '/tmp/somefilename.txt'
+// lead_file must be send with the full path and be the txt name of the file while leadfile_name as far as I can tell is only used to determine what kind of file it is so it does not really matter.
+
+$delimiter = ",";
 
 $finshed_dispo = "RECOVR";
 
@@ -164,7 +170,7 @@ SELECT
 FROM
     lead_tracking
 WHERE
-    `dispo` IN ('hangup' , 'NOVERI')
+	`dispo` IN ('hangup' , 'NOVERI')
         AND `time` BETWEEN '$stime' AND '$etime'
         #AND `time` BETWEEN UNIX_TIMESTAMP(now() - INTERVAL 24 HOUR) AND UNIX_TIMESTAMP(now())
 
@@ -172,13 +178,13 @@ WHERE
         AND `list_id` != '" . mysqli_real_escape_string($_SESSION['db'],$push_to_list_id) . "'
         #Remove records that are missing critical data if any of these fields are 0 ignore the record
         AND 0 NOT IN (lead_id , vici_cluster_id, campaign_id)
+	AND vici_cluster_id NOT in (3)  
        #Using group to remove duplicated records in the dispo log
         GROUP BY vici_cluster_id , lead_id;";
 
-//        AND vici_cluster_id NOT in (3)
 
-#echo $myquery;
-#exit;
+//echo $myquery;
+//exit;
 
 
 $res = query($myquery);
@@ -191,7 +197,7 @@ if ($rowcnt <= 0) {
 }
 
 // WRITE THEM TO A TEMP FILE
-$tmpfname = tempnam(sys_get_temp_dir(), 'HangupRecovery'); // good
+$tmpfname = tempnam(sys_get_temp_dir(), 'HangupRecovery').'.csv'; // good
 
 $fh = fopen($tmpfname, "w");
 
@@ -230,7 +236,7 @@ echo "Filename: ".$tmpfname."\n";
 
 // BUILD THE POST ARRAY
 $post = array(
-    'leadfile_name' => $tmpfname,
+    'leadfile_name' => basename($tmpfname),
     'DB' => "",
     // Overriding list_id is REQUIRED for loading custom fields data so unfortunately one list at a time.
     'list_id_override' => $push_to_list_id,
@@ -251,12 +257,14 @@ $post = array(
 
     'usacan_check' => "NONE",
     'postalgmt' => "POSTAL",
-    'OK_to_process' => "OK TO PROCESS",
-    // Cause they dont fucking set it right (I know what your thinking... Its the only value that works.. I tried)
-    'lead_file' => '/tmp/vicidial_temp_file.txt'
-//    'leadfile' => '@' . realpath($tmpfname)
+//	For custom formatted files where we are populating custom field data the api expects the first post to upload the file without OK_to_process
+//    'OK_to_process' => "OK TO PROCESS",
+
+//  lead_file should be the txt version of whatever file you send. During the first post it is uploaded and automagically converted.
+'lead_file' => '/tmp/'.pathinfo($tmpfname)['filename'].".txt"
 );
 
+// leadfile is the actual file and name that is uploaded to vicidial set filename accordingly .csv .txt .xlsx etc note: .csv preferred
 
 if (function_exists('curl_file_create')) { // php 5.5+
 	$post['leadfile'] = curl_file_create(realpath($tmpfname));
@@ -305,11 +313,25 @@ curl_setopt($process, CURLOPT_TIMEOUT, 45);
 curl_setopt($process, CURLOPT_POST, 1);
 curl_setopt($process, CURLOPT_POSTFIELDS, $post); // $fields_string);
 curl_setopt($process, CURLOPT_RETURNTRANSFER, TRUE);
+
+// This post will upload the file and would normally prompt the user to select which csv fields to use for what lead variables. Without stuff breaks.
+
 $return = curl_exec($process);
 
 if ($errno = curl_errno($process)) {
     echo "cURL error ({$errno}):\n";
 }
+
+$post['OK_to_process']='OK_TO_PROCESS';
+// We dont need or want to upload the file twice
+unset($post['leadfile']);
+curl_setopt($process, CURLOPT_POSTFIELDS, $post); // $fields_string);
+$return = curl_exec($process);
+
+if ($errno = curl_errno($process)) {
+    echo "cURL error ({$errno}):\n";
+}
+
 
 curl_close($process);
 echo "CURL Results: ".$return."\n";
@@ -332,9 +354,9 @@ if (count($completed_id_stack) > 0 && $errno == 0) {
 
         echo "Updating `lead_tracking` to mark leads as recycled\n";
 
-        echo $sql."\n";
-	//echo "Skipping query for testing!!!!!!!!!!!\n";
-        execSQL($sql);
+        //echo $sql."\n";
+echo "Skipping query for testing!!!!!!!!!!!\n";
+//      execSQL($sql);
     }
 }
 

@@ -1,18 +1,29 @@
 #!/usr/bin/php
 <?php
-	$basedir = "/var/www/html/dev/";
+	$basedir = "/var/www/html/reports/";
 
 	include_once($basedir."db.inc.php");
-	include_once($basedir."utils/microtime.php");
+	include_once($basedir."util/microtime.php");
 	include_once($basedir."utils/format_phone.php");
 	include_once($basedir."utils/db_utils.php");
 
 
-
+	include_once($basedir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px_export_all_user_groups_to_vici";
+	
+	
 	$stime = mktime(0,0,0);
 	$etime = mktime(23,59,59);
 
 
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
+	
+	
+	
+	
 	echo "Starting Bulk Vici User GROUP EXPORT script on ".date("m/d/Y",$stime)."...\n";
 
 
@@ -65,6 +76,8 @@
 //	print_r($master_groups);
 //	exit;
 
+	$process_logs = '';
+	
 	// LOOP THROUGH STACK OF VICIDIAL SERVERS
 	foreach($clusters as $cluster_id => $vicirow ){
 
@@ -118,9 +131,11 @@
 					}
 				} // END FOREACH (Group row)
 
+				$str = "Adding group '".$grouprow['user_group']." to Vici Cluster #".$cluster_id."\n";
+				
+				$process_logs .= $str;
 
-
-				echo "Adding group '".$grouprow['user_group']." to Vici Cluster #".$cluster_id."\n";
+				echo $str;
 
 //print_r($dat);
 
@@ -139,4 +154,9 @@
 	}
 
 
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
+	
+	
+	
 

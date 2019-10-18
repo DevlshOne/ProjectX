@@ -79,6 +79,7 @@ class LoginTracker{
 			var LoginsTableFormat = [
 				['id','align_left'],
 				['[time:time]','align_left'],
+				['[get:time_logged_out:time_out]','align_left'],
 				['username','align_left'],
 				['result','align_left'],
 				['section','align_left'],
@@ -386,6 +387,7 @@ class LoginTracker{
 					<tr>
 						<th class="row2" align="left"><?=$this->getOrderLink('id')?>ID</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('time')?>Time</a></th>
+						<th class="row2" align="left"><?=$this->getOrderLink('time_out')?>Logout Time</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('username')?>Username</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('result')?>Result</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('section')?>Section</a></th>
@@ -504,6 +506,25 @@ class LoginTracker{
 			$('#dialog-modal-view-login').dialog( "option", "title", '<?=($id)?'Viewing Login #'.$id.' - '.htmlentities($row['username']):''?>' );
 
 
+			function kickoutUser(loginid){
+
+
+				$.ajax({
+					type: "GET",
+					cache: false,
+					url: 'ajax.php?mode=force_logout&force_logout_user='+loginid,
+					error: function(){
+						alert("Error submitting. Please contact an admin.");
+					},
+					success: function(msg){
+
+						alert(msg);
+						
+					}
+				});
+					
+				
+			}
 
 		</script>
 		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkLoginFrm(this); return false">
@@ -516,22 +537,48 @@ class LoginTracker{
 			<td><?=htmlentities($row['user_id'])?></td>
 		</tr>	
 		<tr>
-			<th align="left" height="30">Time:</th>
-			<td><?=htmlentities($row['time'])?></td>
-		</tr>	
+			<th align="left" height="30"><?=($row['result'] == 'success')?"Time Logged in:":"Time Attempted:"?></th>
+			<td><?=date("g:i:sa", $row['time'])?></td>
+		</tr><?
+		
+		if($row['result'] == 'success'){
+		?><tr>
+			<th align="left" height="30">Time Last Action:</th>
+			<td><?=date("g:i:sa", $row['time_last_action'])?></td>
+		</tr>
 		<tr>
+			<th align="left" height="30">Time Logged out:</th>
+			<td><?=($row['time_out']==0)?
+					'[STILL LOGGED IN]'.((checkAccess('login_tracker_kick_user'))?'<input type="button" value="KICK THEM OUT" onclick="kickoutUser('.$row['id'].');">':''):
+						date("g:i:sa", $row['time_out'])?></td>
+		</tr><?
+		
+		
+		}
+		
+		?><tr>
 			<th align="left" height="30">Username:</th>
 			<td><?=htmlentities($row['username'])?></td>
 		</tr>
 		<tr>
 			<th align="left" height="30">Result:</th>
 			<td><?=htmlentities($row['result'])?></td>
-		</tr>
-		<tr>
+		</tr><?
+		
+		if(trim($row['details'])){
+		?><tr>
+			<th align="left" height="30">Reason:</th>
+			<td><?=htmlentities($row['details'])?></td>
+		</tr><?
+		}
+		
+		?><tr>
 			<th align="left" height="30">Section:</th>
 			<td><?=htmlentities($row['section'])?></td>
-		</tr>
-		<tr>
+		</tr><?
+		
+		if($row['section'] != 'admin'){
+		?><tr>
 			<th align="left" height="30">Campaign:</th>
 			<td><?=htmlentities($row['script_id'])?> - <?
 
@@ -568,8 +615,11 @@ class LoginTracker{
 
 
 			?></td>
-		</tr>			
-		<tr>
+		</tr><?
+		
+		}
+		
+		?><tr>
 			<th align="left" height="30">IP:</th>
 			<td><?=htmlentities($row['ip'])?></td>
 		</tr>		

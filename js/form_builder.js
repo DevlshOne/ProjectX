@@ -376,7 +376,7 @@ frmField.prototype = {
             case '2' :
                 // This is a checkbox field, so let's create it and then populate it
                 lblObj.text(this.txtLabel);
-                fldObj.text(this.txtLabel);
+                //fldObj.text(this.txtLabel);
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
                 fldObj.attr('name', this.fldName);
@@ -411,9 +411,13 @@ frmField.prototype = {
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="img' + this.idx + '"></div>');
                 break;
             case '4' :
+            	
+            	let tmplbl = this.txtLabel;
+            	//tmplbl = tmplbl.replace("<html>","");
+            	
                 // This is a label field, so let's create it and then populate it
-                lblObj.text(this.txtLabel);
-                fldObj.text(this.txtLabel);
+                lblObj.text(tmplbl);
+                fldObj.text(tmplbl);
                 lblObj.css('width', this.lblWidth);
                 lblObj.css('height', this.lblHeight);
                 fldObj.attr('name', this.fldName);
