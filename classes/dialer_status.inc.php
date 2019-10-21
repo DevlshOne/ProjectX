@@ -262,13 +262,14 @@
                             },
                             'Confirm': function () {
                                 let theAction = $(this).data('myAction');
+                                let clusterID = $(this).data('clusterID');
                                 $(this).dialog('close');
                                 switch (theAction) {
                                     case 'forceHopper':
                                         forceHopper('ALL');
                                         break;
                                     case 'stopDialers':
-                                        stopDialers('ALL');
+                                        stopDialers(clusterID);
                                         break;
                                     default:
                                         break;
@@ -289,6 +290,7 @@
                             },
                             'Confirm': function () {
                                 let theAction = $(this).data('myAction');
+                                let clusterID = $(this).data('clusterID');
                                 $(this).dialog('close');
                                 switch (theAction) {
                                     case 'forceHopper':
@@ -301,6 +303,7 @@
                                         break;
                                 }
                                 $('#dialog-modal-second-confirm').data('myAction', theAction);
+                                $('#dialog-modal-second-confirm').data('clusterID', clusterID);
                                 $('#dialog-modal-second-confirm').dialog('open');
                             }
                         }
@@ -486,6 +489,7 @@
                     $('#stopDialersButton').on('click', function (e, ui) {
                         dlgObj = $('#dialog-modal-first-confirm');
                         dlgObj.data('myAction', 'stopDialers');
+                        dlgObj.data('clusterID', selectedClusters);
                         dlgObj.html('<div class="firstConfirmation">This will stop ALL DIALING on the PRODUCTION servers, are you sure?</div>');
                         dlgObj.dialog('open');
                     });
@@ -597,15 +601,29 @@
                             });
                             alert('ALL dialers have been stopped!');
                         } else {
-                            $.ajax({
-                                type: "POST",
-                                cache: false,
-                                async: false,
-                                crossDomain: false,
-                                crossOrigin: false,
-                                url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + clid
-                            });
-                            alert('Dialer for Cluster ' + clid + ' is stopped!');
+                            if (clid.isArray()) {
+                                $.each(clid, function(i, v) {
+                                    $.ajax({
+                                        type: "POST",
+                                        cache: false,
+                                        async: false,
+                                        crossDomain: false,
+                                        crossOrigin: false,
+                                        url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + v
+                                    });
+                                    alert('Dialer for Cluster ' + v + ' is stopped!');
+                                })
+                            } else {
+                                $.ajax({
+                                    type: "POST",
+                                    cache: false,
+                                    async: false,
+                                    crossDomain: false,
+                                    crossOrigin: false,
+                                    url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + clid
+                                });
+                                alert('Dialer for Cluster ' + clid + ' is stopped!');
+                            }
                         }
                     }
 
