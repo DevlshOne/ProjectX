@@ -1542,6 +1542,8 @@ $(function() {
 
         echo date("H:i:s m/d/Y")." - Starting sendReportEmails() funtime...\n";
 
+        $sent_report_total = 0;
+        
         while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
             echo date("H:i:s m/d/Y")." - Checking REID#".$row['id']." report id:".$row['report_id']." interval:".$row['interval']." last_ran:".$row['last_ran']."\n";
 
@@ -1862,6 +1864,9 @@ $(function() {
 				echo date("H:i:s m/d/Y")." - ERROR: Mail::send() call failed sending to ".$row['email_address'];
 
 			}else{
+				
+				$sent_report_total++;
+				
 				echo date("H:i:s m/d/Y")." - Successfully emailed ".$row['email_address']." - ".$subject."\n";
 
 				// UPDATE last_ran TIME
@@ -1880,6 +1885,8 @@ $(function() {
 
 		echo date("H:i:s m/d/Y")." - Finished sendReportEmails()\n";
 
+		
+		return $sent_report_total;
 	}
 
 

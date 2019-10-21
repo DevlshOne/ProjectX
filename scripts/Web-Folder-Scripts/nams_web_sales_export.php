@@ -9,7 +9,7 @@
 
 	$email_html = null;
 
-	$base_dir = "/var/www/html/dev/";
+	$base_dir = "/var/www/html/reports/";
 	$tmpdir = "/var/log/nams_export/";
 
 
@@ -20,6 +20,7 @@
 	include_once($base_dir."classes/pac_reports.inc.php");
 
 
+	
 	global $campaign_array;
 	global $offices;
 
@@ -72,7 +73,6 @@
 		return preg_replace('/[^a-zA-Z0-9.,-=_ $@#^&:;\'"\?]/','', $input, -1);
 	}
 
-	function endsWith($haystack, $needle) {return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);}
 
 
 	function getCSVFilename(){
@@ -174,6 +174,22 @@
 
 	}
 
+	
+	
+	
+	include_once($base_dir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "nams_web_sales_export";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv),"Timeframe:".date("H:i:s m/d/Y", $stime)." - ".date("H:i:s m/d/Y", $etime));
+	
+	$process_logs = '';
+	
+	
+	
+	
 	echo "NAMS WEB SALES Export STARTING - ".date("H:i:s m/d/Y")."\n";
 
 
@@ -232,4 +248,8 @@
 
 
 	}
-
+	
+	
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed");
+	

@@ -33,7 +33,7 @@ class API_Functions{
 			break;
 		case 'json':
 
-			echo 'error:"'.mysqli_real_escape_string($_SESSION['dbapi']->db,$msg).'"';
+			echo 'error:"'.(($msg != null)?addslashes($msg):'').'"';
 
 			if($die)exit;
 

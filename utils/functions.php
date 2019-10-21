@@ -27,7 +27,7 @@
 
 	function filterName($str, $max_length = 0){
 
-		$out = preg_replace('/[^a-zA-Z0-9._-\'\/\\#$ ]/g', '' , $str);
+		$out = preg_replace('/[^a-zA-Z0-9.\-_\'\/\\#$ ]/', '' , $str);
 
 		if($max_length && $max_length > 0){
 

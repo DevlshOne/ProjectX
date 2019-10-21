@@ -508,18 +508,24 @@ class FeatureControl{
 						</tr><?
 
 						$this->renderFeatureRow('lead_management', 'Lead Management', ($row['lead_management'] == 'yes')?true:false );
+						$this->renderFeatureRow('lmt_edit_lead', '|--&gt;Edit Lead', ($row['lmt_edit_lead'] == 'yes')?true:false );
+						$this->renderFeatureRow('lmt_change_dispo', '|--&gt;Change Dispo', ($row['lmt_change_dispo'] == 'yes')?true:false );
+						$this->renderFeatureRow('lmt_create_sale', '|--&gt;Create Sale', ($row['lmt_create_sale'] == 'yes')?true:false );
+						
 						$this->renderFeatureRow('sales_management', 'Sales Management', ($row['sales_management'] == 'yes')?true:false );
 						
 						
 						$this->renderFeatureRow('employee_hours', 'Employee Hours', ($row['employee_hours'] == 'yes')?true:false );
-
+						$this->renderFeatureRow('employee_hours_edit', '|--&gt;Edit Hours', ($row['employee_hours_edit'] == 'yes')?true:false );
+						
+						
 						$this->renderFeatureRow('phone_lookup', 'DRIPP Phone lookup', ($row['phone_lookup'] == 'yes')?true:false );
 
 						$this->renderFeatureRow('quiz_results', 'Quiz Results', ($row['quiz_results'] == 'yes')?true:false );
 
 						$this->renderFeatureRow('ringing_calls', 'Ring Report', ($row['ringing_calls'] == 'yes')?true:false );
 						$this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes')?true:false );
-						$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
+						//$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
 						
 						
 						$this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes')?true:false );
@@ -573,7 +579,8 @@ class FeatureControl{
 						$this->renderFeatureRow('users', 'Central User Management', ($row['users'] == 'yes')?true:false );
 
 						$this->renderFeatureRow('feature_control', 'Feature Control', ($row['feature_control'] == 'yes')?true:false );
-
+						$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
+						$this->renderFeatureRow('login_tracker_kick_user', '|--&gt;Kick User', ($row['login_tracker_kick_user'] == 'yes')?true:false );
 						$this->renderFeatureRow('action_log', 'Action Log', ($row['action_log'] == 'yes')?true:false );
 
 						?><tr>

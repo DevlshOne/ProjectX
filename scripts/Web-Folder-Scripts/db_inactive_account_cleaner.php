@@ -3,7 +3,7 @@
 	// DELETE USER ACCOUNTS THAT HAVE BEEN DELETED FROM VICI BUT NOT THE DATABASE
 	// AUTHORS MICHAEL SEGRETI & JONATHAN WILL
 
-        $basedir = "/var/www/dev/";
+        $basedir = "/var/www/html/reports/";
 
         include_once($basedir."db.inc.php");
 

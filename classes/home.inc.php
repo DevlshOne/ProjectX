@@ -51,8 +51,8 @@
                 $this->prefs['tiles'] = array();
                 $this->prefs['tiles'][] = array('type' => 'my_notes',);
                 $this->prefs['tiles'][] = array('type' => 'user_count', 'timeframe' => 'day');
-                $this->prefs['tiles'][] = array('type' => 'sales_overview', 'clusters' => array(23, 25), 'user_groups' => array(), // ALL USER GROUPS
-                    'timeframe' => 'day');
+               // $this->prefs['tiles'][] = array('type' => 'sales_overview', 'clusters' => array(23, 25), 'user_groups' => array(), // ALL USER GROUPS
+                //    'timeframe' => 'day');
                 $this->savePreferences();
             }
             $this->handlePOST();
@@ -157,18 +157,20 @@
                     var feDebug = false;
                     var $sortArea = $("#home_sortable");
                     var homeTiles = JSON.parse('<?=json_encode($this->prefs['tiles']);?>');
-                    var newTileArray = new Array();
                     var newTilePreSave = {};
                     $sortArea.sortable({
                         items: 'li:not(#tile_add)',
                         refreshPositions: true,
+                        forcePlaceholderSize: true,
                         stop: function (e, ui) {
                             let sortedTileIDs = $sortArea.sortable('toArray');
+                            let newTileArray = new Array();
                             newTileArray['tiles'] = new Array();
-                            sortedTileIDs.pop();
                             if (feDebug) console.log('Before sort ===> ' + JSON.stringify(homeTiles));
                             $(sortedTileIDs).each(function (i, v) {
-                                newTileArray.push(homeTiles[v.split('_')[1]]);
+                                if (v.split('_')[1] != 'add' && v != '') {
+                                    newTileArray.push(homeTiles[v.split('_')[1]]);
+                                }
                             });
                             newTilePreSave.tiles = newTileArray;
                             if (feDebug) console.log('After sort [newTilePreSave] ===> ' + JSON.stringify(newTilePreSave));

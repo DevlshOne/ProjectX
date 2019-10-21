@@ -4,14 +4,14 @@ session_start();
 
 global $delimiter;
 
-$basedir = "/var/www/html/reports/";
+$basedir = "/var/www/html/dev/";
 
 $push_to_cluster_id = 3; // 3 == TAPS CLUSTER
 
 $push_to_list_id = "200000";
 
 
-$vici_web_host = "10.101.11.17";
+$vici_web_host = "10.101.11.15";
 
 // $delimiter = "/t";
 $delimiter = "|";
@@ -172,10 +172,10 @@ WHERE
         AND `list_id` != '" . mysqli_real_escape_string($_SESSION['db'],$push_to_list_id) . "'
         #Remove records that are missing critical data if any of these fields are 0 ignore the record
         AND 0 NOT IN (lead_id , vici_cluster_id, campaign_id)
+	AND vici_cluster_id NOT in (3)  
        #Using group to remove duplicated records in the dispo log
         GROUP BY vici_cluster_id , lead_id;";
 
-//        AND vici_cluster_id NOT in (3)
 
 #echo $myquery;
 #exit;
@@ -191,7 +191,7 @@ if ($rowcnt <= 0) {
 }
 
 // WRITE THEM TO A TEMP FILE
-$tmpfname = tempnam(sys_get_temp_dir(), 'HangupRecovery'); // good
+$tmpfname = tempnam(sys_get_temp_dir(), 'HangupRecovery').'.csv'; //good
 
 $fh = fopen($tmpfname, "w");
 
@@ -253,16 +253,16 @@ $post = array(
     'postalgmt' => "POSTAL",
     'OK_to_process' => "OK TO PROCESS",
     // Cause they dont fucking set it right (I know what your thinking... Its the only value that works.. I tried)
-    'lead_file' => '/tmp/vicidial_temp_file.txt'
-//    'leadfile' => '@' . realpath($tmpfname)
+    'lead_file' => '/tmp/vicidial_temp_file.txt',
+    'leadfile' => '@' . realpath($tmpfname)
 );
 
 
-if (function_exists('curl_file_create')) { // php 5.5+
-	$post['leadfile'] = curl_file_create(realpath($tmpfname));
-} else { //
-	$post['leadfile'] = '@' . realpath($tmpfname);
-}
+//if (function_exists('curl_file_create')) { // php 5.5+
+//	$post['leadfile'] = curl_file_create(realpath($tmpfname));
+//} else { //
+//	$post['leadfile'] = '@' . realpath($tmpfname);
+//}
 
 
 
@@ -334,7 +334,7 @@ if (count($completed_id_stack) > 0 && $errno == 0) {
 
         echo $sql."\n";
 	//echo "Skipping query for testing!!!!!!!!!!!\n";
-        execSQL($sql);
+        //execSQL($sql);
     }
 }
 

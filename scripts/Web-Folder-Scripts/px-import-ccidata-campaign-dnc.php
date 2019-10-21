@@ -12,10 +12,21 @@
 	include_once($base_dir."site_config.php");
 	include_once($base_dir."db.inc.php");
 
-	include_once($base_dir."utils/db_utils.php");
-	include_once($base_dir."utils/microtime.php");
+	include_once($base_dir."util/db_utils.php");
+	include_once($base_dir."util/microtime.php");
 
-
+	include_once($base_dir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px-import-ccidata-campaign-dnc";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
+	
+	$process_logs = '';
+	
+	
+	
 	// CONNECT PX DB FIRST
 	connectPXDB();
 
@@ -77,8 +88,11 @@
 //print_r($rowarr);
 			connectListDB();
 
-			echo "Pushing ".number_format(count($rowarr))." Campaign DNC numbers (".number_format($running_cnt).")...\n";
+			$str = "Pushing ".number_format(count($rowarr))." Campaign DNC numbers (".number_format($running_cnt).")...\n";
 
+			$process_logs .= $str;
+			echo $str;
+			
 			// DO BULK INSERT
 			$ecnt = bulkAdd($rowarr, 'dnc_campaign_list', true);
 
@@ -104,8 +118,12 @@
 		connectListDB();
 
 
-		echo "Pushing ".number_format(count($rowarr))." Campaign DNC numbers (".number_format($running_cnt).")\n";
-
+		$str = "Pushing ".number_format(count($rowarr))." Campaign DNC numbers (".number_format($running_cnt).")\n";
+		
+		$process_logs .= $str;
+		echo $str;
+		
+		
 		// DO BULK INSERT
 		$ecnt = bulkAdd($rowarr, 'dnc_campaign_list', true);
 
@@ -120,12 +138,22 @@
 	$cluster_total += $running_cnt;
 
 
-	echo "Done. Total=".number_format($running_cnt)."\n";
+	$str = "Done. Total=".number_format($running_cnt)."\n";
 
-
+	$process_logs .= $str;
+	echo $str;
+	
 	$timer_end = microtime_float();
 	$runtime = $timer_end - $timer_start;
 
 
-	echo "Run time: ".$runtime." seconds\n";
-
+	$str = "Run time: ".$runtime." seconds\n";
+	
+	$process_logs .= $str;
+	echo $str;
+	
+	
+	
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
+	

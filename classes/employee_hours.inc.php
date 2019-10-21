@@ -367,10 +367,18 @@ class EmployeeHours{
 				['[render:hours_from_min:activity_time]','align_center'],
 				['[render:hours_from_sec:seconds_INCALL:seconds_READY:seconds_QUEUE]','align_center'],
 				['[render:breakdown_hours_from_sec:In Call,seconds_INCALL:Ready,seconds_READY:Queue,seconds_QUEUE:Paused,seconds_PAUSED]','align_center'],
-				['[render:editable_hours_from_min:paid_time]','align_center'],
 
-
-				['[textfield:notes:note_data:30]','align_left'],
+			<?
+			if(!checkAccess('employee_hours_edit')){
+				?>['[render:hours_from_min:paid_time]','align_center'],
+				['note_data','align_left'],<?
+				
+			}else{
+				?>['[render:editable_hours_from_min:paid_time]','align_center'],
+				['[textfield:notes:note_data:30]','align_left'],<?
+				
+			}
+			?>
 			];
 
 
@@ -854,9 +862,15 @@ class EmployeeHours{
 				Employee Hours <a name="header_anchor"></a>
 
 			</td>
-			<td align="left">
-				<input type="button" value="Add Hours" onclick="displayEditEmpDialog(0)">
-			</td>
+			<td align="left"><?
+			
+			if(!checkAccess('employee_hours_edit')){
+				?>&nbsp;<?
+			}else{
+				?><input type="button" value="Add Hours" onclick="displayEditEmpDialog(0)" /><?
+			}
+			
+			?></td>
 			<td align="right"><?
 				/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
 				<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
@@ -1008,36 +1022,47 @@ class EmployeeHours{
 
 					<input type="button" value="Export Clean TOTALS to CSV" name="export_clean_totals" onclick="exportResultsCSV(2)">
 
-				</td>
-				<td>
-
-					<table border="0">
-					<tr>
-						<td nowrap>
-							<span id="setallspan"></span>
-							<script>
-
-								$('#setallspan').html(
-
-										makeNumberDD('paid_hour_setall',0,	0,24,1,	false,'',false)+"h&nbsp;"+
-										makeNumberDD('paid_min_setall',0,	0,59,1,	true,'',false)+'m'
-
-								);
-
-							</script>
-							<?/**<input type="text" size="4" name="set_all_to_value" id="set_all_to_value">**/?>
-
-
-
-						</td>
-						<td><input type="button" value="Set all (on screen)" onclick="setAllToValue()"></td>
-					</tr>
-
-					</table>
-
-				</td>
-				<td width="33%"><input type="submit" name="save_button" value="Save Changes" /></td>
-
+				</td><?
+				
+				
+				
+				if(!checkAccess('employee_hours_edit')){
+					?><td colspan="2">&nbsp;</td><?
+				}else{
+					?><td>
+	
+						<table border="0">
+						<tr>
+							<td nowrap>
+								<span id="setallspan"></span>
+								<script>
+	
+									$('#setallspan').html(
+	
+											makeNumberDD('paid_hour_setall',0,	0,24,1,	false,'',false)+"h&nbsp;"+
+											makeNumberDD('paid_min_setall',0,	0,59,1,	true,'',false)+'m'
+	
+									);
+	
+								</script>
+								<?/**<input type="text" size="4" name="set_all_to_value" id="set_all_to_value">**/?>
+	
+	
+	
+							</td>
+							<td><input type="button" value="Set all (on screen)" onclick="setAllToValue()"></td>
+						</tr>
+	
+						</table>
+	
+					</td>
+					<td width="33%"><input type="submit" name="save_button" value="Save Changes" /></td>
+					<?
+				
+				}
+				
+				
+			?>
 			</tr>
 
 			</table>
@@ -1073,23 +1098,35 @@ class EmployeeHours{
 			// MAGICAL FUCKING AJAX FAIRIES WILL POPULATE THIS SECTION
 
 			?></table>
+			
+			
 
 				<table border="0" width="950">
-			<tr>
-				<td width="33%"></td>
-				<td width="33%" align="right">
-
-					<span id="spn_total_activity"></span><br />
-
-					<span id="spn_total_paid"></span>
-
-
-				</td>
-				<td width="33%"><input type="submit" name="save_button" value="Save Changes" /></td>
-
-			</tr>
-
-			</table>
+				<tr>
+					<td width="33%"></td>
+					<td width="33%" align="right">
+	
+						<span id="spn_total_activity"></span><br />
+	
+						<span id="spn_total_paid"></span>
+	
+	
+					</td>
+					<td width="33%"><?
+					
+					if(!checkAccess('employee_hours_edit')){
+						?>&nbsp;<?
+					}else{
+					
+						?><input type="submit" name="save_button" value="Save Changes" /><?
+						
+					}
+						
+					?></td>
+	
+				</tr>
+	
+				</table>
 
 
 

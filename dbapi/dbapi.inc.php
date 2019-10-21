@@ -145,6 +145,11 @@ class DBAPI {
     public $my_notes;
 
     public $sales_management;
+  
+    public $process_tracker;
+    
+
+    
     
     /**
      * DBAPI Constructor
@@ -254,6 +259,11 @@ class DBAPI {
 
         include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
 
+        
+        ## ACTIVITY LOG
+        include_once($_SESSION['site_config']['basedir']."dbapi/process_tracker.db.php");
+        $this->process_tracker = new ProcessTrackerAPI();
+        
         ## ACTIVITY LOG
         include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
         $this->activitys = new ActivitysAPI();
@@ -390,6 +400,9 @@ class DBAPI {
 		
 		include_once($_SESSION['site_config']['basedir']."dbapi/sales_management.db.php");
 		$this->sales_management = new SalesManagementAPI();
+		
+		
+		
 		
 		
 	}

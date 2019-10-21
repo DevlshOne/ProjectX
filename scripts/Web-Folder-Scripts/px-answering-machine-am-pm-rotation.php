@@ -6,18 +6,27 @@
 
  */
 
-	$basedir = "/var/www/html/dev2/";
+	$basedir = "/var/www/html/reports/";
 
 	include_once($basedir."db.inc.php");
-	include_once($basedir."utils/db_utils.php");
+	include_once($basedir."util/db_utils.php");
 	include_once($basedir."classes/answering_machines.inc.php");
 
+	include_once($basedir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px-answering-machine-am-pm-rotation";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
+	
+	
 
 	echo date("H:i:s m/d/Y")." - Starting Answering machine extraction/rotation...\n";
 
 //exit;
 
-	$days = 2;
+	$days = 1;
 	
 	
 	$stime = mktime(0,0,0);
@@ -40,4 +49,8 @@
 
 
 	echo date("H:i:s m/d/Y")." - DONE!\n";
-
+	
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed");
+	
+	

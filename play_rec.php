@@ -3,6 +3,14 @@
 
 	$url = trim($_REQUEST['play_url']);
 
+	
+	if($_SESSION['user']['id']){
+		
+		include_once("dbapi/dbapi.inc.php");
+		
+		$_SESSION['dbapi']->users->updateLastActionTime();
+		
+	}
 
 ?><audio id="audio_obj" autoplay controls>
 	<source src="<?=$url?>" type="audio/mpeg" />

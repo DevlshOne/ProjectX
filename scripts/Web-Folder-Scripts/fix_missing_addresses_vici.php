@@ -6,7 +6,7 @@
  *
  *
  */
-	$basedir = "/var/www/dev2/"; // FOR PRODUCTION
+	$basedir = "/var/www/html/reports/"; // FOR PRODUCTION
 
     include_once($basedir."db.inc.php");
     include_once($basedir."utils/db_utils.php");
