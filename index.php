@@ -603,7 +603,9 @@
 
 				}
 
-				case 'user_status_report':
+				break;
+				
+			case 'user_status_report':
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['user_status_report'] == 'yes') // MANAGERS WITH USER STATUS REPORT ACCESS
