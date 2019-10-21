@@ -40,13 +40,6 @@
         }
 
         function displayDialers() {
-            /*
-             * TODO
-             * auto-refresh every 4 seconds
-             * rebuild the url based on the selected clusters
-             * calculate the spread of boxes?
-             * get ALL the data and then only display the clusters requested or only get the clusters requested?
-             */
             $this->availableClusterIDs = getClusterIDs();
             $this->getClusterInfo();
             ?>
@@ -91,10 +84,6 @@
                             <td class="align_left"><label for="vici_password">Password :</label></td>
                             <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
                         </tr>
-                        <!--                        <tr>-->
-                        <!--                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>-->
-                        <!--                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked/></td>-->
-                        <!--                        </tr>-->
                         </tbody>
                     </table>
                 </form>
@@ -611,8 +600,8 @@
                                         crossOrigin: false,
                                         url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + v
                                     });
-                                    alert('Dialer for Cluster ' + v + ' is stopped!');
-                                })
+                                });
+                                alert('Dialer for Cluster[s] ' + clid.join(', ') + ' have been stopped!');
                             } else {
                                 $.ajax({
                                     type: "POST",
@@ -622,7 +611,7 @@
                                     crossOrigin: false,
                                     url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + clid
                                 });
-                                alert('Dialer for Cluster ' + clid + ' is stopped!');
+                                alert('Dialer for Cluster ' + clid + ' has been stopped!');
                             }
                         }
                     }
