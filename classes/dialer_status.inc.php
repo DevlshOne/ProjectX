@@ -1,55 +1,55 @@
 <?
-    /***************************************************************
-     *    Dialer Status Dashboard - dialer data as draggable / sortable
-     *    Written By: Dave Mednick
-     ***************************************************************/
+/***************************************************************
+ *    Dialer Status Dashboard - dialer data as draggable / sortable
+ *    Written By: Dave Mednick
+ ***************************************************************/
 
-    $_SESSION['dialer_status'] = new DialerStatus;
+$_SESSION['dialer_status'] = new DialerStatus;
 
-    class DialerStatus {
-        public $availableClusterIDs = [];
-        public $availableClusterIPs = [];
-        public $clusterNames = [];
-        public $selectedClusters = [];
-        public $table = 'vici_cluster';
-        public $clusterInfo = [];
-
-        ## Classes main table to operate on
-
-        function DialerStatus() {
-            $this->handlePOST();
-        }
-
-        function handlePOST() {
-        }
-
-        function handleFLOW() {
-            $this->displayDialers();
-        }
-
-        function getClusterInfo() {
-            foreach (getClusterIDs() as $i => $v) {
-                $this->clusterInfo[$v]['type'] = getClusterType($v);
-                $this->clusterInfo[$v]['name'] = getClusterName($v);
-                $this->clusterInfo[$v]['ip'] = getClusterWebHost($v);
-                $this->clusterInfo[$v]['sel_campaigns'] = array("ALL-ACTIVE");//getClusterCampaigns($v);
-                $this->clusterInfo[$v]['sel_user_groups'] = array("ALL-GROUPS");//getClusterUserGroups($v);
-                $this->clusterInfo[$v]['campaign_options'] = getClusterCampaigns($v);
-                $this->clusterInfo[$v]['usergroup_options'] = getClusterUserGroups($v);
-            }
-        }
-
-        function displayDialers() {
-            /*
-             * TODO
-             * auto-refresh every 4 seconds
-             * rebuild the url based on the selected clusters
-             * calculate the spread of boxes?
-             * get ALL the data and then only display the clusters requested or only get the clusters requested?
-             */
-            $this->availableClusterIDs = getClusterIDs();
-            $this->getClusterInfo();
-            ?>
+class DialerStatus {
+	public $availableClusterIDs = [];
+	public $availableClusterIPs = [];
+	public $clusterNames = [];
+	public $selectedClusters = [];
+	public $table = 'vici_cluster';
+	public $clusterInfo = [];
+	
+	## Classes main table to operate on
+	
+	function DialerStatus() {
+		$this->handlePOST();
+	}
+	
+	function handlePOST() {
+	}
+	
+	function handleFLOW() {
+		$this->displayDialers();
+	}
+	
+	function getClusterInfo() {
+		foreach (getClusterIDs() as $i => $v) {
+			$this->clusterInfo[$v]['type'] = getClusterType($v);
+			$this->clusterInfo[$v]['name'] = getClusterName($v);
+			$this->clusterInfo[$v]['ip'] = getClusterWebHost($v);
+			$this->clusterInfo[$v]['sel_campaigns'] = array("ALL-ACTIVE");//getClusterCampaigns($v);
+			$this->clusterInfo[$v]['sel_user_groups'] = array("ALL-GROUPS");//getClusterUserGroups($v);
+			$this->clusterInfo[$v]['campaign_options'] = getClusterCampaigns($v);
+			$this->clusterInfo[$v]['usergroup_options'] = getClusterUserGroups($v);
+		}
+	}
+	
+	function displayDialers() {
+		/*
+		 * TODO
+		 * auto-refresh every 4 seconds
+		 * rebuild the url based on the selected clusters
+		 * calculate the spread of boxes?
+		 * get ALL the data and then only display the clusters requested or only get the clusters requested?
+		 */
+		$this->availableClusterIDs = getClusterIDs();
+		$this->getClusterInfo();
+		?>
             <table class="pct100 tightTable">
                 <tr>
                     <td class="ht40 pad_left ui-widget-header">
@@ -594,6 +594,12 @@
                         dlgObj.dialog('open');
                     });
 
+                    $('#dialerStatusZone').on('click', '.showAgentsButton', function () {
+                        let clid = $(this).closest('button').attr('id').split('_')[1];
+                        let $agentData = $('#clusterTile_' + clid).find('.agentInfo');
+                        $agentData.toggle();
+                    });
+
                     function stopDialers(clid) {
                         if (clid === 'ALL') {
                             $.each(clusterInfo, function (i) {
@@ -645,6 +651,32 @@
                             alert('Hopper for Cluster ' + clid + ' has been reset!');
                         }
                     }
+
+                    function applyAgentsThresh(s, v, cltype) {
+                        let maxGood = 0;
+                        let maxWarn = 0;
+                        switch (cltype) {
+                            default:
+                            case 'cold':
+                                maxGood = 4;
+                                maxWarn = 8;
+                                break;
+                            case 'taps':
+                                maxGood = 8;
+                                maxWarn = 12;
+                                break;
+                        }
+                        if (s <= maxGood && v >= 1) {
+                            return 'greenThresh';
+                        }
+                        if (s > maxGood && s <= maxWarn && v >= 1) {
+                            return 'yellowThresh';
+                        }
+                        if (s > maxWarn && v >=1) {
+                            return 'redThresh';
+                        }
+                    }
+
 
                     function applyPositiveThresh(v, crit, warn, default_color) {
                         if (parseInt(v) >= crit) {
@@ -714,8 +746,86 @@
                             'agents_dead',
                             'agents_dispo'
                         ];
-                        let clusterData = '<html>' + tbl.split('</FORM>')[0];
-                        let summaryData = '<html>' + tbl.split('</FORM>')[1];
+                        const rgxPre = /<PRE>([\s\S]*)<\/PRE>/gi;
+                        let preString = '';
+                        if (tbl.match(rgxPre) !== null) {
+                            preString = tbl.match(rgxPre)[0];
+                        } else {
+                            preString = '';
+                        }
+                        let agentDataOutput = '';
+                        let clusterData = '<HTML>' + tbl.replace(rgxPre, '').split('</FORM>')[0] + '</HTML>';
+                        let summaryData = '<HTML>' + tbl.replace(rgxPre, '').split('</FORM>')[1] + '</HTML>';
+                        if (preString.length > 11) {
+                            let tmpAgentData = preString.match(rgxPre)[0];
+                            let tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/gi).map(function (val) {
+                                return val.replace(/<\/?b>/gi, '').trim();
+                            });
+                            let parsedAgentData = [];
+                            let rowNumber = 0;
+                            let colNumber = 0;
+                            parsedAgentData[0] = [];
+                            for (let cell = 0; cell < tmpAgentDataSplit.length - 1; cell++) {
+                                if ((cell > 0) && (cell % 7 === 0)) {
+                                    rowNumber++;
+                                    colNumber = 0;
+                                    parsedAgentData[rowNumber] = [];
+                                }
+                                switch (colNumber) {
+                                    case 0 :
+                                        parsedAgentData[rowNumber]['station_id'] = tmpAgentDataSplit[cell];
+                                        break;
+                                    case 1 :
+                                        parsedAgentData[rowNumber]['agent_user'] = tmpAgentDataSplit[cell];
+                                        break;
+                                    case 3 :
+                                        parsedAgentData[rowNumber]['ready_status'] = tmpAgentDataSplit[cell];
+                                        break;
+                                    case 4 :
+                                        parsedAgentData[rowNumber]['minutes_ready'] = parseInt(tmpAgentDataSplit[cell].split(':')[0]);
+                                        parsedAgentData[rowNumber]['seconds_ready'] = parseInt(tmpAgentDataSplit[cell].split(':')[1]);
+                                        break;
+                                    default :
+                                        break;
+                                }
+                                colNumber++;
+                            }
+
+                            function agentIsReady(v) {
+                                return v['ready_status'] === 'READY';
+                            }
+
+                            let parsedAgentDataFiltered = parsedAgentData.filter(agentIsReady);
+                            let userCounts = new Array();
+                            for (let i = 0; i < 16; i++) {
+                                userCounts[i] = 0;
+                            }
+                            $(parsedAgentDataFiltered).each(function (i, v) {
+                                let s = parseInt((v['minutes_ready'] * 60) + (v['seconds_ready']));
+                                if (s > 14) {
+                                    userCounts[15] = userCounts[15] + 1;
+                                } else {
+                                    userCounts[s] = userCounts[s] + 1;
+                                }
+                            });
+                            parsedAgentDataFiltered.sort((a, b) => (a['seconds_ready'] > b['seconds_ready']) ? 1 : -1);
+                            agentDataOutput = '<table class="tightTable pct100">';
+                            let secondsRow = '<thead><tr><th class="secondsRow">Wait Time</th>';
+                            let countsRow = '<tbody><tr><td class="countsRow">Agents</td>';
+                            for (let i = 0; i < 16; i++) {
+                                if (i === 15) {
+                                    secondsRow += '<th class="secondsRow ' + applyAgentsThresh(i, userCounts[i], cltype) + '">' + i.toString() + '+</th>';
+                                } else {
+                                    secondsRow += '<th class="secondsRow ' + applyAgentsThresh(i, userCounts[i], cltype) + '">' + i.toString() + '</th>';
+                                }
+                                countsRow += '<td class="countsRow ' + applyAgentsThresh(i, userCounts[i], cltype) + '">' + userCounts[i] + '</td>';
+                            }
+                            secondsRow += '</tr></thead>';
+                            countsRow += '</tr></tbody>';
+                            agentDataOutput += secondsRow + countsRow + '</table>';
+                        } else {
+                            agentDataOutput = '';
+                        }
                         let tdLabels = [];
                         let tdValues = [];
                         let clusterValues = [];
@@ -751,58 +861,34 @@
                             }
                         });
                         if (summaryData.length > 8) {
-
-                        	summaryData = summaryData.split('<PRE>')[0];
-                            
                             noCalls = summaryData.includes('NO LIVE CALLS');
                             noAgents = summaryData.includes('NO AGENTS ON CALLS');
-
-                            // SET ALL VALUES TO ZERO BY DEFAULT
-                            $.each(clusterSummaryFields, function (i) {
-                                summaryValues[clusterSummaryFields[i]] = '0';
-                            });
-                            
-                          
-
-                                if(!noCalls && !noAgents){
-                                    
-                                	$(summaryData).find('font').each(function (i, n) {
-                                        summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
-                                    });
-                                    
-                                }else{
-                                
-	                                if (noCalls) {
-	
-	                                	
-	                                    summaryValues['calls_active'] = '0';
-	                                    summaryValues['calls_ringing'] = '0';
-	                                    summaryValues['calls_waiting'] = '0';
-	                                    summaryValues['calls_ivr'] = '0';
-	
-	                                    $(summaryData).find('font').each(function (i, n) {
-	                                        summaryValues[clusterSummaryFields[i+4]] = n.innerText.trim();
-	                                    });
-	                                    
-	                                }
-	                                
-	                                if (noAgents) {
-	
-	                                	$(summaryData).find('font').each(function (i, n) {
-	                                        summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
-	                                    });
-	                                    
-	                                    summaryValues['agents_on'] = '0';
-	                                    summaryValues['agents_active'] = '0';
-	                                    summaryValues['agents_waiting'] = '0';
-	                                    summaryValues['agents_paused'] = '0';
-	                                    summaryValues['agents_dead'] = '0';
-	                                    summaryValues['agents_dispo'] = '0';
-	                                }
+                            if (noAgents && noCalls) {
+                                // handling the edge case for NO AGENTS ON CALLS or NO LIVE CALLS by loading up all 0s
+                                $.each(clusterSummaryFields, function (i) {
+                                    summaryValues[clusterSummaryFields[i]] = '0';
+                                });
+                            } else {
+                                $(summaryData).find('font').each(function (i, n) {
+                                    summaryValues[clusterSummaryFields[i]] = n.innerText.trim();
+                                });
+                                if (noCalls) {
+                                    summaryValues['calls_active'] = '0';
+                                    summaryValues['calls_ringing'] = '0';
+                                    summaryValues['calls_waiting'] = '0';
+                                    summaryValues['calls_ivr'] = '0';
+                                }
+                                if (noAgents) {
+                                    summaryValues['agents_on'] = '0';
+                                    summaryValues['agents_active'] = '0';
+                                    summaryValues['agents_waiting'] = '0';
+                                    summaryValues['agents_paused'] = '0';
+                                    summaryValues['agents_dead'] = '0';
+                                    summaryValues['agents_dispo'] = '0';
                                 }
                                 summaryValues.pop();
                                 delete summaryValues['undefined'];
-                            
+                            }
                         }
                         let objClusterData = Object.assign({}, clusterValues);
                         let objSummaryData = Object.assign({}, summaryValues);
@@ -811,20 +897,22 @@
                         if (tdValues.length > 1) {
                             $newLayout.append('<tr><td class="align_left">Server Time: </td><td class="clusterTime align_right">' + objClusterData.time + '</td></tr>');
                             if (cltype === 'cold') {
-                                $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000, 'green') + ' leads</td></tr>');
+                                $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
                                 $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
                             } else if (cltype === 'taps') {
-                                $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 200, 500, 'green') + ' leads</td></tr>');
+                                $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
                                 $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
                             }
                             $newLayout.append('<tr title="Calls Today: ' + objClusterData.calls_today + '&#10;Calls Dropped: ' + objClusterData.dropped + '&#10;Drop Rate: ' + objClusterData.dropped_pct + '&#10;Calls Answered: ' + objClusterData.answered + '"><td class="align_left">Stats:</td><td class="pct50 align_right">' + objClusterData.calls_today + ' / ' + objClusterData.dropped + ' (' + objClusterData.dropped_pct + ') / ' + objClusterData.answered + '</td></tr>');
                             $newLayout.append('<tr title="Average Customer Wait: ' + objClusterData.avg_agent_wait + 's&#10;Average Customer Time: ' + objClusterData.avg_cust_time + 's&#10;Average ACW: ' + objClusterData.avg_acw + 's&#10;Average Pause: ' + objClusterData.avg_pause + 's"><td class="align_left">Wait/Time/ACW/Pause:</td><td class="align_right">' + objClusterData.avg_agent_wait + ' / ' + objClusterData.avg_cust_time + ' / ' + objClusterData.avg_acw + ' / ' + objClusterData.avg_pause + '</td></tr>');
                             if (objSummaryData.calls_active !== undefined) {
-                                $newLayout.append('<tr title="Active Calls: ' + objSummaryData.calls_active + '&#10;Calls Ringing: ' + objSummaryData.calls_ringing + '&#10;Calls Waiting: ' + objSummaryData.calls_waiting + '&#10;Interactive Voice Response: ' + objSummaryData.calls_ivr + '"><td class="align_left">Calls/Ring/Wait/IVR:</td><td class="align_right">' + objSummaryData.calls_active + ' / ' + objSummaryData.calls_ringing + ' / ' + applyPositiveThresh(objSummaryData.calls_waiting, 10000, 1) + ' / ' + objSummaryData.calls_ivr + '</td></tr>');
-                                $newLayout.append('<tr title="Agents Logged In: ' + objSummaryData.agents_on + '&#10;Agents On Calls: ' + objSummaryData.agents_active + '&#10;Agents Waiting: ' + objSummaryData.agents_waiting + '&#10;Agents Paused: ' + objSummaryData.agents_paused + '&#10;Agents Dead: ' + objSummaryData.agents_dead + '&#10;Agents Dispo: ' + objSummaryData.agents_dispo + '"><td class="align_left">Agts/IC/W/P/Dd/Dsp:</td><td class="align_right">' + objSummaryData.agents_on + ' / ' + objSummaryData.agents_active + ' / ' + applyPositiveThresh(objSummaryData.agents_waiting, Math.round(objSummaryData.agents_on/2), Math.round(objSummaryData.agents_on/4)) + ' / ' + objSummaryData.agents_paused + ' / ' + objSummaryData.agents_dead + ' / ' + objSummaryData.agents_dispo + '</td></tr>');
+                                $newLayout.append('<tr title="Active Calls: ' + objSummaryData.calls_active + '&#10;Calls Ringing: ' + objSummaryData.calls_ringing + '&#10;Calls Waiting: ' + objSummaryData.calls_waiting + '&#10;Interactive Voice Response: ' + objSummaryData.calls_ivr + '"><td class="align_left">Calls/Ring/Wait/IVR:</td><td class="align_right">' + objSummaryData.calls_active + ' / ' + objSummaryData.calls_ringing + ' / ' + objSummaryData.calls_waiting + ' / ' + objSummaryData.calls_ivr + '</td></tr>');
+                                $newLayout.append('<tr title="Agents Logged In: ' + objSummaryData.agents_on + '&#10;Agents On Calls: ' + objSummaryData.agents_active + '&#10;Agents Waiting: ' + objSummaryData.agents_waiting + '&#10;Agents Paused: ' + objSummaryData.agents_paused + '&#10;Agents Dead: ' + objSummaryData.agents_dead + '&#10;Agents Dispo: ' + objSummaryData.agents_dispo + '"><td class="align_left">Agts/IC/W/P/Dd/Dsp:</td><td class="align_right">' + objSummaryData.agents_on + ' / ' + objSummaryData.agents_active + ' / ' + objSummaryData.agents_waiting + ' / ' + objSummaryData.agents_paused + ' / ' + objSummaryData.agents_dead + ' / ' + objSummaryData.agents_dispo + '</td></tr>');
                             }
+                            $newLayout.append('<tr><td class="align_left">List Order:</td><td class="pct50 align_right">' + objClusterData.order + '</td></tr>');
+                            $newLayout.append('<tr class="agentInfo" style="vertical-align:bottom;"><td colspan="2" class="pct_100 align_center">' + agentDataOutput + '</td></tr>');
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Select Filters for this Cluster" id="selectClusterFilters_' + clid + '" class="selectFiltersButton align_center ui-button-text-only">Filters</button><button title="Load in ViciDial" id="loadCluster_' + clid + '" class="loadClusterButton align_center ui-button-text-only"><a target="_blank" href="http://' + clusterInfo[clid]['ip'] + '/vicidial/admin.php?ADD=10">Load</a></button><button title="View Cluster Details" class="ui-button-text-only align_center"><a target="_blank" href="http://' + clusterInfo[clid]['ip'] + '/vicidial/realtime_report.php">Details<a></button></td></tr>');
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Stop Dialing for this Cluster" id="stopDialersButton_' + clid + '" class="stopDialersButton align_center ui-button-text-only">Stop Dialer</button><button title="Force Hopper Reset for this Cluster" class="forceHopperButton ui-button-text-only align_center" id="forceHopperButton_' + clid + '">Force Hopper</button></td></tr>');
                         } else {
@@ -834,6 +922,7 @@
                     }
 
                     function parseDialerStatusData(clusterID, dialerStatusData) {
+                        // NOTE - all these clusterID instances will need to be 0-based and incremented
                         let titleRow = '<div class="clusterTitle">' + clusterInfo[clusterID]['name'] + '<a id="removeCluster_' + clusterID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
                         let $tile = $('#clusterTile_' + clusterID);
                         $tile.empty();
@@ -846,10 +935,11 @@
                         if (frontEnd_debug) {
                             console.log('Tiles are about to render :: ', selectedClusters);
                         }
+                        // NOTE - all these selectedClusters instances will need to be 0-based and incremented
                         $.each(selectedClusters, function (i, v) {
                             let strV = v.toString();
                             if ($('li#clusterTile_' + strV).length === 0) {
-                                $('#dialerStatusZone').append('<li id="clusterTile_' + strV + '" class="clusterTile"><table border="0" class="fullsize"><tr><td height="120" align="center"><span class="centerMessage" style="font-family: Arial,sans-serif;font-size:16px;color:#FFF">Loading data, standby...</span><br /><br /><img src="images/ajax-loader-pbar.gif" width="126" height="22" border="0" /></td></tr></table></li>');
+                                $('#dialerStatusZone').append('<li id="clusterTile_' + strV + '" class="clusterTile"><span class="centerMessage">Loading data, standby...</span></li>');
                             }
                             $.ajax({
                                 type: 'POST',
@@ -872,9 +962,10 @@
                         if (highContrast) {
                             $('body').css('background-color', '#000000');
                             $('body').css('color', '#FFFFFF');
-                            
+
                             $('#main_content').css('background-color', '#000000');
                             $('#main_content').css('color', '#FFFFFF');
+                            
                             
                             $('#dialerStatusZone').css('background-color', '#000000');
                             $('.clusterTile').css('background-color', 'black');

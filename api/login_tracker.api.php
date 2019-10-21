@@ -244,6 +244,7 @@ class API_LoginTracker{
 				$out_stack[$idx] = -1;
 
 				break;
+<<<<<<< HEAD
 			case 'time_logged_out':
 				
 				$timeout = intval($tmparr[2]);
@@ -258,6 +259,8 @@ class API_LoginTracker{
 				}
 				
 				break;
+=======
+>>>>>>> refs/heads/dmednick_dialer_status-fixes-tweaks
 			case 'voice_name':
 
 				// COULD BE REPLACED LATER WITH A CUSOMIZABLE SCREEN DB TABLE
