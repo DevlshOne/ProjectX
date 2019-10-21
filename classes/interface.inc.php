@@ -362,6 +362,13 @@
                                             </li><?
                                         }
 
+                                        if (checkAccess('user_status_report')) {
+                                            ?>
+                                            <li><a href="?area=user_status_report&no_script=1"
+                                                   onclick="loadSection(this.href);return false">User Status Report</a>
+                                            </li><?
+                                        }                                        
+
                                         if (checkAccess('action_log')) {//if($_SESSION['user']['priv'] >= 5){
                                             ?>
                                             <li><a href="?area=action_log&no_script=1"

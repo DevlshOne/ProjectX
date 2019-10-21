@@ -525,7 +525,9 @@ class FeatureControl{
 
 						$this->renderFeatureRow('ringing_calls', 'Ring Report', ($row['ringing_calls'] == 'yes')?true:false );
 						$this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes')?true:false );
+
 						//$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
+						$this->renderFeatureRow('user_status_report', 'User Status Report', ($row['user_status_report'] == 'yes')?true:false );
 						
 						
 						$this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes')?true:false );
