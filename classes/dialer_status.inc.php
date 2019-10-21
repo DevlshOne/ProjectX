@@ -757,8 +757,10 @@ class DialerStatus {
                         let clusterData = '<HTML>' + tbl.replace(rgxPre, '').split('</FORM>')[0] + '</HTML>';
                         let summaryData = '<HTML>' + tbl.replace(rgxPre, '').split('</FORM>')[1] + '</HTML>';
                         if (preString.length > 11) {
-                            let tmpAgentData = preString.match(rgxPre)[0];
-                            let tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/gi).map(function (val) {
+                            let tmpAgentData = '';
+                            tmpAgentData = preString.match(rgxPre)[0];
+                            let tmpAgentDataSplit = new Array();
+                            tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/gi).map(function (val) {
                                 return val.replace(/<\/?b>/gi, '').trim();
                             });
                             let parsedAgentData = [];
