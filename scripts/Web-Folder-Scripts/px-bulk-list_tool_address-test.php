@@ -4,7 +4,7 @@
 	global $stime;
 	global $etime;
 
-	$base_dir = "/root/address_verification/";//"/var/www/html/dev2/";
+	$base_dir = "/var/www/html/dev2/";
 
 	$batch_size = 100;
 
@@ -21,16 +21,11 @@
 	$started_time = time();
 	$updatecnt = 0;
 
-	$skip_imports = array(41, 42, 46, 55, 56);
-
-	$import_id = 0;
+	$skip_imports = array(41);
 
 	if($argv[1]){
 
 //		$skip_imports =
-
-		$import_id = intval($argv[1]);
-
 
 	}
 
@@ -43,24 +38,14 @@
 
 	connectListDB();
 
-	if($import_id){
-
-
-		$extrasql = " AND `id`='".intval($import_id)."' ";
-		$x=1;
-
-	}else{
-
-		$extrasql = " AND `id` NOT IN (";
-		$x=0;
-		foreach($skip_imports as $iid){
-			$extrasql .= ($x++ > 0)?',':'';
-			$extrasql .= $iid;
-		}
-
-		$extrasql .= ")";
-
+	$extrasql = " AND `id` NOT IN (";
+	$x=0;
+	foreach($skip_imports as $iid){
+		$extrasql .= ($x++ > 0)?',':'';
+		$extrasql .= $iid;
 	}
+
+	$extrasql .= ")";
 
 
 	$re2 = query("SELECT * FROM `imports` WHERE status='active' ".(($x > 0)?$extrasql:''),1);
@@ -78,13 +63,13 @@
 		while($cnt < $list_total_count){
 
 
-			$pcent = ($cnt > 0)?round(($import_update_cnt / $cnt)*100, 2):0;
+			$pcent = round(($import_update_cnt / $cnt)*100, 2);
 
 			echo "Processed $cnt out of $list_total_count. Updated $import_update_cnt (".$pcent."%) - Total updates $updatecnt\n";
 
 			$addr_array = array();
 
-			$res = query("SELECT phone,address,city,state,zip FROM `leads` WHERE `import_id`='".intval($import['id'])."' LIMIT ".$cnt.",".($batch_size*20), 1);
+			$res = query("SELECT phone,address,city,state,zip FROM `leads` WHERE `import_id`='".intval($import['id'])."' LIMIT ".$cnt.",".$batch_size, 1);
 
 
 			if(mysqli_num_rows($res) <= 0){

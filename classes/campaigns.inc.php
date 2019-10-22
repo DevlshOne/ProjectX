@@ -1,7 +1,8 @@
-<?	/***************************************************************
-	 *	Campaigns - handles listing and editing campaigns
-	 *	Written By: Jonathan Will
-	 ***************************************************************/
+<?php
+/***************************************************************
+ *	Campaigns - handles listing and editing campaigns
+ *	Written By: Jonathan Will
+ ***************************************************************/
 
 $_SESSION['campaigns'] = new Campaigns;
 
@@ -324,7 +325,7 @@ class Campaigns{
 			$("#dialog-modal-add-campaign").dialog({
 				autoOpen: false,
 				width: 480,
-				height: 280,
+				height: 320,
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -476,12 +477,23 @@ function makeAdd($id){
 			<th align="left" height="30">Name</th>
 			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>"></td>
 		</tr>
-            <tr>
-                <th align="left" height="30">Parent Campaign:</th>
-                <td>
-                    <? echo $_SESSION['cmpgn_parents']->makeDDvalIDtxtCODE($row['parent_campaign_id']);?>
-                </td>
-            </tr>
+		<tr>
+			<th align="left" height="30">Parent Campaign:</th>
+			<td>
+				<? echo $_SESSION['cmpgn_parents']->makeDDvalIDtxtCODE($row['parent_campaign_id']);?>
+			</td>
+		</tr>
+		
+		<tr>
+			<th align="left" height="30">Entity Type:</th>
+			<td><select name="type">
+				<option value="charity">Charity</option>
+				<option value="pac"<?=(			$row['type'] == 'pac')?' SELECTED ':''?>>PAC</option>
+				<option value="verifier"<?=(	$row['type'] == 'verifier')?' SELECTED ':''?>>Verifier</option>
+				<option value="other"<?=(		$row['type'] == 'other')?' SELECTED ':''?>>Other</option>
+												
+			</select></td>
+		</tr>
 		<tr>
 			<th align="left" height="30">Status</th>
 			<td>
@@ -517,6 +529,10 @@ function makeAdd($id){
 				<option value="no">Disabled</option>
 				<option value="yes"<?=($row['warm_transfers'] == 'yes')?' SELECTED ':''?>>Enabled</option>
 			</select></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">Variables</th>
+			<td><input name="variables" type="text" size="50" value="<?=htmlentities($row['variables'])?>"></td>
 		</tr>
 		<tr>
 

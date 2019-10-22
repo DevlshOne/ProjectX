@@ -4,7 +4,7 @@
  * EXPORT PX's CAMPAIGN SPECIFIC DNC TO EVERY VICI CLUSTER
  * Written By: Jonathan Will
  */
-	$base_dir = "/var/www/html/dev/";
+	$base_dir = "/var/www/html/reports/";
 
 	$max_insert_count = 1000; // HOW MANY RECORDS AT A TIME TO INSERT
 
@@ -15,10 +15,20 @@
 	include_once($base_dir."site_config.php");
 	include_once($base_dir."db.inc.php");
 
-	include_once($base_dir."util/db_utils.php");
-	include_once($base_dir."util/microtime.php");
+	include_once($base_dir."utils/db_utils.php");
+	include_once($base_dir."utils/microtime.php");
 
-
+	include_once($base_dir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px-export-vici-campaign-dnc";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
+	
+	$process_logs = '';
+	
+	
 	// CONNECT PX DB FIRST
 	connectPXDB();
 
@@ -59,6 +69,8 @@
 		$dnc_all_campaigns[]['phone_number'] = $row['phone'];
 	}
 
+	
+	
 	$dnc_by_campaign = array();
 	$res = query("SELECT `campaign_code`, `phone` FROM `dnc_campaign_list` WHERE campaign_code != '[ALL]'", 1);
 	$cnt = 0;
@@ -74,11 +86,12 @@
 		$cnt++;
 	}
 
-	echo "Done loading DNCs to memory, ".
+	$str = "Done loading DNCs to memory, ".
 			number_format(count($dnc_all_campaigns))." all-campaign DNCs, ".
 			number_format($cnt)." campaign specific dncs total.\n";
 
-
+	$process_logs .= $str;
+	echo $str;
 
 	// STRATIGICALLY LOOP THROUGH IT TO DO MANAGABLE CHUNKS AT A TIME
 
@@ -164,11 +177,14 @@
 	$timer_end = microtime_float();
 	$runtime = $timer_end - $timer_start;
 
-	echo "Cold Cluster(s) Total: ".number_format($cluster_total)."\n";
+	$str = "Cold Cluster(s) Total: ".number_format($cluster_total)."\n";
 
-	echo "Run time: ".$runtime." seconds\n";
+	$str .= "Run time: ".$runtime." seconds\n";
 
 
+	$process_logs .= $str;
+	echo $str;
+	
 	echo "Preparing to process TAPS based servers...\n";
 
 
@@ -268,10 +284,14 @@
 	$timer_end = microtime_float();
 	$runtime = $timer_end - $timer_start;
 
-	echo "TAPS Cluster(s) Total: ".number_format($cluster_total)."\n";
+	$str = "TAPS Cluster(s) Total: ".number_format($cluster_total)."\n";
 
-	echo "Run time: ".$runtime." seconds\n";
+	$str .="Run time: ".$runtime." seconds\n";
 
-
-
+	
+	$process_logs .= $str;
+	echo $str;
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
+	
 

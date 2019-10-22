@@ -1,4 +1,4 @@
-<?
+<?php
 
 
 
@@ -15,13 +15,13 @@ class API_PACReports{
 
 
 
-//		if(!checkAccess('names')){
-//
-//
-//			$_SESSION['api']->errorOut('Access denied to Names');
-//
-//			return;
-//		}
+		if(!checkAccess('pac_web_donations')){
+
+
+			$_SESSION['api']->errorOut('Access denied to Web Donations');
+
+			return;
+		}
 
 
 

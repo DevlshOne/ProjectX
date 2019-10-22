@@ -4,7 +4,7 @@ session_start();
 
 global $delimiter;
 
-$basedir = "/var/www/html/dev/";
+$basedir = "/var/www/html/reports/";
 
 $push_to_cluster_id = 3; // 3 == TAPS CLUSTER
 
@@ -172,9 +172,10 @@ WHERE
         AND `list_id` != '" . mysqli_real_escape_string($_SESSION['db'],$push_to_list_id) . "'
         #Remove records that are missing critical data if any of these fields are 0 ignore the record
         AND 0 NOT IN (lead_id , vici_cluster_id, campaign_id)
-        #Using group to remove duplicated records in the dispo log
+       #Using group to remove duplicated records in the dispo log
         GROUP BY vici_cluster_id , lead_id;";
 
+//        AND vici_cluster_id NOT in (3)
 
 #echo $myquery;
 #exit;

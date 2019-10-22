@@ -1,4 +1,5 @@
-<?	/***************************************************************
+<?php
+	/***************************************************************
 	 *	Summary Report - A report of group totals for cold,taps, and verifiers
 	 *	Written By: Jonathan Will
 	 ***************************************************************/
@@ -27,7 +28,8 @@ class SummaryReport{
 		include_once($_SESSION['site_config']['basedir']."classes/agent_call_stats.inc.php");
 
 		include_once($_SESSION['site_config']['basedir']."classes/sales_analysis.inc.php");
-
+		
+	//	include_once($_SESSION['site_config']['basedir']."classes/rouster_report.inc.php");
 //		if(!checkAccess('sales_analysis')){
 //
 //
@@ -62,7 +64,7 @@ class SummaryReport{
 			$sql = "SELECT * FROM `user_groups_master` WHERE company_id='".intval($company_id)."' AND `agent_type` != 'verifier' ORDER BY `user_group` ASC";
 		//	echo $sql;
 
-			$res = query($sql,1);
+			$res = $_SESSION['dbapi']->ROquery($sql,1);
 
 			//
 			$x = 0;
@@ -70,6 +72,8 @@ class SummaryReport{
 
 				$output[$company_id]['user_groups'][$x] = $group;
 
+				
+				//generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null)
 				$output[$company_id]['user_groups'][$x]['data'] = $_SESSION['sales_analysis']->generateData($stime, $etime, null, -1, true, $group['user_group'], null);
 
 
@@ -236,7 +240,7 @@ class SummaryReport{
 
 		if($report_type == "verifier"){
 
-			$dres = query("SELECT DISTINCT(`verifier_cluster_id`) AS `verifier_cluster_id` FROM `sales` ".
+			$dres = $_SESSION['dbapi']->ROquery("SELECT DISTINCT(`verifier_cluster_id`) AS `verifier_cluster_id` FROM `sales` ".
 						$swhere.
 						" AND `verifier_cluster_id` > 0 ".
 						" ORDER BY `verifier_cluster_id` ASC", 1);
@@ -252,7 +256,7 @@ class SummaryReport{
 
 
 
-			$dres = query("SELECT * FROM `companies` WHERE `status`='enabled' ORDER BY `name` ASC", 1);
+			$dres = $_SESSION['dbapi']->ROquery("SELECT * FROM `companies` WHERE `status`='enabled' ORDER BY `name` ASC", 1);
 			while($row = mysqli_fetch_array($dres, MYSQLI_ASSOC)){
 
 				$cid = $row['id'];
@@ -271,13 +275,13 @@ class SummaryReport{
 
 			//echo $sql;
 
-			$dres = query($sql, 1);
+			$dres = $_SESSION['dbapi']->ROquery($sql, 1);
 			while($row = mysqli_fetch_array($dres, MYSQLI_ASSOC)){
 
 				$cid = $row['agent_cluster_id'];
 
 				// DETERMINE WHAT TYPE OF CLUSTER IT IS
-				list($type) = queryROW("SELECT `cluster_type` FROM `vici_clusters` WHERE id='$cid'");
+				list($type) = $_SESSION['dbapi']->ROqueryROW("SELECT `cluster_type` FROM `vici_clusters` WHERE id='$cid'");
 
 				switch($type){
 				default: // ANY UNKNOWN OR MULTIPURPOSE ONES WILL BE TREATED LIKE COLD CLUSTERS

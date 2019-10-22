@@ -61,7 +61,7 @@ jQuery(document).ready(function(){
 		}
 	});
 
-	$(document).on('click', function(event){
+	sidebar.on('click', function(event){
 		if( !$(event.target).is('.has-children a') ) {
 			sidebar.find('.has-children.selected').removeClass('selected');
 			accountInfo.removeClass('selected');

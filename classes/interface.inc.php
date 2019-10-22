@@ -1,4 +1,5 @@
-<? /***************************************************************
+<?php
+ /***************************************************************
  *    Interface class - handles generic interface stuff, like menus, navigation, etc
  *    Written By: Jonathan Will
  ***************************************************************/
@@ -73,6 +74,7 @@
                                             <li><a href="?area=campaign_parents&no_script=1"
                                                    onclick="loadSection(this.href);return false">Campaign Parents</a>
                                             </li>
+						                    <li><a href="?area=form_builder&no_script=1" onclick="loadSection(this.href);return false">Form Builder</a></li>
                                             <?
                                         }
 
@@ -103,7 +105,15 @@
                                 </li><?
                             }
 
-                            if (checkAccess('lead_management') || checkAccess('employee_hours') || checkAccess('ringing_calls') || checkAccess('messages') || checkAccess('server_status') || checkAccess('extensions')) {
+                            if(
+                            		checkAccess('sales_management') || 
+                            		checkAccess('lead_management') || 
+                            		checkAccess('employee_hours') || 
+                            		checkAccess('ringing_calls') || 
+                            		checkAccess('messages') || 
+                            		checkAccess('server_status') || 
+                            		checkAccess('extensions')
+                            ) {
                                 ?>
                                 <li class="has-children bookmarks">
                                 <a href="#0">Management Tools</a>
@@ -116,7 +126,13 @@
                                                    onclick="loadSection(this.href);return false">Lead Management</a>
                                             </li><?
                                         }
-
+                                        if (checkAccess('sales_management')) {
+                                        	?>
+                                            <li><a href="?area=sales_management&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Sales Management</a>
+                                            </li><?
+                                        }
+                                        
                                         if (checkAccess('employee_hours')) {
                                             ?>
                                             <li><a href="?area=employee_hours&no_script=1"
@@ -148,6 +164,12 @@
                                             <li><a href="?area=messages&no_script=1"
                                                    onclick="loadSection(this.href);return false">Agent Messages</a>
                                             </li><?
+                                        }
+
+                                        if (checkAccess('dialer_status')) {
+                                            ?>
+                                            <li><a href="?area=dialer_status&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Dialer Status</a></li><?
                                         }
 
                                         if (checkAccess('server_status')) {
@@ -235,7 +257,7 @@
                                             </li><?
                                         }
 
-                                        if ($_SESSION['user']['priv'] >= 5) {
+                                        if (checkAccess('summary_report')) {
                                             ?>
                                             <li><a href="?area=summary_report&no_script=1"
                                                    onclick="loadSection(this.href);return false">Summary Report</a>
@@ -274,7 +296,13 @@
                                             <li><a href="?area=dispo_log&no_script=1"
                                                    onclick="loadSection(this.href);return false">Dispo Log</a></li><?
                                         }
-
+                                        
+                                        if (checkAccess('capacity_report')) {
+                                        	?>
+                                            <li><a href="?area=capacity_report&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Capacity Report</a></li><?
+                                        }
+                                        
                                         if (checkAccess('report_emails')) {
                                             ?>
                                             <li><a href="?area=report_emails&no_script=1"
@@ -284,14 +312,14 @@
                                 </li><?
                             }
 
-                            if ($_SESSION['user']['priv'] >= 5) {
+                            if (checkAccess('pac_web_donations')) {
                                 ?>
                                 <li class="has-children comments">
                                 <a href="#0">PACs Maintenance </a>
 
                                 <ul><?
 
-                                        if ($_SESSION['user']['priv'] >= 5) {
+                              			if (checkAccess('pac_web_donations')) {
                                             ?>
                                             <li><a href="?area=pac_reports&no_script=1"
                                                    onclick="loadSection(this.href);return false">Web Donations</a>
@@ -333,6 +361,13 @@
                                                    onclick="loadSection(this.href);return false">Login Tracker</a>
                                             </li><?
                                         }
+
+                                        if (checkAccess('user_status_report')) {
+                                            ?>
+                                            <li><a href="?area=user_status_report&no_script=1"
+                                                   onclick="loadSection(this.href);return false">User Status Report</a>
+                                            </li><?
+                                        }                                        
 
                                         if (checkAccess('action_log')) {//if($_SESSION['user']['priv'] >= 5){
                                             ?>
@@ -390,8 +425,13 @@
 
 
                 <div class="content-wrapper" id="main_content">
-
-                    <center>
+				<?
+					include_once("classes/home.inc.php");
+					$_SESSION['home']->handleFLOW();
+					
+				
+					/**
+					 *<center>
                         <img src="graph.php?area=user_charts&max_mode=1&time_frame=day&width=650&height=300" border="0"
                              height="300" width="650">
                         <br/>
@@ -399,6 +439,7 @@
                         <img src="graph.php?area=user_charts&max_mode=1&time_frame=week&start_time=<?= (time() - 604800) ?>&width=650&height=300"
                              border="0" height="300" width="650">
                     </center>
+               **/?>
 
                 </div> <!-- .content-wrapper -->
             </main> <!-- .cd-main-content -->
@@ -472,6 +513,7 @@
                             ?>
                             <li><a href="?area=campaigns&no_script">Campaigns</a></li>
                             <li><a href="?area=campaign_parents&no_script">Campaign Parents</a></li>
+				<li><a href="?area=form_builder&no_script=1">Form Builder</a></li>
                             <li><a href="?area=voices&no_script">Voices</a></li>
                             <li><a href="?area=names&no_script">Names</a></li>
 
@@ -525,3 +567,4 @@
             </script><?
         }
     }
+

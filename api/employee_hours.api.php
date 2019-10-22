@@ -116,6 +116,14 @@ class API_Employee_Hours{
 
 			//$id = intval($_POST['editing_emp']);
 
+			
+			if(!checkAccess('employee_hours_edit')){
+				
+				$_SESSION['api']->errorOut('Access denied to EDIT Employee Hours');
+				
+				return;
+			}
+			
 /// DO STUFF
 
 			$id_array = preg_split("/\t/", $_POST['activity_ids'], -1);
@@ -882,4 +890,3 @@ $rowarr = array();
 
 
 }
-

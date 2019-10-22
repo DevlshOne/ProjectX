@@ -6,10 +6,18 @@
 	include_once($base_dir."site_config.php");
 	include_once($base_dir."db.inc.php");
 
-	include_once($base_dir."util/db_utils.php");
+	include_once($base_dir."utils/db_utils.php");
 
 
-
+	include_once($base_dir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px_sync_vici_user_groups";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
+	
+	$process_logs = '';
 
 
 
@@ -87,10 +95,13 @@
 
 
 
-	echo "Done, $edit_cnt User Groups Edited, $add_cnt Added.\n";
+	$str = "Done, $edit_cnt User Groups Edited, $add_cnt Added.\n";
 
 
-
+	$process_logs .= $str;
+	echo $str;
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
 
 
 

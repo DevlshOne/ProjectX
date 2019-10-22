@@ -1,4 +1,5 @@
-<?
+<?php
+
 	session_start();
 
 	$basedir = "";
@@ -10,7 +11,15 @@
 
 	$call_id = intval($_REQUEST['call_id']);
 
-
+	if($_SESSION['user']['id']){
+		
+		include_once("dbapi/dbapi.inc.php");
+		
+		$_SESSION['dbapi']->users->updateLastActionTime();
+		
+	}
+	
+	
 	$_SESSION['ringing_calls']->connectPXDB();
 
 

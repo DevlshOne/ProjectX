@@ -208,39 +208,24 @@
 //		return true;
 //	}
 
-
-
-
-
-
-
-
-
-
-
-
-
+    function getClusterIDs() {
+        $clusterIDs = [];
+        foreach ($_SESSION['site_config']['db'] as $k => $v) {
+            array_push($clusterIDs, strval($v['cluster_id']));
+        }
+        return $clusterIDs;
+    }
 
 	function getClusterRow($vici_cluster_id){
-
 		$vici_cluster_id = intval($vici_cluster_id);
-
 		connectPXDB();
-
 		return querySQL("SELECT * FROM `vici_clusters` WHERE id='$vici_cluster_id'");
 	}
 
-
 	function getClusterIndex($vici_cluster_id){
-
-
 		foreach($_SESSION['site_config']['db'] as $idx=>$db){
-
-
 			if($db['cluster_id'] == $vici_cluster_id)return $idx;
-
 		}
-
 		return -1;
 	}
 
@@ -248,31 +233,39 @@
 	 * Get the cluster name from site config variables
 	 */
 	function getClusterName($vici_cluster_id){
-
-
 		foreach($_SESSION['site_config']['db'] as $idx=>$db){
-
-
 			if($db['cluster_id'] == $vici_cluster_id)return $db['name'];
-
 		}
-
 		return null;
 	}
 
 
 	function getClusterWebHost($vici_cluster_id){
-
-
 		foreach($_SESSION['site_config']['db'] as $idx=>$db){
-
-
 			if($db['cluster_id'] == $vici_cluster_id)return $db['web_host'];
-
 		}
-
 		return null;
 	}
+
+	function getClusterCampaigns($vici_cluster_id) {
+        $vici_idx = getClusterIndex(intval($vici_cluster_id));
+        connectViciDB($vici_idx);
+        $res = fetchAllAssoc("SELECT `campaign_id` AS `groups` FROM `vicidial_campaigns` WHERE `active` = 'Y' ORDER BY `campaign_name`");
+        connectPXDB();
+        return $res;
+    }
+
+
+    function getClusterUserGroups($vici_cluster_id) {
+        $res = fetchAllAssoc("SELECT DISTINCT (`group_name`) AS `user_group_filter` FROM `user_group_translations` WHERE `cluster_id` = " . intval($vici_cluster_id) . " ORDER BY `group_name`", 3);
+        return $res;
+    }
+
+    function getClusterType($vici_cluster_id) {
+        connectPXDB();
+        $r = queryRow("SELECT `cluster_type` FROM `vici_clusters` WHERE `id` = '" . intval($vici_cluster_id) . "'");
+        return $r[0];
+    }
 
 	function getEditLeadURL($vici_cluster_id, $lead_id){
 
@@ -296,12 +289,11 @@
 	/**
 	 * Load all the opensips servers into the session array
 	 * 	$_SESSION['site_config']['opensipsdb'][0]['sqlhost']	= "10.100.0.200";
-		$_SESSION['site_config']['opensipsdb'][0]['sqllogin']	= "pxreporting";
-		$_SESSION['site_config']['opensipsdb'][0]['sqlpass']   	= "nrAesou0rethash";
-		$_SESSION['site_config']['opensipsdb'][0]['sqldb'] 		= "opensips";
-
-		AUTOMATICALLY EXECUTED AT THE END OF THIS SCRIPT (util/db_utils.php)
-
+     * $_SESSION['site_config']['opensipsdb'][0]['sqllogin']    = "pxreporting";
+     * $_SESSION['site_config']['opensipsdb'][0]['sqlpass']    = "nrAesou0rethash";
+     * $_SESSION['site_config']['opensipsdb'][0]['sqldb']        = "opensips";
+     *
+     * AUTOMATICALLY EXECUTED AT THE END OF THIS SCRIPT (util/db_utils.php)
 	 */
 	function loadOpenSipsDBs(){
 
@@ -351,24 +343,15 @@
 	function getUserByID($id){
 		$id = intval($id);
 
-		return $_SESSION['dbapi']->querySQL("SELECT * FROM `users` ".
-						" WHERE id='".$id."' "
-
-					);
+        return $_SESSION['dbapi']->querySQL("SELECT * FROM `users` WHERE id='".$id."' ");
 	}
 
 	function getUsername($id){
 		$id = intval($id);
 
-		list($name) = $_SESSION['dbapi']->queryROW("SELECT name FROM `users` ".
-						" WHERE id='".$id."' "
-
-					);
+        list($name) = $_SESSION['dbapi']->queryROW("SELECT name FROM `users` WHERE id='".$id."' ");
 		return $name;
 	}
-
-
-
 
 	// AUTO LOAD OPENSIPS DBS
 	loadOpenSipsDBs();

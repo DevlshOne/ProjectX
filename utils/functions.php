@@ -1,6 +1,5 @@
 <?php
 
-
 	function filter09($str, $max_length = 0){
 
 		$out = preg_replace("/[^0-9]/",'',$str);
@@ -28,7 +27,7 @@
 
 	function filterName($str, $max_length = 0){
 
-		$out = preg_replace('/[^a-zA-Z0-9._-\'\/\\#$ ]/g', '' , $str);
+		$out = preg_replace('/[^a-zA-Z0-9.\-_\'\/\\#$ ]/', '' , $str);
 
 		if($max_length && $max_length > 0){
 
@@ -100,7 +99,7 @@
 
 			// IF A KEY IS IN THE NEW STACK THAT ISNT IN THE OLD ONE, KEY/FIELD WAS ADDED
 			//if($nval != null && !isset($old[$nkey])){
-			if(!array_key_exists($nkey, $old)){
+			if($old != null && !array_key_exists($nkey, $old)){
 				$out .= "$nkey added.\n";
 			}
 		}
@@ -115,7 +114,7 @@
 		return $out;
 	}
 
-	function logAction($action, $area, $record_id, $description = null, $orig_record = null, $new_record = null){
+	function logAction($action, $area, $record_id, $description = null, $orig_record = null, $new_record = null, $additional_changes_tracked=null){
 
 		$dat = array();
 		$dat['time'] = time();
@@ -146,6 +145,11 @@
 		}
 
 
+		if($additional_changes_tracked != null && strlen($additional_changes_tracked) > 0){
+			
+			$dat['changes_tracked'] .= $additional_changes_tracked;
+		}
+		
 //			switch($area){
 //			default:
 //				// IGNORE/SKIP
@@ -201,11 +205,11 @@
 	//http://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
 	function startsWith($haystack, $needle) {
 	    // search backwards starting from haystack length characters from the end
-	    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
+	    return $needle === "" || strripos($haystack, $needle, -strlen($haystack)) !== FALSE;
 	}
 	function endsWith($haystack, $needle) {
 	    // search forward starting from end minus needle length characters
-	    return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);
+	    return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && stripos($haystack, $needle, $temp) !== FALSE);
 	}
 
 

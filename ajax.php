@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * AJAX PORTAL - USED TO EXTRACT DATA AND RETURN IN VARIOUS FRIENDLY FORMATS
  */
@@ -24,6 +24,12 @@
 
 
 	}
+	
+	
+	// UPDATE THE USERS LAST ACTION TIME
+	$_SESSION['dbapi']->users->updateLastActionTime();
+	
+	
 
 
 	function generateFilename($input){
@@ -55,6 +61,53 @@ default:
 	die("No mode specified.");
 	break;
 
+case 'force_logout':
+	
+	
+	if(!checkAccess('login_tracker_kick_user')){
+		
+		die("ERROR: Access to kick users out DENIED");
+	}
+	
+	$login_id = intval($_REQUEST['force_logout_user']);
+	
+	if($login_id <= 0){
+		die("ERROR: Invalid login ID specified");
+	}
+	
+	include_once($_SESSION['site_config']['basedir']."db.inc.php");
+	include_once($_SESSION['site_config']['basedir']."utils/db_utils.php");
+	
+	connectPXDB();
+	
+	if(execSQL("UPDATE `logins` SET `time_out`=UNIX_TIMESTAMP() WHERE id='$login_id'") > 0){
+		echo "Success";
+	}else{
+		
+		echo "ERROR: Record not updated.";
+	}
+	
+
+	exit;
+	
+	break;
+case 'capacity_report':
+	
+	
+	include_once($_SESSION['site_config']['basedir']."db.inc.php");
+	include_once($_SESSION['site_config']['basedir']."utils/db_utils.php");
+	include_once($_SESSION['site_config']['basedir']."utils/functions.php");
+	
+	include_once($_SESSION['site_config']['basedir']."classes/capacity_report.inc.php");
+	
+	
+	$stime = mktime(0,0,0);
+	$etime = $stime + 86399;
+	
+	echo $_SESSION['capacity_report']->generateChartData('day', $stime, $etime);
+	
+	
+	break;
 
 case 'download_fec_form':
 
@@ -895,8 +948,7 @@ case 'list_upload':
 
 	break;
 
-case 'image_upload':
-
+case 'sound_upload':
 
 
 	$warning_msg_stack = array();
@@ -905,13 +957,14 @@ case 'image_upload':
 
 	$voice_id = intval($_REQUEST['voice_id']);
 	$script_id = intval($_REQUEST['script_id']);
+	$file_description = $_REQUEST['file_description'];
 
 
 	$voice = $_SESSION['dbapi']->voices->getByID($voice_id);
 
 
 
-	## UPLOADING IMAGE
+	## UPLOADING SOUND FILE
 	if($_FILES['sound_file']['name']){
 
 
@@ -950,8 +1003,6 @@ case 'image_upload':
 
 						$warning_msg_stack[] = " File: ".$name." already exists.";
 
-						//jsAlert("Splash Image: ".$name." already exists.",0);
-
 					## MOVE FILE TO FINAL DESTINATION, ADD TO DB RECORD
 					} else {
 
@@ -961,6 +1012,7 @@ case 'image_upload':
 							## RELATIVE PATH - WEB/URLS
 							$dat['voice_id'] = $voice['id'];
 							$dat['script_id'] = $script_id;
+							$dat['description'] = $file_description;
 							$dat['file'] = $output_filename;
 
 							list($dat['ordernum']) = $_SESSION['dbapi']->queryROW(
@@ -969,14 +1021,6 @@ case 'image_upload':
 							## INCREMENT MAX ORDERNUM
 							$dat['ordernum']++;
 
-
-/**
- * <select name="upload_mode">
-							<option value="script">Upload Script Sound:</option>
-							<option value="repeat-short">Upload SHORT REPEAT:</option>
-							<option value="repeat-long">Upload LONG REPEAT:</option>
-							<option value="repeat-question">Upload Q. ONLY REPEAT:</option>
- */
 							switch($_REQUEST['upload_mode']){
 							case 'script':
 							default:
@@ -1001,14 +1045,9 @@ case 'image_upload':
 
 							}
 
-							// DELETE OLD IMAGE HERE
-
-
-
 
 						}else{
-							$warning_msg_stack[] = " Upload: Error moving image to output directory ($output_filename)";
-							//jsAlert("Splash Image: Error moving image to output directory ($output_filename)");
+							$warning_msg_stack[] = " Upload: Error moving sound file to output directory ($output_filename)";
 
 						}
 
@@ -1016,15 +1055,14 @@ case 'image_upload':
 				}
 			}else{
 
-				$warning_msg_stack[] = ucfirst($image_type)." Upload: File too large.";
-				//jsAlert("Splash Image: File too large.",0);
+				$warning_msg_stack[] = " Upload: File too large.";
+
 			}
 
 			break;
 		default:
 
 			$warning_msg_stack[] = " Invalid file type. (".$_FILES['sound_file']['type'].")";
-			//jsAlert("Splash Image invalid file type. (".$_FILES['splash_img']['type'].")",0);
 
 			break;
 		}

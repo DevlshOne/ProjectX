@@ -1,4 +1,5 @@
 <?php
+
 	/***************************************************************
 	 *	PAC Reports
 	 *	Written By: Jonathan Will
@@ -90,7 +91,11 @@ class PACReports{
 
 	function handleFLOW(){
 		# Handle flow, based on query string
-
+		if(!checkAccess('pac_web_donations')){
+			
+			accessDenied("Web Donations");
+			return;
+		}
 
 		if(isset($_REQUEST['add_pac'])){
 

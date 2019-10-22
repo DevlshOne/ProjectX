@@ -15,7 +15,7 @@
 /**********/
 
 	// CODE BASE FOLDER
-	$base_dir = "/var/www/html/dev2/";
+	$base_dir = "/var/www/html/reports/";
 
 	include_once($base_dir."site_config.php");
 	include_once($base_dir."db.inc.php");

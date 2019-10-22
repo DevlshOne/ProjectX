@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * Users SQL Functions
  */
@@ -356,8 +357,13 @@ class UsersAPI{
 		$dat['username']	= $username;
 		$dat['pass_attempt'] = $password;
 		$dat['result']		= $res;
+		
 		$dat['time']		= time();
+		$dat['time_last_action']= $dat['time'];
+		
 		$dat['ip']			= $_SERVER["REMOTE_ADDR"];
+		$dat['browser']		= $_SERVER['HTTP_USER_AGENT'];
+		
 		$dat['section'] = 'admin';
 
 		$dat['details'] = $details;
@@ -377,6 +383,41 @@ class UsersAPI{
 		$_SESSION['dbapi']->aedit($_SESSION['user']['id'],$dat,$this->table);
 	}
 
+	function updateLastActionTime(){
+		
+		// CHECK FOR THEM TO BE LOGGED OUT FIRST
+		$logins = $_SESSION['dbapi']->querySQL("SELECT * FROM `logins` WHERE id='".$_SESSION['logins']['id']."' ");
+		
+		// THEY'VE BEEN FORCE LOGGED OUT
+		if($logins['id'] > 0 && $logins['time_out'] > 0){
+			
+			session_unset();
+			
+			
+			jsRedirect("index.php");
+			exit;
+			
+		}
+		
+		$_SESSION['logins'] = $logins;
+		
+		
+		$dat = array( 'time_last_action' => time() );
+		
+		$_SESSION['dbapi']->aedit($_SESSION['logins']['id'],$dat,"logins");
+	}
+	
+	
+	function updateLogoutTime(){
+		
+		$dat = array();
+				
+		$dat['time_out'] = time();
+		$dat['duration'] = $dat['time_out'] - $_SESSION['logins']['time'];
+		
+		$_SESSION['dbapi']->aedit($_SESSION['logins']['id'],$dat,"logins");
+	
+	}
 
 	function userExists($username){
 

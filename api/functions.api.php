@@ -1,4 +1,4 @@
-<?
+<?php
 /**
  * Core functions for the API system
  *
@@ -33,7 +33,7 @@ class API_Functions{
 			break;
 		case 'json':
 
-			echo 'error:"'.mysqli_real_escape_string($_SESSION['dbapi']->db,$msg).'"';
+			echo 'error:"'.(($msg != null)?addslashes($msg):'').'"';
 
 			if($die)exit;
 
@@ -47,6 +47,8 @@ class API_Functions{
 
 		echo '<Result>Success</Result>'."\n";
 	}
+
+	function outputCopySuccess() {}
 
 	function outputEditSuccess($id,$warning_msgs=null){
 
@@ -154,7 +156,9 @@ class API_Functions{
 		return $out;
 	}
 
+
 	function renderResultSetXML($tagname,$res){
+
 		$_SESSION['API_CACHE_STORAGE'][$tagname] = array();
 		$out = '';
 		$taghead = '<'.$tagname.' ';
@@ -166,7 +170,7 @@ class API_Functions{
 			}
 			$out .= $taghead;
 			foreach($row as $key=>$val){
-				$val = preg_replace('/[^a-zA-Z0-9.,-=_ $@#^&:;\'"\n\?]/','', $val);
+				$val = preg_replace('/[^a-zA-Z0-9.,-=_ $!@#^&:;\'"\n\?]/','', $val);
 				if($tagname == 'Account' && $key == 'name'){
 					// SOME NINJA SHIT I HAD TO DO, FOR THE NEW TAB SYSTEM
 					// ( TO POPULATE THE TABS NAME CONTENT )

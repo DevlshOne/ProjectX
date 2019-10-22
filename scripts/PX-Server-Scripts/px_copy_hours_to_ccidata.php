@@ -2,15 +2,15 @@
 <?php
 
 
-	$basedir = "/var/www/html/dev/";
+	$basedir = "/var/www/html/reports/";
 
 	include_once($basedir."db.inc.php");
-	include_once($basedir."util/microtime.php");
-	include_once($basedir."util/format_phone.php");
-	include_once($basedir."util/db_utils.php");
+	include_once($basedir."utils/microtime.php");
+	include_once($basedir."utils/format_phone.php");
+	include_once($basedir."utils/db_utils.php");
 
 
-print_r($argv);
+//print_r($argv);
 
 	if($argv[1]){
 
@@ -32,6 +32,20 @@ print_r($argv);
 
 	$etime = $stime + 86400;
 
+	
+	
+	
+	include_once($basedir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px_copy_hours_to_ccidata";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv), "Hours for ".date("m/d/Y",$stime) );
+	
+	$process_logs = '';
+	
+	
 
 	echo "Starting Hours Copy for ".date("m/d/Y",$stime)."...\n";
 
@@ -52,8 +66,10 @@ print_r($argv);
 
 
 
-	echo "Grabbed ".count($rowarr)." employee records, pushing to ccidata.employee_hours...\n";
-
+	$str = "Grabbed ".count($rowarr)." employee records, pushing to ccidata.employee_hours...\n";
+	
+	$process_logs .= $str;
+	echo $str;
 
 	// CONNECT TO ANDREWS LABYRINTH
 	connectCCIDB();
@@ -89,6 +105,11 @@ print_r($argv);
 //echo $sql."\n";
 	$cnt = execSQL($sql);
 
-	echo "Done. $cnt affected.\n";
+	$str = "Done. $cnt affected.\n";
 
-
+	$process_logs .= $str;
+	echo $str;
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
+	
+	

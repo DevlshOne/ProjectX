@@ -1,4 +1,5 @@
-<?
+<?php
+
 /***************************************************************
      *	Campaigns - handles listing and editing campaigns
      *	Written By: Jonathan Will
@@ -322,7 +323,7 @@ class CampaignParents{
 				return false;
 			}
 			// SET TITLEBAR
-			$('#dialog-modal-add-campaign-parent').dialog( "option", "title", '<?=($id)?'Editing Campaign Parent #'.$id.' - '.htmlentities($row['name']):'Adding new Campaign Parent'?>' );
+			$('#dialog-modal-add-campaign-parent').dialog( "option", "title", '<?=($id)?'Editing Campaign Parent #'.$id.' - '.addslashes(htmlentities($row['name'])):'Adding new Campaign Parent'?>' );
 		</script>
 		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkCampaignParentFrm(this); return false">
 			<input type="hidden" id="adding_campaign_parent" name="adding_campaign_parent" value="<?=$id?>" >
@@ -345,8 +346,7 @@ class CampaignParents{
 		<?
     }
 
-    public function getOrderLink($field)
-    {
+    public function getOrderLink($field){
         $var = '<a href="#" onclick="setOrder(\''.addslashes($this->order_prepend).'\',\''.addslashes($field).'\',';
         $var .= "((".$this->order_prepend."orderdir == 'DESC')?'ASC':'DESC')";
         $var.= ");loadCampaign_parents();return false;\">";

@@ -1,4 +1,4 @@
-<?
+<?php
 
 
 
@@ -173,6 +173,32 @@ class API_Scripts{
 			$_SESSION['api']->outputEditSuccess($id);
 
 
+
+			break;
+
+		case 'edit_voice_file':
+
+			$id = intval($_POST['editing_vfile']);
+
+			if($id > 0){
+				$row = $_SESSION['dbapi']->scripts->getVoiceFileByID($id);
+			}
+
+			unset($dat);
+
+			$dat['description']		= preg_replace("/[^a-zA-Z0-9\-\?'.,() ]/","", trim($_POST['description'] ));
+
+			if($id){
+
+				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->scripts->voices_files_table);
+
+				$newrow = $_SESSION['dbapi']->scripts->getVoiceFileByID($id);
+
+				//logAction('edit', 'scripts', $id, "", $row, $newrow);
+
+			}
+
+			$_SESSION['api']->outputEditSuccess($id);
 
 			break;
 

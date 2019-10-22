@@ -1,5 +1,5 @@
 <?
-	require_once("/var/www/db.inc.php");
+	require_once("/var/www/html/db.inc.php");
 
 	header("Content-Type: text/xml");
 	echo "<?xml version=\"1.0\" ?>\n";

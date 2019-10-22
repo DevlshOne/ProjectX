@@ -153,7 +153,14 @@ class API_LoginTracker{
 
 				$dat['ip'] = trim($_REQUEST['s_ip']);
 
-			}			
+			}		
+			
+			## BROWSER SEARCH
+			if($_REQUEST['s_browser']){
+
+				$dat['browser'] = trim($_REQUEST['s_browser']);
+
+			}	
 
 			## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
 			if(isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])){
@@ -237,6 +244,22 @@ class API_LoginTracker{
 				$out_stack[$idx] = -1;
 
 				break;
+
+			case 'time_logged_out':
+				
+				$timeout = intval($tmparr[2]);
+				
+				// COULD BE REPLACED LATER WITH A CUSOMIZABLE SCREEN DB TABLE
+				if($timeout <= 0){
+					$out_stack[$idx] = '[Still logged in]';
+				}else{
+					
+					$out_stack[$idx] = date("g:ia m/d/Y", $timeout);
+					
+				}
+				
+				break;
+
 			case 'voice_name':
 
 				// COULD BE REPLACED LATER WITH A CUSOMIZABLE SCREEN DB TABLE

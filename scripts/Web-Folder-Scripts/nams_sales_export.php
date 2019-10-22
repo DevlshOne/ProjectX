@@ -9,7 +9,7 @@
 
 	$email_html = null;
 
-	$base_dir = "/var/www/html/dev/";
+	$base_dir = "/var/www/html/reports/";
 	$tmpdir = "/var/log/nams_export/";
 
 
@@ -90,6 +90,13 @@
 	include_once($base_dir."site_config.php");
 	include_once($base_dir."db.inc.php");
 
+	include_once($base_dir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "nams_sales_export";
+	//$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_code, $result='started', $process_command=null, $process_settings=null, $process_logs=null, $time_ended = null)
+	
 
 	global $stime, $etime;
 	global $campaign_array;
@@ -103,7 +110,7 @@
 	$etime = mktime(23,59,59);
 
 
-	if($argv[1] && ($tmptime = strtotime($argv[1])) > 0){
+	if(count($argv) > 1 && $argv[1] && ($tmptime = strtotime($argv[1])) > 0){
 
 		$stime = mktime(0,0,0, date("m", $tmptime), date("d", $tmptime), date("Y", $tmptime));
 		$etime = mktime(23,59,59, date("m", $stime), date("d", $stime), date("Y", $stime));
@@ -127,14 +134,15 @@
 		return preg_replace('/[^a-zA-Z0-9.,-=_ $@#^&:;\'"\?]/','', $input, -1);
 	}
 
-	function endsWith($haystack, $needle) {return $needle === "" || (($temp = strlen($haystack) - strlen($needle)) >= 0 && strpos($haystack, $needle, $temp) !== FALSE);}
 
 
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv), "Timeframe:".date("H:i:s m/d/Y", $stime)." - ".date("H:i:s m/d/Y", $etime));
+	
+
+	
 
 	echo "NAMS Export STARTING - ".date("H:i:s m/d/Y")."\n";
-
-
-
 
 	echo " - Setting Timeframe to ".date("H:i:s m/d/Y", $stime)." - ".date("H:i:s m/d/Y", $etime)."\n";
 
@@ -142,9 +150,11 @@
 
 
 
+//	$where = " WHERE sale_time BETWEEN '$stime' AND '$etime' ".
+//		" AND ((verifier_cluster_id=9 AND `is_paid`='no') OR (agent_cluster_id=3 AND office='11'))  ";
+
 	$where = " WHERE sale_time BETWEEN '$stime' AND '$etime' ".
 		" AND ((verifier_cluster_id IN (9,999999) AND `is_paid`='no') OR (agent_cluster_id=3 AND office='11'))  ";
-
 
 
 
@@ -646,6 +656,6 @@ M4 -> N4*/
 
 
 
-
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed");
 
 

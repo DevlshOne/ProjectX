@@ -51,7 +51,7 @@ class LeadManagement{
 			'REVIEWCC'=>"Review CC Sale",
 			'PAIDCC'=>"PAIDCC/DRIPP",
 			'SALE'=>"Sale",
-			'SALE/PAIDCC'=>"Any Sale/PAIDCC/SALECC",
+			'SALE/PAIDCC'=>"Any/ALL Sales",
 			'SALECC'=>"Rousted CC Sale",
 			'XFER'=>"Verifier Transfer",
 
@@ -152,7 +152,49 @@ class LeadManagement{
 
 
 
+			function playAudio(url){
 
+
+					//$('#media_player').dialog("open");
+
+					$('#media_player').children().filter("audio").each(function(){
+					    this.pause(); // can't hurt
+					    delete(this); // @sparkey reports that this did the trick!
+					    $(this).remove(); // not sure if this works after null assignment
+					});
+					$('#media_player').empty();
+
+					$('#media_player').load("play_rec.php?play_url="+url);
+
+					// RESET OTHERS
+					//resetImages();
+					// CHANGE IMAGE
+					//markPlayButton(call_id);
+
+
+
+					// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
+					$('#media_player').off("dialogclose");
+					$('#media_player').on('dialogclose', function(event) {
+
+						hideAudio();
+
+						//alert("pausing");
+					});
+
+
+				}
+
+				function hideAudio(){
+					$('#media_player').children().filter("audio").each(function(){
+				    	this.pause();
+				    	delete(this);
+				    	$(this).remove();
+
+					});
+
+					$('#media_player').empty();
+				}
 
 
 			/**
@@ -165,7 +207,7 @@ class LeadManagement{
 				return 'api/api.php'+
 								"?get=lead_management&"+
 								"mode=xml&"+
-
+								's_id='+escape(frm.s_id.value)+"&"+
 								's_lead_id='+escape(frm.s_lead_id.value)+"&"+
 								's_campaign_id='+escape(frm.s_campaign_id.value)+"&"+
 
@@ -329,7 +371,7 @@ class LeadManagement{
 				frm.s_cluster_id.selectedIndex = 0;
 				frm.s_campaign_id.selectedIndex = 0;
 				frm.s_lead_id.value = '';
-
+				frm.s_id.value = '';
 				frm.s_agent_username.value = '';
 				frm.s_verifier_username.value = '';
 
@@ -471,6 +513,7 @@ class LeadManagement{
 					<div id="total_count_div"></div>
 
 				</td>
+				<th class="row2">PX ID</th>
 				<th class="row2">Cluster</th>
 				<th class="row2">Campaign</th>
 				<th class="row2">Dispo</th>
@@ -488,6 +531,7 @@ class LeadManagement{
 				</td>
 			</tr>
 			<tr>
+				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
 				<td align="center">
 					<?
 						echo makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', ""); //loadLeads();
@@ -672,7 +716,12 @@ class LeadManagement{
 					height: 420,
 					modal: false,
 					draggable:true,
-					resizable: false
+					resizable: false,
+					close: function(event, ui){
+
+						hideAudio();
+						
+					}
 				});
 
 				<?
@@ -699,7 +748,8 @@ class LeadManagement{
 	function makeRecordingSection($row){
 
 
-		?><script>
+	/***	THESE FUNCTIONS WERE MOVED TO "listEntrys()" function instead
+	 * ?><script>
 			function playAudio(url){
 
 
@@ -722,8 +772,8 @@ class LeadManagement{
 
 
 				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
-				$('#media_player').unbind("dialogclose");
-				$('#media_player').bind('dialogclose', function(event) {
+				$('#media_player').off("dialogclose");
+				$('#media_player').on('dialogclose', function(event) {
 
 					hideAudio();
 
@@ -745,7 +795,10 @@ class LeadManagement{
 			}
 
 		</script>
-		<div id="media_player" title="Playing Call Recording">
+		<?***/
+	
+	
+		?><div id="media_player" title="Playing Call Recording">
 
 
 		</div><?
@@ -1146,8 +1199,12 @@ class LeadManagement{
 	}
 
 	function makeResendSale($leadrow, $sale_id){
-
+		
+		$sale_id = intval($sale_id);
+		
 		connectPXDB();
+		
+		$sale = querySQL("SELECT * FROM `sales` WHERE id='$sale_id' ")
 
 		?><script>
 
@@ -1240,8 +1297,20 @@ class LeadManagement{
 		<table id="change_dispo_table" border="0" align="center">
 		<tr>
 			<th class="ui-widget-header" height="30" colspan="2">Resend Sale</th>
-		</tr>
-		<tr>
+		</tr><?
+		
+		if($sale['is_paid'] != 'no'){
+		
+			?><tr>
+				<td colspan="2" align="center" style="font-size:14px;color:#ff0000">
+				
+					WARNING: Resubmitting Credit card sales is not supported.
+				
+				</td>
+			</tr><?
+		}
+		
+		?><tr>
 			<th>Sale ID#</th>
 			<td><?=$sale_id?></td>
 		</tr>
@@ -1383,8 +1452,14 @@ class LeadManagement{
 		</tr>
 		<tr>
 			<th>Dispo</th>
-			<td><?=$this->makeDispoDD('dispo', $leadrow['dispo'], "", " ", array("SALE","PAIDCC","SALE/PAIDCC"))?></td>
+			<td><?=$this->makeDispoDD('dispo', $leadrow['dispo'], "", " ", array("SALE","PAIDCC","SALE/PAIDCC","SALECC"))?></td>
 		</tr>
+		<?/**
+					'PAIDCC'=>"PAIDCC/DRIPP",
+			'SALE'=>"Sale",
+			'SALECC/PAIDCC'=>"Any CC Sale",
+			'SALECC'=>"Rousted CC Sale",
+			**/?>
 
 
 		<tr>
@@ -1469,7 +1544,10 @@ class LeadManagement{
 
 		$total = 0;
 
-
+		$change_dispo_allowed = checkAccess('lmt_change_dispo');
+		$create_sale_allowed = checkAccess('lmt_create_sale');
+		
+		
 		foreach($rowarr as $xfer){
 
 
@@ -1480,9 +1558,14 @@ class LeadManagement{
 				<td align="center"><?=htmlentities($xfer['verifier_username'])?> @ $<?=number_format($xfer['verifier_amount'])?></td>
 				<td align="center"><?=htmlentities($xfer['verifier_dispo'])?></td>
 				<td align="center">
-
-					<input type="button" value="Change" onclick="loadSaleSection(<?=$xfer['id']?>)">
-				</td>
+				<?
+				if($create_sale_allowed){
+					?><input type="button" value="Change" onclick="loadSaleSection(<?=$xfer['id']?>)"><?
+				}else{
+					?>&nbsp;<?
+				}
+				
+				?></td>
 			</tr><?
 
 
@@ -1542,7 +1625,7 @@ class LeadManagement{
 					$curdate = date("m/d/Y");
 					$saledate = date("m/d/Y", $sale['sale_time']);
 
-					if($saledate != $curdate){
+					if($saledate != $curdate && $create_sale_allowed){
 
 						?><input type="button" value="Resend Sale" onclick="loadSaleResendSection(<?=intval($sale['id'])?>)"><?
 
@@ -1572,12 +1655,23 @@ class LeadManagement{
 		?></table>
 
 		<br />
-
-		<center>
-			<input type="button" value="Change Dispo" onclick="loadDispoSection()">
-
-			<input type="button" value="Create new XFER and Sale" onclick="loadSaleSection(0)">
-		</center>
+		<?
+		
+		if($change_dispo_allowed){
+			?><center><?
+			
+			if($change_dispo_allowed){
+				?><input type="button" value="Change Dispo" onclick="loadDispoSection()"><?
+			}
+			if($create_sale_allowed){
+				?><input type="button" value="Create new XFER and Sale" onclick="loadSaleSection(0)"><?
+				
+			}
+			
+			?></center><?
+			
+		}
+		?>
 
 		<br />
 
@@ -1866,6 +1960,8 @@ class LeadManagement{
 					$vici_ver_search_url = getSearchLeadURL($row['verifier_vici_cluster_id'], $row['phone_num']);
 				}
 
+				
+				if(checkAccess('lmt_edit_lead')){
 
 				?><form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkLeadFrm(this); return false">
 					<input type="hidden" id="editing_lead" name="editing_lead" value="<?=$id?>" >
@@ -1993,10 +2089,10 @@ class LeadManagement{
 
 						<tr>
 							<th align="left" height="25">Dispo:</th>
-							<td><?=($row['dispo'])?htmlentities($row['dispo']).'&nbsp;&nbsp;<input type="button" value="Change" onclick="$(\'#client_tabs\').tabs( \'option\', \'active\', 1 );">':'-In Call-'?> </td>
+							<td><?=($row['dispo'])?htmlentities($row['dispo']).((checkAccess('lmt_change_dispo'))?'&nbsp;&nbsp;<input type="button" value="Change" onclick="$(\'#client_tabs\').tabs( \'option\', \'active\', 1 );">':''):'-In Call-'?> </td>
 						</tr><?
 
-						if($id > 0){
+						if($id > 0 && checkAccess('action_log')){
 						?><tr>
 							<td colspan="2" align="center" style="padding-top:10px">
 
@@ -2017,6 +2113,150 @@ class LeadManagement{
 				</tr>
 				</form>
 				</table><?
+				
+				// VIEW ONLY
+				}else{
+					
+					?><table border="0" width="100%">
+					<tr valign="top">
+						<td>
+	
+							<table border="0" align="center">
+							<tr>
+								<th align="left" height="25">First Name:</th>
+								<td><?=htmlentities($row['first_name'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">Last Name:</th>
+								<td><?=htmlentities($row['last_name'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">Address:</th>
+								<td><?=htmlentities($row['address1'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">Address 2:</th>
+								<td><?=htmlentities($row['address2'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">City/State/Zip:</th>
+								<td>
+									<?=htmlentities($row['city'])?>, <?=htmlentities($row['state'])?> <?=htmlentities($row['zip_code'])?>
+								</td>
+							</tr>
+							<tr>
+								<th align="left" height="25">Comments:</th>
+								<td><?=htmlentities($row['comments'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">Occupation:</th>
+								<td><?=htmlentities($row['occupation'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">Employer:</th>
+								<td><?=htmlentities($row['employer'])?></td>
+							</tr>
+							</table>
+	
+						</td>
+						<td>
+	
+							<table border="0" align="center">
+							<tr>
+								<th align="left" height="25">Phone Number:</th>
+								<td><?=format_phone($row['phone_num'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">Time Added:</th>
+								<td><?=date("g:ia m/d/Y", $row['time'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">PX lead ID#</th>
+								<td><?=htmlentities($row['id'])?></td>
+							</tr>
+							<tr>
+								<th align="left" height="25">Vici Lead ID#:</th>
+								<td>
+									<a href="<?=$vici_url?>" target="_blank"><u><?=htmlentities($row['lead_id']).' on '.getClusterName($row['vici_cluster_id'])?></u></a>
+									 |
+									<a href="<?=$vici_prod_search_url?>" target="_blank"><u>Search by Phone</u></a>
+	
+								</td>
+							</tr><?
+	
+							// CROSS CLUSTER
+							if($row['verifier_vici_cluster_id'] > 0 && $row['verifier_vici_cluster_id'] != $row['vici_cluster_id']){
+	
+								?><tr>
+									<th align="left" height="25">Verifier Lead ID#:</th>
+									<td>
+										<a href="<?=$vici_verifier_url?>" target="_blank"><u><?=htmlentities($row['verifier_lead_id']).' on '.getClusterName($row['verifier_vici_cluster_id'])?></u></a>
+										 |
+									 	<a href="<?=$vici_ver_search_url?>" target="_blank"><u>Search by Phone</u></a>
+									 </td>
+								</tr><?
+	
+	
+	
+							}
+	
+	
+							?><tr>
+	
+								<th align="left" height="25">Office/Group:</th>
+								<td><?
+	
+									echo $row['office'].' / '.$row['user_group'];
+	
+								?></td>
+							</tr><?
+	
+	
+	
+	
+	
+	
+	
+							?><tr>
+								<th align="left" height="25">Problem Call:</th>
+								<td><?
+	
+									if($row['problem'] == 'yes'){
+	
+										echo "Yes".(trim($row['problem_description']))?" - ".$row['problem_description']:'';
+	
+									}else{
+	
+										echo "No";
+									}
+	
+								?></td>
+							</tr>
+	
+							<tr>
+								<th align="left" height="25">Dispo:</th>
+								<td><?=($row['dispo'])?htmlentities($row['dispo']).((checkAccess('lmt_change_dispo'))?'&nbsp;&nbsp;<input type="button" value="Change" onclick="$(\'#client_tabs\').tabs( \'option\', \'active\', 1 );">':''):'-In Call-'?> </td>
+							</tr><?
+	
+							if($id > 0 && checkAccess('action_log')){
+							?><tr>
+								<td colspan="2" align="center" style="padding-top:10px">
+	
+									<input type="button" value="View Change History" style="font-size:10px" onclick="viewChangeHistory('lead_management', <?=$row['id']?>)" />
+	
+	
+								</td>
+							</tr><?
+							}
+	
+							?></table>
+	
+	
+						</td>
+					</tr>
+					</table><?
+				}
+					
 
 				break;
 
@@ -2033,7 +2273,11 @@ class LeadManagement{
 
 			case 'change_dispo':
 
-				$this->makeChangeDispo($row);
+				if(checkAccess('lmt_change_dispo')){
+					$this->makeChangeDispo($row);
+				}else{
+					echo "ACCESS DENIED TO CHANGE DISPO";
+				}
 
 				?><script>
 					window.location = '#look_at_me';
@@ -2043,9 +2287,18 @@ class LeadManagement{
 				break;
 			case 'create_sale':
 
-				$xfer_id = intval($_REQUEST['xfer_id']);
+				if(checkAccess('lmt_change_dispo')){
+					
+					
+					$xfer_id = intval($_REQUEST['xfer_id']);
 
-				$this->makeCreateSale($row, $xfer_id);
+					$this->makeCreateSale($row, $xfer_id);
+					
+				}else{
+					
+					echo "ACCESS DENIED TO CHANGE DISPO";
+					
+				}
 
 				//$this->makeChangeDispo($row);
 

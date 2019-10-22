@@ -340,7 +340,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
         row.setAttribute("record_id", dataarr[x].getAttribute('id'));
         row.setAttribute("color_index", "" + (x % 2));
         var cell;
-        var newDate, tmptime, datestring;
+        var newDate, tmptime, datestring, tmpstr;
         var cur_name, cur_class, cur_data, priv_name;
         for (var y = 0; y < tableFormat.length; y++) {
             //alert("INSERT CELL - "+y+" tableFormat:"+tableFormat[y]);
@@ -487,6 +487,18 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     cell.onclick = function () {
                         handleListClick(tagname, this.parentNode.getAttribute('record_id'));
                     }
+                    
+                    
+                } else if(special_tag.indexOf("maxlen:") == 0) {
+                    
+                	 tmparr = special_tag.split(":");
+                     tmpstr = dataarr[x].getAttribute(tmparr[1]);
+                     tmptime = parseInt(""+tmparr[2]);
+                     cell.innerHTML = htmlEntities((tmpstr.length > tmptime)?tmpstr.substr(0,tmptime).trim()+"...":tmpstr.trim())  ;
+                     cell.className = clsname + ' hand' + cur_class;
+                     cell.onclick = function () {
+                         handleListClick(tagname, this.parentNode.getAttribute('record_id'));
+                     }
                     // RENDER TIME
                 } else if (special_tag.indexOf("time:") == 0) {
                     tmparr = special_tag.split(":");
@@ -531,7 +543,17 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     // CONCAT 2 FIELDS TOGETHER WITH A SPACE SEPERATOR
                 } else if (special_tag.indexOf("concat:") >= 0) {
                     tmparr = special_tag.split(":");
-                    cell.innerHTML = dataarr[x].getAttribute(tmparr[1]) + " " + dataarr[x].getAttribute(tmparr[2]);
+                    
+                    tmpstr = "";
+                    
+
+                    for(var z=1;z < tmparr.length;z++){
+                    	if(z > 1) tmpstr += " ";
+                    	tmpstr += dataarr[x].getAttribute(tmparr[z]);
+                    }
+                    
+                    
+                    cell.innerHTML = tmpstr;//dataarr[x].getAttribute(tmparr[1]) + " " + dataarr[x].getAttribute(tmparr[2]);
                     cell.className = clsname + ' hand' + cur_class;
                     cell.onclick = function () {
                         handleListClick(tagname, this.parentNode.getAttribute('record_id'));
@@ -746,6 +768,10 @@ function parseXMLData(area, tableFormat, xmldoc) {
                 }
             } else {
                 cur_data = dataarr[x].getAttribute(cur_name);
+                
+                
+               // cur_data = priorityProcessing(cur_data);
+                
                 cell.innerHTML = (cur_data) ? cur_data : '&nbsp;';
                 cell.className = clsname + ' hand' + cur_class;
                 cell.onclick = function () {
@@ -763,6 +789,45 @@ function parseXMLData(area, tableFormat, xmldoc) {
     applyUniformity();
     return totalcount;
 } // END parseXMLData()
+
+
+function priorityProcessing(inputstr){
+	inputstr = inputstr.trim();
+	
+	var priority = 0;
+	
+	if(inputstr.startsWith("!")){
+		if(inputstr.startsWith("!!!")){
+			priority = 3;
+		}else if(inputstr.startsWith("!!")){
+			priority = 2;
+		}else{
+			priority = 1;
+		}
+		
+		inputstr = inputstr.replace( /^\!+/, '').trim();
+		
+		switch(priority){
+		default:
+		case 1:
+			//inputstr = '<span style="background-color:#ffcc00">!</span>'+inputstr;
+			
+			inputstr = '<span title="Low Priority"><img src="images/priority_low.png" height="15" border="0" />'+inputstr+'</span>';
+			break;
+		case 2:
+			inputstr = '<span title="Medium Priority"><img src="images/priority_medium.png" height="15" border="0">'+inputstr+'</span>';
+			//inputstr = '<span style="background-color:#ff9933">!</span>'+inputstr;
+			break;
+		case 3:
+			inputstr = '<span title="High Priority"><img src="images/priority_high.png" height="15" border="0">'+inputstr+'</span>';
+			//inputstr = '<span style="background-color:#ff3300">!</span>'+inputstr;
+			break;
+		}
+	}
+	
+	return inputstr;
+}
+
 
 /**
  * Wrapper for list click functions

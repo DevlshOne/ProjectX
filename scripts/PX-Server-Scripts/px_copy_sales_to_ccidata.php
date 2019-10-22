@@ -1,16 +1,21 @@
 #!/usr/bin/php
 <?php
-	$basedir = "/var/www/dev/html/";
+
+	$basedir = "/var/www/html/reports/";
 
 	include_once($basedir."db.inc.php");
-	include_once($basedir."util/microtime.php");
-	include_once($basedir."util/format_phone.php");
-	include_once($basedir."util/db_utils.php");
+	include_once($basedir."utils/microtime.php");
+	include_once($basedir."utils/format_phone.php");
+	include_once($basedir."utils/db_utils.php");
 
 
 
 	$stime = mktime(0,0,0);
 	$etime = mktime(23,59,59);
+
+
+//$stime = mktime(0,0,0,6,8,2019);
+//$etime = $stime + 86400;
 
 
 	echo "Starting Sales Copy for ".date("m/d/Y",$stime)."...\n";
@@ -19,14 +24,24 @@
 	// CONNECT PX DB
 	connectPXDB();
 
-	$res = query("SELECT * FROM sales ".
-				" WHERE `sale_time` BETWEEN '$stime' AND '$etime' ".
-				"".
-				"");
+	//Modified by Andrew 06/17/2019
+	//YOLO!
+	//NEW
+	$res = query("SELECT * FROM sales WHERE `sale_time` BETWEEN '$stime' AND '$etime' and is_paid in ('yes','no') ");
+	//OLD
+	//$res = query("SELECT * FROM sales ".
+	//			" WHERE `sale_time` BETWEEN '$stime' AND '$etime' ".
+	//			"".
+	//			"");
 
 	$rowarr = array();
+	$ptr = 0;
 	while($row=mysqli_fetch_array($res, MYSQLI_ASSOC)){
-		$rowarr[] = $row;
+		$rowarr[$ptr] = $row;
+
+		$rowarr[$ptr]['lead_tracking_row'] = querySQL("SELECT * FROM `lead_tracking` WHERE id='".$row['lead_tracking_id']."'");
+
+		$ptr++;
 	}
 
 
@@ -51,24 +66,24 @@
 
 	$start_sql = "REPLACE INTO `leads` (`lead_id`,`phone`,`agent_id`,`agent_name`,`sales_date`,`sales_time`,".
 					"`last_name`,`first_name`,`contact`,`address1`,`address2`,`city`,`state`,`zip`,`campaign`,`list_id`,".
-					"`sale_amount`,`verifier`,`office`,`call_group`,`server`) VALUES ";
+					"`sale_amount`,`verifier`,`office`,`call_group`,`server`,`employer`,`occupation`) VALUES ";
 
 
 	foreach($rowarr as $row){
 
 
-		if($row['vici_last_call_time'] && $row['vici_last_call_time'] != null){
+		//if($row['vici_last_call_time'] && $row['vici_last_call_time'] != null){
 
-			list($date, $time) = preg_split("/\s/", $row['vici_last_call_time']);
-			$date = date("m/d/Y", strtotime($date) );
+		//	list($date, $time) = preg_split("/\s/", $row['vici_last_call_time']);
+		//	$date = date("m/d/Y", strtotime($date) );
 
-		}else{
+		//}else{
 
 			$date = date("m/d/Y", $row['sale_time']);
 
 			$time = date("H:i:s", $row['sale_time']);
 
-		}
+		//}
 
 
 		$sql = $start_sql;
@@ -93,7 +108,10 @@
 				"'".addslashes(strtoupper($row['verifier_username']))."',".
 				"'".(($row['office'])?addslashes(strtoupper($row['office'])) : "90")."',".
 				"'".addslashes(strtoupper($row['call_group']))."',".
-				"'".addslashes($clusters[$row['agent_cluster_id']])."')";
+				"'".addslashes($clusters[$row['agent_cluster_id']])."',".
+				"'".addslashes($row['lead_tracking_row']['employer'])."',".
+				"'".addslashes($row['lead_tracking_row']['occupation'])."'".
+				")";
 
 
 

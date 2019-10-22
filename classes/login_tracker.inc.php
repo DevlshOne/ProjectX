@@ -47,10 +47,10 @@ class LoginTracker{
 
 		}else{
 
-			## DISPLAY MAKE ADD DIALOG OR LIST ENTRIES BASED ON QUERY STRING
-			if(isset($_REQUEST['add_login'])){
+			## DISPLAY MAKE VIEW LOGIN DIALOG OR LIST ENTRIES BASED ON QUERY STRING
+			if(isset($_REQUEST['view_login'])){
 
-				$this->makeAdd($_REQUEST['add_login']);
+				$this->makeView($_REQUEST['view_login']);
 
 			}else{
 
@@ -79,6 +79,7 @@ class LoginTracker{
 			var LoginsTableFormat = [
 				['id','align_left'],
 				['[time:time]','align_left'],
+				['[get:time_logged_out:time_out]','align_left'],
 				['username','align_left'],
 				['result','align_left'],
 				['section','align_left'],
@@ -101,6 +102,7 @@ class LoginTracker{
 								's_result='+escape(frm.s_result.value)+"&"+
 								's_section='+escape(frm.s_section.value)+"&"+
 								's_ip='+escape(frm.s_ip.value)+"&"+
+								's_browser='+escape(frm.s_browser.value)+"&"+
 
 								's_date_month='+escape(frm.s_date_month.value)+"&"+'s_date_day='+escape(frm.s_date_day.value)+"&"+'s_date_year='+escape(frm.s_date_year.value)+"&"+
 								's_date2_month='+escape(frm.s_date2_month.value)+"&"+'s_date2_day='+escape(frm.s_date2_day.value)+"&"+'s_date2_year='+escape(frm.s_date2_year.value)+"&"+
@@ -179,20 +181,18 @@ class LoginTracker{
 
 			function handleLoginListClick(id){
 
-				displayAddLoginDialog(id);
+				displayViewLoginDialog(id);
 
 			}
 
 
-			function displayAddLoginDialog(id){
+			function displayViewLoginDialog(id){
 
-				var objname = 'dialog-modal-add-login';
+				var objname = 'dialog-modal-view-login';
 
 
 				if(id > 0){
-					$('#'+objname).dialog( "option", "title", 'Editing login' );
-				}else{
-					$('#'+objname).dialog( "option", "title", 'Adding new Login' );
+					$('#'+objname).dialog( "option", "title", 'Viewing login' );
 				}
 
 
@@ -201,11 +201,11 @@ class LoginTracker{
 
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
 
-				$('#'+objname).load("index.php?area=login_tracker&add_login="+id+"&printable=1&no_script=1");
+				$('#'+objname).load("index.php?area=login_tracker&view_login="+id+"&printable=1&no_script=1");
 
 				$('#'+objname).dialog('option', 'position', 'center');
 
-				$('#'+objname).dialog('option', 'height', '300');
+				$('#'+objname).dialog('option', 'height', '350');
 			}
 
 			function resetLoginForm(frm){
@@ -216,17 +216,18 @@ class LoginTracker{
 				frm.s_result.value='';
 				frm.s_section.value='';
 				frm.s_ip.value = '';
+				frm.s_browser.value = '';
 
 				// SET DATE RANGE SEARCH MODE TO DATE ONLY
 				frm.s_date_mode.value = 'date';
 
-				// CLEAR CUSTOMER SEARCH FIELDS
+				// CLEAR CUSTOM SEARCH FIELDS
 				frm.data_aggr_search.value = 'false';
 				frm.data_aggr_range.value = 'false';
 
 				// GET CURRENT DATE AND GRAB DAY + MONTH
 				var d = new Date();
-				var n = d.getDay();
+				var n = d.getDate();
 				var m = d.getMonth();
 
 				// SET DATE SEARCH INPUTS TO CURRENT DAY + MONTH
@@ -271,7 +272,7 @@ class LoginTracker{
 
 
 		</script>
-		<div id="dialog-modal-add-login" title="Adding new Login" class="nod">
+		<div id="dialog-modal-view-login" title="Viewing Login" class="nod">
 		<?
 
 		?>
@@ -325,6 +326,7 @@ class LoginTracker{
 						<th class="row2">Result</th>
 						<th class="row2">Section</th>
 						<th class="row2">IP</th>
+						<th class="row2">Browser</th>
 						<th class="row2">
 						<select name="s_date_mode" onchange="toggleDateMode(this.value);loadLogins();" id="s_date_mode">
 							<option value="date">Date</option>
@@ -335,7 +337,7 @@ class LoginTracker{
 					</tr>
 					<tr>
 						<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-						<td align="center"><input type="text" name="s_username" size="20" value="<?=htmlentities($_REQUEST['s_username'])?>"></td>
+						<td align="center"><input type="text" name="s_username" size="10" value="<?=htmlentities($_REQUEST['s_username'])?>"></td>
 						<td align="center"><select name="s_result" id="s_result">
 								<option value="">[All]</option>
 
@@ -358,7 +360,8 @@ class LoginTracker{
 								<option value="verifier">verifier</option>
 								<option value="API">API</option>
 							</select></td>
-						<td align="center"><input type="text" name="s_ip" size="20" value="<?=htmlentities($_REQUEST['s_ip'])?>"></td>
+						<td align="center"><input type="text" name="s_ip" size="15" value="<?=htmlentities($_REQUEST['s_ip'])?>"></td>
+						<td align="center"><input type="text" name="s_browser" size="15" value="<?=htmlentities($_REQUEST['s_browser'])?>"></td>
 						<td align="center"><span id="date1_span"><?
 
 							echo makeTimebar("s_date_",1,null,false,time()," onchange=\"".$this->index_name." = 0;loadLogins()\" ");
@@ -384,6 +387,7 @@ class LoginTracker{
 					<tr>
 						<th class="row2" align="left"><?=$this->getOrderLink('id')?>ID</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('time')?>Time</a></th>
+						<th class="row2" align="left"><?=$this->getOrderLink('time_out')?>Logout Time</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('username')?>Username</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('result')?>Result</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('section')?>Section</a></th>
@@ -397,7 +401,7 @@ class LoginTracker{
 
 		<script>
 
-			$("#dialog-modal-add-login").dialog({
+			$("#dialog-modal-view-login").dialog({
 				autoOpen: false,
 				width: 500,
 				height: 200,
@@ -482,8 +486,8 @@ class LoginTracker{
 
 	}
 
-	## DISPLAY MAKE ADD FORM WHICH IS DISPLAY ONLY
-	function makeAdd($id){
+	## DISPLAY VIEW LOGIN FORM WHICH IS DISPLAY ONLY
+	function makeView($id){
 
 		$id=intval($id);
 
@@ -499,13 +503,32 @@ class LoginTracker{
 
 
 			// SET TITLEBAR
-			$('#dialog-modal-add-login').dialog( "option", "title", '<?=($id)?'Viewing Login #'.$id.' - '.htmlentities($row['username']):'Adding new Login'?>' );
+			$('#dialog-modal-view-login').dialog( "option", "title", '<?=($id)?'Viewing Login #'.$id.' - '.htmlentities($row['username']):''?>' );
 
 
+			function kickoutUser(loginid){
+
+
+				$.ajax({
+					type: "GET",
+					cache: false,
+					url: 'ajax.php?mode=force_logout&force_logout_user='+loginid,
+					error: function(){
+						alert("Error submitting. Please contact an admin.");
+					},
+					success: function(msg){
+
+						alert(msg);
+						
+					}
+				});
+					
+				
+			}
 
 		</script>
 		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkLoginFrm(this); return false">
-			<input type="hidden" id="adding_login" name="adding_login" value="<?=$id?>" >
+			<input type="hidden" id="viewing_login" name="viewing_login" value="<?=$id?>" >
 
 
 		<table border="0" align="center">
@@ -514,22 +537,48 @@ class LoginTracker{
 			<td><?=htmlentities($row['user_id'])?></td>
 		</tr>	
 		<tr>
-			<th align="left" height="30">Time:</th>
-			<td><?=htmlentities($row['time'])?></td>
-		</tr>	
+			<th align="left" height="30"><?=($row['result'] == 'success')?"Time Logged in:":"Time Attempted:"?></th>
+			<td><?=date("g:i:sa", $row['time'])?></td>
+		</tr><?
+		
+		if($row['result'] == 'success'){
+		?><tr>
+			<th align="left" height="30">Time Last Action:</th>
+			<td><?=date("g:i:sa", $row['time_last_action'])?></td>
+		</tr>
 		<tr>
+			<th align="left" height="30">Time Logged out:</th>
+			<td><?=($row['time_out']==0)?
+					'[STILL LOGGED IN]'.((checkAccess('login_tracker_kick_user'))?'<input type="button" value="KICK THEM OUT" onclick="kickoutUser('.$row['id'].');">':''):
+						date("g:i:sa", $row['time_out'])?></td>
+		</tr><?
+		
+		
+		}
+		
+		?><tr>
 			<th align="left" height="30">Username:</th>
 			<td><?=htmlentities($row['username'])?></td>
 		</tr>
 		<tr>
 			<th align="left" height="30">Result:</th>
 			<td><?=htmlentities($row['result'])?></td>
-		</tr>
-		<tr>
+		</tr><?
+		
+		if(trim($row['details'])){
+		?><tr>
+			<th align="left" height="30">Reason:</th>
+			<td><?=htmlentities($row['details'])?></td>
+		</tr><?
+		}
+		
+		?><tr>
 			<th align="left" height="30">Section:</th>
 			<td><?=htmlentities($row['section'])?></td>
-		</tr>
-		<tr>
+		</tr><?
+		
+		if($row['section'] != 'admin'){
+		?><tr>
 			<th align="left" height="30">Campaign:</th>
 			<td><?=htmlentities($row['script_id'])?> - <?
 
@@ -566,11 +615,18 @@ class LoginTracker{
 
 
 			?></td>
-		</tr>			
-		<tr>
+		</tr><?
+		
+		}
+		
+		?><tr>
 			<th align="left" height="30">IP:</th>
 			<td><?=htmlentities($row['ip'])?></td>
 		</tr>		
+		<tr>
+			<th align="left" height="30">Browser:</th>
+			<td><?=htmlentities($row['browser'])?></td>
+		</tr>	
 		</form>
 		</table><?
 

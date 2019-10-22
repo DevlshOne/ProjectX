@@ -1,4 +1,5 @@
-<?
+<?php
+
 
 
 
@@ -153,8 +154,18 @@ class API_Lead_Management{
 	
 	
 	function syncDataChangesToDRIPP($lead_tracking_id){
+	
+		
+// PRODUCTION URL, DISABLED FOR TESTING A BUG 		
+//		$url = "https://dripp.advancedtci.com/dripp/pages/update_transaction.php";
+
+// TESTING URL		
+//		//$url = "http://10.101.15.101/dripp/pages/update_transaction.php";
+		
 		
 		$url = "https://dripp.advancedtci.com/dripp/pages/update_transaction.php";
+		
+		
 		
 		$lead_tracking_id = intval($lead_tracking_id);
 		
@@ -389,6 +400,13 @@ class API_Lead_Management{
 		switch($_REQUEST['action']){
 			case 'delete':
 				
+				if(!checkAccess('lmt_edit_lead')){
+					
+					$_SESSION['api']->errorOut('Access denied to EDIT LEAD');
+					
+					return;
+				}
+				
 				$id = intval($_REQUEST['id']);
 				
 				//$row = $_SESSION['dbapi']->campaigns->getByID($id);
@@ -441,6 +459,15 @@ class API_Lead_Management{
 				
 				break;
 			case 'edit':
+				 
+				
+				if(!checkAccess('lmt_edit_lead')){
+					
+					$_SESSION['api']->errorOut('Access denied to EDIT LEAD');
+					
+					return;
+				}
+				
 				
 				$id = intval($_POST['editing_lead']);
 				
@@ -506,6 +533,13 @@ class API_Lead_Management{
 				break;
 				
 			case 'change_dispo':
+				
+				if(!checkAccess('lmt_change_dispo')){
+					
+					$_SESSION['api']->errorOut('Access denied to CHANGE DISPO');
+					
+					return;
+				}
 				
 				
 				$id = intval($_POST['editing_lead']);
@@ -597,6 +631,14 @@ class API_Lead_Management{
 				break;
 				
 			case 'resend_sale':
+				
+				if(!checkAccess('lmt_create_sale')){
+					
+					$_SESSION['api']->errorOut('Access denied to CREATE SALE');
+					
+					return;
+				}
+				
 				$id = intval($_REQUEST['editing_lead']);
 				
 				$sale_id = intval($_REQUEST['editing_sale_id']);
@@ -612,6 +654,13 @@ class API_Lead_Management{
 				
 				break;
 			case 'create_sale':
+				
+				if(!checkAccess('lmt_create_sale')){
+					
+					$_SESSION['api']->errorOut('Access denied to CREATE SALE');
+					
+					return;
+				}
 				
 				$id = intval($_REQUEST['editing_lead']);
 				
@@ -1087,8 +1136,30 @@ class API_Lead_Management{
 				
 				//}
 				
+				if($xfer_id > 0){
+					$new_xfer =	$_SESSION['dbapi']->querySQL("SELECT * FROM transfers WHERE id='$xfer_id'");
+					$new_sale = $_SESSION['dbapi']->querySQL("SELECT * FROM sales WHERE transfer_id='$xfer_id'");
+					
+					$additional_changes_tracked = "";
+					
+					$differences = recordCompare($xfer, $new_xfer);
+					if($differences != null && strlen(trim($differences)) > 0){
+						$additional_changes_tracked .= "XFER Compare:\n".$differences;
+					}
+					
+					$differences = recordCompare($sale, $new_sale);
+					if($differences != null && strlen(trim($differences)) > 0){
+						$additional_changes_tracked .= "SALE Compare:\n".$differences;
+					}
+					
+				}
+		
+				$new_row = $_SESSION['dbapi']->lead_management->getByID($id);
 				
-				logAction('create_sale', 'lead_management', $id,"");
+				
+
+				
+				logAction('create_sale', 'lead_management', $id,"", $row, $new_row, $additional_changes_tracked);
 				
 				// SYNC CHANGES TO DRIPP
 				$this->syncDataChangesToDRIPP($id);

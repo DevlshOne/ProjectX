@@ -1,38 +1,34 @@
-<?	/***************************************************************
-	 *	Campaigns - handles listing and editing campaigns
-	 *	Written By: Jonathan Will
-	 ***************************************************************/
+<?php
+/***************************************************************
+ *	Script Management - Handles File uploads, and variable/custom programming.
+ *	Written By: Jonathan Will
+ ***************************************************************/
 
 $_SESSION['scripts'] = new Scripts;
 
 
 class Scripts{
 
-	var $table	= 'scripts';			## Classes main table to operate on
-	var $orderby	= 'id';		## Default Order field
-	var $orderdir	= 'DESC';	## Default order direction
-
+	var $table		= 'scripts';		## Classes main table to operate on
+	var $orderby	= 'id';				## Default Order field
+	var $orderdir	= 'DESC';			## Default order direction
 
 	## Page  Configuration
-	var $pagesize	= 20;	## Adjusts how many items will appear on each page
-	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+	var $pagesize	= 20;				## Adjusts how many items will appear on each page
+	var $index		= 0;				## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
 
-	var $index_name = 'scr_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-	var $frm_name = 'scrnextfrm';
+	var $index_name = 'scr_list';		## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+	var $frm_name 	= 'scrnextfrm';
 
-	var $order_prepend = 'scr_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+	var $order_prepend = 'scr_';		## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
 	function Scripts(){
 
-
-		## REQURES DB CONNECTION!
 		include_once("classes/campaigns.inc.php");
 
-
 		$this->handlePOST();
+
 	}
-
-
 
 
 
@@ -44,6 +40,7 @@ class Scripts{
 			else	$this->orderdir ='DESC';
 
 			$this->orderby = $_GET[$this->order_prepend.'orderby'];	# Or switch order by
+
 		}
 
 		# Page index adjustments
@@ -53,26 +50,35 @@ class Scripts{
 
 		}
 
-
 	}
+
 
 	function handleFLOW(){
 		# Handle flow, based on query string
 
 		if(!checkAccess('scripts')){
 
-
 			accessDenied("Scripts");
-
 			return;
 
 		}else{
+		
 			if(isset($_REQUEST['add_script'])){
 
 				$this->makeAdd($_REQUEST['add_script']);
 
+			}elseif(isset($_REQUEST['edit_voice_file'])) {
+
+				$this->EditVoiceFile($_REQUEST['edit_voice_file']);
+
+			}elseif(isset($_REQUEST['play_voice_file'])) {
+
+				$this->PlayVoiceFile($_REQUEST['play_voice_file']);				
+
 			}else{
+
 				$this->listEntrys();
+
 			}
 
 		}
@@ -80,12 +86,7 @@ class Scripts{
 	}
 
 
-
-
-
-
 	function listEntrys(){
-
 
 		?><script>
 
@@ -151,17 +152,16 @@ class Scripts{
 				// CHECK IF WE ARE ALREADY LOADING THIS DATA
 				if(val == true){
 
-					//console.log("scripts ALREADY LOADING (BYPASSED) \n");
 					return;
+
 				}else{
 
 					eval('scripts_loading_flag = true');
+
 				}
 
 
 				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-
-
 
 				loadAjaxData(getScriptsURL(),'parseScripts');
 
@@ -177,8 +177,6 @@ class Scripts{
 				<?=$this->order_prepend?>totalcount = parseXMLData('script',ScriptsTableFormat,xmldoc);
 
 
-//alert(<?=$this->order_prepend?>totalcount + " > "+<?=$this->order_prepend?>pagesize+" ??");
-
 				// ACTIVATE PAGE SYSTEM!
 				if(parseInt(<?=$this->order_prepend?>totalcount) > parseInt(<?=$this->order_prepend?>pagesize)){
 
@@ -193,7 +191,6 @@ class Scripts{
 
 				}else{
 
-///alert("hide?");
 					hidePageSystem('scripts');
 
 				}
@@ -209,6 +206,7 @@ class Scripts{
 			}
 
 
+
 			function displayAddScriptDialog(scriptid){
 
 				var objname = 'dialog-modal-add-script';
@@ -216,7 +214,7 @@ class Scripts{
 
 				if(scriptid > 0){
 					$('#'+objname).dialog( "option", "title", 'Editing Script' );
-					$('#'+objname).dialog( "option", "height", '580' );
+					$('#'+objname).dialog( "option", "height", '600' );
 				}else{
 					$('#'+objname).dialog( "option", "title", 'Adding new Script' );
 					$('#'+objname).dialog( "option", "height", '380' );
@@ -242,6 +240,7 @@ class Scripts{
 				frm.s_voice_id.value = 0;
 				frm.s_screen_num.value=-1;
 				frm.s_variables.value = '';
+
 			}
 
 
@@ -358,13 +357,11 @@ class Scripts{
 
 		</script>
 		<div id="dialog-modal-add-script" title="Adding new Script" class="nod">
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadScripts();return false">
+		</div>
+		<div id="dialog-modal-edit-voicefile" title="Editing Voice File" class="nod">
+		</div>
+		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadScripts();return false">
 			<input type="hidden" name="searching_scripts">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
 
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
@@ -402,7 +399,6 @@ class Scripts{
 			</td>
 
 		</tr>
-
 		<tr>
 			<td colspan="2"><table border="0" id="script_search_table">
 			<tr>
@@ -478,8 +474,6 @@ class Scripts{
 	}
 
 
-
-
 	function makeAdd($id){
 
 		$id=intval($id);
@@ -495,9 +489,6 @@ class Scripts{
 		?><script>
 
 			function validateScriptField(name,value,frm){
-
-				//alert(name+","+value);
-
 
 				switch(name){
 				default:
@@ -523,9 +514,7 @@ class Scripts{
 
 			function checkScriptFrm(frm){
 
-
 				var params = getFormValues(frm,'validateScriptField');
-
 
 				// FORM VALIDATION FAILED!
 				// param[0] == field name
@@ -549,8 +538,6 @@ class Scripts{
 
 				// SUCCESS - POST AJAX TO SERVER
 				}else{
-
-
 
 					// AJAX CHECK TO MAKE SURE KEYS NOT IN USE
 					$.ajax({
@@ -583,17 +570,10 @@ class Scripts{
 								alert("Error: The keys specified appear to already be in use for this screen/campaign/voice");
 
 							}
+
 						}
 
-
 					});
-
-
-
-
-					//alert("Form validated, posting");
-
-
 
 				}
 
@@ -633,12 +613,10 @@ class Scripts{
 
 						displayAddScriptDialog(res);
 
-						//alert(result['message']);
-
 					}
 
-
 				});
+
 			}
 
 
@@ -653,19 +631,10 @@ class Scripts{
 				obj.options.length=0;
 
 				var newopts = new Array();
-//				newopts[0] = document.createElement("OPTION");
-//
-//				if(ie)	obj.add(newopts[0]);
-//				else	obj.add(newopts[0],null);
-//
-//				newopts[0].innerText	= '';
-//				newopts[0].value	= 0;
 				var curid=0;
 				for(x=0;x < item_id.length;x++){
-					//curid=item_id[x];
-					curid=x;
 
-					//alert(which+' '+item_name[curid]);
+					curid=x;
 
 					if(catid && item_cpgnid[curid] != catid){
 						continue;
@@ -747,7 +716,7 @@ class Scripts{
 				$('#del_voice_id').val(id);
 
 				checkScriptFrm(getEl('scr_add_frm'));
-			}
+			}			
 
 			// SET TITLEBAR
 			$('#dialog-modal-add-script').dialog( "option", "title", '<?=($id)?'Editing Script #'.$id.' - '.addslashes(htmlentities($row['name'])):'Adding new Script'?>' );
@@ -776,9 +745,6 @@ class Scripts{
 			<th align="left" height="30">Language</th>
 			<td id="lang_td_row">[Loading...]</td>
 		</tr>
-
-
-
 		<tr>
 			<th align="left" height="30">Name</th>
 			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>"></td>
@@ -849,7 +815,7 @@ class Scripts{
 							// handleEditXML(xmldata, baseurl,uiobj,success_callback_func)
 							var result = handleEditXML(msg);
 							var res = result['result'];
-alert(res);
+							alert(res);
 							if(res <= 0){
 
 								alert(result['message']);
@@ -863,9 +829,8 @@ alert(res);
 							$('#upload_status_cell').html("");
 
 						}
+
 					});
-
-
 
 			}
 
@@ -923,33 +888,82 @@ alert(res);
 
 			}
 
+			// Display edit voice file dialog with given voice file id
+			function displayEditVoiceFile(voicefileid){
+
+				var objname = 'dialog-modal-edit-voicefile';
+
+				$('#'+objname).dialog( "option", "title", 'Editing Voice File #'+voicefileid );
+				$('#'+objname).dialog( "option", "height", '250' );
+				$('#'+objname).dialog( "option", "width", '400' );
+
+				$('#'+objname).dialog("open");
+
+				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+
+				$('#'+objname).load("index.php?area=scripts&edit_voice_file="+voicefileid+"&printable=1&no_script=1");
+
+				$('#'+objname).dialog('option', 'position', 'center');
+
+			}						
+
+			// Function to display edit voice file dialog box on list click
+			function handleFileListClick(id){
+
+				displayEditVoiceFile(id);
+
+			}	
+
+			// Edit voice file dialog spec
+			$("#dialog-modal-edit-voicefile").dialog({
+				autoOpen: false,
+				height: 250,
+				width: 400,
+				modal: false,
+				draggable:true,
+				resizable: false,
+				close: function(event, ui){
+
+					hideAudio();
+					
+				}
+			});
+
 			</script>
 				<div class="nod">
 					<iframe id="iframe_upload" name="iframe_upload" width="1" height="1" frameborder="0" src="about:blank"></iframe>
 				</div>
 
-				<form id="ninja_upload_<?=$id?>_frm" name="ninja_upload_<?=$id?>_frm" method="POST" enctype="multipart/form-data" action="ajax.php?mode=image_upload" target="iframe_upload">
+				<form id="ninja_upload_<?=$id?>_frm" name="ninja_upload_<?=$id?>_frm" method="POST" enctype="multipart/form-data" action="ajax.php?mode=sound_upload" target="iframe_upload">
 					<input type="hidden" name="script_id" id="script_id" value="<?=$row['id']?>">
 					<input type="hidden" name="voice_id" id="voice_id" value="<?=$row['voice_id']?>">
 
 				<table border="0" width="100%">
 				<tr>
-					<th colspan="2" class="ui-widget-header">
+					<th colspan="4" class="ui-widget-header">
 
 						Voice Files (<a href="#" onclick="alert('These sounds are binding to the key you set above, for the screen you selected.\n\nUpload Script Sound: These are the main script sound and multipress sounds\nUpload REPEAT Sound: This will upload the special REPEAT sound, for when caller is interrupted mid-script.');return false;">help?</a>)
 
 					</th>
 				</tr>
 				<tr>
-					<th colspan="2">
+					<th align="left">New Voice File's Description</th>
+					<td colspan="2">
+					<textarea name="file_description" rows="4" cols="35"></textarea>
+					</td>
+				</tr>				
+				<tr>
+					<th align="left">
 						<select name="upload_mode">
 							<option value="script">Upload Script Sound:</option>
 							<option value="repeat-short">Upload SHORT REPEAT:</option>
 							<option value="repeat-long">Upload LONG REPEAT:</option>
 							<option value="repeat-question">Upload Q. ONLY REPEAT:</option>
 						</select>
-						<input type="file" name="sound_file" id="sound_file" onchange="ninjaUploadImage(<?=$id?>)">
 					</th>
+					<td>
+						<input type="file" name="sound_file" id="sound_file" onchange="ninjaUploadImage(<?=$id?>)">
+					</td>
 				</tr>
 				<tr>
 					<td align="center" colspan="2" id="upload_status_cell"><?
@@ -974,7 +988,7 @@ alert(res);
 				while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
 					$class = 'row'.($color++%2);
 					?><tr>
-						<td class="<?=$class?>"><?=htmlentities($r2['file'])?></td>
+						<td class="<?=$class?>"><span class="hand" onclick="handleFileListClick(<?=$r2['id']?>)"><?=htmlentities($r2['file'])?></span></td>
 						<td class="<?=$class?>"><?=$r2['duration'].'&nbsp;sec'?></td>
 						<td class="<?=$class?>" align="center"><?
 
@@ -1027,7 +1041,210 @@ alert(res);
 	}
 
 
+	function EditVoiceFile($id){
 
+		# Function to edit voice file descriptions
+		# Takes voice file id and pulls db record to be editted
+
+		$id=intval($id);
+
+		if($id){
+
+			# Grab voice file db record
+			$row = $_SESSION['dbapi']->scripts->getVoiceFileByID($id);
+
+		}
+
+		?><script>
+
+			// Used by dialog box Cancel button
+			function HideEditVoiceFile(){
+
+				var objname = 'dialog-modal-edit-voicefile';
+
+				$('#'+objname).dialog("close");
+			
+			}
+
+			// Used by form submit to validate form fields
+			// 'description' is the only required field when submitting
+			function validateVoiceEditField(name,value,frm){
+
+				switch(name){
+				default:
+
+					// Bypass fields not specified
+					return true;
+					break;
+
+				case 'description':
+
+					// Require 'description' field to have a value
+					if(!value)return false;
+
+					return true;
+					break;
+
+				}
+
+				return true;
+
+			}
+
+			// Form submit function that validates form fields and posts AJAX
+			function checkVoiceEditFrm(frm){
+
+				var params = getFormValues(frm,'validateVoiceEditField');
+
+				// FORM VALIDATION FAILED!
+				// param[0] == field name
+				// param[1] == field value
+				if(typeof params == "object"){
+
+					switch(params[0]){
+					default:
+
+						alert("Error submitting form. Check your values");
+
+						break;
+
+					case 'description':
+
+						alert("Please enter a description for this voice file.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+
+					}
+
+				// SUCCESS - POST AJAX TO SERVER
+				}else{
+					
+					$.ajax({
+						type: "POST",
+						cache: false,
+						url: 'api/api.php?get=scripts&mode=xml&action=edit_voice_file',
+						data: params,
+						error: function(){
+							alert("Error saving voice file edit form. Please contact an admin.");
+						},
+
+						success: function(msg){
+
+							var result = handleEditXML(msg);
+							var res = result['result'];
+
+							if(res <= 0){
+
+								alert(result['message']);
+
+								return;
+
+							}
+
+							displayEditVoiceFile(res);
+
+						}
+
+					});
+
+				}
+
+				return false;
+
+			}
+
+			function playAudio(id){
+
+
+				//$('#media_player').dialog("open");
+
+				$('#script_media_player').children().filter("audio").each(function(){
+					this.pause(); // can't hurt
+					delete(this); // @sparkey reports that this did the trick!
+					$(this).remove(); // not sure if this works after null assignment
+				});
+				$('#script_media_player').empty();
+
+				$('#script_media_player').load("index.php?area=scripts&play_voice_file="+id+"&printable=1&no_script=1");
+				// $('#media_player').load("test.php");
+
+				// REMOVE AND READD TEH CLOSE BINDING, TO STOP THE AUDIO
+				$('#script_media_player').off("dialogclose");
+				$('#script_media_player').on('dialogclose', function(event) {
+
+					hideAudio();
+
+				});
+
+
+
+			}
+
+			function hideAudio(){
+				$('#script_media_player').children().filter("audio").each(function(){
+					this.pause();
+					delete(this);
+					$(this).remove();
+
+				});
+
+				$('#script_media_player').empty();
+			}
+
+
+		</script>
+		<center><div id="script_media_player" title="Playing Call Recording"></center>
+		<form method="POST" id="scr_edit_vfile" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkVoiceEditFrm(this); return false">
+			<input type="hidden" id="editing_vfile" name="editing_vfile" value="<?=$id?>" >
+
+		<table border="0" align="center" width="100%">
+		<tr>
+			<th align="left" height="30">Filename</th>
+			<td><?=$row['file']?></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">Description</th>
+			<td><textarea name="description" rows="4" cols="35"><?=htmlentities($row['description'])?></textarea></td>
+		</tr>
+		<tr>
+			<td align="center" colspan="2" height="50">
+				<input type="submit" value="Save Changes">
+				<input type="button" value="Cancel" onclick="hideAudio(); HideEditVoiceFile(); return false;">
+				<input type="button" value="Listen" onclick="playAudio('<?=$row['id']?>')">
+			</td>
+		</tr>
+
+		
+		<?
+
+
+	}
+
+
+	function PlayVoiceFile($id){
+
+		# Play audio file function - it will display audio player with play_audio_file.php as source
+
+		$id=intval($id);
+
+		if($id){
+
+			# Grab voice file db record
+			$row = $_SESSION['dbapi']->scripts->getVoiceFileByID($id);
+
+		}
+		?>
+		<audio id="audio_obj" autoplay controls>
+			<source src="play_audio_file.php?file=<?=htmlentities($row['file'])?>" type="audio/wav" />
+			Your browser does not support the audio element.
+		</audio><br>
+		<a href="#" onclick="parent.hideAudio();return false">[Hide Player]</a>
+		
+		<script>
+			parent.applyUniformity();
+		</script><?
+
+	}
 
 	function getOrderLink($field){
 

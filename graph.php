@@ -1,4 +1,5 @@
-<?
+<?php
+
 /**
  * GRAPH GENERATOR - OUTPUTS A GRAPHIC, NOT TEXT!
  */
@@ -16,6 +17,15 @@
 	require_once 'utils/phplot-6.2.0/phplot.php';
 
 
+	
+	if($_SESSION['user']['id']){
+		
+		include_once("dbapi/dbapi.inc.php");
+		
+		$_SESSION['dbapi']->users->updateLastActionTime();
+		
+	}
+	
 	connectPXDB();
 
 
@@ -39,7 +49,11 @@ case 'user_charts':
 
 //	// START THE LOAD TIMER
 //	$curtime = microtime_float();
-
+	
+	$width = (intval($_REQUEST['width']) > 0)?intval($_REQUEST['width']):800;
+	$height = (intval($_REQUEST['height']) > 0)?intval($_REQUEST['height']):600;
+	
+	
 	$time_frame = ($_REQUEST['time_frame'])?trim($_REQUEST['time_frame']):'day';
 
 	if($_REQUEST['start_time']){
@@ -51,11 +65,14 @@ case 'user_charts':
 	}
 
 	$max_mode = (intval($_REQUEST['max_mode']) == 1)?true:false;
+	$short_mode = false;
+	if($width < 400){
+		
+		$short_mode = true;
+	}
+	
+	$data = $_SESSION['user_charts']->generateData($time_frame, $stime ,  $max_mode, $short_mode);
 
-	$data = $_SESSION['user_charts']->generateData($time_frame, $stime ,  $max_mode);
-
-	$width = (intval($_REQUEST['width']) > 0)?intval($_REQUEST['width']):800;
-	$height = (intval($_REQUEST['height']) > 0)?intval($_REQUEST['height']):600;
 
 
 	$plot = new PHPlot($width, $height);
@@ -72,25 +89,25 @@ case 'user_charts':
 	case 'day':
 
 		# Main plot title:
-		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users Logged in - '.date("m/d/Y", $stime) );
+		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users - '.date("m/d/Y", $stime) );
 
 		break;
 	case 'week':
 
 		# Main plot title:
-		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users Logged in - Week starting '.date("m/d/Y", $stime) );
+		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users - Week ending '.date("m/d/Y", $stime) );
 
 
 		break;
 	case 'month':
 
 		# Main plot title:
-		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users Logged in - Month of '.date("F Y", $stime) );
+		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users - Month of '.date("F Y", $stime) );
 		break;
 	case 'year':
 
 		# Main plot title:
-		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users Logged in - '.date("Y", $stime). ' Year');
+		$plot->SetTitle((($max_mode)?"Max ":"Avg ").'Users - '.date("Y", $stime). ' Year');
 
 		break;
 	}

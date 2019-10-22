@@ -1,6 +1,6 @@
 #!/usr/bin/php
 <?php
-	$basedir = "/var/www/html/dev2/";
+	$basedir = "/var/www/html/reports/";
 
 	include_once($basedir."site_config.php");
 	include_once($basedir."db.inc.php");
@@ -13,6 +13,18 @@
 	$stime = mktime(0,0,0);
 	$etime = mktime(23,59,59);
 
+	
+	
+	include_once($basedir."dbapi/dbapi.inc.php");
+	
+	global $process_name;
+	
+	$process_name = "px_import_all_vici_user_groups";
+	
+	$procid = $_SESSION['dbapi']->process_tracker->logStartProcess($process_name, 'started', implode(" ", $argv));
+	
+	
+	
 
 	echo "Starting Bulk Vici User GROUP Import script on ".date("m/d/Y",$stime)."...\n";
 
@@ -43,6 +55,9 @@
 
 
 
+	$process_logs = '';
+	
+	
 	$master_groups = array();
 	// LOOP THROUGH STACK OF VICIDIAL SERVERS
 	foreach($clusters as $cluster_id => $vicirow ){
@@ -142,6 +157,7 @@
 
 		// ATTEMPT TO DETERMINE WHAT THE "company_id" IS, BASED ON WHICH OFFICE IS SET
 
+
 		if($offices[$dat['office']]['company_id'] > 0){
 
 			$dat['company_id'] = $offices[$dat['office']]['company_id'];
@@ -150,8 +166,12 @@
 
 
 
-		echo "Adding group '".$group['user_group']."' type:".$dat['agent_type']." shift:".$dat['time_shift']."\n";
+		$str = "Adding group '".$group['user_group']."' type:".$dat['agent_type']." shift:".$dat['time_shift']."\n";
 
+		$process_logs .= $str;
+		
+		echo $str;
+		
 		aadd($dat, 'user_groups_master');
 
 
@@ -159,4 +179,6 @@
 	}
 
 
-
+	
+	$_SESSION['dbapi']->process_tracker->logFinishProcess($procid, "completed", $process_logs);
+	

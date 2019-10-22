@@ -252,7 +252,7 @@ class EmployeeHoursAPI{
 		//echo $sql;
 
 		## RETURN RESULT SET
-		return $_SESSION['dbapi']->query($sql);
+		return $_SESSION['dbapi']->ROquery($sql);
 	}
 
 

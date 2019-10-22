@@ -18,7 +18,7 @@
 //	global $project;
 
 
-	$_SESSION['pac_reports']->project = "";
+	$_SESSION['pac_reports']->project = "AFCBC";
 
 
 	// METHOD 0: SKIP THE PAYMENT GATEWAY FIELD (19 fields)

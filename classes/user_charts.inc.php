@@ -1,4 +1,5 @@
-<?	/***************************************************************
+<?php
+	/***************************************************************
 	 * USER CHARTS
 	 *	Written By: Jonathan Will
 	 ***************************************************************/
@@ -48,7 +49,7 @@ class UserCharts{
 	 * @param	$stime			(int)					Timestamp of the first second of the timeframe you want to generate
 	 * @param	$max_mode		true/false				Get the max values for the timeframe, instead of the Average (default)
 	 */
-	function generateData($time_frame,  $stime, $max_mode = false){
+	function generateData($time_frame,  $stime, $max_mode = false, $short_mode = false){
 
 		$px_server_id = intval($px_server_id);
 		$stime = intval($stime);
@@ -92,7 +93,7 @@ class UserCharts{
 									//(($px_server_id > 0)?" AND server_id='$px_server_id' ":"")
 						,1);
 
-				$tmparr = array( (($x%4 == 0)?date("ga", $tmpstime):''), $x/4, 0);
+				$tmparr = array( (($x%4 == 0)?date(  (($short_mode)?"g":"ga")  , $tmpstime):''), $x/4, 0);
 				$idx = 2;
 				while($row = mysqli_fetch_row($res)){
 
@@ -115,7 +116,9 @@ class UserCharts{
 			break;
 		case 'week':
 
-			$etime = $stime + 604800;
+			// GO BACK 1 WEEK
+			$etime = $stime;
+			$stime = $etime - 604800;
 
 
 			for($x = 0;$x < 28;$x++){
@@ -139,7 +142,7 @@ class UserCharts{
 									//(($px_server_id > 0)?" AND server_id='$px_server_id' ":"")
 						,1);
 
-				$tmparr = array( (($x%4 == 0)?date("D jS", $tmpstime):''), $x/4, 0);
+				$tmparr = array( (($x%4 == 0)?date("jS", $tmpstime):''), $x/4, 0);
 				$idx = 2;
 				while($row = mysqli_fetch_row($res)){
 
@@ -218,17 +221,19 @@ class UserCharts{
 
 			$tmpmonth = 0;
 
-			for($x = 0;$x < 52;$x++){
+			for($x = 1;$x < 13;$x++){
 
 				// FIGURE OUT WHAT MONTH IT IS, BY THE WEEK
-				$curday = ($x * 7);
+//				$curday = //($x * 7);
 				//
 
 
 
-				$tmpstime = mktime(0,0,0, 1, $curday+1,  date("Y", $stime) );//$stime + ($x * 86400);
-				$tmpetime = mktime(23,59,59, 1, (($x+1) * 7)-1, date("Y",$tmpstime) );
+// 				$tmpstime = mktime(0,0,0, 1, $curday+1,  			date("Y", $stime) );//$stime + ($x * 86400);
+// 				$tmpetime = mktime(23,59,59, 1, (($x+1) * 7)-1,		date("Y",$tmpstime) );
 
+				$tmpstime = mktime(0,0,0, 		$x, 1,  			date("Y", $stime) );//$stime + ($x * 86400);
+				$tmpetime = mktime(23,59,59, 	$x, date("t", $tmpstime) ,		date("Y",$tmpstime) );
 
 				$show_label = ($tmpmonth != date("m", $tmpstime))?true:false;
 

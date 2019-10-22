@@ -1,7 +1,7 @@
 #!/usr/bin/php
 <?php
 
-	require_once("/var/www/html/dev/db.inc.php");
+	require_once("/var/www/html/reports/db.inc.php");
 
 
 

@@ -20,58 +20,73 @@
 
 		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
 	}
-
+	
 	if($uri != null){
 		header("Location: ".$uri);
 		exit;
 	}
-
-
-//print_r($_SERVER);
-
-
+	
+	//print_r($_SERVER);
+	
+	
 	/**
 	 * Database connection made here
 	 */
 	include_once("site_config.php");
-
+	
 	// GENERIC DB FUNCTIONS
 	include_once("db.inc.php");
 	include_once("utils/microtime.php");
 	include_once("dbapi/dbapi.inc.php");
-
-
+		
 	/**
 	 * Additional includes/requires go here
 	 */
 	include_once("utils/jsfunc.php");
 	include_once("utils/stripurl.php");
-
-
+	
 	include_once("utils/format_phone.php");
 	include_once("utils/rendertime.php");
 	include_once("utils/DropDowns.php");
 	include_once("utils/functions.php");
 	include_once("utils/feature_functions.php");
 	include_once("utils/db_utils.php");
-
-
+	
+	
 	include_once("classes/genericDD.inc.php");
 	include_once("classes/interface.inc.php");
 	include_once("classes/languages.inc.php");
-
-
+	
+	
 	// DESTROY THE SESSION/LOGOUT ?o
 	if(isset($_REQUEST['o'])){
-
+		
+		if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
+			
+			$_SESSION['dbapi']->users->updateLogoutTime();
+			
+		}
+		
+		
 		session_unset();
-
-
+		
+		
 		jsRedirect("index.php");
 		exit;
-
+		
 	}
+	
+	
+	
+/*?><!DOCTYPE HTML>
+<html>
+<head>
+    <title>Project X - Management Tools and Reports</title>
 
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
+    <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/><?**/
 
 
 
@@ -90,10 +105,10 @@
 
 			<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
 
-<META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
+			<META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
 
 
-<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+			<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
 
 			<link rel="stylesheet" type="text/css" href="css/style.css" />
 			<link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
@@ -120,6 +135,7 @@
 
 			<script src="js/jquery.dataTables.min.js"></script>
 
+			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 
 			<script src="js/ajax_functions.js"></script>
@@ -133,6 +149,7 @@
 			<script src="js/jquery.menu-aim.js"></script>
 			<script src="js/main.js"></script> <!-- Resource jQuery -->
 			<script>
+        		var dispTimer = false;
 				function genReport(frm, area, printable){
 					if(area){
 						$('#'+area+'_submit_report_button').hide();
@@ -188,14 +205,20 @@
 				function loadSection(url){
 
 					$('#main_content').load(url);
+            		$('body').css('background-color', '#FFFFFF');
+            		$('body').css('color', '#000000');
 
-
+            		$('#main_content').css('background-color', '#FFFFFF');
+                    $('#main_content').css('color', '#000000');
+            		
 					$('.cd-side-nav').find('.hover').removeClass('hover');
 					$('.cd-side-nav').find('.selected').removeClass('selected');
 					$('.cd-side-nav').removeClass('nav-is-visible');
 					$('.cd-main-header').find('.nav-is-visible').removeClass('nav-is-visible');
-					 //$("#menu").mouseleaveMenu();
-
+            		if(dispTimer) {
+                		clearInterval(dispTimer);
+						dispTimer = false;
+            		}
 				}
 
 
@@ -217,6 +240,17 @@
 				function applyUniformity(){
 					$("input:submit, button, input:button").button();
 					$("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
+
+
+					$('.priorityRender').each(function( index ) {
+
+						$(this).html( 
+								
+							priorityProcessing( $(this).html() )
+							 
+						);
+						 // console.log( index + ": " + $( this ).text() );
+					});
 				}
 
 
@@ -246,6 +280,9 @@
 	// USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
 	if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
 
+		$_SESSION['dbapi']->users->updateLastActionTime();
+		
+		
 		// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
 		if(!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])){
 
@@ -272,7 +309,6 @@
 
 				include_once("classes/home.inc.php");
 				$_SESSION['home']->handleFLOW();
-
 
 				break;
 			case 'activity_log':
@@ -336,8 +372,17 @@
 					}
 					break;
 
+			case 'form_builder':
+				if (checkAccess('campaigns')) {
+					include_once("classes/form_builder.inc.php");
+					$_SESSION['form_builder']->handleFLOW();
+				} else {
+					accessDenied("Campaigns");
+				}
+				break;
+					
+					
 			case 'scripts':
-
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['scripts'] == 'yes') // MANAGERS WITH SCRIPT ACCESS
@@ -557,6 +602,24 @@
 					accessDenied("LoginTracker");
 
 				}
+
+				break;
+				
+			case 'user_status_report':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['user_status_report'] == 'yes') // MANAGERS WITH USER STATUS REPORT ACCESS
+				){
+
+					include_once("classes/user_status_report.inc.php");
+					$_SESSION['user_status_report']->handleFLOW();
+
+
+				}else{
+
+					accessDenied("UserStatusReport");
+
+				}				
 				
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //
@@ -646,11 +709,31 @@
 
 
 				break;
+			
+			case 'sales_management':
+				
+				if(	checkAccess('sales_management') // MANAGERS WITH LEAD MANAGEMENT ACCESS
+				){
+					
+					
+					include_once("classes/sales_management.inc.php");
+					
+					$_SESSION['sales_management']->handleFLOW();
+					
+					
+					
+				}else{
+					
+					accessDenied("Sales Management");
+					
+				}
+				
+				break;
+				
 			case 'lead_management':
 
 
-				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
-					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['lead_management'] == 'yes') // MANAGERS WITH LEAD MANAGEMENT ACCESS
+				if(	checkAccess('lead_management') // MANAGERS WITH LEAD MANAGEMENT ACCESS
 				){
 
 
@@ -701,6 +784,11 @@
                 case 'dialer_sales':
                     include_once("classes/dialer_sales.inc.php");
                     $_SESSION['dialer_sales']->handleFlow();
+                    break;
+
+                case 'dialer_status':
+                    include_once("classes/dialer_status.inc.php");
+                    $_SESSION['dialer_status']->handleFlow();
                     break;
 
 			case 'employee_hours':
@@ -957,6 +1045,14 @@
 
 				break;
 
+			case 'capacity_report':
+				
+				include_once("classes/capacity_report.inc.php");
+				$_SESSION['capacity_report']->handleFLOW();
+				
+				
+				break;
+				
 //			case 'fec_filer':
 //
 //				include_once("classes/fec_filer.inc.php");

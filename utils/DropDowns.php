@@ -1,4 +1,5 @@
-<?php /***************************************************************
+<?php 
+/***************************************************************
  *    Drop Down Functions
  *    Written By:    Jonathan Will
  ***************************************************************/
@@ -405,7 +406,49 @@
         $out .= '</select>';
         return $out;    }
 
+        
+        /**
     function makeTimebar($basename="time_", $mode=0, $selarr=null, $stack=false, $timestamp=0, $extra_attr="")
+    {
+        connectPXDB();
+        $res = query("SELECT `name`, `vici_campaign_id` FROM campaigns WHERE `status`='active'");
+        $out = '<select name="' . $name . '" id="' . $name . '" ';
+        $out .= ($css) ? ' class="' . $css . '" ' : '';
+        $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
+        $out .= '>';
+        if ($blank_option) {
+            $out .= '<option value="" ' . (($selected == '') ? ' SELECTED ' : '') . '>' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
+        }
+        while ($row = mysqli_fetch_array($res)) {
+            $out .= '<option value="' . $row['vici_campaign_id'] . '" ';
+            $out .= ($selected == $row['vici_campaign_id']) ? ' SELECTED ' : '';
+            $out .= '>' . htmlentities($row['name']) . '</option>';
+        }
+        $out .= '</select>';
+        return $out;
+    }**/
+
+    function makeNoFormsCampaignDD($name, $selected, $css, $onchange, $blank_option = 1)
+    {
+        connectPXDB();
+        $res = query("SELECT DISTINCT(`c`.`name`), `c`.`id` FROM `campaigns` AS `c` WHERE `c`.`status`='active' AND `c`.`id` NOT IN (SELECT `campaign_id` FROM `custom_fields`)");
+        $out = '<select name="' . $name . '" id="' . $name . '" ';
+        $out .= ($css) ? ' class="' . $css . '" ' : '';
+        $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
+        $out .= '>';
+        if ($blank_option) {
+            $out .= '<option value="" ' . (($selected == '') ? ' SELECTED ' : '') . '>' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
+        }
+        while ($row = mysqli_fetch_array($res)) {
+            $out .= '<option value="' . $row['id'] . '" ';
+            $out .= ($selected == $row['id']) ? ' SELECTED ' : '';
+            $out .= '>' . htmlentities($row['name']) . '</option>';
+        }
+        $out .= '</select>';
+        return $out;
+    }
+
+    function makeTimebar($basename = "time_", $mode = 0, $selarr = NULL, $stack = false, $timestamp = 0, $extra_attr = "")
     {
         ## Mode 0 = full
         ## Mode 1 = date
