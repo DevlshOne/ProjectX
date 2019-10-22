@@ -590,7 +590,7 @@
                             });
                             alert('ALL dialers have been stopped!');
                         } else {
-                            if (clid.isArray()) {
+                            if (Array.isArray(clid)) {
                                 $.each(clid, function(i, v) {
                                     $.ajax({
                                         type: "POST",
