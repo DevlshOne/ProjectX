@@ -506,14 +506,15 @@
                         dlgObj.data('cluster_id', clid);
                         dlgObj.dialog('open');
                         dlgObj.dialog({title: 'Change Cluster Filters - ' + clusterInfo[clid]['name']});
-                        let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option>ALL-ACTIVE</option>';
+                        let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option value="ALL-ACTIVE">ALL-ACTIVE</option>';
+                        debugger;
                         $.each(clusterInfo[clid]['campaign_options'], function (i, v) {
-                            campaignSelect += '<option>' + v.groups + '</option>';
+                            campaignSelect += '<option value="' + v.groups + '">' + v.groups + '</option>';
                         });
                         campaignSelect += '</select>';
                         let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8"><option>ALL-GROUPS</option>';
                         $.each(clusterInfo[clid]['usergroup_options'], function (i, v) {
-                            ugSelect += '<option>' + v.user_group_filter + '</option>';
+                            ugSelect += '<option value="' + v.user_group_filter + '">' + v.user_group_filter + '</option>';
                         });
                         ugSelect += '</select>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
@@ -859,10 +860,10 @@
                             }
                         }
                         function loadClusterAssessment(c) {
-                            if(clusterInfo[c]['sel_campaigns'].length === 1) {
-                                return '&campaign_id=' + encodeURIComponent(clusterInfo[c]['name']);
+                            if(clusterInfo[c]['sel_campaigns'].length > 0 && clusterInfo[c]['sel_campaigns'][0].groups !== 'ALL-ACTIVE') {
+                                return '&campaign_id=' + encodeURIComponent(clusterInfo[c]['sel_campaigns'][0].groups);
                             } else {
-                                return;
+                                return '';
                             }
                         }
                         let objClusterData = Object.assign({}, clusterValues);
