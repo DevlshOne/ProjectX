@@ -246,7 +246,7 @@
 		}
 		return null;
 	}
-	
+
 	function getClusterCampaigns($vici_cluster_id) {
         $vici_idx = getClusterIndex(intval($vici_cluster_id));
         connectViciDB($vici_idx);
@@ -254,7 +254,7 @@
         connectPXDB();
         return $res;
     }
-    
+
 
     function getClusterUserGroups($vici_cluster_id) {
         $res = fetchAllAssoc("SELECT DISTINCT (`group_name`) AS `user_group_filter` FROM `user_group_translations` WHERE `cluster_id` = " . intval($vici_cluster_id) . " ORDER BY `group_name`", 3);
@@ -355,4 +355,4 @@
 
 	// AUTO LOAD OPENSIPS DBS
 	loadOpenSipsDBs();
-	
+

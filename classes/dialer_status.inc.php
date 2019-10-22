@@ -250,6 +250,7 @@ class DialerStatus {
                         }
                     });
 
+
                     $('#dialog-modal-second-confirm').dialog({
                         autoOpen: false,
                         width: 400,
@@ -262,13 +263,14 @@ class DialerStatus {
                             },
                             'Confirm': function () {
                                 let theAction = $(this).data('myAction');
+                                let clusterID = $(this).data('clusterID');
                                 $(this).dialog('close');
                                 switch (theAction) {
                                     case 'forceHopper':
                                         forceHopper('ALL');
                                         break;
                                     case 'stopDialers':
-                                        stopDialers('ALL');
+                                        stopDialers(clusterID);
                                         break;
                                     default:
                                         break;
@@ -289,6 +291,7 @@ class DialerStatus {
                             },
                             'Confirm': function () {
                                 let theAction = $(this).data('myAction');
+                                let clusterID = $(this).data('clusterID');
                                 $(this).dialog('close');
                                 switch (theAction) {
                                     case 'forceHopper':
@@ -301,6 +304,7 @@ class DialerStatus {
                                         break;
                                 }
                                 $('#dialog-modal-second-confirm').data('myAction', theAction);
+                                $('#dialog-modal-second-confirm').data('clusterID', clusterID);
                                 $('#dialog-modal-second-confirm').dialog('open');
                             }
                         }
@@ -489,6 +493,7 @@ class DialerStatus {
                     $('#stopDialersButton').on('click', function (e, ui) {
                         dlgObj = $('#dialog-modal-first-confirm');
                         dlgObj.data('myAction', 'stopDialers');
+                        dlgObj.data('clusterID', selectedClusters);
                         dlgObj.html('<div class="firstConfirmation">This will stop ALL DIALING on the PRODUCTION servers, are you sure?</div>');
                         dlgObj.dialog('open');
                     });
@@ -524,22 +529,21 @@ class DialerStatus {
                         dlgObj.data('cluster_id', clid);
                         dlgObj.dialog('open');
                         dlgObj.dialog({title: 'Change Cluster Filters - ' + clusterInfo[clid]['name']});
-                        let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option>ALL-ACTIVE</option>';
+                        let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option value="ALL-ACTIVE">ALL-ACTIVE</option>';
+                        debugger;
                         $.each(clusterInfo[clid]['campaign_options'], function (i, v) {
-                            campaignSelect += '<option>' + v.groups + '</option>';
+                            campaignSelect += '<option value="' + v.groups + '">' + v.groups + '</option>';
                         });
                         campaignSelect += '</select>';
                         let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8"><option>ALL-GROUPS</option>';
                         $.each(clusterInfo[clid]['usergroup_options'], function (i, v) {
-                            ugSelect += '<option>' + v.user_group_filter + '</option>';
+                            ugSelect += '<option value="' + v.user_group_filter + '">' + v.user_group_filter + '</option>';
                         });
                         ugSelect += '</select>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
                         let arrSelTemp = [];
-                        if (
-                                clusterInfo[clid]['campaign_options'].length === clusterInfo[clid]['sel_campaigns'].length ||
+                        if (clusterInfo[clid]['campaign_options'].length === clusterInfo[clid]['sel_campaigns'].length ||
                         		clusterInfo[clid]['sel_campaigns'].length == 0) {
-                    		
                             arrSelTemp.push('ALL-ACTIVE');
                             saveUserPrefs();
                         } else {
@@ -549,10 +553,8 @@ class DialerStatus {
                         }
                         $('#campaignFilter').val(arrSelTemp);
                         arrSelTemp = [];
-                        if (
-                                clusterInfo[clid]['usergroup_options'].length === clusterInfo[clid]['sel_user_groups'].length ||
-                        		clusterInfo[clid]['sel_user_groups'].length == 0
-                        ) {
+                        if (clusterInfo[clid]['usergroup_options'].length === clusterInfo[clid]['sel_user_groups'].length ||
+                        		clusterInfo[clid]['sel_user_groups'].length == 0) {
                             arrSelTemp.push('ALL-GROUPS');
                             saveUserPrefs();
                         } else {
@@ -614,15 +616,29 @@ class DialerStatus {
                             });
                             alert('ALL dialers have been stopped!');
                         } else {
-                            $.ajax({
-                                type: "POST",
-                                cache: false,
-                                async: false,
-                                crossDomain: false,
-                                crossOrigin: false,
-                                url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + clid
-                            });
-                            alert('Dialer for Cluster ' + clid + ' is stopped!');
+                            if (Array.isArray(clid)) {
+                                $.each(clid, function(i, v) {
+                                    $.ajax({
+                                        type: "POST",
+                                        cache: false,
+                                        async: false,
+                                        crossDomain: false,
+                                        crossOrigin: false,
+                                        url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + v
+                                    });
+                                });
+                                alert('Dialer for Cluster[s] ' + clid.join(', ') + ' have been stopped!');
+                            } else {
+                                $.ajax({
+                                    type: "POST",
+                                    cache: false,
+                                    async: false,
+                                    crossDomain: false,
+                                    crossOrigin: false,
+                                    url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + clid
+                                });
+                                alert('Dialer for Cluster ' + clid + ' has been stopped!');
+                            }
                         }
                     }
 
@@ -892,6 +908,15 @@ class DialerStatus {
                                 delete summaryValues['undefined'];
                             }
                         }
+
+                        function loadClusterAssessment(c) {
+                            if(clusterInfo[c]['sel_campaigns'].length > 0 && clusterInfo[c]['sel_campaigns'][0].groups !== 'ALL-ACTIVE') {
+                                return '&campaign_id=' + encodeURIComponent(clusterInfo[c]['sel_campaigns'][0].groups);
+                            } else {
+                                return '';
+                            }
+                        }
+                        
                         let objClusterData = Object.assign({}, clusterValues);
                         let objSummaryData = Object.assign({}, summaryValues);
                         let $newLayout = $('<table class="clusterDataTable"><tbody></tbody></table>');
@@ -900,11 +925,11 @@ class DialerStatus {
                             $newLayout.append('<tr><td class="align_left">Server Time: </td><td class="clusterTime align_right">' + objClusterData.time + '</td></tr>');
                             if (cltype === 'cold') {
                                 $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
-                                $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
+                                //$newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
                             } else if (cltype === 'taps') {
                                 $newLayout.append('<tr title="Dialer Level: ' + objClusterData.dial_level + '&#10;Dialable Leads: ' + objClusterData.dialable_leads + '"><td class="align_left">Dialer:</td><td class="pct25 align_right">' + objClusterData.dial_level + ' - ' + applyThresh(objClusterData.dialable_leads, 2000, 5000) + ' leads</td></tr>');
-                                $newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
+                                //$newLayout.append('<tr title="Trunk Short: ' + objClusterData.trunk_short + '&#10;Trunk Fill: ' + objClusterData.trunk_fill + '"><td class="align_left">Trunk:</td><td class="pct25 align_right">' + objClusterData.trunk_short + ' / ' + objClusterData.trunk_fill + '</td></tr>');
                                 $newLayout.append('<tr title="Hopper Min: ' + objClusterData.hopper_min + '&#10;Hopper Auto: ' + objClusterData.hopper_auto + '&#10;Leads in Hopper: ' + objClusterData.hopper_leads + '"><td class="align_left">Hopper:</td><td class="align_right">' + objClusterData.hopper_min + ' / ' + objClusterData.hopper_auto + ' - ' + applyThresh(objClusterData.hopper_leads, 2000, 5000) + ' leads</td></tr>');
                             }
                             $newLayout.append('<tr title="Calls Today: ' + objClusterData.calls_today + '&#10;Calls Dropped: ' + objClusterData.dropped + '&#10;Drop Rate: ' + objClusterData.dropped_pct + '&#10;Calls Answered: ' + objClusterData.answered + '"><td class="align_left">Stats:</td><td nowrap class="pct50 align_right">' + objClusterData.calls_today + ' / ' + objClusterData.dropped + ' (' + objClusterData.dropped_pct + ') / ' + objClusterData.answered + '</td></tr>');
