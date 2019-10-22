@@ -527,7 +527,7 @@ class FeatureControl{
 						$this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes')?true:false );
 
 						//$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
-						$this->renderFeatureRow('user_status_report', 'User Status Report', ($row['user_status_report'] == 'yes')?true:false );
+						
 						
 						
 						$this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes')?true:false );
@@ -585,6 +585,8 @@ class FeatureControl{
 						$this->renderFeatureRow('login_tracker_kick_user', '|--&gt;Kick User', ($row['login_tracker_kick_user'] == 'yes')?true:false );
 						$this->renderFeatureRow('action_log', 'Action Log', ($row['action_log'] == 'yes')?true:false );
 
+						$this->renderFeatureRow('user_status_report', 'User Status Report', ($row['user_status_report'] == 'yes')?true:false );
+						
 						?><tr>
 							<th colspan="2" class="row2">Account</th>
 						</tr><?
