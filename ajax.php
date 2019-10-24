@@ -832,13 +832,13 @@ case 'check_keys':
 	$screen_num = intval($_REQUEST['screen_num']);
 
 	$reserved_keys = array(
-						"31",
-						"32",
-						"33",
-					//	"q",
-						",",
-						"+",
-						"9",
+// 						"31",
+// 						"32",
+// 						"33",
+// 					//	"q",
+// 						",",
+// 						"+",
+// 						"9",
 //						"0"
 					);
 
