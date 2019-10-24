@@ -13,20 +13,20 @@ class DialerStatus {
 	public $selectedClusters = [];
 	public $table = 'vici_cluster';
 	public $clusterInfo = [];
-	
+
 	## Classes main table to operate on
-	
+
 	function DialerStatus() {
 		$this->handlePOST();
 	}
-	
+
 	function handlePOST() {
 	}
-	
+
 	function handleFLOW() {
 		$this->displayDialers();
 	}
-	
+
 	function getClusterInfo() {
 		foreach (getClusterIDs() as $i => $v) {
 			$this->clusterInfo[$v]['type'] = getClusterType($v);
@@ -38,7 +38,7 @@ class DialerStatus {
 			$this->clusterInfo[$v]['usergroup_options'] = getClusterUserGroups($v);
 		}
 	}
-	
+
 	function displayDialers() {
 		/*
 		 * TODO
@@ -91,10 +91,6 @@ class DialerStatus {
                             <td class="align_left"><label for="vici_password">Password :</label></td>
                             <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
                         </tr>
-                        <!--                        <tr>-->
-                        <!--                            <td class="align_left"><label for="loadPrefs">Load User Preferences :</label></td>-->
-                        <!--                            <td class="align_right"><input type="checkbox" id="loadPrefs" name="loadPrefs" checked/></td>-->
-                        <!--                        </tr>-->
                         </tbody>
                     </table>
                 </form>
@@ -111,6 +107,12 @@ class DialerStatus {
                 </form>
             </div>
             <script>
+                /*
+                  New Tile Object Structure:
+                  tile -
+                      clusters Array
+                      options Array
+                 */
                 $('#dialerStatusZone').ready(function () {
                     var refreshInterval = 40;
                     var refreshEnabled = true;
@@ -131,6 +133,8 @@ class DialerStatus {
                     var scriptRoot = '<?=$_SESSION['site_config']['basedir'];?>';
                     var useCache = true;
                     var cacheDebug = false;
+                    // NEW CODE
+                    var clusterDefs = [];
 
                     $('#dialog-modal-select-clusters').dialog({
                         autoOpen: false,
@@ -391,7 +395,7 @@ class DialerStatus {
                                     });
 
 
-                                    
+
                                     if (frontEnd_debug) {
                                         console.log('Prefs have just been loaded :: ', selectedClusters);
                                         console.log('User Preferences loaded');
@@ -504,7 +508,7 @@ class DialerStatus {
 
                             $('#main_content').css('background-color', '#000000');
                             $('#main_content').css('color', '#FFFFFF');
-                            
+
                             $('#dialerStatusZone').css('background-color', '#000000');
                             $('.clusterTile').css('background-color', 'black');
                             $(this).button('option', 'label', 'Light Mode');
@@ -515,7 +519,7 @@ class DialerStatus {
 
                             $('#main_content').css('background-color', '#FFFFFF');
                             $('#main_content').css('color', '#000000');
-                            
+
                             $('#dialerStatusZone').css('background-color', '#FFFFFF');
                             $('.clusterTile').css('background-color', 'navy');
                             $(this).button('option', 'label', 'Dark Mode');
@@ -567,7 +571,7 @@ class DialerStatus {
 
                     $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
                         let clid = $(this).attr('id').split('_')[1].toString();
-                        $('#clusterTile_' + clid).remove();
+                        $('#tile_' + clid).remove();
                         let i = selectedClusters.indexOf(clid);
                         if (i !== -1) {
                             selectedClusters.splice(i, 1);
@@ -598,7 +602,7 @@ class DialerStatus {
 
                     $('#dialerStatusZone').on('click', '.showAgentsButton', function () {
                         let clid = $(this).closest('button').attr('id').split('_')[1];
-                        let $agentData = $('#clusterTile_' + clid).find('.agentInfo');
+                        let $agentData = $('#tile_' + clid).find('.agentInfo');
                         $agentData.toggle();
                     });
 
@@ -705,7 +709,7 @@ class DialerStatus {
                         if(default_color){
 
                         	return '<span style="color:'+default_color+';">' + v.toString() + '</span>';
-                            
+
                         }else{
 	                        return v;
                         }
@@ -721,7 +725,7 @@ class DialerStatus {
                         if(default_color){
 
                         	return '<span style="color:'+default_color+';">' + v.toString() + '</span>';
-                            
+
                         }else{
 	                        return v;
                         }
@@ -916,7 +920,7 @@ class DialerStatus {
                                 return '';
                             }
                         }
-                        
+
                         let objClusterData = Object.assign({}, clusterValues);
                         let objSummaryData = Object.assign({}, summaryValues);
                         let $newLayout = $('<table class="clusterDataTable"><tbody></tbody></table>');
@@ -951,10 +955,10 @@ class DialerStatus {
                     function parseDialerStatusData(clusterID, dialerStatusData) {
                         // NOTE - all these clusterID instances will need to be 0-based and incremented
                         let titleRow = '<div class="clusterTitle">' + clusterInfo[clusterID]['name'] + '<a id="removeCluster_' + clusterID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
-                        let $tile = $('#clusterTile_' + clusterID);
+                        let $tile = $('#tile_' + clusterID);
                         $tile.empty();
                         $tile.append(titleRow);
-                        let prsdData = parseTable(clusterID, clusterInfo[clusterID]['type'], dialerStatusData);
+                        let prsdData = parseTable(clusterDefs.id, clusterDefs.type, dialerStatusData);
                         $tile.append(prsdData);
                     }
 
@@ -964,9 +968,8 @@ class DialerStatus {
                         }
                         // NOTE - all these selectedClusters instances will need to be 0-based and incremented
                         $.each(selectedClusters, function (i, v) {
-                            let strV = v.toString();
-                            if ($('li#clusterTile_' + strV).length === 0) {
-                                $('#dialerStatusZone').append('<li id="clusterTile_' + strV + '" class="clusterTile"><span class="centerMessage">Loading data, standby...</span></li>');
+                            if ($('li#tile_' + i.toString()).length === 0) {
+                                $('#dialerStatusZone').append('<li id="tile_' + i.toString() + '" class="clusterTile"><span class="centerMessage">Loading data, standby...</span></li>');
                             }
                             $.ajax({
                                 type: 'POST',
@@ -992,8 +995,8 @@ class DialerStatus {
 
                             $('#main_content').css('background-color', '#000000');
                             $('#main_content').css('color', '#FFFFFF');
-                            
-                            
+
+
                             $('#dialerStatusZone').css('background-color', '#000000');
                             $('.clusterTile').css('background-color', 'black');
                             $('button#switchContrast').button('option', 'label', 'Light Mode');
