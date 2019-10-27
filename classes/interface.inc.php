@@ -421,7 +421,46 @@
 				<?
 					include_once("classes/home.inc.php");
 					$_SESSION['home']->handleFLOW();
-					
+                    
+                    
+                    ## CHECK IF PASSWORD IS OLDER THAN 6 MONTHS FOR PRIV 4 OR GREATER
+                    if($_SESSION['user']['priv'] >= 4){
+
+                        $sixmonthsago = strtotime("-6 months");
+
+                        if($_SESSION['user']['changedpw_time'] < $sixmonthsago){
+
+                            ?><div id="change-password-expired-div" title="Password Expired - Change Required"></div>
+                            <script>
+
+                                $('#change-password-expired-div').dialog({
+                                    dialogClass: "no-close",
+                                    autoOpen: false,
+                                    width: 370,
+                                    height: 220,
+                                    modal: true,
+                                    draggable: false,
+                                    resizable: false
+                                });
+                                
+                                function loadChangeExpiredPassword() {
+                                
+                                    $('#change-password-expired-div').dialog("open");
+
+                                    $('#change-password-expired-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+
+                                    $('#change-password-expired-div').load("index.php?area=change_expired_password&printable=1&no_script=1");
+
+                                }
+
+                                loadChangeExpiredPassword();
+                            
+                            </script><?
+
+                        }
+
+
+                    }
 				
 					/**
 					 *<center>

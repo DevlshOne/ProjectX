@@ -1049,7 +1049,15 @@
 
 
 				break;
-			}
+
+			case 'change_expired_password':
+
+				include_once("classes/change_password.inc.php");
+				$_SESSION['change_password']->handleFLOW(true);
+
+
+				break;
+			}			
 
 			if(isset($_REQUEST['no_nav'])){
 				?></div><?
