@@ -1232,7 +1232,8 @@ $(function() {
 
 			<th>TOTAL SALES</th>
 			<th>PAID SALES</th>
-			<th>PAID %</th>
+			<th title="The percentage of deal counts that were paid, vs the total count sent">PAID %</th>
+			<th title="Percentage of paid deals, by the dollar amount, instead of count">$PAID %</th>
 			<th>UNPAID SALES</th>
 			<th>UNPAID %</th>
 
@@ -1252,9 +1253,9 @@ $(function() {
 		foreach($agent_data_arr as $agent_data){
 
 			$paid_sale_percent = ($agent_data['sale_cnt'] <= 0)?0:round( ((float)$agent_data['paid_sale_cnt'] / $agent_data['sale_cnt']) * 100, 2);
-
 			$unpaid_sale_percent = 100 - $paid_sale_percent;
 
+			$paid_sale_amount_percent = ($agent_data['sales_total'] <= 0)?0:round( ((float)$agent_data['paid_sales_total'] / $agent_data['sales_total']) * 100, 2);
 
 			$ans_percent = round(  (($agent_data['num_AnswerMachines'] / $agent_data['calls_today']) * 100), 2);
 
@@ -1303,6 +1304,8 @@ $(function() {
 
 				</td>
 				<td align="right"><?=number_format($paid_sale_percent,2)?>%</td>
+				<td align="right"><?=number_format($paid_sale_amount_percent,2)?>%</td>
+
 
 
 				<td align="center"><?=number_format(($agent_data['sale_cnt']-$agent_data['paid_sale_cnt']))?></td>
@@ -1324,8 +1327,9 @@ $(function() {
 
 
 		$paid_sale_percent = round( ((float)$totals['total_paid_sale_cnt'] / $totals['total_sale_cnt']) * 100, 2);
-
 		$unpaid_sale_percent = 100 - $paid_sale_percent;
+
+		$paid_sale_amount_percent = ($totals['total_sales'] <= 0)?0:round( ((float)$totals['total_paid_sales'] / $totals['total_sales']) * 100, 2);
 
 		$t_ans_percent = round(  (($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2);
 
@@ -1364,6 +1368,8 @@ $(function() {
 
 			<th style="border-top:1px solid #000" align="left"><?=number_format($totals['total_paid_sale_cnt'])?> ($<?=number_format($totals['total_paid_sales'])?>)</th>
 			<th style="border-top:1px solid #000" align="right"><?=number_format($paid_sale_percent,2)?>%</th>
+			<th style="border-top:1px solid #000" align="right"><?=number_format($paid_sale_amount_percent,2)?>%</th>
+
 
 			<th style="border-top:1px solid #000" align="center"><?=number_format(($totals['total_sale_cnt']-$totals['total_paid_sale_cnt']))?></th>
 			<th style="border-top:1px solid #000" align="right"><?=number_format($unpaid_sale_percent,2)?>%</th>
