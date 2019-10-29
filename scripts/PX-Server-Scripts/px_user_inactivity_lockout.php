@@ -2,7 +2,7 @@
 <?php
 
     #$basedir = "/var/www/dev/html/";
-    $basedir = "/var/www/html/ProjectX-ReportsAndAdmin/";
+    $basedir = "/var/www/html/reports/";
 
     include_once($basedir."db.inc.php");
     
@@ -24,4 +24,4 @@
     if($cnt>0){
         echo "Updated ".$cnt." user records enabled flag to no.\n";
     }
-?>
+    
