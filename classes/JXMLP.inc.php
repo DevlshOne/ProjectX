@@ -853,7 +853,7 @@ echo "Breaking from grab One Tag!\n";
 
 
 
-	function makeXMLFromHash($tag,$asso_arr,$sub_tag){
+	function makeXMLFromHash($tag,$asso_arr,$sub_tag = null){
 
 		##if($sub_tag)jsAlert($tag.'   '.$sub_tag);
 
