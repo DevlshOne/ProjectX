@@ -443,8 +443,8 @@
                                 $('#change-password-expired-div').dialog({
                                     dialogClass: "no-close",
                                     autoOpen: false,
-                                    width: 370,
-                                    height: 220,
+                                    width: 400,
+                                    height: 280,
                                     modal: true,
                                     draggable: false,
                                     resizable: false
@@ -490,8 +490,8 @@
 
                 $('#change-password-div').dialog({
                     autoOpen: false,
-                    width: 370,
-                    height: 220,
+                    width: 400,
+                    height: 280,
                     modal: false,
                     draggable: true,
                     resizable: true

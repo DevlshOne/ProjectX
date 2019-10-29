@@ -45,9 +45,19 @@ class ChangePassword{
 		?><script src="js/md5.js"></script>
 		<script>
 
+			function resetPWimages(){
+				$('#pw_minlength_span').html('<img src="images/circle-red.gif" width="20" border="0" />');
+				$('#pw_letter_span').html('<img src="images/circle-red.gif" width="20" border="0" />');
+				$('#pw_digit_span').html('<img src="images/circle-red.gif" width="20" border="0" />');
+				$('#pw_symbol_span').html('<img src="images/circle-red.gif" width="20" border="0" />');
+			}
+		
 			// JS FUNCTIONS TO CHECK PASSWORD COMPLEXITY
 			function pwCheckComplexity(pw){
 
+				// FIRST, RESET THE IMAGES 
+				resetPWimages();
+				
 				// SET CHARACTER MATCH STRINGS
 				var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 				var lowercase = "abcdefghijklmnopqrstuvwxyz";
@@ -60,16 +70,48 @@ class ChangePassword{
 				<?=($this->pw_digits)?'var digitsFlag = contains(pw, digits);':'var digitsFlag = false;'?>
 				<?=($this->pw_specialchars)?'var specialCharsFlag = contains(pw, specialChars);':'var specialCharsFlag = false;'?>
 
+				
+				<?
+				
+				if($this->pw_uppercase && $this->pw_lowercase){
+					?>if(ucaseFlag == true && lcaseFlag == true){
+						$('#pw_letter_span').html('<img src="images/circle-green.gif" width="20" border="0" />');
+					}<?
+					
+				}else if($this->pw_uppercase || $this->pw_lowercase){
+					?>if(ucaseFlag == true || lcaseFlag == true){
+						$('#pw_letter_span').html('<img src="images/circle-green.gif" width="20" border="0" />');
+					}<?
+					
+				}
+				?>
+				
+				
+				if(digitsFlag){
+					$('#pw_digit_span').html('<img src="images/circle-green.gif" width="20" border="0" />');
+				}
+
+				if(specialCharsFlag){
+					$('#pw_symbol_span').html('<img src="images/circle-green.gif" width="20" border="0" />');
+				}
+
+				if(pw.length >= <?=$this->pw_minlength?>){
+					$('#pw_minlength_span').html('<img src="images/circle-green.gif" width="20" border="0" />');
+				}
+				
+				
 				// CHECK COMPLEXITY MATCH FLAGS
-				if(pw.length>=<?=$this->pw_minlength?><?=($this->pw_uppercase)?' && ucaseFlag ':''?><?=($this->pw_lowercase)?' && lcaseFlag ':''?><?=($this->pw_digits)?' && digitsFlag ':''?><?=($this->pw_specialchars)?' && specialCharsFlag ':''?>)
+				if(pw.length >= <?=$this->pw_minlength?><?=($this->pw_uppercase)?' && ucaseFlag ':''?><?=($this->pw_lowercase)?' && lcaseFlag ':''?><?=($this->pw_digits)?' && digitsFlag ':''?><?=($this->pw_specialchars)?' && specialCharsFlag ':''?>){
+
+					
 					
 					return true;
 
-				else
+				}else{
 					
 					return false;
 
-
+				}
 			}
 
 			// RUN PASSWORD THROUGH COMPLEXITY CHECK
@@ -155,6 +197,7 @@ class ChangePassword{
 
 			}
 
+
 		</script>
 		<form method="POST" action="<?=stripurl()?>" autocomplete="off" onsubmit="return submitChangePass(this)">
 			<input type="hidden" name="changing_password">
@@ -171,8 +214,36 @@ class ChangePassword{
 			<td><input type="password" name="old_pass" id="old_pass"></td>
 		</tr>
 		<tr>
+			<td colspan="2" style="padding:10px">
+			
+				<span class="big">New Password requirements:</span><br />
+				<ul>
+					<li><span id="pw_minlength_span"><img src="images/circle-red.gif" width="20" border="0" /></span>Must be at least <?=$this->pw_minlength?> characters.</li>
+				<?	
+					if($this->pw_uppercase == true && $this->pw_lowercase == true){
+						?><li><span id="pw_letter_span"><img src="images/circle-red.gif" width="20" border="0" /></span>Must contain both UPPER and LOWER case letters.</li><?
+						
+					}else if($this->pw_uppercase == true || $this->pw_lowercase == true){
+						
+						?><li><span id="pw_letter_span"><img src="images/circle-red.gif" width="20" border="0" /></span>Must contain <?=($this->pw_uppercase)?"UPPER":"LOWER"?> case letters.</li><?
+					}
+					
+					if($this->pw_digits){
+						?><li><span id="pw_digit_span"><img src="images/circle-red.gif" width="20" border="0" /></span>Must contain number(s)</li><?
+					}
+					
+					if($this->pw_specialchars == true){
+						
+						?><li><span id="pw_symbol_span"><img src="images/circle-red.gif" width="20" border="0" /></span>Must contain symbols(s)</li><?
+					}
+			
+			
+				?></ul>
+			</td>
+		</tr>
+		<tr>
 			<th align="left">New Password:</th>
-			<td><input type="password" name="new_pass" id="new_pass"></td>
+			<td><input type="password" name="new_pass" id="new_pass" onkeyup="pwCheckComplexity(this.value)"></td>
 		</tr>
 		<tr>
 			<th align="left">Confirm Password:</th>
