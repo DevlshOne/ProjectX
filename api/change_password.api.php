@@ -55,10 +55,12 @@ class API_ChangePassword{
 				logAction('change_password', 'users', $_SESSION['user']['id'], "");
 
 
-				# UPDATE PREVIOUS PASSWORD DB FIELD AND SESSION
-				$this->storePreviousPassword($_SESSION['user']['id'],$_SESSION['user']['previous_passwords'],$old_pass);
+				# UPDATE PREVIOUS PASSWORD DB FIELD AND SESSION FOR PRIV 4 AND HIGHER
+				if($_SESSION['user']['priv'] >= 4){
+				
+					$this->storePreviousPassword($_SESSION['user']['id'],$_SESSION['user']['previous_passwords'],$old_pass);
 
-
+				}
 
 				exit;
 
@@ -117,10 +119,10 @@ class API_ChangePassword{
 		# CREATE ARRAY FROM PREVIOUS PASSWORDS
 		$previous_password_hashes = explode("\n",$password_hashes);
 
-		# ADD NEW PASS TO END OF PREVIOUS PASSWORD ARRAY
+		# ADD NEW PASS (HASHED) TO END OF PREVIOUS PASSWORD ARRAY
 		array_push($previous_password_hashes,md5($old_pass));
 
-		# COUNT PREVIOUS PASSWORD ARRAY AND POP OLDEST PREVIOUS PASSWORD
+		# COUNT PREVIOUS PASSWORD ARRAY AND SHIFT OLDEST PREVIOUS PASSWORD
 		if(count($previous_password_hashes) > intval($this->num_previous_passwords)){
 
 			array_shift($previous_password_hashes);

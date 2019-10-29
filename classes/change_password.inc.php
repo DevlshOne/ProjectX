@@ -97,6 +97,11 @@ class ChangePassword{
 				// ONLY CHECK PW COMPLEXITY FOR PRIV 4 OR HIGHER
 				if(frm.priv.value >= 4){
 
+					if(frm.old_pass.value == frm.conf_pass.value){
+						alert("ERROR: Unable to use previous password.");
+						return false;
+					}
+
 					if(!pwCheckComplexity(frm.new_pass.value)){
 
 						alert("Error: Password doesn't meet the complexity requirements, please try again.");
