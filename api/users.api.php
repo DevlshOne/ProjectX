@@ -1074,6 +1074,9 @@ class API_Users{
 
 				$dat['password'] = trim($_POST['md5sum']);
 
+				## UPDATE CHANGED PW TIME IF PW WAS PROVIDED
+				$dat['changedpw_time'] = time();
+
 			}
 
 			$dat['vici_password'] = trim($_POST['vici_password']);
@@ -1123,6 +1126,9 @@ class API_Users{
 
 				$dat['createdby_time'] = time();
 				$dat['createdby_userid'] = $_SESSION['user']['id'];
+
+				## SET CHANGED PW TIME ON USER CREATION
+				$dat['changedpw_time'] = time();
 
 				if($_SESSION['dbapi']->users->userExists($username)){
 
