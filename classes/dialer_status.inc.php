@@ -132,7 +132,7 @@ class DialerStatus {
                     }
                     var tileDefs = [];
                     $(clusterInfo).each(function(i,v) {
-                        tileDefs.push(new clusterDef(i, v.type, v.name, v.ip, v.groups, v.user_group_filter));
+                       tileDefs.push(new clusterDef(i, v.type, v.name, v.ip, v.groups, v.user_group_filter));
                     });
                     if (frontEnd_debug) {
                         console.log('Initializing the variable `clusterInfo` :: ', clusterInfo);
@@ -146,7 +146,7 @@ class DialerStatus {
                     var scriptRoot = '<?=$_SESSION['site_config']['basedir'];?>';
                     var useCache = true;
                     var cacheDebug = false;
-
+                    const tileAdder = '<li id="tile_add" class="clusterTile" style="width:50px"><table border="0" width="100%" height="100%" class="hand"<tr><td align="center"><img src="images/add_icon.png" width="40" border="0"/></td></tr></table><li>';
                     $('#dialog-modal-select-clusters').dialog({
                         autoOpen: false,
                         width: 400,
@@ -539,7 +539,6 @@ class DialerStatus {
                         dlgObj.dialog('open');
                         dlgObj.dialog({title: 'Change Cluster Filters - ' + clusterInfo[clid]['name']});
                         let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option value="ALL-ACTIVE">ALL-ACTIVE</option>';
-                        debugger;
                         $.each(clusterInfo[clid]['campaign_options'], function (i, v) {
                             campaignSelect += '<option value="' + v.groups + '">' + v.groups + '</option>';
                         });
@@ -957,13 +956,14 @@ class DialerStatus {
                         return $newLayout;
                     }
 
-                    function parseDialerStatusData(clusterID, dialerStatusData) {
+                    function parseDialerStatusData(tileID, clusterID, dialerStatusData) {
                         // NOTE - all these clusterID instances will need to be 0-based and incremented
                         let titleRow = '<div class="clusterTitle">' + clusterInfo[clusterID]['name'] + '<a id="removeCluster_' + clusterID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
-                        let $tile = $('#tile_' + clusterID);
+                        let $tile = $('#tile_' + tileID);
                         $tile.empty();
                         $tile.append(titleRow);
-                        let prsdData = parseTable(tileDefs.cluster_id, tileDefs.type, dialerStatusData);
+                        let clusterType = tileDefs[tileID].type;
+                        let prsdData = parseTable(clusterID, clusterType, dialerStatusData);
                         $tile.append(prsdData);
                     }
 
@@ -984,15 +984,18 @@ class DialerStatus {
                                 contentType: 'application/x-www-form-urlencoded',
                                 crossDomain: false,
                                 crossOrigin: false,
-                                url: 'api/api.php?get=dialer_status&mode=json&action=getClusterDataByUserPrefs&c=' + i.toString(),
+                                url: 'api/api.php?get=dialer_status&mode=json&action=getClusterDataByUserPrefs&c=' + v.cluster_id.toString(),
                                 success: function (response) {
-                                    parseDialerStatusData(v, response);
+                                    parseDialerStatusData(i, v.cluster_id, response);
                                 },
                                 error: function (response) {
                                     console.log('FAILURE - ' + response);
                                 }
                             });
                         });
+                        if ($('li#tile_add').length === 0) {
+                            $('#dialerStatusZone').append(tileAdder);
+                        }
                         applyUniformity();
                         if (highContrast) {
                             $('body').css('background-color', '#000000');
