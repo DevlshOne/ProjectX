@@ -468,7 +468,7 @@ class DialerStatus {
                         refreshPositions: true,
                         stop: function (e, ui) {
                             // the sort order has been changed - now re-arrange the selectedClusters array accordingly
-                            let clusterTiles = $('#dialerStatusZone').children();
+                            let clusterTiles = $('#dialerStatusZone').children('li[id!="tile_add"]');
                             let newTileOrder = [];
                             $.each(clusterTiles, function (i, v) {
                                 newTileOrder[i] = $(v).attr('id').split('_')[1];
@@ -487,7 +487,7 @@ class DialerStatus {
                         $('#dialerStatusZone').empty();
                     }
 
-                    $('#clusterSelectButton').on('click', function (e, ui) {
+                    $('#clusterSelectButton').on('click', function () {
                         dlgObj = $('#dialog-modal-select-clusters');
                         let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection" multiple size="6">';
                         $.each(availableClusters, function (i, v) {
@@ -498,26 +498,26 @@ class DialerStatus {
                         dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
                         $('#clusterSelection').val(tileDefs);
                     });
-                    $('#refreshRateButton').on('click', function (e, ui) {
+                    $('#refreshRateButton').on('click', function () {
                         dlgObj = $('#dialog-modal-change-refresh');
                         dlgObj.dialog('open');
                         let refreshOptions = '<option value="4">4 seconds</option><option value="10">10 seconds</option><option value="20">20 seconds</option><option value="30">30 seconds</option><option value="40">40 seconds</option><option value="60">60 seconds</option><option value="120">2 minutes</option><option value="300">5 minutes</option><option value="600">10 minutes</option><option value="1200">20 minutes</option><option value="1800">30 minutes</option><option value="3600">60 minutes</option><option value="7200">120 minutes</option>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="refreshRate">Refresh Rate : </label><td class="align_right"><select id="refreshRate" name="refreshRate">' + refreshOptions + '</select></td></tr><tr><td class="align_left"><label for="refreshEnabled">Disable refresh : </label><td class="align_right"><input id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
                         $('#refreshRate').val(refreshInterval);
                     });
-                    $('#forceHopperButton').on('click', function (e, ui) {
+                    $('#forceHopperButton').on('click', function () {
                         dlgObj = $('#dialog-modal-first-confirm');
                         dlgObj.data('myAction', 'forceHopper');
                         dlgObj.html('<div class="firstConfirmation">This will EMPTY/ERASE ALL CALLS from the hopper, are you sure?</div>');
                         dlgObj.dialog('open');
                     });
-                    $('#stopDialersButton').on('click', function (e, ui) {
+                    $('#stopDialersButton').on('click', function () {
                         dlgObj = $('#dialog-modal-first-confirm');
                         dlgObj.data('myAction', 'stopDialers');
                         dlgObj.html('<div class="firstConfirmation">This will stop ALL DIALING on the PRODUCTION servers, are you sure?</div>');
                         dlgObj.dialog('open');
                     });
-                    $('#switchContrast').on('click', function (e, ui) {
+                    $('#switchContrast').on('click', function () {
                         if (!highContrast) {
                             $('body').css('background-color', '#000000');
                             $('body').css('color', '#FFFFFF');
