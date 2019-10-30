@@ -1,56 +1,56 @@
 <?
-/***************************************************************
- *    Dialer Status Dashboard - dialer data as draggable / sortable
- *    Written By: Dave Mednick
- ***************************************************************/
+    /***************************************************************
+     *    Dialer Status Dashboard - dialer data as draggable / sortable
+     *    Written By: Dave Mednick
+     ***************************************************************/
 
-$_SESSION['dialer_status'] = new DialerStatus;
+    $_SESSION['dialer_status'] = new DialerStatus;
 
-class DialerStatus {
-	public $availableClusterIDs = [];
-	public $availableClusterIPs = [];
-	public $clusterNames = [];
-	public $selectedClusters = [];
-	public $table = 'vici_cluster';
-	public $clusterInfo = [];
+    class DialerStatus {
+        public $availableClusterIDs = [];
+        public $availableClusterIPs = [];
+        public $clusterNames = [];
+        public $selectedClusters = [];
+        public $table = 'vici_cluster';
+        public $clusterInfo = [];
 
-	## Classes main table to operate on
+        ## Classes main table to operate on
 
-	function DialerStatus() {
-		$this->handlePOST();
-	}
+        function DialerStatus() {
+            $this->handlePOST();
+        }
 
-	function handlePOST() {
-	}
+        function handlePOST() {
+        }
 
-	function handleFLOW() {
-		$this->displayDialers();
-	}
+        function handleFLOW() {
+            $this->displayDialers();
+        }
 
-	function getClusterInfo() {
-		foreach (getClusterIDs() as $i => $v) {
-		    $this->clusterInfo[$i]['cluster_id'] = $v;
-			$this->clusterInfo[$i]['type'] = getClusterType($v);
-			$this->clusterInfo[$i]['name'] = getClusterName($v);
-			$this->clusterInfo[$i]['ip'] = getClusterWebHost($v);
-			$this->clusterInfo[$i]['sel_campaigns'] = array("ALL-ACTIVE");//getClusterCampaigns($v);
-			$this->clusterInfo[$i]['sel_user_groups'] = array("ALL-GROUPS");//getClusterUserGroups($v);
-			$this->clusterInfo[$i]['campaign_options'] = getClusterCampaigns($v);
-			$this->clusterInfo[$i]['usergroup_options'] = getClusterUserGroups($v);
-		}
-	}
+        function getClusterInfo() {
+            foreach (getClusterIDs() as $i => $v) {
+                $this->clusterInfo[$i]['cluster_id'] = $v;
+                $this->clusterInfo[$i]['type'] = getClusterType($v);
+                $this->clusterInfo[$i]['name'] = getClusterName($v);
+                $this->clusterInfo[$i]['ip'] = getClusterWebHost($v);
+                $this->clusterInfo[$i]['sel_campaigns'] = array("ALL-ACTIVE");//getClusterCampaigns($v);
+                $this->clusterInfo[$i]['sel_user_groups'] = array("ALL-GROUPS");//getClusterUserGroups($v);
+                $this->clusterInfo[$i]['campaign_options'] = getClusterCampaigns($v);
+                $this->clusterInfo[$i]['usergroup_options'] = getClusterUserGroups($v);
+            }
+        }
 
-	function displayDialers() {
-		/*
-		 * TODO
-		 * auto-refresh every 4 seconds
-		 * rebuild the url based on the selected clusters
-		 * calculate the spread of boxes?
-		 * get ALL the data and then only display the clusters requested or only get the clusters requested?
-		 */
-		$this->availableClusterIDs = getClusterIDs();
-		$this->getClusterInfo();
-		?>
+        function displayDialers() {
+            /*
+             * TODO
+             * auto-refresh every 4 seconds
+             * rebuild the url based on the selected clusters
+             * calculate the spread of boxes?
+             * get ALL the data and then only display the clusters requested or only get the clusters requested?
+             */
+            $this->availableClusterIDs = getClusterIDs();
+            $this->getClusterInfo();
+            ?>
             <table class="pct100 tightTable">
                 <tr>
                     <td class="ht40 pad_left ui-widget-header">
@@ -74,6 +74,7 @@ class DialerStatus {
                     </td>
                 </tr>
             </table>
+            <div id="dialog-modal-add-tile" title="Add tile" class="nod"></div>
             <div id="dialog-modal-select-clusters" title="Cluster selection" class="nod"></div>
             <div id="dialog-modal-change-refresh" title="Modify refresh rate" class="nod"></div>
             <div id="dialog-modal-cluster-filters" title="Filters" class="nod"></div>
@@ -119,9 +120,13 @@ class DialerStatus {
                     var refreshEnabled = true;
                     var frontEnd_debug = true;
                     dispTimer = false;
+                    // clusterInfo is an array that stores all the available information for a cluster, including the selectable campaigns and usergroups
                     var clusterInfo = <?=json_encode($this->clusterInfo);?>;
+                    // availableClusters is an array that lists all available clusters for this user
                     var availableClusters = <?=json_encode($this->availableClusterIDs);?>;
-                    // NEW CODE
+                    // tileDefs is an array of clusterDefs (object storing the specifics for that cluster)
+                    var tileDefs = [];
+
                     class clusterDef {
                         constructor(i, t, n, ip, g, ugf, go, ugo) {
                             this.cluster_id = i;
@@ -134,9 +139,9 @@ class DialerStatus {
                             this.user_group_options = ugo;
                         }
                     }
-                    var tileDefs = [];
-                    $(clusterInfo).each(function(i, v) {
-                           tileDefs.push(new clusterDef(v.cluster_id, v.type, v.name, v.ip, v.sel_campaigns, v.sel_user_groups, v.campaign_options, v.usergroup_options));
+
+                    $(clusterInfo).each(function (i, v) {
+                        tileDefs.push(new clusterDef(v.cluster_id, v.type, v.name, v.ip, v.sel_campaigns, v.sel_user_groups, v.campaign_options, v.usergroup_options));
                     });
                     if (frontEnd_debug) {
                         console.log('Initializing the variable `clusterInfo` :: ', clusterInfo);
@@ -151,7 +156,34 @@ class DialerStatus {
                     var scriptRoot = '<?=$_SESSION['site_config']['basedir'];?>';
                     var useCache = true;
                     var cacheDebug = false;
-                    const tileAdder = '<li id="tile_add" class="clusterTile adderTile"><table class="tightTable hand"<tr><td align="center"><img src="images/add_icon.png" width="60px" style="padding-top:30px" border="0" title="Add a new tile" /></td></tr></table></li>';
+                    const tileAdder = '<li id="tile_add" class="clusterTile adderTile"><table class="tightTable hand"><tr><td align="center"><img src="images/add_icon.png" width="60px" style="padding-top:30px" border="0" title="Add a new tile" /></td></tr></table></li>';
+                    $('#dialog-modal-add-tile').dialog({
+                        autoOpen: false,
+                        width: 400,
+                        modal: true,
+                        draggable: true,
+                        resizable: false,
+                        title: 'Add New Tile',
+                        buttons: {
+                            'Save': function () {
+                                $('#clusterSelection option:selected').each(function () {
+                                    tileDefs.push(new clusterDef(this.value));
+                                });
+                                if (frontEnd_debug) {
+                                    console.log('Clusters have just been changed :: ', tileDefs);
+                                }
+                                saveUserPrefs();
+                                initScreen();
+                                getDialerStatusData();
+                                $(this).dialog('close');
+                            },
+                            'Cancel': function () {
+                                $(this).dialog('close');
+                            }
+                        },
+                        position: 'center'
+                    });
+
                     $('#dialog-modal-select-clusters').dialog({
                         autoOpen: false,
                         width: 400,
@@ -218,23 +250,13 @@ class DialerStatus {
                         buttons: {
                             'Save': function (e) {
                                 let tileID = $(this).data('tileID');
-                                if (frontEnd_debug) {
-                                    console.log($(this).data());
-                                }
-                                let tmpArr = [];
                                 $('#campaignFilter option:selected').each(function (i, v) {
-                                    tmpArr.push({
-                                        groups: v.innerText
-                                    });
+                                    tileDefs[tileID].groups.push(v.innerText);
                                 });
-                                clusterInfo[tileID].sel_campaigns = tmpArr;
-                                tmpArr = [];
+                                tileDefs[tileID].groups = tmpArr;
                                 $('#usergroupFilter option:selected').each(function (i, v) {
-                                    tmpArr.push({
-                                        user_group_filter: v.innerText
-                                    });
+                                    tileDefs[tileID].user_group_filter.push(v.innerText);
                                 });
-                                clusterInfo[tileID].sel_user_groups = tmpArr;
                                 saveUserPrefs();
                                 $(this).dialog('close');
                             },
@@ -257,15 +279,14 @@ class DialerStatus {
                             },
                             'Confirm': function () {
                                 let theAction = $(this).data('myAction');
-                                let tileID = $(this).data('tileID');
                                 let clusterID = $(this).data('clusterID');
                                 $(this).dialog('close');
                                 switch (theAction) {
                                     case 'forceHopper':
-                                        forceHopper(tileID);
+                                        forceHopper(clusterID);
                                         break;
                                     case 'stopDialers':
-                                        stopDialers(tileID);
+                                        stopDialers(clusterID);
                                         break;
                                     default:
                                         break;
@@ -287,7 +308,6 @@ class DialerStatus {
                             },
                             'Confirm': function () {
                                 let theAction = $(this).data('myAction');
-                                let tileID = $(this).data('tileID');
                                 let clusterID = $(this).data('clusterID');
                                 $(this).dialog('close');
                                 switch (theAction) {
@@ -488,7 +508,7 @@ class DialerStatus {
                     }
 
                     $('#clusterSelectButton').on('click', function () {
-                        dlgObj = $('#dialog-modal-select-clusters');
+                        let dlgObj = $('#dialog-modal-select-clusters');
                         let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection" multiple size="6">';
                         $.each(availableClusters, function (i, v) {
                             clusterSelect += '<option value="' + v + '">' + clusterInfo[i].name + '</option>';
@@ -499,20 +519,20 @@ class DialerStatus {
                         $('#clusterSelection').val(tileDefs);
                     });
                     $('#refreshRateButton').on('click', function () {
-                        dlgObj = $('#dialog-modal-change-refresh');
+                        let dlgObj = $('#dialog-modal-change-refresh');
                         dlgObj.dialog('open');
                         let refreshOptions = '<option value="4">4 seconds</option><option value="10">10 seconds</option><option value="20">20 seconds</option><option value="30">30 seconds</option><option value="40">40 seconds</option><option value="60">60 seconds</option><option value="120">2 minutes</option><option value="300">5 minutes</option><option value="600">10 minutes</option><option value="1200">20 minutes</option><option value="1800">30 minutes</option><option value="3600">60 minutes</option><option value="7200">120 minutes</option>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="refreshRate">Refresh Rate : </label><td class="align_right"><select id="refreshRate" name="refreshRate">' + refreshOptions + '</select></td></tr><tr><td class="align_left"><label for="refreshEnabled">Disable refresh : </label><td class="align_right"><input id="refreshEnabled" name="refreshEnabled" type="checkbox"' + (refreshEnabled ? '' : ' checked') + ' /></td></tr></table>');
                         $('#refreshRate').val(refreshInterval);
                     });
                     $('#forceHopperButton').on('click', function () {
-                        dlgObj = $('#dialog-modal-first-confirm');
+                        let dlgObj = $('#dialog-modal-first-confirm');
                         dlgObj.data('myAction', 'forceHopper');
                         dlgObj.html('<div class="firstConfirmation">This will EMPTY/ERASE ALL CALLS from the hopper, are you sure?</div>');
                         dlgObj.dialog('open');
                     });
                     $('#stopDialersButton').on('click', function () {
-                        dlgObj = $('#dialog-modal-first-confirm');
+                        let dlgObj = $('#dialog-modal-first-confirm');
                         dlgObj.data('myAction', 'stopDialers');
                         dlgObj.html('<div class="firstConfirmation">This will stop ALL DIALING on the PRODUCTION servers, are you sure?</div>');
                         dlgObj.dialog('open');
@@ -543,9 +563,20 @@ class DialerStatus {
                         }
                         saveUserPrefs();
                     });
+                    $('#dialerStatusZone').on('click', '#tile_add', function () {
+                        let dlgObj = $('#dialog-modal-add-tile');
+                        let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection">';
+                        $.each(availableClusters, function (i, v) {
+                            clusterSelect += '<option value="' + v + '">' + clusterInfo[i].name + '</option>';
+                        });
+                        clusterSelect += '</select>';
+                        dlgObj.dialog('open');
+                        dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
+                    });
+
                     $('#dialerStatusZone').on('click', '.selectFiltersButton', function () {
                         let tileID = $(this).closest('button').attr('id').split('_')[1];
-                        dlgObj = $('#dialog-modal-cluster-filters');
+                        let dlgObj = $('#dialog-modal-cluster-filters');
                         dlgObj.data('tileID', tileID);
                         dlgObj.data('clusterID', tileDefs[tileID].cluster_id);
                         dlgObj.dialog('open');
@@ -563,7 +594,7 @@ class DialerStatus {
                         let arrSelTemp = [];
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
                         if (clusterInfo[tileID].campaign_options.length === clusterInfo[tileID].sel_campaigns.length ||
-                        		clusterInfo[tileID].sel_campaigns.length == 0) {
+                            clusterInfo[tileID].sel_campaigns.length == 0) {
                             arrSelTemp.push('ALL-ACTIVE');
                             saveUserPrefs();
                         } else {
@@ -571,22 +602,16 @@ class DialerStatus {
                                 arrSelTemp.push(v.groups);
                             });
                         }
-                        if(frontEnd_debug) {
-                            debugger;
-                        }
                         $('#campaignFilter').val(arrSelTemp);
                         arrSelTemp = [];
                         if (clusterInfo[tileID].usergroup_options.length === clusterInfo[tileID].sel_user_groups.length ||
-                        		clusterInfo[tileID].sel_user_groups.length == 0) {
+                            clusterInfo[tileID].sel_user_groups.length == 0) {
                             arrSelTemp.push('ALL-GROUPS');
                             saveUserPrefs();
                         } else {
                             $.each(clusterInfo[tileID].sel_user_groups, function (i, v) {
                                 arrSelTemp.push(v.user_group_filter);
                             });
-                        }
-                        if(frontEnd_debug) {
-                            debugger;
                         }
                         $('#usergroupFilter').val(arrSelTemp);
                     });
@@ -604,7 +629,7 @@ class DialerStatus {
 
                     $('#dialerStatusZone').on('click', '.stopDialersButton', function () {
                         let tileID = $(this).closest('button').attr('id').split('_')[1];
-                        dlgObj = $('#dialog-modal-cluster-action-confirm');
+                        let dlgObj = $('#dialog-modal-cluster-action-confirm');
                         dlgObj.data('myAction', 'stopDialers');
                         dlgObj.data('tileID', tileID);
                         dlgObj.data('clusterID', tileDefs[tileID].cluster_id);
@@ -614,7 +639,7 @@ class DialerStatus {
 
                     $('#dialerStatusZone').on('click', '.forceHopperButton', function () {
                         let tileID = $(this).closest('button').attr('id').split('_')[1];
-                        dlgObj = $('#dialog-modal-cluster-action-confirm');
+                        let dlgObj = $('#dialog-modal-cluster-action-confirm');
                         dlgObj.data('myAction', 'forceHopper');
                         dlgObj.data('tileID', tileID);
                         dlgObj.data('clusterID', tileDefs[tileID].cluster_id);
@@ -643,7 +668,7 @@ class DialerStatus {
                             alert('ALL dialers have been stopped!');
                         } else {
                             if (Array.isArray(clid)) {
-                                $.each(clid, function(i, v) {
+                                $.each(clid, function (i, v) {
                                     $.ajax({
                                         type: "POST",
                                         cache: false,
@@ -714,7 +739,7 @@ class DialerStatus {
                         if (s > maxGood && s <= maxWarn && v >= 1) {
                             return 'yellowThresh';
                         }
-                        if (s > maxWarn && v >=1) {
+                        if (s > maxWarn && v >= 1) {
                             return 'redThresh';
                         }
                     }
@@ -728,14 +753,15 @@ class DialerStatus {
                             return '<span style="color:yellow;">' + v.toString() + '</span>';
                         }
 
-                        if(default_color){
+                        if (default_color) {
 
-                        	return '<span style="color:'+default_color+';">' + v.toString() + '</span>';
+                            return '<span style="color:' + default_color + ';">' + v.toString() + '</span>';
 
-                        }else{
-	                        return v;
+                        } else {
+                            return v;
                         }
                     }
+
                     function applyThresh(v, crit, warn, default_color) {
                         if (parseInt(v) < crit) {
                             return '<span style="color:red;">' + v.toString() + '</span>';
@@ -744,12 +770,12 @@ class DialerStatus {
                             return '<span style="color:yellow;">' + v.toString() + '</span>';
                         }
 
-                        if(default_color){
+                        if (default_color) {
 
-                        	return '<span style="color:'+default_color+';">' + v.toString() + '</span>';
+                            return '<span style="color:' + default_color + ';">' + v.toString() + '</span>';
 
-                        }else{
-	                        return v;
+                        } else {
+                            return v;
                         }
                     }
 
@@ -937,7 +963,7 @@ class DialerStatus {
                         }
 
                         function loadClusterAssessment(c) {
-                            if(clusterInfo[c]['sel_campaigns'].length > 0 && clusterInfo[c]['sel_campaigns'][0].groups !== 'ALL-ACTIVE') {
+                            if (clusterInfo[c]['sel_campaigns'].length > 0 && clusterInfo[c]['sel_campaigns'][0].groups !== 'ALL-ACTIVE') {
                                 return '&campaign_id=' + encodeURIComponent(clusterInfo[c]['sel_campaigns'][0].groups);
                             } else {
                                 return '';
