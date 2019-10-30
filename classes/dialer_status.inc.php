@@ -295,7 +295,7 @@ class DialerStatus {
                                         forceHopper('ALL');
                                         break;
                                     case 'stopDialers':
-                                        stopDialers(tileID);
+                                        stopDialers(clusterID);
                                         break;
                                     default:
                                         break;
@@ -594,12 +594,10 @@ class DialerStatus {
                     $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
                         let tileID = $(this).attr('id').split('_')[1].toString();
                         $('#tile_' + tileID).remove();
-                        let i = tileDefs.indexOf(tileID);
-                        if (i !== -1) {
-                            tileDefs.splice(i, 1);
-                        }
+                        tileDefs.splice(tileID, 1);
                         saveUserPrefs();
                         if (frontEnd_debug) {
+                            console.log('Removed tile :: ', tileID);
                             console.log('Prefs have just been saved :: ', tileDefs);
                         }
                     });
@@ -632,14 +630,14 @@ class DialerStatus {
 
                     function stopDialers(clid) {
                         if (clid === 'ALL') {
-                            $.each(clusterInfo, function (i) {
+                            $.each(tileDefs, function (i, v) {
                                 $.ajax({
                                     type: "POST",
                                     cache: false,
                                     async: false,
                                     crossDomain: false,
                                     crossOrigin: false,
-                                    url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + i
+                                    url: 'api/api.php?get=dialer_status&mode=json&action=stopDialer&clusterid=' + v.cluster_id
                                 });
                             });
                             alert('ALL dialers have been stopped!');
@@ -672,14 +670,14 @@ class DialerStatus {
 
                     function forceHopper(clid) {
                         if (clid === 'ALL') {
-                            $.each(clusterInfo, function (i) {
+                            $.each(tileDefs, function (i, v) {
                                 $.ajax({
                                     type: "POST",
                                     cache: false,
                                     async: false,
                                     crossDomain: false,
                                     crossOrigin: false,
-                                    url: 'api/api.php?get=dialer_status&mode=json&action=forceHopperReset&clusterid=' + i
+                                    url: 'api/api.php?get=dialer_status&mode=json&action=forceHopperReset&clusterid=' + v.cluster_id
                                 });
                             });
                             alert('All hoppers have been reset!');
@@ -978,7 +976,7 @@ class DialerStatus {
                     }
 
                     function parseDialerStatusData(tileID, dialerStatusData) {
-                        let titleRow = '<div class="clusterTitle">' + tileDefs[tileID].name + '<a id="removeCluster_' + tileDefs[tileID].cluster_id + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
+                        let titleRow = '<div class="clusterTitle">' + tileDefs[tileID].name + '<a id="removeCluster_' + tileID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
                         let $tile = $('#tile_' + tileID);
                         $tile.empty();
                         $tile.append(titleRow);
