@@ -199,7 +199,7 @@ class ChangePassword{
 
 
 		</script>
-		<form method="POST" action="<?=stripurl()?>" autocomplete="off" onsubmit="return submitChangePass(this)">
+		<form method="POST" action="<?=stripurl()?>" onsubmit="return submitChangePass(this)"  autocomplete="off" >
 			<input type="hidden" name="changing_password">
 			<input type="hidden" id="pass_hash" name="pass_hash">
 			<input type="hidden" id="old_pass_hash" name="old_pass_hash">
@@ -211,7 +211,7 @@ class ChangePassword{
 		</tr>
 		<tr>
 			<th align="left">Old Password:</th>
-			<td><input type="password" name="old_pass" id="old_pass"></td>
+			<td><input type="password" name="old_pass" id="old_pass"  autocomplete="off" ></td>
 		</tr>
 		<tr>
 			<td colspan="2" style="padding:10px">
@@ -243,11 +243,11 @@ class ChangePassword{
 		</tr>
 		<tr>
 			<th align="left">New Password:</th>
-			<td><input type="password" name="new_pass" id="new_pass" onkeyup="pwCheckComplexity(this.value)"></td>
+			<td><input type="password" name="new_pass" id="new_pass" onkeyup="pwCheckComplexity(this.value)"  autocomplete="off" ></td>
 		</tr>
 		<tr>
 			<th align="left">Confirm Password:</th>
-			<td><input type="password" name="conf_pass" id="conf_pass"></td>
+			<td><input type="password" name="conf_pass" id="conf_pass"  autocomplete="off" ></td>
 		</tr>
 		<tr>
 			<th colspan="2" align="center">
