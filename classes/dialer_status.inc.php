@@ -167,7 +167,7 @@
                         buttons: {
                             'Save': function () {
                                 $('#clusterSelection option:selected').each(function () {
-                                    tileDefs.push(new clusterDef(this.value));
+                                    tileDefs.push(new clusterDef(clusterInfo[this.value].cluster_id, clusterInfo[this.value].type, clusterInfo[this.value].name, clusterInfo[this.value].tyip, clusterInfo[this.value].sel_campaigns, clusterInfo[this.value].sel_user_groups, clusterInfo[this.value].campaign_options, clusterInfo[this.value].usergroup_options));
                                 });
                                 if (frontEnd_debug) {
                                     console.log('Clusters have just been changed :: ', tileDefs);
@@ -444,18 +444,14 @@
                     function saveUserPrefs() {
                         let tmpJSON = [];
                         $.each(tileDefs, function (i, v) {
-                            let tmpGroups = [];
-                            let tmpUserGroups = [];
-                            $.each(clusterInfo[i].sel_campaigns, function (j, w) {
-                                tmpGroups.push(w.groups);
-                            });
-                            $.each(clusterInfo[i].sel_user_groups, function (j, w) {
-                                tmpUserGroups.push(w.user_group_filter);
-                            });
+                            if (frontEnd_debug) {
+                                console.log('The groups for this tile :: ', tileDefs[i].groups);
+                                console.log('The user_group_filter for this tile :: ', tileDefs[i].user_group_filter);
+                            }
                             tmpJSON.push({
-                                cluster_id: clusterInfo[i].cluster_id,
-                                groups: tmpGroups,
-                                user_group_filter: tmpUserGroups,
+                                cluster_id: tileDefs[i].cluster_id,
+                                groups: tileDefs[i].groups,
+                                user_group_filter: tileDefs[i].user_group_filter,
                             });
                         });
                         tmpJSON.push({
@@ -566,8 +562,8 @@
                     $('#dialerStatusZone').on('click', '#tile_add', function () {
                         let dlgObj = $('#dialog-modal-add-tile');
                         let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection">';
-                        $.each(availableClusters, function (i, v) {
-                            clusterSelect += '<option value="' + v + '">' + clusterInfo[i].name + '</option>';
+                        $.each(availableClusters, function (i) {
+                            clusterSelect += '<option value="' + i + '">' + clusterInfo[i].name + '</option>';
                         });
                         clusterSelect += '</select>';
                         dlgObj.dialog('open');
@@ -593,23 +589,23 @@
                         ugSelect += '</select>';
                         let arrSelTemp = [];
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
-                        if (clusterInfo[tileID].campaign_options.length === clusterInfo[tileID].sel_campaigns.length ||
-                            clusterInfo[tileID].sel_campaigns.length == 0) {
+                        if (clusterInfo[tileID].campaign_options.length === tileDefs[tileID].groups.length ||
+                            tileDefs[tileID].groups.length == 0) {
                             arrSelTemp.push('ALL-ACTIVE');
                             saveUserPrefs();
                         } else {
-                            $.each(clusterInfo[tileID].sel_campaigns, function (i, v) {
+                            $.each(tileDefs[tileID].sel_campaigns, function (i, v) {
                                 arrSelTemp.push(v.groups);
                             });
                         }
                         $('#campaignFilter').val(arrSelTemp);
                         arrSelTemp = [];
-                        if (clusterInfo[tileID].usergroup_options.length === clusterInfo[tileID].sel_user_groups.length ||
-                            clusterInfo[tileID].sel_user_groups.length == 0) {
+                        if (clusterInfo[tileID].usergroup_options.length === tileDefs[tileID].user_group_filter.length ||
+                            tileDefs[tileID].user_group_filter.length == 0) {
                             arrSelTemp.push('ALL-GROUPS');
                             saveUserPrefs();
                         } else {
-                            $.each(clusterInfo[tileID].sel_user_groups, function (i, v) {
+                            $.each(tileDefs[tileID].sel_user_groups, function (i, v) {
                                 arrSelTemp.push(v.user_group_filter);
                             });
                         }
