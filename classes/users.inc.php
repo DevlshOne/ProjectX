@@ -2183,6 +2183,12 @@ class UserClass{
 
 			function togglePriv(curpriv){
 
+				if(curpriv >= 4){
+					$('#pw_reset_tr').show();
+				}else{
+					$('#pw_reset_tr').hide();
+				}
+				
 				if(curpriv == 4){
 
 					$('#feature_set_tr').show();
@@ -2552,7 +2558,8 @@ class UserClass{
 					<option value="Pacific/Samoa"<?=($row['default_timezone'] == 'Pacific/Samoa')?" SELECTED ":""?>>Pacific/Samoa</option>
 					<option value="Pacific/Wake"<?=($row['default_timezone'] == 'Pacific/Wake')?" SELECTED ":""?>>Pacific/Wake</option>
 				</select></td>
-			</tr><?
+			</tr>
+			<?
 
 			if($id){
 				?><tr>
@@ -2578,6 +2585,12 @@ class UserClass{
 
 
 			?><input type="hidden" id="md5sum" name="md5sum">
+			<tr id="pw_reset_tr">
+				<th align="center" colspan="2" title="Force the user to change there password when they login next.">
+					<input type="checkbox" name="force_change_password" <?=(intval($row['changedpw_time']) == 0)?" CHECKED ":''?> /> Force Change Password
+				</th>
+				
+			</tr>
 
 			<tr>
 				<th align="left">Vicidial Password:</th>
