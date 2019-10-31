@@ -25,6 +25,14 @@ class UserClass{
 
 	var $order_prepend = 'usr_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
+
+	## PASSWORD COMPLEXITY REQUIREMENTS TOGGLE, SET FROM CHANGE PASSWORD CLASS
+	var $pw_uppercase = '';
+	var $pw_lowercase = '';
+	var $pw_digits = '';
+	var $pw_specialchars = '';
+	var $pw_minlength = '';
+
 	function UserClass(){
 
 		include_once("db.inc.php");
@@ -34,6 +42,16 @@ class UserClass{
 
 		## INCLUDED FEATURE CONTROL FOR ITS DROPDOWN AS WELL
 		include_once("classes/feature_control.inc.php");
+
+		## INCLUDE CHANGE PASSWORD CLASS TO GRAB PASSWORD COMPLEXITY REQUIREMENT VARIABLE VALUES
+		include_once("classes/change_password.inc.php");
+
+		## SET PASSWORD COMPLEXITY FLAGS FROM CHANGE PASSWORD CLASS
+		$this->pw_uppercase = $_SESSION['change_password']->pw_uppercase;
+		$this->pw_lowercase = $_SESSION['change_password']->pw_lowercase;
+		$this->pw_digits = $_SESSION['change_password']->pw_digits;
+		$this->pw_specialchars = $_SESSION['change_password']->pw_specialchars;
+		$this->pw_minlength = $_SESSION['change_password']->pw_minlength;
 
 
 		$this->handlePOST();
@@ -1300,6 +1318,47 @@ class UserClass{
 
 		var input_cnt = 0;
 
+		// JS FUNCTIONS TO CHECK PASSWORD COMPLEXITY
+		function pwCheckComplexity(pw){
+
+			// SET CHARACTER MATCH STRINGS
+			var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+			var lowercase = "abcdefghijklmnopqrstuvwxyz";
+			var digits = "0123456789";
+			var specialChars ="!@#$%&*()[]{}?><,.:;~`";
+
+			// SET CHARACTER MATCH FLAGS BASED ON CLASS SETTINGS AND RUN PW THROUGH CHARACTER CHECKS
+			<?=($this->pw_uppercase)?'var ucaseFlag = contains(pw, uppercase);':'var ucaseFlag = false;'?>
+			<?=($this->pw_lowercase)?'var lcaseFlag = contains(pw, lowercase);':'var lcaseFlag = false;'?>
+			<?=($this->pw_digits)?'var digitsFlag = contains(pw, digits);':'var digitsFlag = false;'?>
+			<?=($this->pw_specialchars)?'var specialCharsFlag = contains(pw, specialChars);':'var specialCharsFlag = false;'?>
+
+			// CHECK COMPLEXITY MATCH FLAGS
+			if(pw.length>=<?=$this->pw_minlength?><?=($this->pw_uppercase)?' && ucaseFlag ':''?><?=($this->pw_lowercase)?' && lcaseFlag ':''?><?=($this->pw_digits)?' && digitsFlag ':''?><?=($this->pw_specialchars)?' && specialCharsFlag ':''?>)
+				
+				return true;
+
+			else
+				
+				return false;
+
+
+		}
+
+			// RUN PASSWORD THROUGH COMPLEXITY CHECK
+			function contains(pw,allowedChars) {
+
+				for (i = 0; i < pw.length; i++) {
+
+						var char = pw.charAt(i);
+						if (allowedChars.indexOf(char) >= 0) { return true; }
+
+					}
+
+				return false;
+
+		}
+
 
 		function saveBulkAdd(frm){
 			var obj = null;
@@ -1323,6 +1382,18 @@ class UserClass{
 
 			}
 
+										// ONLY CHECK PW COMPLEXITY FOR PRIV 4 OR HIGHER
+			if(frm.priv.value >= 4){
+
+				if(!pwCheckComplexity(frm.newpass.value)){
+
+					alert("Error: Password doesn't meet the complexity requirements, please try again.");
+					frm.newpass.select();
+					return false;
+
+				}
+
+			}
 
 			resultcnt = 0; checkingcnt =0; errorcnt = 0;
 
@@ -1416,6 +1487,19 @@ class UserClass{
 				alert("Error: Please enter a password first.");
 				frm.newpass.select();
 				return false;
+			}
+
+			// ONLY CHECK PW COMPLEXITY FOR PRIV 4 OR HIGHER
+			if(frm.priv.value >= 4){
+
+				if(!pwCheckComplexity(frm.newpass.value)){
+
+					alert("Error: Password doesn't meet the complexity requirements, please try again.");
+					frm.newpass.select();
+					return false;
+
+				}
+
 			}
 
 			if(frm.newpass.value){
@@ -1835,6 +1919,48 @@ class UserClass{
 		?><script src="js/md5.js"></script>
 		<script>
 
+			// JS FUNCTIONS TO CHECK PASSWORD COMPLEXITY
+			function pwCheckComplexity(pw){
+
+				// SET CHARACTER MATCH STRINGS
+				var uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+				var lowercase = "abcdefghijklmnopqrstuvwxyz";
+				var digits = "0123456789";
+				var specialChars ="!@#$%&*()[]{}?><,.:;~`";
+
+				// SET CHARACTER MATCH FLAGS BASED ON CLASS SETTINGS AND RUN PW THROUGH CHARACTER CHECKS
+				<?=($this->pw_uppercase)?'var ucaseFlag = contains(pw, uppercase);':'var ucaseFlag = false;'?>
+				<?=($this->pw_lowercase)?'var lcaseFlag = contains(pw, lowercase);':'var lcaseFlag = false;'?>
+				<?=($this->pw_digits)?'var digitsFlag = contains(pw, digits);':'var digitsFlag = false;'?>
+				<?=($this->pw_specialchars)?'var specialCharsFlag = contains(pw, specialChars);':'var specialCharsFlag = false;'?>
+
+				// CHECK COMPLEXITY MATCH FLAGS
+				if(pw.length>=<?=$this->pw_minlength?><?=($this->pw_uppercase)?' && ucaseFlag ':''?><?=($this->pw_lowercase)?' && lcaseFlag ':''?><?=($this->pw_digits)?' && digitsFlag ':''?><?=($this->pw_specialchars)?' && specialCharsFlag ':''?>)
+					
+					return true;
+
+				else
+					
+					return false;
+
+
+			}
+
+			// RUN PASSWORD THROUGH COMPLEXITY CHECK
+			function contains(pw,allowedChars) {
+
+				for (i = 0; i < pw.length; i++) {
+
+						var char = pw.charAt(i);
+						if (allowedChars.indexOf(char) >= 0) { return true; }
+
+					}
+
+				return false;
+
+			}
+
+
 			function validateUserField(name,value,frm){
 
 				//alert(name+","+value);
@@ -1876,6 +2002,19 @@ class UserClass{
 
 							}
 
+							// ONLY CHECK PW COMPLEXITY FOR PRIV 4 OR HIGHER
+							if(frm.priv.value >= 4){
+
+								if(!pwCheckComplexity(frm.newpass.value)){
+
+									alert("Error: Password doesn't meet the complexity requirements, please try again.");
+									frm.newpass.select();
+									return false;
+
+								}
+
+							}
+
 							frm.md5sum.value = hex_md5(frm.newpass.value);
 							frm.newpass.value = frm.confpass.value = "";
 
@@ -1904,6 +2043,19 @@ class UserClass{
 							return false;
 
 						}
+
+						// ONLY CHECK PW COMPLEXITY FOR PRIV 4 OR HIGHER
+						if(frm.priv.value >= 4){
+
+							if(!pwCheckComplexity(frm.newpass.value)){
+
+								alert("Error: Password doesn't meet the complexity requirements, please try again.");
+								frm.newpass.select();
+								return false;
+
+							}
+
+						}					
 
 						if(frm.newpass.value){
 
@@ -2031,6 +2183,12 @@ class UserClass{
 
 			function togglePriv(curpriv){
 
+				if(curpriv >= 4){
+					$('#pw_reset_tr').show();
+				}else{
+					$('#pw_reset_tr').hide();
+				}
+				
 				if(curpriv == 4){
 
 					$('#feature_set_tr').show();
@@ -2400,7 +2558,8 @@ class UserClass{
 					<option value="Pacific/Samoa"<?=($row['default_timezone'] == 'Pacific/Samoa')?" SELECTED ":""?>>Pacific/Samoa</option>
 					<option value="Pacific/Wake"<?=($row['default_timezone'] == 'Pacific/Wake')?" SELECTED ":""?>>Pacific/Wake</option>
 				</select></td>
-			</tr><?
+			</tr>
+			<?
 
 			if($id){
 				?><tr>
@@ -2426,6 +2585,12 @@ class UserClass{
 
 
 			?><input type="hidden" id="md5sum" name="md5sum">
+			<tr id="pw_reset_tr">
+				<th align="center" colspan="2" title="Force the user to change there password when they login next.">
+					<input type="checkbox" name="force_change_password" <?=(intval($row['changedpw_time']) == 0)?" CHECKED ":''?> /> Force Change Password
+				</th>
+				
+			</tr>
 
 			<tr>
 				<th align="left">Vicidial Password:</th>

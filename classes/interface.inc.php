@@ -220,7 +220,7 @@
                                 </li><?
                             }
 
-                            if (checkAccess('fronter_closer') || checkAccess('sales_analysis') || checkAccess('agent_call_stats') || checkAccess('user_charts') || checkAccess('recent_hangups') || checkAccess('script_statistics') || checkAccess('dispo_log')
+                            if (checkAccess('fronter_closer') || checkAccess('sales_analysis') || checkAccess('agent_call_stats') || checkAccess('user_charts') || checkAccess('recent_hangups') || checkAccess('script_statistics') || checkAccess('dispo_log') || checkAccess('user_status_report')
 
                             ) {
                                 ?>
@@ -308,7 +308,15 @@
                                             <li><a href="?area=report_emails&no_script=1"
                                                    onclick="loadSection(this.href);return false">Report Email Setup</a>
                                             </li><?
-                                        } ?></ul>
+                                        }
+                                        
+                                        if (checkAccess('user_status_report')) {
+                                            ?>
+                                            <li><a href="?area=user_status_report&no_script=1"
+                                                   onclick="loadSection(this.href);return false">User Status Report</a>
+                                            </li><?
+                                        } ?>                                        
+                                        </ul>
                                 </li><?
                             }
 
@@ -360,14 +368,7 @@
                                             <li><a href="?area=login_tracker&no_script=1"
                                                    onclick="loadSection(this.href);return false">Login Tracker</a>
                                             </li><?
-                                        }
-
-                                        if (checkAccess('user_status_report')) {
-                                            ?>
-                                            <li><a href="?area=user_status_report&no_script=1"
-                                                   onclick="loadSection(this.href);return false">User Status Report</a>
-                                            </li><?
-                                        }                                        
+                                        }                                     
 
                                         if (checkAccess('action_log')) {//if($_SESSION['user']['priv'] >= 5){
                                             ?>
@@ -428,7 +429,46 @@
 				<?
 					include_once("classes/home.inc.php");
 					$_SESSION['home']->handleFLOW();
-					
+                    
+                    
+                    ## CHECK IF PASSWORD IS OLDER THAN 6 MONTHS FOR PRIV 4 OR GREATER
+                    if($_SESSION['user']['priv'] >= 4){
+
+                        $sixmonthsago = strtotime("-6 months");
+
+                        if($_SESSION['user']['changedpw_time'] < $sixmonthsago){
+
+                            ?><div id="change-password-expired-div" title="Password Expired - Change Required"></div>
+                            <script>
+
+                                $('#change-password-expired-div').dialog({
+                                    dialogClass: "no-close",
+                                    autoOpen: false,
+                                    width: 400,
+                                    height: 280,
+                                    modal: true,
+                                    draggable: false,
+                                    resizable: false
+                                });
+                                
+                                function loadChangeExpiredPassword() {
+                                
+                                    $('#change-password-expired-div').dialog("open");
+
+                                    $('#change-password-expired-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+
+                                    $('#change-password-expired-div').load("index.php?area=change_expired_password&printable=1&no_script=1");
+
+                                }
+
+                                loadChangeExpiredPassword();
+                            
+                            </script><?
+
+                        }
+
+
+                    }
 				
 					/**
 					 *<center>
@@ -451,8 +491,8 @@
 
                 $('#change-password-div').dialog({
                     autoOpen: false,
-                    width: 370,
-                    height: 220,
+                    width: 400,
+                    height: 280,
                     modal: false,
                     draggable: true,
                     resizable: true

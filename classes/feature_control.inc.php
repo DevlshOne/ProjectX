@@ -495,44 +495,44 @@ class FeatureControl{
 							<th colspan="2" class="row2">Campaign Setup</th>
 						</tr><?
 
-						$this->renderFeatureRow('campaigns', 'Campaigns', ($row['campaigns'] == 'yes')?true:false );
+							$this->renderFeatureRow('campaigns', 'Campaigns', ($row['campaigns'] == 'yes')?true:false );
 
-						$this->renderFeatureRow('voices', 'Voices', ($row['voices'] == 'yes')?true:false );
+							$this->renderFeatureRow('voices', 'Voices', ($row['voices'] == 'yes')?true:false );
 
-						$this->renderFeatureRow('names', 'Names', ($row['names'] == 'yes')?true:false );
+							$this->renderFeatureRow('names', 'Names', ($row['names'] == 'yes')?true:false );
 
-						$this->renderFeatureRow('scripts', 'Scripts', ($row['scripts'] == 'yes')?true:false );
+							$this->renderFeatureRow('scripts', 'Scripts', ($row['scripts'] == 'yes')?true:false );
 
 						?><tr>
 							<th colspan="2" class="row2">Management Tools</th>
 						</tr><?
 
-						$this->renderFeatureRow('lead_management', 'Lead Management', ($row['lead_management'] == 'yes')?true:false );
-						$this->renderFeatureRow('lmt_edit_lead', '|--&gt;Edit Lead', ($row['lmt_edit_lead'] == 'yes')?true:false );
-						$this->renderFeatureRow('lmt_change_dispo', '|--&gt;Change Dispo', ($row['lmt_change_dispo'] == 'yes')?true:false );
-						$this->renderFeatureRow('lmt_create_sale', '|--&gt;Create Sale', ($row['lmt_create_sale'] == 'yes')?true:false );
-						
-						$this->renderFeatureRow('sales_management', 'Sales Management', ($row['sales_management'] == 'yes')?true:false );
-						
-						
-						$this->renderFeatureRow('employee_hours', 'Employee Hours', ($row['employee_hours'] == 'yes')?true:false );
-						$this->renderFeatureRow('employee_hours_edit', '|--&gt;Edit Hours', ($row['employee_hours_edit'] == 'yes')?true:false );
-						
-						
-						$this->renderFeatureRow('phone_lookup', 'DRIPP Phone lookup', ($row['phone_lookup'] == 'yes')?true:false );
+							$this->renderFeatureRow('lead_management', 'Lead Management', ($row['lead_management'] == 'yes')?true:false );
+							$this->renderFeatureRow('lmt_edit_lead', '|--&gt;Edit Lead', ($row['lmt_edit_lead'] == 'yes')?true:false );
+							$this->renderFeatureRow('lmt_change_dispo', '|--&gt;Change Dispo', ($row['lmt_change_dispo'] == 'yes')?true:false );
+							$this->renderFeatureRow('lmt_create_sale', '|--&gt;Create Sale', ($row['lmt_create_sale'] == 'yes')?true:false );
+							
+							$this->renderFeatureRow('sales_management', 'Sales Management', ($row['sales_management'] == 'yes')?true:false );
+							
+							
+							$this->renderFeatureRow('employee_hours', 'Employee Hours', ($row['employee_hours'] == 'yes')?true:false );
+							$this->renderFeatureRow('employee_hours_edit', '|--&gt;Edit Hours', ($row['employee_hours_edit'] == 'yes')?true:false );
+							
+							
+							$this->renderFeatureRow('phone_lookup', 'DRIPP Phone lookup', ($row['phone_lookup'] == 'yes')?true:false );
 
-						$this->renderFeatureRow('quiz_results', 'Quiz Results', ($row['quiz_results'] == 'yes')?true:false );
+							$this->renderFeatureRow('quiz_results', 'Quiz Results', ($row['quiz_results'] == 'yes')?true:false );
 
-						$this->renderFeatureRow('ringing_calls', 'Ring Report', ($row['ringing_calls'] == 'yes')?true:false );
-						$this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes')?true:false );
+							$this->renderFeatureRow('ringing_calls', 'Ring Report', ($row['ringing_calls'] == 'yes')?true:false );
+							$this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes')?true:false );
 
-						//$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
-						
-						
-						
-						$this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes')?true:false );
-						$this->renderFeatureRow('server_status', 'Server Status', ($row['server_status'] == 'yes')?true:false );
-						$this->renderFeatureRow('extensions', 'Extensions', ($row['extensions'] == 'yes')?true:false );
+							//$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
+							
+							
+							
+							$this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes')?true:false );
+							$this->renderFeatureRow('server_status', 'Server Status', ($row['server_status'] == 'yes')?true:false );
+							$this->renderFeatureRow('extensions', 'Extensions', ($row['extensions'] == 'yes')?true:false );
 
 
 						?><tr>
@@ -552,49 +552,48 @@ class FeatureControl{
 							<th colspan="2" class="row2">Reports</th>
 						</tr><?
 
-						$this->renderFeatureRow('fronter_closer', 'Fronter/Closer Report', ($row['fronter_closer'] == 'yes')?true:false );
-						$this->renderFeatureRow('sales_analysis', 'Sales Analysis', ($row['sales_analysis'] == 'yes')?true:false );
-						$this->renderFeatureRow('agent_call_stats', 'Verifier Call Stats', ($row['agent_call_stats'] == 'yes')?true:false );
+							$this->renderFeatureRow('fronter_closer', 'Fronter/Closer Report', ($row['fronter_closer'] == 'yes')?true:false );
+							$this->renderFeatureRow('sales_analysis', 'Sales Analysis', ($row['sales_analysis'] == 'yes')?true:false );
+							$this->renderFeatureRow('agent_call_stats', 'Verifier Call Stats', ($row['agent_call_stats'] == 'yes')?true:false );
 
 
-						$this->renderFeatureRow('rouster_report', 'Rouster Call Stats', ($row['rouster_report'] == 'yes')?true:false );
-						
-						$this->renderFeatureRow('summary_report', 'Summary Reports', ($row['summary_report'] == 'yes')?true:false );
-						
+							$this->renderFeatureRow('rouster_report', 'Rouster Call Stats', ($row['rouster_report'] == 'yes')?true:false );
+							
+							$this->renderFeatureRow('summary_report', 'Summary Reports', ($row['summary_report'] == 'yes')?true:false );
+							
 
-						$this->renderFeatureRow('user_charts', 'User Charts', ($row['user_charts'] == 'yes')?true:false );
-						$this->renderFeatureRow('recent_hangups', 'Recent Hangups', ($row['recent_hangups'] == 'yes')?true:false );
-						$this->renderFeatureRow('script_statistics', 'Script Statistics', ($row['script_statistics'] == 'yes')?true:false );
-						$this->renderFeatureRow('dispo_log', 'Dispo Log', ($row['dispo_log'] == 'yes')?true:false );
+							$this->renderFeatureRow('user_charts', 'User Charts', ($row['user_charts'] == 'yes')?true:false );
+							$this->renderFeatureRow('recent_hangups', 'Recent Hangups', ($row['recent_hangups'] == 'yes')?true:false );
+							$this->renderFeatureRow('script_statistics', 'Script Statistics', ($row['script_statistics'] == 'yes')?true:false );
+							$this->renderFeatureRow('dispo_log', 'Dispo Log', ($row['dispo_log'] == 'yes')?true:false );
+							$this->renderFeatureRow('user_status_report', 'User Status Report', ($row['user_status_report'] == 'yes')?true:false );
 
 						?><tr>
 							<th colspan="2" class="row2">PAC Maintenance</th>
 						</tr><?
 						
-						$this->renderFeatureRow('pac_web_donations', 'Web Donations', ($row['pac_web_donations'] == 'yes')?true:false );
+							$this->renderFeatureRow('pac_web_donations', 'Web Donations', ($row['pac_web_donations'] == 'yes')?true:false );
 						
 						
 						?><tr>
 							<th colspan="2" class="row2">Users</th>
 						</tr><?
 
-						$this->renderFeatureRow('users', 'Central User Management', ($row['users'] == 'yes')?true:false );
+							$this->renderFeatureRow('users', 'Central User Management', ($row['users'] == 'yes')?true:false );
 
-						$this->renderFeatureRow('feature_control', 'Feature Control', ($row['feature_control'] == 'yes')?true:false );
-						$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
-						$this->renderFeatureRow('login_tracker_kick_user', '|--&gt;Kick User', ($row['login_tracker_kick_user'] == 'yes')?true:false );
-						$this->renderFeatureRow('action_log', 'Action Log', ($row['action_log'] == 'yes')?true:false );
-
-						$this->renderFeatureRow('user_status_report', 'User Status Report', ($row['user_status_report'] == 'yes')?true:false );
-						
+							$this->renderFeatureRow('feature_control', 'Feature Control', ($row['feature_control'] == 'yes')?true:false );
+							$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
+							$this->renderFeatureRow('login_tracker_kick_user', '|--&gt;Kick User', ($row['login_tracker_kick_user'] == 'yes')?true:false );
+							$this->renderFeatureRow('action_log', 'Action Log', ($row['action_log'] == 'yes')?true:false );
+							
 						?><tr>
 							<th colspan="2" class="row2">Account</th>
 						</tr><?
 
-						$this->renderFeatureRow('change_password', 'Change Password', ($row['change_password'] == 'yes')?true:false );
+							$this->renderFeatureRow('change_password', 'Change Password', ($row['change_password'] == 'yes')?true:false );
 
-
-						?></table>
+						?>
+					</table>
 					</td>
 				</tr>
 				</table>

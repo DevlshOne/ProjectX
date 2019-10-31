@@ -1074,6 +1074,9 @@ class API_Users{
 
 				$dat['password'] = trim($_POST['md5sum']);
 
+				## UPDATE CHANGED PW TIME IF PW WAS PROVIDED
+				$dat['changedpw_time'] = time();
+
 			}
 
 			$dat['vici_password'] = trim($_POST['vici_password']);
@@ -1104,7 +1107,10 @@ class API_Users{
 
 				}
 
-
+				// FORCE A PASSWORD RESET
+				if($_REQUEST['force_change_password']){
+					$dat['changedpw_time'] = 0;
+				}
 
 				$dat['modifiedby_time'] = time();
 				$dat['modifiedby_userid'] = $_SESSION['user']['id'];
@@ -1123,6 +1129,14 @@ class API_Users{
 
 				$dat['createdby_time'] = time();
 				$dat['createdby_userid'] = $_SESSION['user']['id'];
+
+				// IF WE'RE NOT FORCING A PASSWORD RESET
+				if(!$_REQUEST['force_change_password']){
+					## SET CHANGED PW TIME ON USER CREATION
+					$dat['changedpw_time'] = time();
+				}else{
+					$dat['changedpw_time'] = 0;
+				}
 
 				if($_SESSION['dbapi']->users->userExists($username)){
 
