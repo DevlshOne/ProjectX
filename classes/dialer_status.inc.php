@@ -154,7 +154,7 @@
                     var scriptRoot = '<?=$_SESSION['site_config']['basedir'];?>';
                     var useCache = true;
                     var cacheDebug = false;
-                    const tileAdder = '<li id="tile_add" class="clusterTile adderTile"><table class="tightTable hand"><tr><td align="center"><img src="images/add_icon.png" width="60px" style="padding-top:30px" border="0" title="Add a new tile" /></td></tr></table></li>';
+                    const tileAdder = '<li id="tile_add" class="clusterTile adderTile"><table class="tightTable hand"><tr><td align="center"><img src="images/add_icon.png" width="60px" border="0" title="Add a new tile" /></td></tr></table></li>';
                     $('#dialog-modal-add-tile').dialog({
                         autoOpen: false,
                         width: 400,
@@ -421,31 +421,17 @@
                                     refreshInterval = guiPrefs.refreshInterval;
                                     refreshEnabled = guiPrefs.refreshEnabled;
                                     highContrast = guiPrefs.highContrast;
-                                    tileDefs = [];
-                                    if(prefs['0'].cluster_id === undefined) {
-                                        $.each(prefs, function (i, v) {
+                                    tileDefs = prefs;
+                                    let oldPrefsData = false;
+                                    $.each(tileDefs, function (i, v) {
+                                        if (tileDefs.name === undefined || tileDefs.name === '') {
+                                            // missing tileDef data because the prefs format is outdated
+                                            oldPrefsData = true;
                                             let clusterData = getClusterInfoByClusterID(v.cluster_id);
                                             tileDefs[i] = new clusterDef(v.cluster_id, clusterData['0'].type, clusterData['0'].name, clusterData['0'].ip, v.groups, v.user_group_filter);
-                                            // tileDefs[i] = new clusterDef(clusterInfo[i]['cluster_id'], clusterInfo[i]['type'], clusterInfo[i]['name'], clusterInfo[i]['ip'], v.groups, v.user_group_filter);
-                                            clusterInfo[i]['sel_campaigns'] = [];
-                                            $(v.user_group_filter).each(function (j, w) {
-                                                clusterInfo[i]['sel_campaigns'].push({
-                                                    groups: w
-                                                });
-                                            });
-                                            clusterInfo[i]['sel_user_groups'] = [];
-                                            $(v.user_group_filter).each(function (j, w) {
-                                                clusterInfo[i]['sel_user_groups'].push({
-                                                    user_group_filter: w
-                                                });
-                                            });
-                                        });
-                                    } else {
-                                        $.each(prefs, function (i, v) {
-                                            let clusterData = getClusterInfoByClusterID(v.cluster_id);
-                                            tileDefs[i] = new clusterDef(v.cluster_id, clusterData['0'].type, clusterData['0'].name, clusterData['0'].ip, v.groups, v.user_group_filter);
-                                        });
-                                    }
+                                        }
+                                    });
+                                    if(oldPrefsData) saveUserPrefs();
                                     if (frontEnd_debug) {
                                         console.log('Prefs have just been loaded :: ', tileDefs);
                                         console.log('User Preferences loaded');

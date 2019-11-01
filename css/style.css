@@ -332,6 +332,7 @@ a:hover {
     float: left;
 }
 .clusterTile.adderTile {
+	min-height: 80px;
 	width: 80px;
 	height: 80px;
 	text-align: center;
