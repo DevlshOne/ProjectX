@@ -33,8 +33,8 @@
                 $this->clusterInfo[$i]['type'] = getClusterType($v);
                 $this->clusterInfo[$i]['name'] = getClusterName($v);
                 $this->clusterInfo[$i]['ip'] = getClusterWebHost($v);
-                $this->clusterInfo[$i]['sel_campaigns'] = array("ALL-ACTIVE");//getClusterCampaigns($v);
-                $this->clusterInfo[$i]['sel_user_groups'] = array("ALL-GROUPS");//getClusterUserGroups($v);
+                $this->clusterInfo[$i]['sel_campaigns'] = getClusterCampaigns($v);
+                $this->clusterInfo[$i]['sel_user_groups'] = getClusterUserGroups($v);
                 $this->clusterInfo[$i]['campaign_options'] = getClusterCampaigns($v);
                 $this->clusterInfo[$i]['usergroup_options'] = getClusterUserGroups($v);
             }
@@ -128,20 +128,18 @@
                     var tileDefs = [];
 
                     class clusterDef {
-                        constructor(i, t, n, ip, g, ugf, go, ugo) {
+                        constructor(i, t, n, ip, g, ugf) {
                             this.cluster_id = i;
                             this.type = t;
                             this.name = n;
                             this.web_ip = ip;
                             this.groups = g;
                             this.user_group_filter = ugf;
-                            this.group_options = go;
-                            this.user_group_options = ugo;
                         }
                     }
 
                     $(clusterInfo).each(function (i, v) {
-                        tileDefs.push(new clusterDef(v.cluster_id, v.type, v.name, v.ip, v.sel_campaigns, v.sel_user_groups, v.campaign_options, v.usergroup_options));
+                        tileDefs.push(new clusterDef(v.cluster_id, v.type, v.name, v.ip, v.sel_campaigns, v.sel_user_groups));
                     });
                     if (frontEnd_debug) {
                         console.log('Initializing the variable `clusterInfo` :: ', clusterInfo);
@@ -401,6 +399,13 @@
                         }
                     });
 
+                    function getClusterInfoByClusterID(i) {
+                        let r = clusterInfo.filter(obj => {
+                            return obj.cluster_id === i;
+                        });
+                        return r;
+                    }
+
                     function loadUserPrefs() {
                         $.ajax({
                             type: "POST",
@@ -417,21 +422,31 @@
                                     refreshEnabled = guiPrefs.refreshEnabled;
                                     highContrast = guiPrefs.highContrast;
                                     tileDefs = [];
-                                    $.each(prefs, function (i, v) {
-                                        tileDefs[i] = new clusterDef(v.cluster_id, clusterInfo[i].type, clusterInfo[i].name, clusterInfo[i].ip, v.groups, v.user_group_filter, null, null);
-                                        clusterInfo[i]['sel_campaigns'] = [];
-                                        $(v.user_group_filter).each(function (j, w) {
-                                            clusterInfo[i]['sel_campaigns'].push({
-                                                groups: w
+                                    if(prefs['0'].cluster_id === undefined) {
+                                        $.each(prefs, function (i, v) {
+                                            let clusterData = getClusterInfoByClusterID(v.cluster_id);
+                                            tileDefs[i] = new clusterDef(v.cluster_id, clusterData['0'].type, clusterData['0'].name, clusterData['0'].ip, v.groups, v.user_group_filter);
+                                            // tileDefs[i] = new clusterDef(clusterInfo[i]['cluster_id'], clusterInfo[i]['type'], clusterInfo[i]['name'], clusterInfo[i]['ip'], v.groups, v.user_group_filter);
+                                            clusterInfo[i]['sel_campaigns'] = [];
+                                            $(v.user_group_filter).each(function (j, w) {
+                                                clusterInfo[i]['sel_campaigns'].push({
+                                                    groups: w
+                                                });
+                                            });
+                                            clusterInfo[i]['sel_user_groups'] = [];
+                                            $(v.user_group_filter).each(function (j, w) {
+                                                clusterInfo[i]['sel_user_groups'].push({
+                                                    user_group_filter: w
+                                                });
                                             });
                                         });
-                                        clusterInfo[i]['sel_user_groups'] = [];
-                                        $(v.user_group_filter).each(function (j, w) {
-                                            clusterInfo[i]['sel_user_groups'].push({
-                                                user_group_filter: w
-                                            });
+                                    } else {
+                                        $.each(prefs, function (i, v) {
+                                            let clusterData = getClusterInfoByClusterID(v.cluster_id);
+                                            debugger;
+                                            tileDefs[i] = new clusterDef(v.cluster_id, clusterData['0'].type, clusterData['0'].name, clusterData['0'].ip, v.groups, v.user_group_filter);
                                         });
-                                    });
+                                    }
                                     if (frontEnd_debug) {
                                         console.log('Prefs have just been loaded :: ', tileDefs);
                                         console.log('User Preferences loaded');
@@ -442,18 +457,18 @@
                     }
 
                     function saveUserPrefs() {
-                        let tmpJSON = [];
-                        $.each(tileDefs, function (i, v) {
-                            if (frontEnd_debug) {
-                                console.log('The groups for this tile :: ', tileDefs[i].groups);
-                                console.log('The user_group_filter for this tile :: ', tileDefs[i].user_group_filter);
-                            }
-                            tmpJSON.push({
-                                cluster_id: tileDefs[i].cluster_id,
-                                groups: tileDefs[i].groups,
-                                user_group_filter: tileDefs[i].user_group_filter,
-                            });
-                        });
+                        let tmpJSON = tileDefs;
+                        // $.each(tileDefs, function (i, v) {
+                        //     if (frontEnd_debug) {
+                        //         console.log('The groups for this tile :: ', tileDefs[i].groups);
+                        //         console.log('The user_group_filter for this tile :: ', tileDefs[i].user_group_filter);
+                        //     }
+                        //     tmpJSON.push({
+                        //         cluster_id: tileDefs[i].cluster_id,
+                        //         groups: tileDefs[i].groups,
+                        //         user_group_filter: tileDefs[i].user_group_filter,
+                        //     });
+                        // });
                         tmpJSON.push({
                             refreshInterval: refreshInterval,
                             refreshEnabled: refreshEnabled,
@@ -462,8 +477,10 @@
                             viciPassword: '<?=$_SESSION['user']['vici_password'];?>'
                         });
                         let tmpPrefs = JSON.stringify(tmpJSON);
-
                         let prefpoststr = 'prefs=' + tmpPrefs;
+                        if (frontEnd_debug) {
+                            console.log('Saving in user preferences :: tileDefs :: ', tileDefs);
+                        }
                         $.ajax({
                             type: "POST",
                             cache: false,
@@ -578,38 +595,38 @@
                         dlgObj.dialog('open');
                         dlgObj.dialog({title: 'Change Cluster Filters - ' + tileDefs[tileID].name});
                         let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option value="ALL-ACTIVE">ALL-ACTIVE</option>';
-                        $.each(clusterInfo[tileID].campaign_options, function (i, v) {
+                        $.each(clusterInfo[tileID]['campaign_options'], function (i, v) {
                             campaignSelect += '<option value="' + v.groups + '">' + v.groups + '</option>';
                         });
                         campaignSelect += '</select>';
+                        // if (clusterInfo[tileID]['campaign_options'] === tileDefs[tileID].groups ||
+                        //     tileDefs[tileID].groups.length == 0) {
+                        //     arrSelTemp.push('ALL-ACTIVE');
+                        //     saveUserPrefs();
+                        // } else {
+                        //     $.each(tileDefs[tileID].groups, function (i, v) {
+                        //         arrSelTemp.push(v.groups);
+                        //     });
+                        // }
                         let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8"><option>ALL-GROUPS</option>';
-                        $.each(clusterInfo[tileID].usergroup_options, function (i, v) {
+                        $.each(clusterInfo[tileID]['usergroup_options'], function (i, v) {
                             ugSelect += '<option value="' + v.user_group_filter + '">' + v.user_group_filter + '</option>';
                         });
                         ugSelect += '</select>';
-                        let arrSelTemp = [];
+                        // let arrSelTemp = [];
+                        // arrSelTemp = [];
+                        // if (clusterInfo[tileID].usergroup_options.length === tileDefs[tileID].user_group_filter.length ||
+                        //     tileDefs[tileID].user_group_filter.length == 0) {
+                        //     arrSelTemp.push('ALL-GROUPS');
+                        //     saveUserPrefs();
+                        // } else {
+                        //     $.each(tileDefs[tileID].user_group_filter, function (i, v) {
+                        //         arrSelTemp.push(v.user_group_filter);
+                        //     });
+                        // }
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
-                        if (clusterInfo[tileID].campaign_options.length === tileDefs[tileID].groups.length ||
-                            tileDefs[tileID].groups.length == 0) {
-                            arrSelTemp.push('ALL-ACTIVE');
-                            saveUserPrefs();
-                        } else {
-                            $.each(tileDefs[tileID].sel_campaigns, function (i, v) {
-                                arrSelTemp.push(v.groups);
-                            });
-                        }
-                        $('#campaignFilter').val(arrSelTemp);
-                        arrSelTemp = [];
-                        if (clusterInfo[tileID].usergroup_options.length === tileDefs[tileID].user_group_filter.length ||
-                            tileDefs[tileID].user_group_filter.length == 0) {
-                            arrSelTemp.push('ALL-GROUPS');
-                            saveUserPrefs();
-                        } else {
-                            $.each(tileDefs[tileID].sel_user_groups, function (i, v) {
-                                arrSelTemp.push(v.user_group_filter);
-                            });
-                        }
-                        $('#usergroupFilter').val(arrSelTemp);
+                        $('#campaignFilter').val(tileDefs[tileID].groups);
+                        $('#usergroupFilter').val(tileDefs[tileID].user_group_filter);
                     });
 
                     $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
