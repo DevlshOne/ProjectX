@@ -443,7 +443,6 @@
                                     } else {
                                         $.each(prefs, function (i, v) {
                                             let clusterData = getClusterInfoByClusterID(v.cluster_id);
-                                            debugger;
                                             tileDefs[i] = new clusterDef(v.cluster_id, clusterData['0'].type, clusterData['0'].name, clusterData['0'].ip, v.groups, v.user_group_filter);
                                         });
                                     }
@@ -457,25 +456,16 @@
                     }
 
                     function saveUserPrefs() {
-                        let tmpJSON = tileDefs;
-                        // $.each(tileDefs, function (i, v) {
-                        //     if (frontEnd_debug) {
-                        //         console.log('The groups for this tile :: ', tileDefs[i].groups);
-                        //         console.log('The user_group_filter for this tile :: ', tileDefs[i].user_group_filter);
-                        //     }
-                        //     tmpJSON.push({
-                        //         cluster_id: tileDefs[i].cluster_id,
-                        //         groups: tileDefs[i].groups,
-                        //         user_group_filter: tileDefs[i].user_group_filter,
-                        //     });
-                        // });
-                        tmpJSON.push({
+                        let tmpDefs = tileDefs.slice();
+                        let tmpJSON = tmpDefs;
+                        let idxGUIPrefs = tmpDefs.length++;
+                        tmpJSON[idxGUIPrefs] = {
                             refreshInterval: refreshInterval,
                             refreshEnabled: refreshEnabled,
                             highContrast: highContrast,
                             viciUsername: '<?=$_SESSION['user']['username'];?>',
                             viciPassword: '<?=$_SESSION['user']['vici_password'];?>'
-                        });
+                        };
                         let tmpPrefs = JSON.stringify(tmpJSON);
                         let prefpoststr = 'prefs=' + tmpPrefs;
                         if (frontEnd_debug) {
