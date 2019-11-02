@@ -75,6 +75,18 @@
                 </tr>
             </table>
             <div id="dialog-modal-add-tile" title="Add tile" class="nod"></div>
+            <div id="dialog-modal-rename-tile" title="Rename tile" class="nod">
+                <form method="post">
+                    <table class="tightTable pct100">
+                        <tbody>
+                        <tr>
+                            <td class="align_left"><label for="new_tile_name">Tile Name :</label></td>
+                            <td class="align_right"><input type="text" id="new_tile_name" name="new_tile_name"/></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </form>
+            </div>
             <div id="dialog-modal-select-clusters" title="Cluster selection" class="nod"></div>
             <div id="dialog-modal-change-refresh" title="Modify refresh rate" class="nod"></div>
             <div id="dialog-modal-cluster-filters" title="Filters" class="nod"></div>
@@ -155,6 +167,7 @@
                     var useCache = true;
                     var cacheDebug = false;
                     const tileAdder = '<li id="tile_add" class="clusterTile adderTile"><table class="tightTable hand"><tr><td align="center"><img src="images/add_icon.png" width="60px" border="0" title="Add a new tile" /></td></tr></table></li>';
+
                     $('#dialog-modal-add-tile').dialog({
                         autoOpen: false,
                         width: 400,
@@ -165,10 +178,38 @@
                         buttons: {
                             'Save': function () {
                                 $('#clusterSelection option:selected').each(function () {
-                                    tileDefs.push(new clusterDef(clusterInfo[this.value].cluster_id, clusterInfo[this.value].type, clusterInfo[this.value].name, clusterInfo[this.value].tyip, clusterInfo[this.value].sel_campaigns, clusterInfo[this.value].sel_user_groups, clusterInfo[this.value].campaign_options, clusterInfo[this.value].usergroup_options));
+                                    tileDefs.push(new clusterDef(clusterInfo[this.value].cluster_id, clusterInfo[this.value].type, clusterInfo[this.value].name, clusterInfo[this.value].web_ip, clusterInfo[this.value].groups, clusterInfo[this.value].user_group_filter));
                                 });
                                 if (frontEnd_debug) {
                                     console.log('Clusters have just been changed :: ', tileDefs);
+                                }
+                                saveUserPrefs();
+                                initScreen();
+                                getDialerStatusData();
+                                $(this).dialog('close');
+                            },
+                            'Cancel': function () {
+                                $(this).dialog('close');
+                            }
+                        },
+                        position: 'center'
+                    });
+
+                    $('#dialog-modal-rename-tile').dialog({
+                        autoOpen: false,
+                        width: 400,
+                        modal: false,
+                        draggable: true,
+                        resizable: false,
+                        title: 'Rename Tile',
+                        buttons: {
+                            'Save': function () {
+                                let tileID = $(this).data('tileID');
+                                if($('#new_tile_name') != '') {
+                                    tileDefs[tileID].name = $('#new_tile_name').val();
+                                }
+                                if (frontEnd_debug) {
+                                    console.log('Tile name has just been changed :: ', tileDefs);
                                 }
                                 saveUserPrefs();
                                 initScreen();
@@ -575,34 +616,26 @@
                             campaignSelect += '<option value="' + v.groups + '">' + v.groups + '</option>';
                         });
                         campaignSelect += '</select>';
-                        // if (clusterInfo[tileID]['campaign_options'] === tileDefs[tileID].groups ||
-                        //     tileDefs[tileID].groups.length == 0) {
-                        //     arrSelTemp.push('ALL-ACTIVE');
-                        //     saveUserPrefs();
-                        // } else {
-                        //     $.each(tileDefs[tileID].groups, function (i, v) {
-                        //         arrSelTemp.push(v.groups);
-                        //     });
-                        // }
                         let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8"><option>ALL-GROUPS</option>';
                         $.each(clusterInfo[tileID]['usergroup_options'], function (i, v) {
                             ugSelect += '<option value="' + v.user_group_filter + '">' + v.user_group_filter + '</option>';
                         });
                         ugSelect += '</select>';
-                        // let arrSelTemp = [];
-                        // arrSelTemp = [];
-                        // if (clusterInfo[tileID].usergroup_options.length === tileDefs[tileID].user_group_filter.length ||
-                        //     tileDefs[tileID].user_group_filter.length == 0) {
-                        //     arrSelTemp.push('ALL-GROUPS');
-                        //     saveUserPrefs();
-                        // } else {
-                        //     $.each(tileDefs[tileID].user_group_filter, function (i, v) {
-                        //         arrSelTemp.push(v.user_group_filter);
-                        //     });
-                        // }
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
                         $('#campaignFilter').val(tileDefs[tileID].groups);
                         $('#usergroupFilter').val(tileDefs[tileID].user_group_filter);
+                    });
+
+                    $('#dialerStatusZone').on('click', '.clusterTitle', function () {
+                        let tileID = $(this).closest('li').attr('id').split('_')[1].toString();
+                        let dlgObj = $('#dialog-modal-rename-tile');
+                        dlgObj.data('tileID', tileID);
+                        dlgObj.dialog('open');
+                        saveUserPrefs();
+                        if (frontEnd_debug) {
+                            console.log('Renamed tile :: ', tileID);
+                            console.log('Prefs have just been saved :: ', tileDefs);
+                        }
                     });
 
                     $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
@@ -952,12 +985,15 @@
                         }
 
                         function loadClusterAssessment(c) {
-                            if (clusterInfo[c]['sel_campaigns'].length > 0 && clusterInfo[c]['sel_campaigns'][0].groups !== 'ALL-ACTIVE') {
-                                return '&campaign_id=' + encodeURIComponent(clusterInfo[c]['sel_campaigns'][0].groups);
+                            let out = "?ADD=";
+                            if(clusterInfo[c]['sel_campaigns'].length > 0 && clusterInfo[c]['sel_campaigns'][0].groups !== 'ALL-ACTIVE') {
+                                out += '31&campaign_id=' + encodeURIComponent(clusterInfo[c]['sel_campaigns'][0].groups);
                             } else {
-                                return '';
+                                out += '10';
                             }
+                            return out;
                         }
+
 
                         let objClusterData = Object.assign({}, clusterValues);
                         let objSummaryData = Object.assign({}, summaryValues);
@@ -982,7 +1018,7 @@
                             }
                             $newLayout.append('<tr><td class="align_left" title="Order the lists/leads are being processed/dialed in">List Order:</td><td class="pct50 align_right">' + objClusterData.order + '</td></tr>');
                             $newLayout.append('<tr class="agentInfo" style="vertical-align:bottom;"><td colspan="2" class="pct_100 align_center">' + agentDataOutput + '</td></tr>');
-                            $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Select Filters for this Cluster" id="selectClusterFilters_' + tile_id + '" class="selectFiltersButton align_center ui-button-text-only">Filters</button><button title="Load in ViciDial" id="loadCluster_' + tile_id + '" class="loadClusterButton align_center ui-button-text-only"><a target="_blank" href="http://' + tileDefs[tile_id].web_ip + '/vicidial/admin.php?ADD=31">Load</a></button><button title="View Cluster Details" class="ui-button-text-only align_center"><a target="_blank" href="http://' + tileDefs[tile_id].web_ip + '/vicidial/realtime_report.php">Details<a></button></td></tr>');
+                            $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Select Filters for this Cluster" id="selectClusterFilters_' + tile_id + '" class="selectFiltersButton align_center ui-button-text-only">Filters</button><button title="Load in ViciDial" id="loadCluster_' + tile_id + '" class="loadClusterButton align_center ui-button-text-only"><a target="_blank" href="http://' + tileDefs[tile_id].web_ip + '/vicidial/admin.php' + loadClusterAssessment(tileDefs[tile_id].cluster_id) + '">Load</a></button><button title="View Cluster Details" class="ui-button-text-only align_center"><a target="_blank" href="http://' + tileDefs[tile_id].web_ip + '/vicidial/realtime_report.php">Details<a></button></td></tr>');
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Stop Dialing for this Cluster" id="stopDialersButton_' + tile_id + '" class="stopDialersButton align_center ui-button-text-only">Stop Dialer</button><button title="Force Hopper Reset for this Cluster" class="forceHopperButton ui-button-text-only align_center" id="forceHopperButton_' + tile_id + '">Force Hopper</button></td></tr>');
                         } else {
                             $newLayout.append(tbl);
@@ -991,7 +1027,7 @@
                     }
 
                     function parseDialerStatusData(tileID, dialerStatusData) {
-                        let titleRow = '<div class="clusterTitle">' + tileDefs[tileID].name + '<a id="removeCluster_' + tileID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
+                        let titleRow = '<div class="clusterTitle" title="Click to rename">' + tileDefs[tileID].name + '<a id="removeCluster_' + tileID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
                         let $tile = $('#tile_' + tileID);
                         $tile.empty();
                         $tile.append(titleRow);
