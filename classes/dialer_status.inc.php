@@ -130,7 +130,7 @@
                 $('#dialerStatusZone').ready(function () {
                     var refreshInterval = 40;
                     var refreshEnabled = true;
-                    var frontEnd_debug = true;
+                    var frontEnd_debug = false;
                     dispTimer = false;
                     // clusterInfo is an array that stores all the available information for a cluster, including the selectable campaigns and usergroups
                     var clusterInfo = <?=json_encode($this->clusterInfo);?>;
@@ -993,7 +993,6 @@
                             }
                             return out;
                         }
-
 
                         let objClusterData = Object.assign({}, clusterValues);
                         let objSummaryData = Object.assign({}, summaryValues);
