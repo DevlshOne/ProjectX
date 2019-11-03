@@ -145,8 +145,8 @@
                             this.type = t;
                             this.name = n;
                             this.web_ip = ip;
-                            this.groups = g;
-                            this.user_group_filter = ugf;
+                            this.groups = (g === undefined ? new Array('ALL-ACTIVE') : g);
+                            this.user_group_filter = (ugf === undefined ? new Array('ALL-GROUPS') : ugf);
                         }
                     }
 
@@ -626,7 +626,7 @@
                         $('#usergroupFilter').val(tileDefs[tileID].user_group_filter);
                     });
 
-                    $('#dialerStatusZone').on('click', '.clusterTitle', function () {
+                    $('#dialerStatusZone').on('click', '.clusterName', function () {
                         let tileID = $(this).closest('li').attr('id').split('_')[1].toString();
                         let dlgObj = $('#dialog-modal-rename-tile');
                         dlgObj.data('tileID', tileID);
@@ -984,10 +984,10 @@
                             }
                         }
 
-                        function loadClusterAssessment(c) {
+                        function loadClusterAssessment(t) {
                             let out = "?ADD=";
-                            if(clusterInfo[c]['sel_campaigns'].length > 0 && clusterInfo[c]['sel_campaigns'][0].groups !== 'ALL-ACTIVE') {
-                                out += '31&campaign_id=' + encodeURIComponent(clusterInfo[c]['sel_campaigns'][0].groups);
+                            if(tileDefs[t].groups.length > 0 && tileDefs[t].groups[0] !== 'ALL-ACTIVE') {
+                                out += '31&campaign_id=' + encodeURIComponent(tileDefs[t].groups[0]);
                             } else {
                                 out += '10';
                             }
@@ -1017,7 +1017,7 @@
                             }
                             $newLayout.append('<tr><td class="align_left" title="Order the lists/leads are being processed/dialed in">List Order:</td><td class="pct50 align_right">' + objClusterData.order + '</td></tr>');
                             $newLayout.append('<tr class="agentInfo" style="vertical-align:bottom;"><td colspan="2" class="pct_100 align_center">' + agentDataOutput + '</td></tr>');
-                            $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Select Filters for this Cluster" id="selectClusterFilters_' + tile_id + '" class="selectFiltersButton align_center ui-button-text-only">Filters</button><button title="Load in ViciDial" id="loadCluster_' + tile_id + '" class="loadClusterButton align_center ui-button-text-only"><a target="_blank" href="http://' + tileDefs[tile_id].web_ip + '/vicidial/admin.php' + loadClusterAssessment(tileDefs[tile_id].cluster_id) + '">Load</a></button><button title="View Cluster Details" class="ui-button-text-only align_center"><a target="_blank" href="http://' + tileDefs[tile_id].web_ip + '/vicidial/realtime_report.php">Details<a></button></td></tr>');
+                            $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Select Filters for this Cluster" id="selectClusterFilters_' + tile_id + '" class="selectFiltersButton align_center ui-button-text-only">Filters</button><button title="Load in ViciDial" id="loadCluster_' + tile_id + '" class="loadClusterButton align_center ui-button-text-only"><a target="_blank" href="http://' + tileDefs[tile_id].web_ip + '/vicidial/admin.php' + loadClusterAssessment(tile_id) + '">Load</a></button><button title="View Cluster Details" class="ui-button-text-only align_center"><a target="_blank" href="http://' + tileDefs[tile_id].web_ip + '/vicidial/realtime_report.php">Details<a></button></td></tr>');
                             $newLayout.append('<tr style="height:35px;vertical-align:bottom;"><td colspan="2" class="pct100 align_center"><button title="Stop Dialing for this Cluster" id="stopDialersButton_' + tile_id + '" class="stopDialersButton align_center ui-button-text-only">Stop Dialer</button><button title="Force Hopper Reset for this Cluster" class="forceHopperButton ui-button-text-only align_center" id="forceHopperButton_' + tile_id + '">Force Hopper</button></td></tr>');
                         } else {
                             $newLayout.append(tbl);
@@ -1026,7 +1026,7 @@
                     }
 
                     function parseDialerStatusData(tileID, dialerStatusData) {
-                        let titleRow = '<div class="clusterTitle" title="Click to rename">' + tileDefs[tileID].name + '<a id="removeCluster_' + tileID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
+                        let titleRow = '<div class="clusterTitle"><span class="clusterName" title="Click to rename">' + tileDefs[tileID].name + '</span><a id="removeCluster_' + tileID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
                         let $tile = $('#tile_' + tileID);
                         $tile.empty();
                         $tile.append(titleRow);
