@@ -626,7 +626,7 @@
                         $('#usergroupFilter').val(tileDefs[tileID].user_group_filter);
                     });
 
-                    $('#dialerStatusZone').on('click', '.clusterName', function () {
+                    $('#dialerStatusZone').on('click', '.tileName', function () {
                         let tileID = $(this).closest('li').attr('id').split('_')[1].toString();
                         let dlgObj = $('#dialog-modal-rename-tile');
                         dlgObj.data('tileID', tileID);
@@ -1026,7 +1026,7 @@
                     }
 
                     function parseDialerStatusData(tileID, dialerStatusData) {
-                        let titleRow = '<div class="clusterTitle"><span class="clusterName" title="Click to rename">' + tileDefs[tileID].name + '</span><a id="removeCluster_' + tileID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
+                        let titleRow = '<div class="clusterTitle"><span class="tileName" title="Click to rename">' + tileDefs[tileID].name + '</span><a id="removeCluster_' + tileID + '" class="removeClusterButton" title="Remove this Cluster">[x]</a></div>';
                         let $tile = $('#tile_' + tileID);
                         $tile.empty();
                         $tile.append(titleRow);
