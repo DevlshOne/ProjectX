@@ -851,6 +851,10 @@ class API_Lead_Management{
 					$dat['campaign_id'] = $row['campaign_id'];
 					$dat['sale_time'] = $sale_time;
 					
+					$dat['list_id'] = $row['list_id'];
+					$dat['vici_campaign_id'] = $row['vici_campaign_id'];
+					
+					
 					// sale_datetime not really used atm
 					$dat['phone'] = $row['phone_num'];
 					
@@ -1005,7 +1009,8 @@ class API_Lead_Management{
 							$dat['verifier_name'] = $verifier_user['first_name'].(($verifier_user['last_name'])?' '.$verifier_user['last_name']:'');
 							$dat['amount'] = intval($_REQUEST['verifier_amount']);
 							
-							
+							$dat['list_id'] = $row['list_id'];
+							$dat['vici_campaign_id'] = $row['vici_campaign_id'];
 							
 							// IF IT WAS A SALE, BUT CHANGING TO PAIDCC
 							if($_REQUEST['dispo'] == 'PAIDCC'){
@@ -1043,6 +1048,9 @@ class API_Lead_Management{
 							$dat['verifier_lead_id'] = $row['verifier_lead_id'];
 							$dat['verifier_cluster_id'] = $verifier_cluster_id;
 							$dat['campaign_id'] = $row['campaign_id'];
+							
+							$dat['list_id'] = $row['list_id'];
+							$dat['vici_campaign_id'] = $row['vici_campaign_id'];
 							
 							
 							$dat['sale_time'] = $sale_time;
