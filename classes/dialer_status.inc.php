@@ -33,8 +33,8 @@
                 $this->clusterInfo[$i]['type'] = getClusterType($v);
                 $this->clusterInfo[$i]['name'] = getClusterName($v);
                 $this->clusterInfo[$i]['ip'] = getClusterWebHost($v);
-                $this->clusterInfo[$i]['sel_campaigns'] = getClusterCampaigns($v);
-                $this->clusterInfo[$i]['sel_user_groups'] = getClusterUserGroups($v);
+                $this->clusterInfo[$i]['sel_campaigns'] = array("ALL-ACTIVE");//getClusterCampaigns($v);
+                $this->clusterInfo[$i]['sel_user_groups'] = array("ALL-GROUPS");//getClusterUserGroups($v);
                 $this->clusterInfo[$i]['campaign_options'] = getClusterCampaigns($v);
                 $this->clusterInfo[$i]['usergroup_options'] = getClusterUserGroups($v);
             }
