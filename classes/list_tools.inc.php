@@ -62,6 +62,15 @@ class ListToolsClass{
 			$this->makeBuildListGUI();
 
 			break;
+			
+			
+		case 'performance_reports':
+			
+			include_once("classes/list_performance_report.inc.php");
+			$_SESSION['list_performance']->handleFLOW();
+			
+			
+			break;
 
 		case 'view_imports':
 

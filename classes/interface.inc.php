@@ -211,6 +211,10 @@
                                     ?>
                                     <li><a href="?area=list_tools&tool=view_imports&no_script=1"
                                            onclick="loadSection(this.href);return false">List Imports/Counts</a></li><?
+                                           
+                                           
+                                    ?><li><a href="?area=list_tools&tool=performance_reports&no_script=1"
+                                           onclick="loadSection(this.href);return false">List Performance Report</a></li><?
 
                                     ?>
                                     <li><a href="?area=list_tools&tool=vici_report&no_script=1"

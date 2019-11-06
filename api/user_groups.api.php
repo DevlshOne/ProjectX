@@ -53,6 +53,31 @@ class API_UserGroups{
 
 		}
 
+		
+		connectPXDB();
+		
+		// SYNC MASTER GROUP TOO?
+		list($master_id) = queryROW("SELECT `id` FROM `user_groups_master` WHERE `user_group`='".mysqli_real_escape_string($_SESSION['db'],$row['user_group'])."' ");
+		
+		if($master_id > 0){
+			
+			
+			
+			$dat = array();
+			$dat['group_name']	= $row['name'];
+			$dat['office']		= $row['office'];
+			
+			
+			list($company_id) = queryROW("SELECT company_id FROM `offices` WHERE id='".mysqli_real_escape_string($_SESSION['db'],$dat['office'])."'");
+			if($company_id > 0){
+				
+				$dat['company_id'] = $company_id;
+			}
+			
+			
+			aedit($master_id, $dat,'user_groups_master');
+			
+		}
 
 
 	}

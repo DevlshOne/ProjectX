@@ -84,10 +84,10 @@ class SalesAnalysis{
 	
 	
 	
-	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null){
+	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null, $vici_campaign_id=''){
 		
 		$campaign_id = 0;
-		//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group)<br />\n";
+		//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_id)<br />\n";
 		
 		connectPXDB();
 		
@@ -454,39 +454,39 @@ class SalesAnalysis{
 								:
 								// ELSE JUST GET THE SPECIFIED USER
 								" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
-								).
-								" AND agent_cluster_id='$cluster_id' ";
-								
-								//	echo "\n".$sql."\n";
-								//if(stripos($agentobj->username,"2")> -1){
-								//
-								//	echo "<br />POOOP(".$agentobj->username.")!<br />\n";
-								//}
-								
-								$paidsql = $sql." AND is_paid='yes' ";
-								$unpaidsql = $sql." AND is_paid='no' ";
-								
-								// GET THE UNPAID DEALS
-								list($amount,$salecnt) = $_SESSION['dbapi']->ROqueryROW($unpaidsql);
-								
-								
-								$running_amount += $amount;
-								$running_salecnt += $salecnt;
-								
-								// GET THE PAID DEALS
-								list($amount,$salecnt) = $_SESSION['dbapi']->ROqueryROW($paidsql);
-								
-								// ADDING TO THE MAIN NUMBERS
-								$running_amount += $amount;
-								$running_salecnt += $salecnt;
-								// BUT ALSO TRACKING THEM SEPERATE
-								$running_paid_amount += $amount;
-								$running_paid_salecnt += $salecnt;
-								//
-								//				$testsql = "EXPLAIN ".$sql;
-								//				$row = querySQL($testsql);
-								//
-								//				print_r($row);
+						).
+						" AND agent_cluster_id='$cluster_id' ";
+						
+						//	echo "\n".$sql."\n";
+						//if(stripos($agentobj->username,"2")> -1){
+						//
+						//	echo "<br />POOOP(".$agentobj->username.")!<br />\n";
+						//}
+				
+				$paidsql = $sql." AND is_paid='yes' ";
+				$unpaidsql = $sql." AND is_paid='no' ";
+				
+				// GET THE UNPAID DEALS
+				list($amount,$salecnt) = $_SESSION['dbapi']->ROqueryROW($unpaidsql);
+				
+				
+				$running_amount += $amount;
+				$running_salecnt += $salecnt;
+				
+				// GET THE PAID DEALS
+				list($amount,$salecnt) = $_SESSION['dbapi']->ROqueryROW($paidsql);
+				
+				// ADDING TO THE MAIN NUMBERS
+				$running_amount += $amount;
+				$running_salecnt += $salecnt;
+				// BUT ALSO TRACKING THEM SEPERATE
+				$running_paid_amount += $amount;
+				$running_paid_salecnt += $salecnt;
+				//
+				//				$testsql = "EXPLAIN ".$sql;
+				//				$row = querySQL($testsql);
+				//
+				//				print_r($row);
 								
 			}
 			
@@ -508,237 +508,237 @@ class SalesAnalysis{
 					:
 					// ELSE JUST GET THE SPECIFIED USER
 					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
+			).
+			$ofcsql.
+			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
+			
+			list($num_total_calls_px) = $_SESSION['dbapi']->ROqueryROW($sql);
+			
+			
+			
+			$sql = "SELECT COUNT(id) FROM lead_tracking ".
+					
+					//									" FORCE INDEX (time) ".
+			//" USE INDEX (time) ".
+			
+			" WHERE `time` BETWEEN '$stime' AND '$etime' ".
+			//	" AND `account_id`='".$_SESSION['account']['id']."' ".
+			
+			// EXCLUDE ANYTHING ROUSTING RELATED
+			" AND dispo != 'SALECC' ".
+			
+			" AND lead_id > 0 ".
+			(($combine_users)?
+					// GET USER AND USER2
+					" AND (agent_username IN('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') )"
+					:
+					// ELSE JUST GET THE SPECIFIED USER
+					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
+			).
+			" AND (`dispo`='NI' OR `dispo`='ni') ".
+			$ofcsql.
+			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
+			
+			//echo "\n".$sql."\n";
+			
+			
+			// NOT INTERESTED STATS
+			list($num_NI) = $_SESSION['dbapi']->ROqueryROW($sql
+					);
+			
+			
+			
+			// ANSWERING MACHINE STATS
+			$sql = "SELECT COUNT(id) FROM lead_tracking ".
+					
+					//									" FORCE INDEX (time) ".
+			//" USE INDEX (time) ".
+			
+			" WHERE `time` BETWEEN '$stime' AND '$etime' ".
+			//	" AND `account_id`='".$_SESSION['account']['id']."' ".
+			
+			
+			// EXCLUDE ANYTHING ROUSTING RELATED
+			" AND dispo != 'SALECC' ".
+			
+			" AND lead_id > 0 ".
+			(($combine_users)?
+					// GET USER AND USER2
+					" AND (agent_username IN ('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') ) "
+					:
+					// ELSE JUST GET THE SPECIFIED USER
+					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
 					).
-					$ofcsql.
-					(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
-					
-					list($num_total_calls_px) = $_SESSION['dbapi']->ROqueryROW($sql);
-					
-					
-					
-					$sql = "SELECT COUNT(id) FROM lead_tracking ".
-							
-							//									" FORCE INDEX (time) ".
-					//" USE INDEX (time) ".
-					
-					" WHERE `time` BETWEEN '$stime' AND '$etime' ".
+			" AND (`dispo`='A' OR `dispo`='a') ".
+			$ofcsql.
+			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
+			//echo "\n".$sql."\n";
+			// ANSWERING MACHINE STATS
+			list($num_AnswerMachines) = $_SESSION['dbapi']->ROqueryROW($sql);
+			
+			
+			$sql = "SELECT COUNT(id) FROM transfers ".
+					" WHERE xfer_time BETWEEN '$stime' AND '$etime' ".
 					//	" AND `account_id`='".$_SESSION['account']['id']."' ".
+			" AND (verifier_dispo IS NOT NULL  AND verifier_dispo != 'DROP' AND `verifier_dispo` != 'SALECC') ".
+			$ofcsql.
+			(($combine_users)?
+					// GET USER AND USER2
+					" AND (agent_username IN ('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') ) "
+					:
+					// ELSE JUST GET THE SPECIFIED USER
+					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
+					).
+					(($campaign_id > 0)?" AND campaign_id='".intval($campaign_id)."' ":"");
 					
-					// EXCLUDE ANYTHING ROUSTING RELATED
-					" AND dispo != 'SALECC' ".
 					
-					" AND lead_id > 0 ".
-					(($combine_users)?
-							// GET USER AND USER2
-							" AND (agent_username IN('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') )"
-							:
-							// ELSE JUST GET THE SPECIFIED USER
-							" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
-							).
-							" AND (`dispo`='NI' OR `dispo`='ni') ".
-							$ofcsql.
-							(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
+					
+					//			echo $sql."<br />\n";
+					
+					list($num_XFER) = $_SESSION['dbapi']->ROqueryROW($sql
+							);
+					
+					
+					
+					$activity_paid = 0;
+					$activity_wrkd = 0;
+					$activity_num_calls = 0;
+					
+					
+					if($combine_users){
+						
+						list($activity_paid,$activity_wrkd,$activity_num_calls)  =
+						$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
+								"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
+								//	" AND `account_id`='".$_SESSION['account']['id']."' ".
+								" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."' "
+								//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
+								//(($campaign_code)?" AND campaign='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ":"")
+								
+								);
+						
+						//" AND (username='".mysql_real_escape_string($agent)."' OR username='".mysql_real_escape_string($agent)."2') "
+						list($activity_paid2,$activity_wrkd2,$activity_num_calls2)  =
+						$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
+								"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
+								//	" AND `account_id`='".$_SESSION['account']['id']."' ".
+								" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."2' "
+								//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
+								//(($campaign_code)?" AND campaign='".mysqli_real_escape_string($campaign_code)."' ":"")
+								
+								);
+						
+						// PER STEVE, DONT COMBINE HOURS WORKED
+						//$activity_paid += $activity_paid2;
+						//$activity_wrkd += $activity_wrkd2;
+						$activity_num_calls += $activity_num_calls2;
+						
+					}else{
+						// GET AGENT ACTIVITY TIMER
+						list($activity_paid,$activity_wrkd,$activity_num_calls)  =
+						$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
+								"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
+								//" AND `account_id`='".$_SESSION['account']['id']."' ".
+								" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."' ".
+								//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
+								(($campaign_code)?" AND campaign='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ":"")
+								
+								);
+					}
+					
+					
+					
+					
+					
+					/// $activity_num_calls
+					
+					
+					
+					
+					
+					
+					$paid_hrs = $avtivity_paid = $activity_paid/60;
+					$active_hrs= $activity_worked = $activity_wrkd/60;
+					
+					
+					$closing_percent = ($num_XFER <= 0)?0:(($running_salecnt / $num_XFER) * 100);
+					
+					$conversion_percent = (($num_NI + $running_salecnt) <= 0)?0: (($running_salecnt / ($num_NI + $running_salecnt)) * 100);
+					
+					
+					$avg_sale = ($running_salecnt <= 0)?0:($running_amount / $running_salecnt);
+					
+					
+					$yes2all = ($activity_num_calls <= 0)?0: ($running_salecnt / $activity_num_calls) * 100;
+					
+					$paid_hr = ($paid_hrs <= 0)?0:($running_amount / $paid_hrs);
+					
+					$wrkd_hr = ($active_hrs <= 0)?0:($running_amount / $active_hrs);
+					
+					
+					
+					
+					$contacts_hr = ($paid_hrs <= 0)?0:(($num_NI + $num_XFER)/$avtivity_paid);
+					$calls_hr = ($paid_hrs <= 0)?0:(($activity_num_calls)/$avtivity_paid);
+					
+					
+					$worked_contacts_hr = ($activity_worked <= 0)?0:(($num_NI + $num_XFER)/$activity_worked);
+					$worked_calls_hr = ($activity_worked <= 0)?0:(($activity_num_calls)/$activity_worked);
+					
+					
+					$output_array[$ox++] = array(
 							
-							//echo "\n".$sql."\n";
+							'agent_username'=>$agentobj->username,
+							'cluster_id'=>$agentobj->cluster_array,
 							
+							'activity_paid'=>$avtivity_paid,
+							'activity_wrkd'=>$activity_worked,
+							'calls_today'=>$num_total_calls_px, //$activity_num_calls,
 							
-							// NOT INTERESTED STATS
-							list($num_NI) = $_SESSION['dbapi']->ROqueryROW($sql
-									);
+							'num_NI'		=> $num_NI,
+							'num_XFER'	=> $num_XFER,
 							
+							'num_AnswerMachines' => $num_AnswerMachines,
 							
+							'contacts_per_paid_hour' => $contacts_hr,
+							'calls_per_paid_hour' => $calls_hr,
 							
-							// ANSWERING MACHINE STATS
-							$sql = "SELECT COUNT(id) FROM lead_tracking ".
-									
-									//									" FORCE INDEX (time) ".
-							//" USE INDEX (time) ".
+							'contacts_per_worked_hour' => $worked_contacts_hr,
+							'calls_per_worked_hour' => $worked_calls_hr,
 							
-							" WHERE `time` BETWEEN '$stime' AND '$etime' ".
-							//	" AND `account_id`='".$_SESSION['account']['id']."' ".
+							'sale_cnt'		=> $running_salecnt,
+							'closing_percent'=> $closing_percent,
+							'conversion_percent'=>$conversion_percent,
+							'yes2all_percent'	=> $yes2all,
+							'sales_total'		=> $running_amount,
+							'paid_sales_total'	=> $running_paid_amount,
+							'paid_sale_cnt'		=> $running_paid_salecnt,
+							'avg_sale'			=> $avg_sale,
 							
-							
-							// EXCLUDE ANYTHING ROUSTING RELATED
-							" AND dispo != 'SALECC' ".
-							
-							" AND lead_id > 0 ".
-							(($combine_users)?
-									// GET USER AND USER2
-									" AND (agent_username IN ('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') ) "
-									:
-									// ELSE JUST GET THE SPECIFIED USER
-									" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
-									).
-									" AND (`dispo`='A' OR `dispo`='a') ".
-									$ofcsql.
-									(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
-									//echo "\n".$sql."\n";
-									// ANSWERING MACHINE STATS
-									list($num_AnswerMachines) = $_SESSION['dbapi']->ROqueryROW($sql);
-									
-									
-									$sql = "SELECT COUNT(id) FROM transfers ".
-											" WHERE xfer_time BETWEEN '$stime' AND '$etime' ".
-											//	" AND `account_id`='".$_SESSION['account']['id']."' ".
-									" AND (verifier_dispo IS NOT NULL  AND verifier_dispo != 'DROP' AND `verifier_dispo` != 'SALECC') ".
-									$ofcsql.
-									(($combine_users)?
-											// GET USER AND USER2
-											" AND (agent_username IN ('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') ) "
-											:
-											// ELSE JUST GET THE SPECIFIED USER
-											" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
-											).
-											(($campaign_id > 0)?" AND campaign_id='".intval($campaign_id)."' ":"");
-											
-											
-											
-											//			echo $sql."<br />\n";
-											
-											list($num_XFER) = $_SESSION['dbapi']->ROqueryROW($sql
-													);
-											
-											
-											
-											$activity_paid = 0;
-											$activity_wrkd = 0;
-											$activity_num_calls = 0;
-											
-											
-											if($combine_users){
-												
-												list($activity_paid,$activity_wrkd,$activity_num_calls)  =
-												$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
-														"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
-														//	" AND `account_id`='".$_SESSION['account']['id']."' ".
-														" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."' "
-														//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
-														//(($campaign_code)?" AND campaign='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ":"")
-														
-														);
-												
-												//" AND (username='".mysql_real_escape_string($agent)."' OR username='".mysql_real_escape_string($agent)."2') "
-												list($activity_paid2,$activity_wrkd2,$activity_num_calls2)  =
-												$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
-														"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
-														//	" AND `account_id`='".$_SESSION['account']['id']."' ".
-														" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."2' "
-														//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
-														//(($campaign_code)?" AND campaign='".mysqli_real_escape_string($campaign_code)."' ":"")
-														
-														);
-												
-												// PER STEVE, DONT COMBINE HOURS WORKED
-												//$activity_paid += $activity_paid2;
-												//$activity_wrkd += $activity_wrkd2;
-												$activity_num_calls += $activity_num_calls2;
-												
-											}else{
-												// GET AGENT ACTIVITY TIMER
-												list($activity_paid,$activity_wrkd,$activity_num_calls)  =
-												$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
-														"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
-														//" AND `account_id`='".$_SESSION['account']['id']."' ".
-														" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."' ".
-														//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
-														(($campaign_code)?" AND campaign='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ":"")
-														
-														);
-											}
-											
-											
-											
-											
-											
-											/// $activity_num_calls
-											
-											
-											
-											
-											
-											
-											$paid_hrs = $avtivity_paid = $activity_paid/60;
-											$active_hrs= $activity_worked = $activity_wrkd/60;
-											
-											
-											$closing_percent = ($num_XFER <= 0)?0:(($running_salecnt / $num_XFER) * 100);
-											
-											$conversion_percent = (($num_NI + $running_salecnt) <= 0)?0: (($running_salecnt / ($num_NI + $running_salecnt)) * 100);
-											
-											
-											$avg_sale = ($running_salecnt <= 0)?0:($running_amount / $running_salecnt);
-											
-											
-											$yes2all = ($activity_num_calls <= 0)?0: ($running_salecnt / $activity_num_calls) * 100;
-											
-											$paid_hr = ($paid_hrs <= 0)?0:($running_amount / $paid_hrs);
-											
-											$wrkd_hr = ($active_hrs <= 0)?0:($running_amount / $active_hrs);
-											
-											
-											
-											
-											$contacts_hr = ($paid_hrs <= 0)?0:(($num_NI + $num_XFER)/$avtivity_paid);
-											$calls_hr = ($paid_hrs <= 0)?0:(($activity_num_calls)/$avtivity_paid);
-											
-											
-											$worked_contacts_hr = ($activity_worked <= 0)?0:(($num_NI + $num_XFER)/$activity_worked);
-											$worked_calls_hr = ($activity_worked <= 0)?0:(($activity_num_calls)/$activity_worked);
-											
-											
-											$output_array[$ox++] = array(
-													
-													'agent_username'=>$agentobj->username,
-													'cluster_id'=>$agentobj->cluster_array,
-													
-													'activity_paid'=>$avtivity_paid,
-													'activity_wrkd'=>$activity_worked,
-													'calls_today'=>$num_total_calls_px, //$activity_num_calls,
-													
-													'num_NI'		=> $num_NI,
-													'num_XFER'	=> $num_XFER,
-													
-													'num_AnswerMachines' => $num_AnswerMachines,
-													
-													'contacts_per_paid_hour' => $contacts_hr,
-													'calls_per_paid_hour' => $calls_hr,
-													
-													'contacts_per_worked_hour' => $worked_contacts_hr,
-													'calls_per_worked_hour' => $worked_calls_hr,
-													
-													'sale_cnt'		=> $running_salecnt,
-													'closing_percent'=> $closing_percent,
-													'conversion_percent'=>$conversion_percent,
-													'yes2all_percent'	=> $yes2all,
-													'sales_total'		=> $running_amount,
-													'paid_sales_total'	=> $running_paid_amount,
-													'paid_sale_cnt'		=> $running_paid_salecnt,
-													'avg_sale'			=> $avg_sale,
-													
-													'paid_hr'=>$paid_hr,
-													'wrkd_hr'=>$wrkd_hr,
-											);
-											
-											
-											
-											
-											
-											
-											
-											// TOTALS ADDUP
-											$total_paid_hrs += $paid_hrs;
-											$total_active_hrs += $active_hrs;
-											$total_calls += $activity_num_calls;
-											$total_ni += $num_NI;
-											$total_xfer += $num_XFER;
-											
-											$total_AnswerMachines += $num_AnswerMachines;
-											
-											$total_sale_cnt += $running_salecnt;
-											$total_amount += $running_amount;
-											
-											$total_paid_sale_cnt += $running_paid_salecnt;
-											$total_paid_amount += $running_paid_amount;
+							'paid_hr'=>$paid_hr,
+							'wrkd_hr'=>$wrkd_hr,
+					);
+					
+					
+					
+					
+					
+					
+					
+					// TOTALS ADDUP
+					$total_paid_hrs += $paid_hrs;
+					$total_active_hrs += $active_hrs;
+					$total_calls += $activity_num_calls;
+					$total_ni += $num_NI;
+					$total_xfer += $num_XFER;
+					
+					$total_AnswerMachines += $num_AnswerMachines;
+					
+					$total_sale_cnt += $running_salecnt;
+					$total_amount += $running_amount;
+					
+					$total_paid_sale_cnt += $running_paid_salecnt;
+					$total_paid_amount += $running_paid_amount;
 											
 		}
 		
@@ -924,10 +924,15 @@ $(function() {
 					</tr>
 
 					<tr>
-						<th>VICI Campaign:</th>
+						<th>Campaign Code:</th>
 						<td><?php
 
                             echo $this->makeViciCampaignDD('vici_campaign_code', $_REQUEST['vici_campaign_code'], '', ""); ?></td>
+					</tr>
+					
+					<tr>
+						<th>VICI Campaign ID:</th>
+						<td><input type="text" size="8" name="vici_campaign_id" value="<?=htmlentities($_REQUEST['vici_campaign_id'])?>" /></td>
 					</tr>
 
 					<tr>
@@ -1055,6 +1060,7 @@ $(function() {
 
             $vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
 
+            $vici_campaign_id = trim($_REQUEST['vici_campaign_id']);
             
             $ignore_arr = preg_split("/,|;|:| /", $_REQUEST['ignore_users_list'], -1, PREG_SPLIT_NO_EMPTY);
             
@@ -1068,7 +1074,7 @@ $(function() {
             
             
             ## GENERATE AND DISPLAY REPORT
-                $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code,$ignore_arr);
+            $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code,$ignore_arr,$vici_campaign_id);
 
 
             /*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
@@ -1110,12 +1116,12 @@ $(function() {
     }
 
 
-    function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users,$user_group, $ignore_group, $vici_campaign_code='', $ignore_arr= null){
+    function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users,$user_group, $ignore_group, $vici_campaign_code='', $ignore_arr= null, $vici_campaign_id = ''){
     	
-    	echo '<span style="font-size:9px">makeHTMLReport('."$stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code,$ignore_arr) called</span><br /><br />\n";
+    	echo '<span style="font-size:9px">makeHTMLReport('."$stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code,$ignore_arr,$vici_campaign_id) called</span><br /><br />\n";
     	
     	
-    	list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code,$ignore_arr);
+    	list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code,$ignore_arr,$vici_campaign_id);
     	
         if (count($agent_data_arr) < 1) {
             return null;

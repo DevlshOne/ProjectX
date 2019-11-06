@@ -79,7 +79,7 @@ class UserGroupsClass{
 			}else{
 
 
-				if(!$_REQUEST['group_sub']){
+	/*			if(!$_REQUEST['group_sub']){
 
 					$this->makeTabInterface();
 
@@ -87,11 +87,11 @@ class UserGroupsClass{
 
 					switch($_REQUEST['group_sub']){
 					default:
-					case 'cluster':
+					case 'cluster':*/
 
 						$this->listEntrys();
 
-						break;
+/*						break;
 					case 'master':
 
 
@@ -101,7 +101,7 @@ class UserGroupsClass{
 
 					}
 
-				}
+				}*/
 
 				//$this->listEntrys();
 
