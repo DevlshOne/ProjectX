@@ -58,7 +58,7 @@
                             <tr>
                                 <td class="pct100">
                                     <div class="align_center" style="float:left;margin:7px;">Dialer Status Dashboard</div>
-                                    <button id="clusterSelectButton" class="align_center ui-state-highlight" style="float:right;">Select Clusters</button>
+                                    <button id="clusterSelectButton" class="align_center ui-state-highlight" style="float:right;">Add Cluster Tile</button>
                                     <button id="refreshRateButton" class="align_center refreshButton" style="float:right;">Change Refresh [40]</button>
                                     <button id="stopDialersButton" class="align_center ui-state-error" style="float:right;">Stop All Dialing</button>
                                     <button id="forceHopperButton" class="align_center" style="float:right;">Force Hopper</button>
@@ -292,7 +292,6 @@
                                 $('#campaignFilter option:selected').each(function (i, v) {
                                     tileDefs[tileID].groups.push(v.innerText);
                                 });
-                                tileDefs[tileID].groups = tmpArr;
                                 $('#usergroupFilter option:selected').each(function (i, v) {
                                     tileDefs[tileID].user_group_filter.push(v.innerText);
                                 });
@@ -465,7 +464,7 @@
                                     tileDefs = prefs;
                                     let oldPrefsData = false;
                                     $.each(tileDefs, function (i, v) {
-                                        if (tileDefs.name === undefined || tileDefs.name === '') {
+                                        if (v.name === undefined || v.name === '') {
                                             // missing tileDef data because the prefs format is outdated
                                             oldPrefsData = true;
                                             let clusterData = getClusterInfoByClusterID(v.cluster_id);
@@ -538,15 +537,24 @@
                     }
 
                     $('#clusterSelectButton').on('click', function () {
-                        let dlgObj = $('#dialog-modal-select-clusters');
-                        let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection" multiple size="6">';
-                        $.each(availableClusters, function (i, v) {
-                            clusterSelect += '<option value="' + v + '">' + clusterInfo[i].name + '</option>';
+                        let dlgObj = $('#dialog-modal-add-tile');
+                        let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection">';
+                        $.each(availableClusters, function (i) {
+                            clusterSelect += '<option value="' + i + '">' + clusterInfo[i].name + '</option>';
                         });
                         clusterSelect += '</select>';
                         dlgObj.dialog('open');
-                        dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
-                        $('#clusterSelection').val(tileDefs);
+                        dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
+                        //
+                        // let dlgObj = $('#dialog-modal-select-clusters');
+                        // let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection" multiple size="6">';
+                        // $.each(availableClusters, function (i, v) {
+                        //     clusterSelect += '<option value="' + v + '">' + clusterInfo[i].name + '</option>';
+                        // });
+                        // clusterSelect += '</select>';
+                        // dlgObj.dialog('open');
+                        // dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
+                        // $('#clusterSelection').val(tileDefs);
                     });
                     $('#refreshRateButton').on('click', function () {
                         let dlgObj = $('#dialog-modal-change-refresh');
@@ -791,11 +799,8 @@
                         if (parseInt(v) < warn) {
                             return '<span style="color:yellow;">' + v.toString() + '</span>';
                         }
-
                         if (default_color) {
-
                             return '<span style="color:' + default_color + ';">' + v.toString() + '</span>';
-
                         } else {
                             return v;
                         }
@@ -1060,9 +1065,9 @@
                                 }
                             });
                         });
-                        if ($('li#tile_add').length === 0) {
-                            $('#dialerStatusZone').append(tileAdder);
-                        }
+                        // if ($('li#tile_add').length === 0) {
+                        //     $('#dialerStatusZone').append(tileAdder);
+                        // }
                         applyUniformity();
                         if (highContrast) {
                             $('body').css('background-color', '#000000');
