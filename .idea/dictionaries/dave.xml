@@ -5,8 +5,11 @@
       <w>cltype</w>
       <w>clusterid</w>
       <w>crit</w>
+      <w>dialable</w>
+      <w>dialers</w>
       <w>prefs</w>
       <w>prsd</w>
+      <w>usergroup</w>
       <w>usergroups</w>
       <w>vici</w>
       <w>webip</w>

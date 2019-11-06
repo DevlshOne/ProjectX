@@ -6,7 +6,7 @@
         function curlClusterData($webIP, $groups, $user_groups, $curlUP) {
             $curl = curl_init();
             $curlURL = 'http://' . $webIP . '/vicidial/AST_timeonVDADall.php?RTajax=1&AGENTtimeSTATS=1' . $groups . $user_groups;
-            
+
            //echo $curlURL;exit;
 
             curl_setopt($curl, CURLOPT_URL, $curlURL);
@@ -55,99 +55,62 @@
                             $strGroups .= '&groups[]=' . urlencode($v);
                         }
                     }else{
-                    	
                     	$strGroups .= '&groups[]=ALL-ACTIVE';
-                    	
-
                     }
-
                     $user_group_filters = $_REQUEST['user_group_filter'];
                     if (isset($user_group_filters)) {
                         foreach ($user_group_filters as $v) {
                             $strUserGroups .= '&user_group_filter[]=' . urlencode($v);
                         }
                     }else{
-                    	
                     	$strUserGroups .= '&user_group_filter[]=ALL-GROUPS';
-
                     }
                     $curlUP = (($_SESSION['user']['vici_username']) ? $_SESSION['user']['vici_username'] : $_SESSION['user']['username']) . ":" . $_SESSION['user']['vici_password'];
                     $out = $this->curlClusterData($webip, $strGroups, $strUserGroups, $curlUP);
                     break;
                 case 'getClusterDataByUserPrefs':
-
                     $user_preferences = json_decode($_SESSION['dbapi']->user_prefs->getRaw("dialer_status"), true);
-
                     $desiredCluster = trim($_REQUEST['c']);
-
                     // POP THE GLOBAL SETTINGS OFF THE END, BEFORE RENDERING
                     /// NO NEED TO POP ANYMORE, JUST MADE IT SKIP IF THE 'cluster_id' ISNT SPECIFIED
                     ///array_pop($user_preferences);
-    	
                     if(!$user_preferences || count($user_preferences) < 1){
-                    	
                     	$user_preferences = array();
-                    	
-                    	
                     	foreach (getClusterIDs() as $i => $v) {
-                    		
                     		$user_preferences[] = array(
                     				'cluster_id' 		=> 	$v,
                     				'groups' 			=> array(0 => "ALL-ACTIVE"),
                     				'user_group_filter'	=> array(0 => "ALL-GROUPS")
                     		);
-                    		
                     	}
-                    	
                     	$user_preferences[] = array(
-                    			
                     			'refreshInterval' => 40,
                     			'refreshEnabled' => true,
                     			'highContrast' => false
-                    			
                     	);
-                    	
-                    	
                     	$out = json_encode($user_preferences);
                     	$_SESSION['dbapi']->user_prefs->update('dialer_status', $out);
-                    	
                     }
-                 
-                    
-                    // print_r($user_preferences);exit;
-                    
-
                     foreach ($user_preferences as $k => $v) {
-                    	
                     	if(!$v['cluster_id']) continue;
-
                         $strGroups = '';
                         $strUserGroups = '';
                         $cluster_id = $v['cluster_id'];
                         if ($desiredCluster !== $cluster_id) continue;
                         $webip = getClusterWebHost($cluster_id);
-                        
                         if(isset($v['groups']) && count($v['groups']) > 0){
 	                        foreach ($v['groups'] as $w) {
 	                            $strGroups .= '&groups[]=' . urlencode($w);
 	                        }
                         }else{
                         	$strGroups .= '&groups[]=ALL-ACTIVE';
-
                         }
-                        
                         if(isset($v['user_group_filter']) && count($v['user_group_filter']) > 0){
-                        	
-                        
                         	foreach ($v['user_group_filter'] as $w) {
                             	$strUserGroups .= '&user_group_filter[]=' . urlencode($w);
 	                        }
                         }else{
-                        	
-                        	
                         	$strUserGroups .= '&user_group_filter[]=ALL-GROUPS';
-                        	
-
                         }
                         $curlUP = (($_SESSION['user']['vici_username']) ? $_SESSION['user']['vici_username'] : $_SESSION['user']['username']) . ":" . $_SESSION['user']['vici_password'];
                         $out = json_encode($this->curlClusterData($webip, $strGroups, $strUserGroups, $curlUP));
@@ -202,37 +165,24 @@
                     $out = '';
                     break;
                 case 'loadUserPrefs':
-
                     $out = $_SESSION['dbapi']->user_prefs->getRaw("dialer_status");
-                   
                     // CREATE DEFAULT PREFERENCES
                     if(!$out){
-                    	
                     	$user_preferences = array();
-                    	
-                    	
                     	foreach (getClusterIDs() as $i => $v) {
-                    		
                     		$user_preferences[] = array(
                     				'cluster_id' 		=> 	$v,
                     				'groups' 			=> array(0 => "ALL-ACTIVE"),
                     				'user_group_filter'	=> array(0 => "ALL-GROUPS")
                     		);
-                    		
                     	}
-                    	
                     	$user_preferences[] = array(
-                    			
                     			'refreshInterval' => 40,
                     			'refreshEnabled' => true,
                     			'highContrast' => false
-                    			
                     	);
-                    	
-                    	
                     	$out = json_encode($user_preferences);
                     	$_SESSION['dbapi']->user_prefs->update('dialer_status', $out);
-                    	
                     }
                     break;
             }

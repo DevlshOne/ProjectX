@@ -147,7 +147,7 @@
                                 </tr>
                             </table>
 
-                        <li>
+                        </li>
                     </td>
                 </tr>
             </table>
