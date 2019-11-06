@@ -36,6 +36,7 @@
                     break;
                 case 'edit':
                     $id = intval($_POST['adding_user_groups_master']);
+                    
                     unset($dat);
                     $dat['group_name'] = trim($_POST['group_name']);
                     $dat['office'] = intval($_POST['office']);
@@ -51,6 +52,19 @@
                         $id = mysqli_insert_id($_SESSION['dbapi']->db);
                         logAction('add', 'user_groups_master', $id, "");
                     }
+                    
+                    
+                    ## UPDATE ALL USER GROUPS TABLE ENTRIES
+                    $_SESSION['dbapi']->execSQL(
+                    		"UPDATE `user_groups` ".
+                    			" SET `office`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $dat['office'])."', ".
+                    			" `name`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $dat['group_name'])."' ".
+                    		" WHERE `user_group`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$dat['user_group'])."' ");
+                    
+                    ## UPDATE ALL VICIDIAL CLUSTERS ENTRIES FOR IT
+					$this->syncMasterGroupToVicis($id);
+					
+                    
                     //	$this->syncGroupToVici($id);
                     $_SESSION['api']->outputEditSuccess($id);
                     break;
@@ -121,8 +135,100 @@
             }
         }
 
-        function handleSecondaryAjax()
-        {
+        
+        
+        
+        function syncMasterGroupToVicis($master_group_id){
+        	
+        	
+        	$row = $_SESSION['dbapi']->user_groups_master->getByID($master_group_id);
+        	
+        	$res = query("SELECT * FROM vici_clusters WHERE status='enabled' ",1);
+        	$clusters = array();
+        	while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+        		
+        		$clusters[$row['id']] = $row;
+        		
+        	}
+        	
+        	// LOOP THROUGH STACK OF VICIDIAL SERVERS
+        	foreach($clusters as $cluster_id => $vicirow ){
+        		
+        		// LOCATE WHICH DB INDEX IT IS
+        		$dbidx = getClusterIndex($cluster_id);
+        		
+        		// CONNECT TO VICIDIAL DB
+        		connectViciDB($dbidx);
+        		
+        		//echo "Cluster ID# ".$cluster_id." - ".$vicirow['name']."\n";
+
+        	
+        		// LOOK UP GROUP BY NAME
+        		list($test) = queryROW("SELECT user_group FROM vicidial_user_groups WHERE user_group LIKE '".mysqli_real_escape_string($_SESSION['db'],$row['user_group'])."'");
+        	
+        	
+	        	$dat = array();
+	        	
+
+	        	
+	        	// ADD IF NOT EXISTS
+	        	if(!$test){
+	        		
+	        		foreach($row as $key=>$val){
+	        			
+	        			
+	        			switch($key){
+	        				
+	        				// IGNORE BECAUSE THEY ARE PX SPECIFIC FIELDS
+	        				case 'company_id':
+	        				case 'time_shift':
+	        				case 'id':
+	        				case 'agent_type':
+	        					break;
+	        					
+	        					// IGNORE BECAUSE THEY ARE ONLY IN NEWEST VICI SVN
+	        				case 'allowed_custom_reports':
+	        				case 'agent_allowed_chat_groups':
+	        				case 'agent_xfer_park_3way':
+	        				case 'admin_ip_list':
+	        				case 'agent_ip_list':
+	        				case 'api_ip_list':
+	        				case 'webphone_layout':
+	        					
+	        					$dat2[$key] = $val;
+	        					
+	        					break;
+	        				default:
+	        					
+	        					$dat[$key] = $val;
+	        					
+	        			}
+	        		} // END FOREACH (Group row)
+
+	        		
+	        		aadd($dat, 'vicidial_user_groups');
+	
+	        		
+	        	}else{
+	        		// EDIT IF IT DOES EXIST ALREADY
+	        		$dat['group_name']	= $row['name'];
+	        		$dat['office']		= $row['office'];
+	        		
+	        		aeditByField('user_group',$row['user_group'],$dat,'vicidial_user_groups');
+	        		
+	        	}
+        	
+        	}// END FOREACH(CLUSTER)
+        	
+        	
+        }
+        
+        
+        
+        
+        function handleSecondaryAjax(){
+        	
+        
             $out_stack = array();
             #print_r($_REQUEST);
             foreach ($_REQUEST['special_stack'] as $idx => $data) {
