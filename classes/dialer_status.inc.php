@@ -209,6 +209,10 @@
                                 initScreen();
                                 getDialerStatusData();
                                 $(this).dialog('close');
+                                if (frontEnd_debug) {
+                                    console.log('Renamed tile :: ', tileID);
+                                    console.log('Prefs have just been saved :: ', tileDefs);
+                                }
                             },
                             'Cancel': function () {
                                 $(this).dialog('close');
@@ -630,14 +634,11 @@
 
                     $('#dialerStatusZone').on('click', '.tileName', function () {
                         let tileID = $(this).closest('li').attr('id').split('_')[1].toString();
+                        let currentTileName = $(this)[0].innerText;
                         let dlgObj = $('#dialog-modal-rename-tile');
                         dlgObj.data('tileID', tileID);
                         dlgObj.dialog('open');
-                        saveUserPrefs();
-                        if (frontEnd_debug) {
-                            console.log('Renamed tile :: ', tileID);
-                            console.log('Prefs have just been saved :: ', tileDefs);
-                        }
+                        $('#new_tile_name').val(currentTileName);
                     });
 
                     $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
