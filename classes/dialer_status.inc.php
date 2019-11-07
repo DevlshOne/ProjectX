@@ -641,8 +641,8 @@
                     });
 
                     $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
-                        let tileID = $(this).attr('id').split('_')[1].toString();
-                        $('#tile_' + tileID).remove();
+                        let tileID = $(this).attr('id').split('_')[1];
+                        $('#tile_' + tileID.toString()).remove();
                         tileDefs.splice(tileID, 1);
                         saveUserPrefs();
                         if (frontEnd_debug) {
