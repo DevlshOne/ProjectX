@@ -98,7 +98,7 @@ class RousterReport{
 						($_SESSION['user']['priv'] < 5) &&
 						($_SESSION['user']['allow_all_offices'] != 'yes')
 					) && is_array($_SESSION['assigned_groups']) && !in_array($group, $_SESSION['assigned_groups'], false)){
-					
+
 					continue;
 				}
 
@@ -1102,7 +1102,7 @@ class RousterReport{
 
 			//				$row['agent']['total_activity_date_time_array'][date("m/d/Y", $row['time_started'])]
 			//				$row['agent']['total_activity_date_daily_array'][date("m/d/Y", $row['time_started'])]
-			
+
 			// 				$tmphours = floor($row['agent']['total_activity_time'] / 3600);
 			//				$tmpmin = floor( ($row['agent']['total_activity_time'] - ($tmphours * 3600)) / 60 );
 
@@ -1116,14 +1116,14 @@ class RousterReport{
 			//										" AND `micro_time` BETWEEN '$stmicro' AND '$etmicro' ".
 			//										" AND `dispo` = 'REVIEW' ".
 			//										" AND `result`='success' ");
-			
+
 			//				$running_total_hangups += $row['hangup_cnt'];
 			//				$running_total_declines += $row['decline_cnt'];
 
 			// 				echo $paidcc_per_hour.' vs '.$paidcc_per_worked_hour."<br />";
 			// 				echo 'Paid total: '.$row['paid_sale_total'].'<br />';
 			// 				echo ($row['paid_time']/60).' vs '.($act_total_time/3600).'<br /><br />';
-				
+
 			//				if($combine_users){
 			//
 			//					$paidcc_per_worked_hour = ($activity_time <= 0)?0:($row['paid_sale_total'] / (($row['t_time']/intval($row['agent']['agent_count']))/3600));
@@ -1155,24 +1155,24 @@ class RousterReport{
 			//						}else{
 
 			//							echo '<span style="background-color:yellow">'.$total_pause.'</span>';
-			//						}				
+			//						}
 
 			//echo $talktimeavg.' vs '.$this->talk_lower_limit.' ';
 
 
-			//						if($talktimeavg >= $this->talk_lower_limit && $talktimeavg <= $this->talk_upper_limit){	
-				
+			//						if($talktimeavg >= $this->talk_lower_limit && $talktimeavg <= $this->talk_upper_limit){
+
 			//						}else{
 
 			//							echo '<span style="background-color:yellow">'.$total_talk.'</span>';
-			//						}				
+			//						}
 
 			//						if($row['t_dead'] > $this->dead_time_limit){
 			//
 			//							echo '<span style="background-color:yellow">'.$total_dead.'</span>';
 			//						}else{
-			//						}	
-			
+			//						}
+
 			/**
 					<td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
 
@@ -1340,15 +1340,15 @@ class RousterReport{
 			$total_pos_bump_amount =  $running_total_pos_bump_verifier_amount - $running_total_pos_bump_agent_amount;
 			$total_pos_bump_percent = ($running_total_pos_bump_agent_amount <= 0)?0:round(($running_total_pos_bump_verifier_amount / $running_total_pos_bump_agent_amount) * 100, 2);
 
-			
-			
+
+
 			$total_paidcc_per_hour = ($running_paid_time <= 0)?0:($running_total_paid_sales_amount / ($running_paid_time/60));
 
 // NICOLE: CAN WE USE ACTIVITY TIME (8/13/2019)
 //			$total_paidcc_per_worked_hour = ($running_total_activity_time <= 0)?0:($running_total_paid_sales_amount / ($running_t_time/3600));
 //			$total_paidcc_per_worked_hour = ($running_total_total_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_total_time/3600));//($running_t_max/3600));
 			$total_paidcc_per_worked_hour = ($running_total_activity_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_activity_time/3600));//($running_t_max/3600));
-			
+
 
 
 			// TOTALS ROW
@@ -1416,20 +1416,20 @@ class RousterReport{
 					$tmphours = floor($running_t_time / 3600);
 					$tmpmin = floor( ($running_t_time - ($tmphours * 3600)) / 60 );
 					echo $tmphours.':'.(($tmpmin <= 9)?'0'.$tmpmin:$tmpmin);
-	
+
 					//	echo renderTimeFormatted($running_t_time/60);
 
 
 				?></td>
 				<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
-	
+
 					// PAID TIME
 					$ptime = ($running_paid_time );
 					$tmpmin = floor($ptime/60);
 					$tmpsec = ($ptime%60);
 					$total_ptime = $tmpmin.':'.(($tmpsec < 10)?'0'.$tmpsec:$tmpsec);
 					echo $total_ptime;
-					
+
 					//echo renderTimeFormatted($running_paid_time * 60);
 
 
@@ -1534,24 +1534,16 @@ class RousterReport{
 	function makeReport(){
 
 		if(isset($_REQUEST['generate_agent_stat_report'])){
-
-
-			if($_REQUEST['date_mode'] == 'daterange'){
-
-				$stime = mktime(0,0,0, $_REQUEST['s_date_month'], $_REQUEST['s_date_day'], $_REQUEST['s_date_year'] );
-				$etime = mktime(23,59,59, $_REQUEST['e_date_month'], $_REQUEST['e_date_day'], $_REQUEST['e_date_year'] );
-
-			}else{
-
-				$stime = mktime(0,0,0, $_REQUEST['s_date_month'], $_REQUEST['s_date_day'], $_REQUEST['s_date_year'] );
-				$etime = $stime + 86399;
-			}
-
-		}else{
-			$stime = mktime(0,0,0);
-			$etime = mktime(23,59,59);
-
-
+            if($_REQUEST['timeFilter']){
+                $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
+                $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
+            }else{
+                $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." 00:00:00");
+                $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." 23:59:59");
+            }
+		} else {
+            $timestamp = mktime(0, 0, 0);
+            $timestamp2 = mktime(23, 59, 59);
 		}
 
 		$cluster_id = intval($_REQUEST['s_cluster_id']);
@@ -1572,18 +1564,31 @@ class RousterReport{
 
 		//if(!isset($_REQUEST['no_script'])){
 
-		?><script>
+		?>
+        <script>
+            function toggleDateSearchMode(way) {
+                if (way == 'daterange') {
+                    $('#end_date_row').show();
+                } else {
+                    $('#end_date_row').hide();
+                }
+            }
 
-			function toggleDateSearchMode(way){
-
-				if(way == 'daterange'){
-					$('#end_date_row').show();
-				}else{
-					$('#end_date_row').hide();
-				}
-			}
-
-		</script>
+            $(function () {
+                let timeFields = $('#startTimeFilter, #endTimeFilter');
+                let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
+                if (retainTime) {
+                    $(timeFields).show();
+                    $('#timeFilter').prop('checked', true);
+                } else {
+                    $(timeFields).hide();
+                    $('#timeFilter').prop('checked', false);
+                }
+                $('#timeFilter').on('click', function () {
+                    $(timeFields).toggle();
+                });
+            });
+        </script>
 		<?
 
 		if(!isset($_REQUEST['no_nav'])){
@@ -1619,30 +1624,26 @@ class RousterReport{
 
 					?></td>
 				</tr>
-				<tr>
-					<th height="30">Date Mode:</th>
-					<td><select name="date_mode" onchange="toggleDateSearchMode(this.value)">
-						<option value="date">Date</option>
-						<option value="daterange"<?=($_REQUEST['date_mode'] == 'daterange')?' SELECTED':''?>>Date Range</option>
-					</select></td>
-				</tr>
-				<tr>
-					<th height="30">Date:</th>
-					<td><?
-
-						echo makeTimebar("s_date_",1,null,false, $stime,"");
-
-					?></td>
-				</tr>
-				<tr id="end_date_row" class="nod">
-					<th height="30">End Date:</th>
-					<td><?
-
-						echo makeTimebar("e_date_",1,null,false, $etime,"");
-
-					?></td>
-				</tr>
-
+                    <tr>
+                        <th>Date Start:</th>
+                        <td>
+                            <?php  echo makeTimebar("strt_date_", 1, null, false, $timestamp); ?>
+                            <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php  echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Date End:</th>
+                        <td>
+                            <?php echo makeTimebar("end_date_", 1, null, false, $timestamp2); ?>
+                            <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php  echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Use Time?</th>
+                        <td>
+                            <input type="checkbox" name="timeFilter" id="timeFilter">
+                        </td>
+                    </tr>
 				<tr>
 					<th height="30">Ignore Users:<br />(<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
 

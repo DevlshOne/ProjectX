@@ -7,19 +7,30 @@
     $_SESSION['agent_call_stats'] = new AgentCallStats;
 
     class AgentCallStats {
+
         var $close_percent_limit = 76;
+
         var $dead_time_limit = 120;
+
         var $time_limit = 27000; // 7.5hrs aka 7:30
+
         var $talk_lower_limit = 70;
         var $talk_upper_limit = 80;
+
         var $pause_limit = 1800;
 
         function AgentCallStats() {
+
+//		include_once("site_config.php");
+//		include_once("dbapi/dbapi.inc.php");
+//		include_once("db.inc.php");
+//		include_once('utils/db_utils.php');
             ## REQURES DB CONNECTION!
             $this->handlePOST();
         }
 
         function handlePOST() {
+
         }
 
         function handleFLOW() {
@@ -346,6 +357,85 @@
                 $t_talk = 0;
                 $t_dead = 0;
                 $t_call_count = 0;
+
+//
+//			if(!$use_archive_by_default){
+//
+//				$res = query("SELECT * FROM `vicidial_agent_log` ".
+//						" WHERE `user` LIKE '".mysqli_real_escape_string($_SESSION['db'],$username)."' ".
+//						" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
+//						" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
+//						,1);
+//
+//				if(mysqli_num_rows($res) == 0){
+//
+//					//echo "Using archive fallback.\n";
+//					// ATTEMPT ARCHIVE TABLE?
+//					$res = query("SELECT * FROM `vicidial_agent_log_archive` ".
+//							" WHERE `user` LIKE '".mysqli_real_escape_string($_SESSION['db'],$username)."' ".
+//							" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
+//							" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
+//							,1);
+//				}
+//			}else{
+//
+//				$res = query("SELECT * FROM `vicidial_agent_log_archive` ".
+//							" WHERE `user` LIKE '".mysqli_real_escape_string($_SESSION['db'],$username)."' ".
+//							" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
+//							" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
+//							,1);
+//			}
+
+//			$today = mktime(0,0,0);
+//
+//
+//
+//			// IF THE TIMEFRAME INCLUDES TODAY
+//			if($today >= $stime && $today <= $etime){
+//
+//				// GET DATA FROM BOTH TABLES AND COMBINE
+//
+//
+//				$res = query("SELECT * FROM `vicidial_agent_log` ".
+//						" WHERE `user` = '".mysqli_real_escape_string($_SESSION['db'],$username)."' ". // INSTEAD OF LIKE, TO APPEASE ANDREW
+//						" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
+//						" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
+//						,1);
+//
+//				// ADD THIS SHIT REAL QUICK, THEN QUERY THE ARCHIVE TABLE FOR THE REST?
+//				while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+//
+//					$t_time += ($row['pause_sec'] + $row['talk_sec'] + $row['dead_sec'] + $row['dispo_sec'] + $row['wait_sec']);
+//
+//					$t_pause += $row['pause_sec'];
+//					$t_talk += $row['talk_sec'];
+//					$t_dead += $row['dead_sec'];
+//
+//
+//					$t_call_count++;
+//				}
+//
+//
+//				$res = query("SELECT * FROM `vicidial_agent_log_archive` ".
+//						" WHERE `user` = '".mysqli_real_escape_string($_SESSION['db'],$username)."' ". // INSTEAD OF LIKE, TO APPEASE ANDREW
+//						" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
+//						" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
+//						,1);
+//
+//
+//			// ANYTHING ELSE BUT TODAY
+//			}else{
+//
+//
+//
+//				// ATTEMPT ARCHIVE TABLE?
+//				$res = query("SELECT * FROM `vicidial_agent_log_archive` ".
+//						" WHERE `user` = '".mysqli_real_escape_string($_SESSION['db'],$username)."' ". // INSTEAD OF LIKE, TO APPEASE ANDREW
+//						" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
+//						" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
+//						,1);
+//
+//			}
 
                 $sql = "SELECT * FROM `vicidial_agent_log_archive` " . " WHERE `user` = '" . mysqli_real_escape_string($_SESSION['db'], $username) . "' " .
 
@@ -991,19 +1081,12 @@
         function makeReport() {
             $timeOptionMode = (isset($_REQUEST['timeOptions']) ? intval($_REQUEST['timeOptions']) : 1);
             if (isset($_POST['generate_report'])) {
-                switch ($timeOptionMode) {
-                    case '1' :
-                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 00:00:00");
-                        $timestamp2 = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 23:59:59");
-                        break;
-                    case '2' :
-                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 00:00:00");
-                        $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " 23:59:59");
-                        break;
-                    case '3' :
-                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['strt_time_hour'] . ":" . $_REQUEST['strt_time_min'] . $_REQUEST['strt_time_timemode']);
-                        $timestamp2 = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['end_time_hour'] . ":" . $_REQUEST['end_time_min'] . $_REQUEST['end_time_timemode']);
-                        break;
+                if($_REQUEST['timeFilter']){
+                    $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
+                    $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
+                }else{
+                    $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." 00:00:00");
+                    $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." 23:59:59");
                 }
             } else {
                 $timestamp = mktime(0, 0, 0);
@@ -1025,111 +1108,43 @@
                         </tr>
                         <tr>
                             <td colspan="2">
-                                <script>
+                                <script>                    <script>
                                     $(function () {
                                         let timeFields = $('#startTimeFilter, #endTimeFilter');
                                         let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
-                                        let singleDateMode =
-                                            '<th>Date :</th>\n' +
-                                            '<td>\n' +
-                                            '<?php echo makeTimebar("strt_date_", 1, NULL, false, $timestamp); ?>\n' +
-                                            '<input type="hidden" name="timeFilter" id="timeFilter" value="off" />' +
-                                            '</td>\n';
-                                        let dateRangeMode1 =
-                                            '<th>Date Start :</th>\n' +
-                                            '<td>\n' +
-                                            '<?php echo makeTimebar("strt_date_", 1, NULL, false, $timestamp); ?>\n' +
-                                            '<input type="hidden" name="timeFilter" id="timeFilter" value="off" />' +
-                                            '</td>\n';
-                                        let dateRangeMode2 =
-                                            '<th>Date End :</th>\n' +
-                                            '<td>\n' +
-                                            '<?php echo makeTimebar("end_date_", 1, NULL, false, $timestamp2); ?>\n' +
-                                            '</td>\n';
-                                        let dateTimeRangeMode1 =
-                                            '<th>Date :</th>\n' +
-                                            '<td>\n' +
-                                            '<?php echo makeTimebar("strt_date_", 1, NULL, false, $timestamp); ?>\n' +
-                                            '</td>\n';
-                                        let dateTimeRangeMode2 =
-                                            '<th>Start Time :</th>\n' +
-                                            '<td>\n' +
-                                            '<?php echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?>\n' +
-                                            '</td>\n';
-                                        let dateTimeRangeMode3 =
-                                            '<th>End Time :</th>\n' +
-                                            '<td>\n' +
-                                            '<?php echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?>\n' +
-                                            '<input type="hidden" name="timeFilter" id="timeFilter" value="on" />\n' +
-                                            '</td>\n';
-
-                                        function changeDateFilters(t) {
-                                            //console.log('Changing date/time mode : ' + t);
-                                            switch (t) {
-                                                case '1' :
-                                                    $('#timeFilterModeR1').empty().html(singleDateMode);
-                                                    $('#timeFilterModeR2').empty();
-                                                    $('#timeFilterModeR3').empty();
-                                                    $('#shiftHours').show();
-                                                    break;
-                                                default :
-                                                case '2' :
-                                                    $('#timeFilterModeR1').empty().html(dateRangeMode1);
-                                                    $('#timeFilterModeR2').empty().html(dateRangeMode2);
-                                                    $('#timeFilterModeR3').empty();
-                                                    $('#shiftHours').show();
-                                                    break;
-                                                case '3' :
-                                                    $('#timeFilterModeR1').empty().html(dateTimeRangeMode1);
-                                                    $('#timeFilterModeR2').empty().html(dateTimeRangeMode2);
-                                                    $('#timeFilterModeR3').empty().html(dateTimeRangeMode3);
-                                                    $('#shiftHours').hide();
-                                                    break;
-                                            }
-                                        }
-
                                         if (retainTime) {
                                             $(timeFields).show();
                                             $('#timeFilter').prop('checked', true);
-                                            $('#shift_hours').val(null);
-                                            $('#shiftHours').hide();
                                         } else {
                                             $(timeFields).hide();
                                             $('#timeFilter').prop('checked', false);
-                                            $('#shiftHours').show();
                                         }
                                         $('#timeFilter').on('click', function () {
                                             $(timeFields).toggle();
-                                            $('#shiftHours').toggle();
                                         });
-                                        $('#timeOptions').on('change', function () {
-                                            let newMode = $('#timeOptions option:selected').val();
-                                            changeDateFilters(newMode);
-                                        }).change();
                                     });
                                 </script>
                                 <table border="0" id="filterTable">
                                     <tr>
-                                        <th>Date Mode :</th>
+                                        <th>Date Start:</th>
                                         <td>
-                                            <div class="lefty" id="timeOptions">
-                                                <select id="timeOptions" name="timeOptions">
-                                                    <option value="1" <? echo ($timeOptionMode == 1) ? ' selected' : '' ?>>
-                                                        Single Date
-                                                    </option>
-                                                    <option value="2" <? echo ($timeOptionMode == 2) ? ' selected' : '' ?>>
-                                                        Date Range
-                                                    </option>
-                                                    <option value="3" <? echo ($timeOptionMode == 3) ? ' selected' : '' ?>>
-                                                        Date w/Time Range
-                                                    </option>
-                                                </select>
-                                            </div>
+                                            <?php  echo makeTimebar("strt_date_", 1, null, false, $timestamp); ?>
+                                            <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php  echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?></div>
                                         </td>
                                     </tr>
-                                    <tr id="timeFilterModeR1"></tr>
-                                    <tr id="timeFilterModeR2"></tr>
-                                    <tr id="timeFilterModeR3"></tr>
+                                    <tr>
+                                        <th>Date End:</th>
+                                        <td>
+                                            <?php echo makeTimebar("end_date_", 1, null, false, $timestamp2); ?>
+                                            <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php  echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>Use Time?</th>
+                                        <td>
+                                            <input type="checkbox" name="timeFilter" id="timeFilter">
+                                        </td>
+                                    </tr>
                                     <tr id="shiftHours">
                                         <th>Shift Hours :</th>
                                         <td><?

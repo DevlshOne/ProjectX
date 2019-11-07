@@ -9,283 +9,283 @@ $_SESSION['sales_analysis'] = new SalesAnalysis;
 
 
 class AgentInfo{
-	
+
 	var $username;
 	var $cluster_array;
-	
-	
+
+
 	function AgentInfo($user, $cluster_id){
-		
+
 		$this->username = strtoupper($user);
 		$this->cluster_array = array(0 => $cluster_id );
-		
+
 	}
-	
+
 	function findCluster($cluster_id){
-		
+
 		foreach($this->cluster_array as $cid){
-			
+
 			if($cid == $cluster_id) return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	function addClusterID($cluster_id){
-		
+
 		$this->cluster_array[] = $cluster_id;
-		
+
 	}
 }
 
 
 
 class SalesAnalysis{
-	
-	
+
+
 	function SalesAnalysis(){
-		
-		
+
+
 		## REQURES DB CONNECTION!
 		$this->handlePOST();
 	}
-	
-	
+
+
 	function handlePOST(){
-		
+
 		//print_r($_SESSION['cached_data']);
 	}
-	
+
 	function handleFLOW(){
 		if(!checkAccess('sales_analysis')){
-			
-			
+
+
 			accessDenied("Sales Analysis");
-			
+
 			return;
-			
+
 		}else{
-			
+
 			$this->makeReport();
-			
+
 		}
-		
+
 	}
-	
-	
+
+
 	function findAgent($agent_array, $user){
 		$user = strtoupper($user);
 		foreach($agent_array as $idx=>$agentobj){
 			if($agentobj->username == $user)return $idx;
 		}
-		
+
 		return -1;
 	}
-	
-	
-	
-	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null, $vici_campaign_id=''){
-		
+
+
+
+	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null){
+
 		$campaign_id = 0;
 		//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_id)<br />\n";
-		
+
 		connectPXDB();
-		
+
 		$sql_campaign = "";
 		$sql_cluster = "";
 		$sql_user_group = "";
 		$sql_ignore_group = "";
 		$ofcsql = "";
-		
+
 		if(php_sapi_name() != "cli") {
-			
+
 			// Not in cli-mode
-			
-			
-			
-			
+
+
+
+
 			// OFFICE RESTRICTION/SEARCH ABILITY
 			if(
 					($_SESSION['user']['priv'] < 5) &&
 					($_SESSION['user']['allow_all_offices'] != 'yes')
 					){
-						
+
 						$ofcsql = " AND `office` IN(";
 						$x=0;
 						foreach($_SESSION['assigned_offices'] as $ofc){
-							
+
 							if($x++ > 0)$ofcsql.= ',';
-							
+
 							$ofcsql.= intval($ofc);
 						}
-						
+
 						$ofcsql.= ") ";
-						
+
 			}else{
-				
+
 			}
-			
+
 		}
-		
-		
+
+
 		/**
 		 * Campaign SQL Generation
 		 */
 		$sql_campaign = '';
 		if($campaign_code){
-			
+
 			if(is_array($campaign_code)){
-				
+
 				$sql_campaign = " AND (";
-				
+
 				$x=0;
 				foreach($campaign_code as $code){
-					
-					list($campaign_id) = $_SESSION['dbapi']->ROqueryROW("SELECT id FROM campaigns WHERE vici_campaign_id='".mysqli_real_escape_string($_SESSION['db'],$code)."' ");
-					
+
+					list($campaign_id) = $_SESSION['dbapi']->ROqueryROW("SELECT `id` FROM `campaigns` WHERE `vici_campaign_id`='".mysqli_real_escape_string($_SESSION['db'],$code)."' ");
+
 					if($x++ > 0) $sql_campaign .= " OR ";
-					
+
 					$sql_campaign .= " campaign_id='".$campaign_id."' ";
 				}
-				
-				
-				
+
+
+
 				$sql_campaign.= ") ";
-				
+
 				// AVOID SQL ERRORS WITH EMPTY QUERY " AND () "
 				if($x == 0){
 					$sql_campaign = "";
 				}
-				
+
 				// SINGULAR
 			}else{
-				
+
 				list($campaign_id) = $_SESSION['dbapi']->ROqueryROW("SELECT id FROM campaigns WHERE vici_campaign_id='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ");
-				
+
 				$sql_campaign = " AND campaign_id='".$campaign_id."' ";
-				
+
 			}
-			
+
 		}
-		
-		
+
+
 		if($vici_campaign_id){
-			
+
 			$sql_campaign .= " AND campaign_code='".mysqli_real_escape_string($_SESSION['db'],$vici_campaign_id)."' ";
-			
+
 		}
-		
-		
+
+
 		if($agent_cluster_id > -1){
-			
-			
+
+
 			if(is_array($agent_cluster_id)){
-				
+
 				$sql_cluster = " AND ( ";
 				$x=0;
 				foreach($agent_cluster_id as $cidx){
-					
+
 					if($x++ > 0)$sql_cluster .= " OR ";
-					
+
 					$sql_cluster .= " agent_cluster_id='".$_SESSION['site_config']['db'][$cidx]['cluster_id']."' ";
-					
+
 				}
-				
+
 				$sql_cluster .= ") ";
-				
-				
+
+
 				if($x == 0){
 					$sql_cluster .= "";
 				}
-				
+
 			}else{
-				
+
 				$sql_cluster = " AND agent_cluster_id='".$_SESSION['site_config']['db'][$agent_cluster_id]['cluster_id']."' ";
-				
+
 			}
-			
+
 		}
-		
-		
+
+
 		if($user_group){
-			
+
 			//print_r($user_group);
-			
+
 			if(is_array($user_group)){
-				
+
 				$x=0;
-				
+
 				if(count($user_group) > 0 && trim($user_group[0]) != ''){
-					
+
 					$sql_user_group = " AND ( ";
-					
-					
+
+
 					foreach($user_group as $group){
-						
+
 						if($x++ > 0)$sql_user_group .= " OR ";
-						
+
 						$sql_user_group .= " call_group='".mysqli_real_escape_string($_SESSION['db'],$group)."' ";
-						
+
 					}
-					
+
 					$sql_user_group .= ")";
-					
-					
+
+
 				}
-				
+
 				if($x == 0){
 					$sql_user_group = "";
 				}
-				
+
 			}else{
-				
+
 				$sql_user_group = " AND call_group='".mysqli_real_escape_string($_SESSION['db'],$user_group)."' ";
-				
+
 			}
 		}
-		
-		
-		
+
+
+
 		if($ignore_group){
-			
-			
+
+
 			if(is_array($ignore_group)){
 				$x=0;
-				
+
 				if(count($ignore_group) > 0 && trim($ignore_group[0]) != ''){
-					
+
 					$sql_ignore_group = " AND ( ";
-					
+
 					foreach($ignore_group as $group){
-						
+
 						if($x++ > 0)$sql_ignore_group .= " AND ";
-						
+
 						$sql_ignore_group .= " call_group != '".mysqli_real_escape_string($_SESSION['db'],$group)."' ";
-						
+
 					}
-					
+
 					$sql_ignore_group .= ")";
-					
+
 				}
-				
-				
-				
+
+
+
 				if($x == 0){
 					$sql_ignore_group = "";
 				}
-				
+
 			}else{
-				
+
 				$sql_ignore_group = " AND call_group != '".mysqli_real_escape_string($_SESSION['db'],$ignore_group)."' ";
-				
+
 			}
 		}
-		
+
 		$where = " WHERE sale_time BETWEEN '$stime' AND '$etime' ".
-				
+
 				// EXCLUDE ANYTHING ROUSTING RELATED
 		" AND `is_paid` != 'roustedcc' ".
-		
+
 		//	" AND `account_id`='".$_SESSION['account']['id']."' ".
 		$sql_campaign.
 		$sql_cluster.
@@ -294,33 +294,33 @@ class SalesAnalysis{
 		$ofcsql.
 		//							(($verifier_cluster_id > -1)?" AND verifier_cluster_id='".$_SESSION['site_config']['db'][$verifier_cluster_id]['cluster_id']."' ":"").
 		"";
-		
+
 		//echo $where;
-		
-		
-		
-		
-		
-		
-		
+
+
+
+
+
+
+
 		$user_group_array = array();
-		
-		
-		
-		
+
+
+
+
 		// DATA ARRAY TO RETURN!
 		$output_array = array();
-		
+
 		$agent_array = array();
 		$cluster_array=array();
-		
-		
+
+
 		$sql = "SELECT DISTINCT(agent_username), agent_cluster_id FROM transfers ".
 				" WHERE xfer_time BETWEEN '$stime' AND '$etime' AND agent_cluster_id > 0".
-				
+
 				// EXCLUDE ANYTHING ROUSTING RELATED
 		" AND verifier_dispo != 'SALECC' ".
-		
+
 		//" AND `account_id`='".$_SESSION['account']['id']."' ".
 		$sql_cluster.
 		$sql_campaign.
@@ -332,20 +332,20 @@ class SalesAnalysis{
 		$res = $_SESSION['dbapi']->ROquery($sql);
 		//$res = query("SELECT DISTINCT(agent_username),agent_cluster_id FROM sales ".$where." ORDER BY agent_username ASC");
 		while($row = mysqli_fetch_row($res)){
-			
+
 			$tmp =  strtoupper($row[0]);
-			
-			
+
+
 			// USER GROUP FILTER
 			// IGNORE GROUP FILTER
-			
-			
+
+
 			if($combine_users){
-				
+
 				// JPW vs JPW2
 				// SKIPS THE "2" users (IF YOU CAN FIND THERE MAIN USER
 				if(endsWith($tmp, "2")){
-					
+
 					//					if($this->findAgent($agent_array, substr($tmp,0,strlen($tmp)-1) ) > -1   ){
 					//
 					//						echo "SKIPPING $tmp : ".substr($tmp,0,strlen($tmp)-1)."<br />\n";
@@ -353,56 +353,56 @@ class SalesAnalysis{
 					//						continue;
 					//					}else{
 					$tmp = substr($tmp,0,strlen($tmp)-1);
-					
+
 					//						echo "TRIMMING $tmp<br />\n";
 					//					}
 				}
-				
+
 			}
-			
-			
-			
+
+
+
 			if($ignore_arr != null && is_array($ignore_arr)){
-				
+
 				// SKIPP THEM!!!!
 				if(in_array($tmp, $ignore_arr)){
 					//						echo "Skipping user on ignore list.\n";
-					
+
 					continue;
 				}
-				
-				
+
+
 			}
-			
-			
+
+
 			$idx = $this->findAgent($agent_array, $tmp);
-			
+
 			if($idx < 0){
-				
+
 				//				echo "Pushing user $tmp ".$row[1]."<br />\n";
-				
+
 				$agent_array[] = new AgentInfo($tmp, $row[1]);
-				
+
 			}else{
-				
+
 				// FIND BY CLUSTER
 				// SKIP IF CLUSTER ALREADY EXISTS
 				if(!$agent_array[$idx]->findCluster($row[1]) ){
-					
+
 					//					echo "Pushing cluster ".$row[1]."<br />\n";
 					$agent_array[$idx]->addClusterID($row[1]);
-					
+
 				}
 			}
-			
+
 		}
-		
-		
+
+
 		//		print_r($agent_array);
 		//		exit;
-		
-		
-		
+
+
+
 		// INIT TOTALS VARIABLES
 		$total_paid_hrs = 0;
 		$total_active_hrs = 0;
@@ -411,26 +411,26 @@ class SalesAnalysis{
 		$total_xfer = 0;
 		$total_sale_cnt = 0;
 		$total_amount = 0;
-		
+
 		$total_paid_sale_cnt = 0;
 		$total_paid_amount = 0;
-		
+
 		$total_closing = 0;
 		$total_conversion = 0;
 		$total_yes2all = 00;
 		$total_avg = 0;
 		$total_paid_hr = 0;
 		$total_wrkd_hr = 0;
-		
-		
+
+
 		$total_AnswerMachines = 0;
-		
+
 		$ox = 0;
-		
+
 		//print_r($agent_array);
-		
+
 		foreach($agent_array as $idx=>$agentobj){
-			
+
 			$running_amount = 0;
 			$running_salecnt= 0;
 			$running_num_NI = 0;
@@ -438,16 +438,16 @@ class SalesAnalysis{
 			$running_activity_paid = 0;
 			$running_activity_wrkd = 0;
 			$running_activity_num_calls = 0;
-			
+
 			$running_paid_amount = 0;
 			$running_paid_salecnt = 0;
-			
-			
+
+
 			foreach($agentobj->cluster_array as $cluster_id){
-				
+
 				$sql = "SELECT SUM(amount) AS amount,count(id) AS salecount FROM sales ".
 						$where.
-						
+
 						(($combine_users)?
 								// GET USER AND USER2
 								" AND (agent_username IN ('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') ) "
@@ -456,26 +456,26 @@ class SalesAnalysis{
 								" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
 						).
 						" AND agent_cluster_id='$cluster_id' ";
-						
+
 						//	echo "\n".$sql."\n";
 						//if(stripos($agentobj->username,"2")> -1){
 						//
 						//	echo "<br />POOOP(".$agentobj->username.")!<br />\n";
 						//}
-				
+
 				$paidsql = $sql." AND is_paid='yes' ";
 				$unpaidsql = $sql." AND is_paid='no' ";
-				
+
 				// GET THE UNPAID DEALS
 				list($amount,$salecnt) = $_SESSION['dbapi']->ROqueryROW($unpaidsql);
-				
-				
+
+
 				$running_amount += $amount;
 				$running_salecnt += $salecnt;
-				
+
 				// GET THE PAID DEALS
 				list($amount,$salecnt) = $_SESSION['dbapi']->ROqueryROW($paidsql);
-				
+
 				// ADDING TO THE MAIN NUMBERS
 				$running_amount += $amount;
 				$running_salecnt += $salecnt;
@@ -487,19 +487,19 @@ class SalesAnalysis{
 				//				$row = querySQL($testsql);
 				//
 				//				print_r($row);
-								
+
 			}
-			
-			
+
+
 			//echo $amount.' '.$salecnt."\n";
-			
+
 			// TOTAL CALLZ!
 			$sql = "SELECT COUNT(id) FROM lead_tracking ".
 					" WHERE `time` BETWEEN '$stime' AND '$etime' ".
-					
+
 					// EXCLUDE ANYTHING ROUSTING RELATED
 			" AND dispo != 'SALECC' ".
-			
+
 			//	" AND `account_id`='".$_SESSION['account']['id']."' ".
 			" AND lead_id > 0 ".
 			(($combine_users)?
@@ -511,22 +511,22 @@ class SalesAnalysis{
 			).
 			$ofcsql.
 			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
-			
+
 			list($num_total_calls_px) = $_SESSION['dbapi']->ROqueryROW($sql);
-			
-			
-			
+
+
+
 			$sql = "SELECT COUNT(id) FROM lead_tracking ".
-					
+
 					//									" FORCE INDEX (time) ".
 			//" USE INDEX (time) ".
-			
+
 			" WHERE `time` BETWEEN '$stime' AND '$etime' ".
 			//	" AND `account_id`='".$_SESSION['account']['id']."' ".
-			
+
 			// EXCLUDE ANYTHING ROUSTING RELATED
 			" AND dispo != 'SALECC' ".
-			
+
 			" AND lead_id > 0 ".
 			(($combine_users)?
 					// GET USER AND USER2
@@ -538,29 +538,29 @@ class SalesAnalysis{
 			" AND (`dispo`='NI' OR `dispo`='ni') ".
 			$ofcsql.
 			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
-			
+
 			//echo "\n".$sql."\n";
-			
-			
+
+
 			// NOT INTERESTED STATS
 			list($num_NI) = $_SESSION['dbapi']->ROqueryROW($sql
 					);
-			
-			
-			
+
+
+
 			// ANSWERING MACHINE STATS
 			$sql = "SELECT COUNT(id) FROM lead_tracking ".
-					
+
 					//									" FORCE INDEX (time) ".
 			//" USE INDEX (time) ".
-			
+
 			" WHERE `time` BETWEEN '$stime' AND '$etime' ".
 			//	" AND `account_id`='".$_SESSION['account']['id']."' ".
-			
-			
+
+
 			// EXCLUDE ANYTHING ROUSTING RELATED
 			" AND dispo != 'SALECC' ".
-			
+
 			" AND lead_id > 0 ".
 			(($combine_users)?
 					// GET USER AND USER2
@@ -575,8 +575,8 @@ class SalesAnalysis{
 			//echo "\n".$sql."\n";
 			// ANSWERING MACHINE STATS
 			list($num_AnswerMachines) = $_SESSION['dbapi']->ROqueryROW($sql);
-			
-			
+
+
 			$sql = "SELECT COUNT(id) FROM transfers ".
 					" WHERE xfer_time BETWEEN '$stime' AND '$etime' ".
 					//	" AND `account_id`='".$_SESSION['account']['id']."' ".
@@ -590,23 +590,23 @@ class SalesAnalysis{
 					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
 					).
 					(($campaign_id > 0)?" AND campaign_id='".intval($campaign_id)."' ":"");
-					
-					
-					
+
+
+
 					//			echo $sql."<br />\n";
-					
+
 					list($num_XFER) = $_SESSION['dbapi']->ROqueryROW($sql
 							);
-					
-					
-					
+
+
+
 					$activity_paid = 0;
 					$activity_wrkd = 0;
 					$activity_num_calls = 0;
-					
-					
+
+
 					if($combine_users){
-						
+
 						list($activity_paid,$activity_wrkd,$activity_num_calls)  =
 						$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
 								"WHERE `time_started` BETWEEN '$stime' AND '$etime' ".
@@ -614,9 +614,9 @@ class SalesAnalysis{
 								" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."' "
 								//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
 								//(($campaign_code)?" AND campaign='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ":"")
-								
+
 								);
-						
+
 						//" AND (username='".mysql_real_escape_string($agent)."' OR username='".mysql_real_escape_string($agent)."2') "
 						list($activity_paid2,$activity_wrkd2,$activity_num_calls2)  =
 						$_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log ".
@@ -625,14 +625,14 @@ class SalesAnalysis{
 								" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."2' "
 								//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
 								//(($campaign_code)?" AND campaign='".mysqli_real_escape_string($campaign_code)."' ":"")
-								
+
 								);
-						
+
 						// PER STEVE, DONT COMBINE HOURS WORKED
 						//$activity_paid += $activity_paid2;
 						//$activity_wrkd += $activity_wrkd2;
 						$activity_num_calls += $activity_num_calls2;
-						
+
 					}else{
 						// GET AGENT ACTIVITY TIMER
 						list($activity_paid,$activity_wrkd,$activity_num_calls)  =
@@ -642,70 +642,70 @@ class SalesAnalysis{
 								" AND `username`='".mysqli_real_escape_string($_SESSION['db'],strtolower($agentobj->username))."' ".
 								//" AND `vici_cluster_id`='".$cluster_array[$idx]."' ".
 								(($campaign_code)?" AND campaign='".mysqli_real_escape_string($_SESSION['db'],$campaign_code)."' ":"")
-								
+
 								);
 					}
-					
-					
-					
-					
-					
+
+
+
+
+
 					/// $activity_num_calls
-					
-					
-					
-					
-					
-					
+
+
+
+
+
+
 					$paid_hrs = $avtivity_paid = $activity_paid/60;
 					$active_hrs= $activity_worked = $activity_wrkd/60;
-					
-					
+
+
 					$closing_percent = ($num_XFER <= 0)?0:(($running_salecnt / $num_XFER) * 100);
-					
+
 					$conversion_percent = (($num_NI + $running_salecnt) <= 0)?0: (($running_salecnt / ($num_NI + $running_salecnt)) * 100);
-					
-					
+
+
 					$avg_sale = ($running_salecnt <= 0)?0:($running_amount / $running_salecnt);
-					
-					
+
+
 					$yes2all = ($activity_num_calls <= 0)?0: ($running_salecnt / $activity_num_calls) * 100;
-					
+
 					$paid_hr = ($paid_hrs <= 0)?0:($running_amount / $paid_hrs);
-					
+
 					$wrkd_hr = ($active_hrs <= 0)?0:($running_amount / $active_hrs);
-					
-					
-					
-					
+
+
+
+
 					$contacts_hr = ($paid_hrs <= 0)?0:(($num_NI + $num_XFER)/$avtivity_paid);
 					$calls_hr = ($paid_hrs <= 0)?0:(($activity_num_calls)/$avtivity_paid);
-					
-					
+
+
 					$worked_contacts_hr = ($activity_worked <= 0)?0:(($num_NI + $num_XFER)/$activity_worked);
 					$worked_calls_hr = ($activity_worked <= 0)?0:(($activity_num_calls)/$activity_worked);
-					
-					
+
+
 					$output_array[$ox++] = array(
-							
+
 							'agent_username'=>$agentobj->username,
 							'cluster_id'=>$agentobj->cluster_array,
-							
+
 							'activity_paid'=>$avtivity_paid,
 							'activity_wrkd'=>$activity_worked,
 							'calls_today'=>$num_total_calls_px, //$activity_num_calls,
-							
+
 							'num_NI'		=> $num_NI,
 							'num_XFER'	=> $num_XFER,
-							
+
 							'num_AnswerMachines' => $num_AnswerMachines,
-							
+
 							'contacts_per_paid_hour' => $contacts_hr,
 							'calls_per_paid_hour' => $calls_hr,
-							
+
 							'contacts_per_worked_hour' => $worked_contacts_hr,
 							'calls_per_worked_hour' => $worked_calls_hr,
-							
+
 							'sale_cnt'		=> $running_salecnt,
 							'closing_percent'=> $closing_percent,
 							'conversion_percent'=>$conversion_percent,
@@ -714,52 +714,52 @@ class SalesAnalysis{
 							'paid_sales_total'	=> $running_paid_amount,
 							'paid_sale_cnt'		=> $running_paid_salecnt,
 							'avg_sale'			=> $avg_sale,
-							
+
 							'paid_hr'=>$paid_hr,
 							'wrkd_hr'=>$wrkd_hr,
 					);
-					
-					
-					
-					
-					
-					
-					
+
+
+
+
+
+
+
 					// TOTALS ADDUP
 					$total_paid_hrs += $paid_hrs;
 					$total_active_hrs += $active_hrs;
 					$total_calls += $activity_num_calls;
 					$total_ni += $num_NI;
 					$total_xfer += $num_XFER;
-					
+
 					$total_AnswerMachines += $num_AnswerMachines;
-					
+
 					$total_sale_cnt += $running_salecnt;
 					$total_amount += $running_amount;
-					
+
 					$total_paid_sale_cnt += $running_paid_salecnt;
 					$total_paid_amount += $running_paid_amount;
-											
+
 		}
-		
-		
+
+
 		//print_r($output_array);
-		
+
 		if(count($output_array) > 0){
-			
+
 			$total_closing = ($total_xfer <= 0)?0: (($total_sale_cnt / $total_xfer) * 100);
-			
+
 			$total_conversion = (($total_ni + $total_sale_cnt) <= 0)?0: (($total_sale_cnt / ($total_ni + $total_sale_cnt)) * 100);
-			
+
 			$total_yes2all = ($total_calls <= 0)?0:(($total_sale_cnt / $total_calls) * 100);
-			
+
 			$total_avg = ($total_sale_cnt <= 0)?0:($total_amount / $total_sale_cnt);
-			
+
 			$total_paid_hr = ($total_paid_hrs <= 0)?0:($total_amount / $total_paid_hrs);
-			
+
 			$total_wrkd_hr = ($total_active_hrs <= 0)?0:($total_amount / $total_active_hrs);
-			
-			
+
+
 			////
 			$total_contacts_hr = ($total_paid_hrs <= 0)?0:(($total_ni + $total_xfer)/$total_paid_hrs);
 			$total_calls_hr = ($total_paid_hrs <= 0)?0:(($total_calls)/$total_paid_hrs);
@@ -768,30 +768,30 @@ class SalesAnalysis{
 			$total_worked_calls_hr = ($total_active_hrs <= 0)?0:(($total_calls)/$total_active_hrs);
 			////
 		}
-		
+
 		$totals = array(
-				
+
 				// ADDED IN THE LOOP
 				'total_activity_paid_hrs' => $total_paid_hrs,
 				'total_activity_wrkd_hrs' => $total_active_hrs,
 				'total_calls' => $total_calls,
 				'total_NI' => $total_ni,
 				'total_XFER' => $total_xfer,
-				
+
 				'total_AnswerMachines' => $total_AnswerMachines,
-				
+
 				'total_contacts_per_paid_hour' => $total_contacts_hr,
 				'total_calls_per_paid_hour' => $total_calls_hr,
-				
+
 				'total_contacts_per_worked_hour' => $total_worked_contacts_hr,
 				'total_calls_per_worked_hour' => $total_worked_calls_hr,
-				
+
 				'total_sale_cnt' => $total_sale_cnt,
 				'total_sales' => $total_amount,
-				
+
 				'total_paid_sale_cnt' => $total_paid_sale_cnt,
 				'total_paid_sales' => $total_paid_amount,
-				
+
 				// MATH GENERATED FROM ABOVE DATA
 				'total_closing' => $total_closing,
 				'total_conversion' => $total_conversion,
@@ -800,55 +800,42 @@ class SalesAnalysis{
 				'total_paid_hr' => $total_paid_hr,
 				'total_wrkd_hr' => $total_wrkd_hr,
 		);
-		
+
 		//print_r($totals);
-		
-		
+
+
 		// SORTING MOTHERFUCKER
 		uasort($output_array, 'paidSorter');//($a, $b)
-		
-		
+
+
 		return array($output_array, $totals);
 	}
-	
-	
-	
-	
-	
-	function makeReport(){
-		
-		
-		
-		//echo $this->makeHTMLReport('1430377200', '1430463599', 'BCSFC', -1, 1,null , array("SYSTEM-TRNG-SOUTH", "SYSTEM-TRNG","SYS-TRNG-SOUTH-AM")) ;
-		
-		if(isset($_POST['generate_report'])){
-			
-// 			$timestamp = strtotime($_REQUEST['stime_month']."/".$_REQUEST['stime_day']."/".$_REQUEST['stime_year']);
-// 			$timestamp2 = strtotime($_REQUEST['etime_month']."/".$_REQUEST['etime_day']."/".$_REQUEST['etime_year']);
 
-			
+
+
+
+
+	function makeReport(){
+
+
+
+		//echo $this->makeHTMLReport('1430377200', '1430463599', 'BCSFC', -1, 1,null , array("SYSTEM-TRNG-SOUTH", "SYSTEM-TRNG","SYS-TRNG-SOUTH-AM")) ;
+
+		if(isset($_POST['generate_report'])){
 			if($_REQUEST['timeFilter']){
-				
-			
 				$timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
 				$timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
 			}else{
-				
 				$timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." 00:00:00");
 				$timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." 23:59:59");
 			}
-			
-			
 		}else{
-			
 			$timestamp = mktime(0,0,0);
 			$timestamp2 = mktime(23,59,59);
-			
-			
 		}
-		
-		
-		
+
+
+
 		if(!isset($_REQUEST['no_nav'])){
 			?><form id="saleanal_report" method="POST" action="<?=$_SERVER['PHP_SELF']?>?area=sales_analysis&no_script=1" onsubmit="return genReport(this, 'sales')">
 
@@ -865,25 +852,23 @@ class SalesAnalysis{
 			</tr>
 			<tr>
 				<td colspan="2">
-
-<script>
-$(function() {
-  let timeFields = $('#startTimeFilter, #endTimeFilter');
-  let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
-  if(retainTime) {
-    $(timeFields).show();
-    $('#timeFilter').prop('checked', true);
-  } else {
-  $(timeFields).hide();
-      $('#timeFilter').prop('checked', false);
-}
-  $('#timeFilter').on('click', function() {
-    $(timeFields).toggle();
-  });
-});
-</script>
-
-					<table border="0">
+                    <script>
+                        $(function () {
+                            let timeFields = $('#startTimeFilter, #endTimeFilter');
+                            let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
+                            if (retainTime) {
+                                $(timeFields).show();
+                                $('#timeFilter').prop('checked', true);
+                            } else {
+                                $(timeFields).hide();
+                                $('#timeFilter').prop('checked', false);
+                            }
+                            $('#timeFilter').on('click', function () {
+                                $(timeFields).toggle();
+                            });
+                        });
+                    </script>
+                    <table border="0">
 					<tr>
 						<th>Date Start:</th>
 						<td>
@@ -929,7 +914,7 @@ $(function() {
 
                             echo $this->makeViciCampaignDD('vici_campaign_code', $_REQUEST['vici_campaign_code'], '', ""); ?></td>
 					</tr>
-					
+
 					<tr>
 						<th>VICI Campaign ID:</th>
 						<td><input type="text" size="8" name="vici_campaign_id" value="<?=htmlentities($_REQUEST['vici_campaign_id'])?>" /></td>
@@ -952,7 +937,7 @@ $(function() {
 					</tr>
 					<tr>
 						<th height="30">Ignore Users:<br />(<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
-	
+
 						<td>
 							<input type="text" size="30" name="ignore_users_list" id="ignore_users_list" value="<?=htmlentities($_REQUEST['ignore_users_list'])?>" >
 						</td>
@@ -965,15 +950,15 @@ $(function() {
 							Combine Left/Right Users
 						</td>
 					</tr>
-					
-					
+
+
 					<input type="hidden" name="include_answer_machines" value="1" /><?
-					
+
 					/***
 					<tr>
 						<td>&nbsp;</td>
 						<td>
-						
+
 							<input type="checkbox" name="include_answer_machines" value="1" <?=(!isset($_REQUEST['include_answer_machines']) || $_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
 							Include Answering Machine stats
 						</td>
@@ -1020,7 +1005,7 @@ $(function() {
 
 
             ## TIME
-            
+
             //$timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
             //$timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
             /*
@@ -1030,10 +1015,10 @@ $(function() {
 
             $stime = $timestamp;
             $etime = $timestamp2;
-            
+
             ## TIMEFRAMESif($_REQUEST['timeFilter']){
 //             if (!$_REQUEST['timeFilter']){
-            	
+
 //                 $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
 //                 $etime = mktime(23, 59, 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
 //                 #echo "Human Start : " . date("r", $stime) . PHP_EOL;
@@ -1061,18 +1046,18 @@ $(function() {
             $vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
 
             $vici_campaign_id = trim($_REQUEST['vici_campaign_id']);
-            
+
             $ignore_arr = preg_split("/,|;|:| /", $_REQUEST['ignore_users_list'], -1, PREG_SPLIT_NO_EMPTY);
-            
-            
+
+
 //             if($_REQUEST['include_answer_machines']){
                 $this->skip_answeringmachines = false;
 //             }else{
 //                 $this->skip_answeringmachines = true;
 //             }
-            
-            
-            
+
+
+
             ## GENERATE AND DISPLAY REPORT
             $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code,$ignore_arr,$vici_campaign_id);
 
@@ -1117,12 +1102,12 @@ $(function() {
 
 
     function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users,$user_group, $ignore_group, $vici_campaign_code='', $ignore_arr= null, $vici_campaign_id = ''){
-    	
+
     	echo '<span style="font-size:9px">makeHTMLReport('."$stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code,$ignore_arr,$vici_campaign_id) called</span><br /><br />\n";
-    	
-    	
+
+
     	list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code,$ignore_arr,$vici_campaign_id);
-    	
+
         if (count($agent_data_arr) < 1) {
             return null;
         }
@@ -1190,10 +1175,10 @@ $(function() {
                 echo '<b>Ignoring Group:</b> '.$ignore_group.'<br />';
             }
         }
-        
-        
+
+
         ?></h3>
-		
+
 		<script>
 
 			function addUserToIgnore(username){
@@ -1226,11 +1211,11 @@ $(function() {
 			<th title="Total number of calls for the day">Total Calls</th>
 			<th title="Number of Calls that were NOT INTERESTED">NI</th>
 			<th title="Number of Transfers">XFERS</th>
-			<?php 
-			
+			<?php
+
 			if($this->skip_answeringmachines == false){
 			     ?><th title="Number of Answering Machine calls">A</th>
-				<th title="Percentage of calls that are Answering Machines">%ANS</th><?php 
+				<th title="Percentage of calls that are Answering Machines">%ANS</th><?php
 			}
 			?>
 			<th title="Contacts per Worked hour, and Calls per Worked hour">Con&amp;Calls/hr</th>
@@ -1284,7 +1269,7 @@ $(function() {
 				<td align="center"><?=number_format($agent_data['calls_today'])?></td>
 				<td align="center"><?=number_format($agent_data['num_NI'])?></td>
 				<td align="center"><?=number_format($agent_data['num_XFER'])?></td><?
-				
+
 				if($this->skip_answeringmachines == false){
 				    ?><td align="center"><?=number_format($agent_data['num_AnswerMachines'])?></td>
 					<?/** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/?>
@@ -1360,7 +1345,7 @@ $(function() {
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_NI'])?></th>
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_XFER'])?></th>
 			<?
-				
+
 				if($this->skip_answeringmachines == false){
 				    ?><th style="border-top:1px solid #000"><?=number_format($totals['total_AnswerMachines'])?></th>
 					<th style="border-top:1px solid #000"><?=$t_ans_percent?>%</th><?
@@ -1530,8 +1515,8 @@ $(function() {
      *
      */
     public function sendReportEmails(){
-    	
-    	
+
+
         $curtime = time();
 
         // INIT VARIABLES
@@ -1555,7 +1540,7 @@ $(function() {
         echo date("H:i:s m/d/Y")." - Starting sendReportEmails() funtime...\n";
 
         $sent_report_total = 0;
-        
+
         while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
             echo date("H:i:s m/d/Y")." - Checking REID#".$row['id']." report id:".$row['report_id']." interval:".$row['interval']." last_ran:".$row['last_ran']."\n";
 
@@ -1794,30 +1779,30 @@ $(function() {
 
                 $textdata .=	"\nReport is attached (or view email as HTML).";
                 break;
-                
-                
+
+
             case 4: // ROUSTER REPORT
-            	
-            	
+
+
             	include_once($_SESSION['site_config']['basedir'].'classes/rouster_report.inc.php');
-            	
-            	
-            	
+
+
+
             	$html = $_SESSION['rouster_report']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
             	//									            	makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = null, $combine_users = false){
-            	
-            	
+
+
             	if ($html == null) {
             		echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
             		continue 2;
             	}
-            	
+
             	$textdata = ucfirst($row['interval']).' '.$report_name."\n\n".
-              	
+
               	"Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
               	(($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
               	(($user_group)?" User Group:".$user_group."\n":'');
-              	
+
               	if (count($source_user_group) > 0) {
               		$textdata .= "Source group(s): ";
               		$z=0;
@@ -1827,11 +1812,11 @@ $(function() {
               		}
               		$textdata .= "\n";
               	}
-              	
-              	
+
+
               	$textdata .=	"\nReport is attached (or view email as HTML).";
               	break;
-              	
+
             }
             // REPORT HAS BEEN GENERATED, DO THE EMAIL SHIT HERE
 
@@ -1876,9 +1861,9 @@ $(function() {
 				echo date("H:i:s m/d/Y")." - ERROR: Mail::send() call failed sending to ".$row['email_address'];
 
 			}else{
-				
+
 				$sent_report_total++;
-				
+
 				echo date("H:i:s m/d/Y")." - Successfully emailed ".$row['email_address']." - ".$subject."\n";
 
 				// UPDATE last_ran TIME
@@ -1897,7 +1882,7 @@ $(function() {
 
 		echo date("H:i:s m/d/Y")." - Finished sendReportEmails()\n";
 
-		
+
 		return $sent_report_total;
 	}
 
