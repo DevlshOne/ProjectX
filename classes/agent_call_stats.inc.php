@@ -1,35 +1,25 @@
-<? /***************************************************************
- * Agent Call Stat Report (AKA VERIFIER CALL STATS REPORT)
- * Written By: Jonathan Will
- ***************************************************************/
+<? /** @noinspection ALL */
+    /***************************************************************
+     * Agent Call Stat Report (AKA VERIFIER CALL STATS REPORT)
+     * Written By: Jonathan Will
+     ***************************************************************/
 
     $_SESSION['agent_call_stats'] = new AgentCallStats;
 
     class AgentCallStats {
-
         var $close_percent_limit = 76;
-
         var $dead_time_limit = 120;
-
         var $time_limit = 27000; // 7.5hrs aka 7:30
-
         var $talk_lower_limit = 70;
         var $talk_upper_limit = 80;
-
         var $pause_limit = 1800;
 
         function AgentCallStats() {
-
-//		include_once("site_config.php");
-//		include_once("dbapi/dbapi.inc.php");
-//		include_once("db.inc.php");
-//		include_once('utils/db_utils.php');
             ## REQURES DB CONNECTION!
             $this->handlePOST();
         }
 
         function handlePOST() {
-
         }
 
         function handleFLOW() {
@@ -356,85 +346,6 @@
                 $t_talk = 0;
                 $t_dead = 0;
                 $t_call_count = 0;
-
-//
-//			if(!$use_archive_by_default){
-//
-//				$res = query("SELECT * FROM `vicidial_agent_log` ".
-//						" WHERE `user` LIKE '".mysqli_real_escape_string($_SESSION['db'],$username)."' ".
-//						" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
-//						" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
-//						,1);
-//
-//				if(mysqli_num_rows($res) == 0){
-//
-//					//echo "Using archive fallback.\n";
-//					// ATTEMPT ARCHIVE TABLE?
-//					$res = query("SELECT * FROM `vicidial_agent_log_archive` ".
-//							" WHERE `user` LIKE '".mysqli_real_escape_string($_SESSION['db'],$username)."' ".
-//							" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
-//							" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
-//							,1);
-//				}
-//			}else{
-//
-//				$res = query("SELECT * FROM `vicidial_agent_log_archive` ".
-//							" WHERE `user` LIKE '".mysqli_real_escape_string($_SESSION['db'],$username)."' ".
-//							" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
-//							" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
-//							,1);
-//			}
-
-//			$today = mktime(0,0,0);
-//
-//
-//
-//			// IF THE TIMEFRAME INCLUDES TODAY
-//			if($today >= $stime && $today <= $etime){
-//
-//				// GET DATA FROM BOTH TABLES AND COMBINE
-//
-//
-//				$res = query("SELECT * FROM `vicidial_agent_log` ".
-//						" WHERE `user` = '".mysqli_real_escape_string($_SESSION['db'],$username)."' ". // INSTEAD OF LIKE, TO APPEASE ANDREW
-//						" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
-//						" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
-//						,1);
-//
-//				// ADD THIS SHIT REAL QUICK, THEN QUERY THE ARCHIVE TABLE FOR THE REST?
-//				while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
-//
-//					$t_time += ($row['pause_sec'] + $row['talk_sec'] + $row['dead_sec'] + $row['dispo_sec'] + $row['wait_sec']);
-//
-//					$t_pause += $row['pause_sec'];
-//					$t_talk += $row['talk_sec'];
-//					$t_dead += $row['dead_sec'];
-//
-//
-//					$t_call_count++;
-//				}
-//
-//
-//				$res = query("SELECT * FROM `vicidial_agent_log_archive` ".
-//						" WHERE `user` = '".mysqli_real_escape_string($_SESSION['db'],$username)."' ". // INSTEAD OF LIKE, TO APPEASE ANDREW
-//						" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
-//						" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
-//						,1);
-//
-//
-//			// ANYTHING ELSE BUT TODAY
-//			}else{
-//
-//
-//
-//				// ATTEMPT ARCHIVE TABLE?
-//				$res = query("SELECT * FROM `vicidial_agent_log_archive` ".
-//						" WHERE `user` = '".mysqli_real_escape_string($_SESSION['db'],$username)."' ". // INSTEAD OF LIKE, TO APPEASE ANDREW
-//						" AND `user_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."' ".
-//						" AND `dispo_epoch` BETWEEN '$stime' AND '$etime' "
-//						,1);
-//
-//			}
 
                 $sql = "SELECT * FROM `vicidial_agent_log_archive` " . " WHERE `user` = '" . mysqli_real_escape_string($_SESSION['db'], $username) . "' " .
 
@@ -1542,21 +1453,21 @@
                                 </script><?
 
                                 if (!isset($_REQUEST['no_nav'])) {
-                                    ?>
-                                    <script>
-                                        $(document).ready(function () {
+                            ?>
+                                <script>
+                                    $(document).ready(function () {
 
-                                            $('#verifier_report_table').DataTable({
+                                        $('#verifier_report_table').DataTable({
 
-                                                "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]]
-
-
-                                            });
+                                            "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]]
 
 
                                         });
-                                    </script><?
-                                }
+
+
+                                    });
+                                </script><?
+                            }
 
                             } // END IF GENERATE REPORT
 
@@ -1564,4 +1475,7 @@
 
                 }
 
-            } // END OF CLASS
+            }
+        }
+    }
+// END OF CLASS
