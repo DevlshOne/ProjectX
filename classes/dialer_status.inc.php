@@ -76,16 +76,14 @@
             </table>
             <div id="dialog-modal-add-tile" title="Add tile" class="nod"></div>
             <div id="dialog-modal-rename-tile" title="Rename tile" class="nod">
-                <form method="post">
-                    <table class="tightTable pct100">
-                        <tbody>
-                        <tr>
-                            <td class="align_left"><label for="new_tile_name">Tile Name :</label></td>
-                            <td class="align_right"><input type="text" id="new_tile_name" name="new_tile_name"/></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
+                <table class="tightTable pct100">
+                    <tbody>
+                    <tr>
+                        <td class="align_left"><label for="new_tile_name">Tile Name :</label></td>
+                        <td class="align_right"><input type="text" id="new_tile_name" name="new_tile_name"/></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div id="dialog-modal-select-clusters" title="Cluster selection" class="nod"></div>
             <div id="dialog-modal-change-refresh" title="Modify refresh rate" class="nod"></div>
@@ -94,31 +92,27 @@
             <div id="dialog-modal-second-confirm" title="Confirmation Required" class="nod"></div>
             <div id="dialog-modal-cluster-action-confirm" title="Confirmation Required" class="nod"></div>
             <div id="dialog-modal-vici-credentials" title="Vici Username/Password Required" class="nod">
-                <form method="post">
-                    <table class="tightTable pct100">
-                        <tbody>
-                        <tr>
-                            <td class="align_left"><label for="vici_username">Username :</label></td>
-                            <td class="align_right"><input type="text" id="vici_username" name="vici_username"/></td>
-                        </tr>
-                        <tr>
-                            <td class="align_left"><label for="vici_password">Password :</label></td>
-                            <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
+                <table class="tightTable pct100">
+                    <tbody>
+                    <tr>
+                        <td class="align_left"><label for="vici_username">Username :</label></td>
+                        <td class="align_right"><input type="text" id="vici_username" name="vici_username"/></td>
+                    </tr>
+                    <tr>
+                        <td class="align_left"><label for="vici_password">Password :</label></td>
+                        <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div id="dialog-modal-load-userprefs" title="Load User Preferences" class="nod">
-                <form method="post">
-                    <table class="tightTable pct100">
-                        <tbody>
-                        <tr>
-                            <td class="align_left">Would you like to load your user preferences?</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
+                <table class="tightTable pct100">
+                    <tbody>
+                    <tr>
+                        <td class="align_left">Would you like to load your user preferences?</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <script>
                 /*
@@ -205,7 +199,7 @@
                         buttons: {
                             'Save': function () {
                                 let tileID = $(this).data('tileID');
-                                if($('#new_tile_name') != '') {
+                                if ($('#new_tile_name') != '') {
                                     tileDefs[tileID].name = $('#new_tile_name').val();
                                 }
                                 if (frontEnd_debug) {
@@ -471,7 +465,7 @@
                                             tileDefs[i] = new clusterDef(v.cluster_id, clusterData['0'].type, clusterData['0'].name, clusterData['0'].ip, v.groups, v.user_group_filter);
                                         }
                                     });
-                                    if(oldPrefsData) saveUserPrefs();
+                                    if (oldPrefsData) saveUserPrefs();
                                     if (frontEnd_debug) {
                                         console.log('Prefs have just been loaded :: ', tileDefs);
                                         console.log('User Preferences loaded');
@@ -991,7 +985,7 @@
 
                         function loadClusterAssessment(t) {
                             let out = "?ADD=";
-                            if(tileDefs[t].groups.length > 0 && tileDefs[t].groups[0] !== 'ALL-ACTIVE') {
+                            if (tileDefs[t].groups.length > 0 && tileDefs[t].groups[0] !== 'ALL-ACTIVE') {
                                 out += '31&campaign_id=' + encodeURIComponent(tileDefs[t].groups[0]);
                             } else {
                                 out += '10';
