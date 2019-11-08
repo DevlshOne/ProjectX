@@ -11,6 +11,8 @@ $_SESSION['list_performance'] = new ListPerformance;
 class ListPerformance{
 	
 	
+	public $max_hourlys_age = 14; // IN DAYS, HOW LONG WE KEEP THE HOURLY DATA, BEFORE ITS CLEANED DOWN TO JUST THE LAST/LARGEST ONE
+	
 	function ListPerformance(){
 		
 		
@@ -25,10 +27,10 @@ class ListPerformance{
 	}
 	
 	function handleFLOW(){
-		if(!checkAccess('list_performance')){
+		if(!checkAccess('list_tools')){
 			
 			
-			accessDenied("List Performance Reports");
+			accessDenied("List Tools");
 			
 			return;
 			
@@ -41,6 +43,86 @@ class ListPerformance{
 	}
 	
 
+	function logHistoryReport(){
+		
+		$stime = mktime(0, 0, 0);
+		
+		// CURRENT HOUR TIMESTAMP
+		$etime = mktime(date("H"), 0, 0);
+		
+		
+		foreach($_SESSION['site_config']['db'] as $dbidx=>$db){
+		
+			echo "Generating data for '".$db['name']."' - ".$db['sqlhost'];
+			
+			$data_arr = $this->generateData($stime, $etime, $db['cluster_id']);
+			
+			
+			$json_data = json_encode($data_arr);
+			
+			$sql = "INSERT INTO `list_performance_history` (`time`, `vici_cluster_id`, `json_data`) VALUES ".
+					"(".$etime.",".$db['cluster_id'].",'".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."') ".
+					"ON DUPLICATE KEY UPDATE `json_data`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."' ";
+			
+			echo "..logging...";
+			
+			echo $_SESSION['dbapi']->execSQL($sql);
+			
+			
+// 			$dat = array();
+
+// 			$dat['time'] = $etime;
+// 			$dat['vici_cluster_id'] = $db['cluster_id'];
+// 			$dat['json_data'] = $json_data
+			
+
+// 			$_SESSION['dbapi']->aadd($dat,'list_performance_history');
+			
+			echo "Done\n";
+		}
+	}
+	
+	
+	/**
+	 * select * from list_performance_history where id in (
+select max(`id`) from list_performance_history where `time` between 1573236000 and 1573237000 group by vici_cluster_id, date(from_unixtime(`time`)))
+	 */
+	function cleanupOldHourlys(){
+		
+		$before_time = mktime(0,0,0) - (86400 * $this->max_hourlys_age);
+		
+		
+		$sql = "DELETE FROM `list_performance_history` ".
+				" WHERE `time` BETWEEN '$before_time' AND '".($before_time + 86399)."' ".
+				" AND `id` NOT IN (".
+					"SELECT MAX(`id`) FROM list_performance_history ".
+					"WHERE `time` BETWEEN' $before_time' AND '".($before_time + 86399)."' GROUP BY vici_cluster_id, DATE(FROM_UNIXTIME(`time`)))";
+		$cnt = execSQL($sql);	
+		
+		
+		echo date("m/d/Y")." - Cleaned up $cnt older records\n";
+		
+		return $cnt;
+		/*$cnt = 0;
+		foreach($_SESSION['site_config']['db'] as $dbidx=>$db){
+			
+			echo "Cleaning up data for '".$db['name']."' - ".$db['sqlhost']." from ".date("m/d/Y", $before_time)."\n";
+		
+			$cluster_id = intval($db['cluster_id']);
+			
+			$sql = "DELETE FROM `list_performance_history` WHERE `time` BETWEEN '$before_time' AND '".($before_time + 86399)."'  AND `vici_cluster_id`='$cluster_id' ".
+				" AND `id` NOT IN(".
+					"SELECT MAX(id) FROM `list_performance_history` ".
+					" WHERE `time` BETWEEN '$before_time' AND '".($before_time + 86399)."' AND `vici_cluster_id`='$cluster_id'".			
+				")";
+		
+			$cnt += execSQL($sql);	
+				
+		}*/
+		
+	}
+	
+	
 	
 	/**
 	 * 
@@ -90,31 +172,62 @@ where sale_time > unix_timestamp(curdate() - interval 35 day);
 			
 			$dat = array('list_id' => $list_id);
 			
+			
+			$lead_where = " WHERE `time` BETWEEN '$stime' AND '$etime' AND `list_id`='".$list_id."' AND `lead_id` > 0 AND vici_cluster_id='".intval($vici_cluster_id)."' ";
+			
+			
+			
+			list($dat['time_first_call'],$dat['time_last_call']) = $_SESSION['dbapi']->queryROW("SELECT min(`time`), max(`time`) FROM `lead_tracking` ".$lead_where );
+
+					
+		/*	list($dat['time_first_call']) = $_SESSION['dbapi']->queryROW("SELECT `time` FROM `lead_tracking` ".
+					$lead_where.
+					" ORDER BY `time` ASC LIMIT 1");
+			
+			list($dat['time_last_call']) = $_SESSION['dbapi']->queryROW("SELECT `time` FROM `lead_tracking` ".
+					$lead_where.
+					" ORDER BY `time` DESC LIMIT 1");*/
+			
+			$dat['list_run_time'] = $dat['time_last_call'] - $dat['time_first_call'];
+			
+			
+			list($dat['num_agents']) = $_SESSION['dbapi']->queryROW("SELECT COUNT(DISTINCT(agent_username)) FROM `lead_tracking` ".
+					$lead_where);
+			
+			
+			
 			list($dat['total_cnt']) = $_SESSION['dbapi']->queryROW("SELECT COUNT(*) FROM `lead_tracking` ".
-					" WHERE `time` BETWEEN '$stime' AND '$etime' AND `list_id`='".$list_id."' AND `lead_id` > 0 ".
-					" AND vici_cluster_id='".intval($vici_cluster_id)."' ");
+					$lead_where);
 			
 			
+// 			list($dat['sale_cnt']) = $_SESSION['dbapi']->queryROW("SELECT COUNT(1) FROM `sales` ".
+// 					" JOIN `lead_tracking` ON `sales`.lead_tracking_id = `lead_tracking`.id ".
+// 					" WHERE `lead_tracking`.`time` BETWEEN '$stime' AND '$etime' ".
+// ///					" AND `sales`.`sale_time` BETWEEN '$stime' AND '$etime' ".
+// 					" AND `lead_tracking`.`list_id`='".$list_id."' AND `lead_tracking`.`lead_id` > 0 ".
+// 					" AND `lead_tracking`.vici_cluster_id='".intval($vici_cluster_id)."' ");
+
 			list($dat['sale_cnt']) = $_SESSION['dbapi']->queryROW("SELECT COUNT(1) FROM `sales` ".
-					" JOIN `lead_tracking` ON `sales`.lead_tracking_id = `lead_tracking`.id ".
-					" WHERE `lead_tracking`.`time` BETWEEN '$stime' AND '$etime' ".
-///					" AND `sales`.`sale_time` BETWEEN '$stime' AND '$etime' ".
-					" AND `lead_tracking`.`list_id`='".$list_id."' AND `lead_tracking`.`lead_id` > 0 ".
-					" AND `lead_tracking`.vici_cluster_id='".intval($vici_cluster_id)."' ");
+					
+					" WHERE `sales`.`sale_time` BETWEEN '$stime' AND '$etime' ".
+					" AND `sales`.`list_id`='".$list_id."'  ". //AND `sales`.`agent_lead_id` > 0
+					" AND `sales`.agent_cluster_id='".intval($vici_cluster_id)."' ");
+			
 			
 			list($dat['answer_cnt']) = $_SESSION['dbapi']->queryROW("SELECT COUNT(*) FROM `lead_tracking` ".
-					" WHERE `time` BETWEEN '$stime' AND '$etime' AND `list_id`='".$list_id."' AND `lead_id` > 0 AND `dispo`='A' ".
-					" AND vici_cluster_id='".intval($vici_cluster_id)."' "
+					$lead_where.
+					" AND `dispo`='A' "
+
 					);
 			
 			list($dat['not_interested_cnt']) = $_SESSION['dbapi']->queryROW("SELECT COUNT(*) FROM `lead_tracking` ".
-					" WHERE `time` BETWEEN '$stime' AND '$etime' AND `list_id`='".$list_id."' AND `lead_id` > 0 AND `dispo`='NI' ".
-					" AND vici_cluster_id='".intval($vici_cluster_id)."' "
+					$lead_where.
+					" AND `dispo`='NI' "
 					);
 			
 			list($dat['contacts_cnt']) = $_SESSION['dbapi']->queryROW("SELECT COUNT(*) FROM `lead_tracking` ".
-					" WHERE `time` BETWEEN '$stime' AND '$etime' AND `list_id`='".$list_id."' AND `lead_id` > 0 AND `dispo` NOT IN('A','DC') ".
-					" AND vici_cluster_id='".intval($vici_cluster_id)."' "
+					$lead_where.
+					" AND `dispo` NOT IN('A','DC') "
 					);
 			
 			$out[$list_id]['data'] = $dat;
@@ -222,10 +335,10 @@ $(function() {
             </td>
 		</tr>**/
 		?><tr>
-			<td colspan="2" align="Center">
-				<table border="0">
-				<tr valign="top">
-					<th>Agent Cluster:</th>
+			<td colspan="2" align="left">
+				<table border="0" class="lb" cellpadding="1" cellspacing="1" width="300">
+				<tr>
+					<th height="30">Agent Cluster:</th>
 					<td><?php
 					
 					
@@ -238,7 +351,14 @@ $(function() {
 					</td>
 				</tr>
 				<tr>
-					<th colspan="2">
+					<td height="30" colspan="2" align="center">
+					
+						<input type="checkbox" name="force_fresh_pull" value="1" /> Force fresh data pull (Slower)
+					
+					</td>
+				</tr>
+				<tr>
+					<th height="50" colspan="2">
 
 						<span id="list_performance_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0" /> Loading, Please wait...</span>
 						
@@ -281,8 +401,10 @@ $(function() {
             $agent_cluster_id = $_SESSION['site_config']['db'][intval($_REQUEST['agent_cluster_idx'])]['cluster_id'];
 
             
+			$force_fresh_pull = ($_REQUEST['force_fresh_pull'])?true:false;
+            
             ## GENERATE AND DISPLAY REPORT
-            $html = $this->makeHTMLReport($stime, $etime, $agent_cluster_id);
+			$html = $this->makeHTMLReport($stime, $etime, $agent_cluster_id, $force_fresh_pull);
 
 
             if ($html == null) {
@@ -307,8 +429,8 @@ $(function() {
 
 					    $('#listperf_table').DataTable({
 
-							"lengthMenu": [[ -1, 20, 50, 100, 500], ["All", 20, 50, 100,500 ]]
-
+							"lengthMenu": [[ -1, 20, 50, 100, 500], ["All", 20, 50, 100,500 ]],
+							"order": [[12, "desc"]]
 
 					    });
 
@@ -321,17 +443,82 @@ $(function() {
         }
     }
 
+    function getRecentSnapshot($stime, $etime, $vici_cluster_id){
+    	$stime = intval($stime);
+    	$etime = intval($etime);
+    	$vici_cluster_id = intval($vici_cluster_id);
+    	
+    	$sql = "SELECT * FROM `list_performance_history` ".
+      	" WHERE `time` BETWEEN '$stime' AND '$etime' AND vici_cluster_id='$vici_cluster_id'".
+      	" ORDER BY `time` DESC LIMIT 1";
+    	
+    	//echo $sql;
+    	
+    	$row = $_SESSION['dbapi']->querySQL($sql);
+    	
+    	if($row){
+    		
+    		return $row;
+    		
+    	}else{
+    		return null;
+    	}
+    	
+    }
 
-    function makeHTMLReport($stime, $etime, $vici_cluster_id){
+    function makeHTMLReport($stime, $etime, $vici_cluster_id, $force_fresh_pull = false){
     	
-    	echo '<span style="font-size:9px">makeHTMLReport('."$stime, $etime, $vici_cluster_id) called</span><br /><br />\n";
+    	$report_stime = time();
     	
-    	//generateData($stime, $etime, $vici_cluster_id )
-    	$data_arr = $this->generateData($stime, $etime, $vici_cluster_id);
+    	echo '<span style="font-size:9px">makeHTMLReport('."$stime, $etime, $vici_cluster_id, $force_fresh_pull) called</span><br /><br />\n";
+    	
+    	
+    	if($force_fresh_pull){
+    	
+    		//generateData($stime, $etime, $vici_cluster_id )
+    		$data_arr = $this->generateData($stime, $etime, $vici_cluster_id);
+    		
+    		
+    		// SAVE THE DATA
+    		$json_data = json_encode($data_arr);
+    		
+    		$sql = "INSERT INTO `list_performance_history` (`time`, `vici_cluster_id`, `json_data`) VALUES ".
+      				"(".$report_stime.",".$vici_cluster_id.",'".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."') ".
+      				"ON DUPLICATE KEY UPDATE `json_data`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."' ";
+    		
+  
+    		$_SESSION['dbapi']->execSQL($sql);
+    		
+    		
+    	}else{
+    	
+    		// LOAD FROM MOST RECENT SNAPSHOT
+    		$row = $this->getRecentSnapshot($stime, $etime, $vici_cluster_id);
+    		
+    		if($row == null){
+    			
+    			$data_arr = $this->generateData($stime, $etime, $vici_cluster_id);
+    			
+    			
+    			// SAVE THE DATA
+    			$json_data = json_encode($data_arr);
+    			
+    			$sql = "INSERT INTO `list_performance_history` (`time`, `vici_cluster_id`, `json_data`) VALUES ".
+      			"(".$report_stime.",".$vici_cluster_id.",'".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."') ".
+      			"ON DUPLICATE KEY UPDATE `json_data`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."' ";
+    			
+    			
+    			$_SESSION['dbapi']->execSQL($sql);
+    			
+    		}else{
+    			$data_arr = json_decode($row['json_data'], TRUE);
+    		}
+    		
+    	}
     	
     	$vici_cluster_idx = getClusterIndex( $vici_cluster_id);
     	
-    	//print_r($data_arr);exit;
+  //  	print_r($data_arr);exit;
     	
     	if (count($data_arr) < 1) {
             return null;
@@ -375,12 +562,24 @@ $(function() {
 
 			}else{
 				echo date("m-d-Y", $stime).' to '.date("m-d-Y", $etime);
-        } ?></h1>
+        	}
+        	
+        	
+        	
+        ?></h1><?
+        
+        if($row['time'] > 0){
+        	
+        	echo '<h2 align="center">(Cached, as of '.date("h:i:s T", $row['time']).')</h2>';
+        }else{
+        	echo '<h2 align="center">(as of '.date("h:i:s T", $report_stime).')</h2>';
+        }
+        
 
 		
 
 
-		<table id="listperf_table" style="width:100%" border="0"  cellspacing="1">
+		?><table id="listperf_table" style="width:100%" border="0"  cellspacing="1">
 		<thead>
 		<tr>
 			<th title="The LIST ID in Vicidial.">LIST ID</th>
@@ -392,6 +591,9 @@ $(function() {
 			<th title="Percentage of Answering machines to Total Calls">AnsMach %</th>
 			<th title="Total number of SALES for the specified date(s)">Total Sales</th>
 			<th title="Contacts per hour, and Calls per Worked hour">Contacts</th>
+			<th title="The maximum unique/distinct agents that touched this list today"># Agents</th>
+			<th title="In Hours - Approx. How long the list ran for, based on first and last lead for today." align="right">List Run Time</th>
+			<th title="The Number of contacts per agent, per hour, using the approx list run time, and total distinct agents that touched it today.">Contacts/agent/hr</th>
 			<th align="right" title="Conversion Percentage">CONV %</th>	
 			<th align="right" title="The last time we called this list.">Last Call Date</th>
 		</tr>
@@ -407,6 +609,11 @@ $(function() {
 
 			$conversion_percent = (($data['data']['not_interested_cnt'] + $data['data']['sale_cnt']) <= 0)?0: (($data['data']['sale_cnt'] / ($data['data']['not_interested_cnt'] + $data['data']['sale_cnt'])) * 100);
 
+			$list_run_hours = round(($data['data']['list_run_time'] / 3600), 2);
+			
+			
+			$contacts_agents_hours = ($data['data']['num_agents'] > 0 && $list_run_hours > 0)?round(($data['data']['contacts_cnt'] / $data['data']['num_agents'] / $list_run_hours), 2):0;
+			
 			?><tr><?
 
 					if($data['vici']['active'] == 'Y'){
@@ -426,6 +633,11 @@ $(function() {
 				<td align="center"><?=$ans_percent?></td>
 				<td align="center"><?=number_format($data['data']['sale_cnt'])?></td>
 				<td align="center"><?=number_format($data['data']['contacts_cnt'])?></td>
+				
+				<td align="center"><?=number_format($data['data']['num_agents'])?></td>
+				<td align="center" align="right"><?=$list_run_hours?> hrs</td>			
+				<td align="center"><?=$contacts_agents_hours?></td>				
+				
 				<td align="center"><?=number_format($conversion_percent,2)?>%</td>
 				<td align="center" nowrap><?=$data['vici']['list_lastcalldate']?></td>
 			</tr><?
