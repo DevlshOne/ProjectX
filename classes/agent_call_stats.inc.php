@@ -1,8 +1,7 @@
-<? /** @noinspection ALL */
-    /***************************************************************
-     * Agent Call Stat Report (AKA VERIFIER CALL STATS REPORT)
-     * Written By: Jonathan Will
-     ***************************************************************/
+<? /***************************************************************
+ * Agent Call Stat Report (AKA VERIFIER CALL STATS REPORT)
+ * Written By: Jonathan Will
+ ***************************************************************/
 
     $_SESSION['agent_call_stats'] = new AgentCallStats;
 
@@ -1079,337 +1078,159 @@
         }
 
         function makeReport() {
-            $timeOptionMode = (isset($_REQUEST['timeOptions']) ? intval($_REQUEST['timeOptions']) : 1);
-            if (isset($_POST['generate_report'])) {
-                if($_REQUEST['timeFilter']){
-                    $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." ".$_REQUEST['strt_time_hour'].":".$_REQUEST['strt_time_min'].$_REQUEST['strt_time_timemode']);
-                    $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
-                }else{
-                    $timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." 00:00:00");
-                    $timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." 23:59:59");
+
+            if (isset($_REQUEST['generate_agent_stat_report'])) {
+                if ($_REQUEST['timeFilter']) {
+                    $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['strt_time_hour'] . ":" . $_REQUEST['strt_time_min'] . $_REQUEST['strt_time_timemode']);
+                    $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " " . $_REQUEST['end_time_hour'] . ":" . $_REQUEST['end_time_min'] . $_REQUEST['end_time_timemode']);
+                } else {
+                    $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 00:00:00");
+                    $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " 23:59:59");
                 }
             } else {
                 $timestamp = mktime(0, 0, 0);
                 $timestamp2 = mktime(23, 59, 59);
             }
-            //echo $this->makeHTMLReport('1430377200', '1430463599', 'BCSFC', -1, 1,null , array("SYSTEM-TRNG-SOUTH", "SYSTEM-TRNG","SYS-TRNG-SOUTH-AM")) ;
-            if (!isset($_REQUEST['no_nav'])) {
-                ?>
-                <script type="text/javascript" src="js/table2CSV.js"></script>
-                <form id="agnet_call_stats_report" method="POST"
-                      action="<?= $_SERVER['PHP_SELF'] ?>?area=agent_call&no_script=1"
-                      onsubmit="return genReport(this, 'sales')">
-                    <input type="hidden" name="generate_report">
-                    <table border="0" width="100%">
-                        <tr>
-                            <td height="40" class="pad_left ui-widget-header">
-                                Area Code Sales by Dialer
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2">
-                                <script>                    <script>
-                                    $(function () {
-                                        let timeFields = $('#startTimeFilter, #endTimeFilter');
-                                        let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
-                                        if (retainTime) {
-                                            $(timeFields).show();
-                                            $('#timeFilter').prop('checked', true);
-                                        } else {
-                                            $(timeFields).hide();
-                                            $('#timeFilter').prop('checked', false);
-                                        }
-                                        $('#timeFilter').on('click', function () {
-                                            $(timeFields).toggle();
-                                        });
-                                    });
-                                </script>
-                                <table border="0" id="filterTable">
-                                    <tr>
-                                        <th>Date Start:</th>
-                                        <td>
-                                            <?php  echo makeTimebar("strt_date_", 1, null, false, $timestamp); ?>
-                                            <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php  echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Date End:</th>
-                                        <td>
-                                            <?php echo makeTimebar("end_date_", 1, null, false, $timestamp2); ?>
-                                            <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php  echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Use Time?</th>
-                                        <td>
-                                            <input type="checkbox" name="timeFilter" id="timeFilter">
-                                        </td>
-                                    </tr>
-                                    <tr id="shiftHours">
-                                        <th>Shift Hours :</th>
-                                        <td><?
-                                                echo makeNumberDD("shift_hours", (!isset($_REQUEST['shift_hours']) ? 12 : $_REQUEST['shift_hours']), 1, 24, 1);
-                                            ?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <th>Agent Cluster [Dialer] :</th>
-                                        <td><?php
-                                                echo makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0) ? -1 : $_REQUEST['agent_cluster_id'], '', ""); ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Area Code :</th>
-                                        <td><?php
-                                                echo makeAreaCodeDD("area_code", (!isset($_REQUEST['area_code'])) ? 0 : $_REQUEST['area_code'], '', ""); ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="2">
-                                            <div id="sales_loading_plx_wait_span" class="nod"><img
-                                                        src="images/ajax-loader.gif" border="0"/> Loading, Please
-                                                wait...
-                                            </div>
-                                            <div id="dialersales_submit_report_button">
-                                                <input type="button" value="Generate PRINTABLE"
-                                                       onclick="genReport(getEl('dialersales_report'), 'sales', 1)">
-                                                <input type="button" id="btnGenCSV" value="Download CSV"
-                                                       onclick="genCSV(getEl('dialer_sales_table'))" disabled aria-disabled="true">
-                                                <input type="submit" value="Generate">
-                                            </div>
-                                        </th>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
-                <br/><br/><?php
-            } else {
-                ?>
-                <meta charset="UTF-8">
-                <meta name="google" content="notranslate">
-                <meta http-equiv="Content-Language" content="en"><?php
-            }
 
-            if (isset($_POST['generate_report'])) {
-                ?>
-                <script>
-                    $('#timeOptions').val(<?=$timeOptionMode?>).change();
-                    $('#btnGenCSV').prop('disabled', false).prop('aria-disabled', false);
-                </script>
-                <?
-                #echo var_dump($_REQUEST) . "<br />";
-                $time_started = microtime_float();
-                ## AGENT CLUSTER
-                $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
-                ## AREA CODE
-                $area_code = intval($_REQUEST['area_code']);
-                ## SHIFT HOURS
-                $shift_hours = intval($_REQUEST['shift_hours']);
-                $timeOptionMode = intval($_REQUEST['timeOptions']);
-                switch ($timeOptionMode) {
-                    case '1' :
-                        $timestamp = strtotime($_POST['strt_date_month'] . "/" . $_POST['strt_date_day'] . "/" . $_POST['strt_date_year'] . " 00:00:00");
-                        $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-                        $etime = mktime(23, 59, 59, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-                        $reportName = "AreaCodeSales_singledate_" . date('m-d-Y', $stime) . "_" . $shift_hours;
-                        break;
-                    case '2' :
-                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " 00:00:00");
-                        $timestamp2 = strtotime($_REQUEST['end_date_month'] . "/" . $_REQUEST['end_date_day'] . "/" . $_REQUEST['end_date_year'] . " 23:59:59");
-                        $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-                        $etime = mktime(23, 59, 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
-                        $shift_hours = (ceil(($timestamp2 - $timestamp) / 86400) - 1) * $shift_hours;
-                        $reportName = "AreaCodeSales_daterange_" . date('m-d-Y', $stime) . "_to_" . date('m-d-Y', $etime) . "_" . $shift_hours;
-                        break;
-                    case '3' :
-//                        $inStart = $_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['strt_time_hour'] . ":" . $_REQUEST['strt_time_min'] . " " . $_REQUEST['strt_time_timemode'];
-//                        $inEnd = $_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['end_time_hour'] . ":" . $_REQUEST['end_time_min'] . " " . $_REQUEST['end_time_timemode'];
-//                        echo __METHOD__ . "::POST PROCESSING:: START POSTED : " . $inStart . "<br />" . PHP_EOL;
-//                        echo __METHOD__ . "::POST PROCESSING:: END POSTED : " . $inEnd . "<br />" . PHP_EOL;
-                        $timestamp = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['strt_time_hour'] . ":" . $_REQUEST['strt_time_min'] . " " . $_REQUEST['strt_time_timemode']);
-                        $timestamp2 = strtotime($_REQUEST['strt_date_month'] . "/" . $_REQUEST['strt_date_day'] . "/" . $_REQUEST['strt_date_year'] . " " . $_REQUEST['end_time_hour'] . ":" . $_REQUEST['end_time_min'] . " " . $_REQUEST['end_time_timemode']);
-//                        echo __METHOD__ . "::POST PROCESSING:: START AFTER strtotime() : " . date('m/d/Y H:i A', $timestamp) . "<br />" . PHP_EOL;
-//                        echo __METHOD__ . "::POST PROCESSING:: END AFTER strtotime() : " . date('m/d/Y H:i A', $timestamp2) . "<br />" . PHP_EOL;
-                        $stime = mktime(date("H", $timestamp), date("i", $timestamp), 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-                        $etime = mktime(date("H", $timestamp2), date("i", $timestamp2), 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
-//                        echo __METHOD__ . "::POST PROCESSING:: START AFTER mktime() : " . date('m/d/Y H:i A', $stime) . "<br />" . PHP_EOL;
-//                        echo __METHOD__ . "::POST PROCESSING:: END AFTER mktime() : " . date('m/d/Y H:i A', $etime) . "<br />" . PHP_EOL;
-                        $shift_hours = ceil(($timestamp2 - $timestamp) / 3600);
-//                        echo __METHOD__ . "::POST PROCESSING:: shiftHours calculated = " . $shift_hours . "<br />" . PHP_EOL;
-                        $reportName = "AreaCodeSales_datetimerange_" . date('m-d-Y_H:i', $stime) . "_to_" . date('m-d-Y_H:i', $etime) . "_" . $shift_hours;
-                        break;
-                }
-                echo "<input type='hidden' id='reportTitle' value='" . $reportName . "'>" . PHP_EOL;
-                ## GENERATE AND DISPLAY REPORT
-                #echo __METHOD__ . "::POST PROCESSING:: timeOptionMode = " . $timeOptionMode . "<br />" . PHP_EOL;
-                #echo "Start Time (timestamp) = " . var_dump($timestamp) . "<br />" . PHP_EOL;
-                #echo "End Time (timestamp2) = " . var_dump($timestamp2) . "<br />" . PHP_EOL;
-                #echo __METHOD__ . "::POST PROCESSING:: about to call makeHTMLReport(" . $stime . ", " . $etime . ", " . $agent_cluster_id . ", " . $area_code . ", " . $shift_hours . ");<br />" . PHP_EOL;
-                $html = $this->makeHTMLReport($stime, $etime, $agent_cluster_id, $area_code, $shift_hours, $timeOptionMode);
-                if ($html == NULL) {
-                    echo '<span style="font-size:14px;font-style:italic;">No results found, for the specified values.</span><br />';
-                } else {
-                    echo $html;
-                }
-                $time_ended = microtime_float();
-                $time_taken = $time_ended - $time_started;
-                echo '<br /><span style="float:bottom;color:#fff">Load time: ' . $time_taken . '</span>';
-                if (!isset($_REQUEST['no_nav'])) {
-                    ?>
-                    <script>
-                        $(document).ready(function () {
-                            $('#dialer_sales_table').DataTable({
-                                "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]]
-                            });
-                        });
-                    </script><?php
+            $cluster_id = intval($_REQUEST['s_cluster_id']);
+            $cluster_id = ($cluster_id) ? $cluster_id : 9; // DEFAULT TO VERIFIER CLUSTER
 
-                    if (isset($_REQUEST['generate_agent_stat_report'])) {
+            $user_group = $_REQUEST['s_user_group'];
 
-                        if ($_REQUEST['date_mode'] == 'daterange') {
+            $source_user_group = $_REQUEST['s_source_user_group'];
 
-                            $stime = mktime(0, 0, 0, $_REQUEST['s_date_month'], $_REQUEST['s_date_day'], $_REQUEST['s_date_year']);
-                            $etime = mktime(23, 59, 59, $_REQUEST['e_date_month'], $_REQUEST['e_date_day'], $_REQUEST['e_date_year']);
+            $source_cluster_id = intval($_REQUEST['s_source_cluster_id']);
 
-                        } else {
+            $ignore_source_cluster_id = intval($_REQUEST['s_ignore_source_cluster_id']);
 
-                            $stime = mktime(0, 0, 0, $_REQUEST['s_date_month'], $_REQUEST['s_date_day'], $_REQUEST['s_date_year']);
-                            $etime = $stime + 86399;
-                        }
+            ?>
+            <table border="0" width="100%"><?
 
+            //if(!isset($_REQUEST['no_script'])){
+
+            ?>
+            <script>
+
+                function toggleDateSearchMode(way) {
+
+                    if (way == 'daterange') {
+                        $('#end_date_row').show();
                     } else {
-                        $stime = mktime(0, 0, 0);
-                        $etime = mktime(23, 59, 59);
-
+                        $('#end_date_row').hide();
                     }
+                }
 
-                    $cluster_id = intval($_REQUEST['s_cluster_id']);
-                    $cluster_id = ($cluster_id) ? $cluster_id : 9; // DEFAULT TO VERIFIER CLUSTER
+            </script>
+            <script>
+                $(function () {
+                    let timeFields = $('#startTimeFilter, #endTimeFilter');
+                    let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
+                    if (retainTime) {
+                        $(timeFields).show();
+                        $('#timeFilter').prop('checked', true);
+                    } else {
+                        $(timeFields).hide();
+                        $('#timeFilter').prop('checked', false);
+                    }
+                    $('#timeFilter').on('click', function () {
+                        $(timeFields).toggle();
+                    });
+                });
+            </script>
+            <?
 
-                    $user_group = $_REQUEST['s_user_group'];
+            if (!isset($_REQUEST['no_nav'])) {
 
-                    $source_user_group = $_REQUEST['s_source_user_group'];
+                ?>
+                <tr>
+                    <td height="40" class="ui-widget-header pad_left">Verifier Call Stats</td>
+                </tr>
+                <tr>
+                <td>
+                    <form id="agentstatfrm" method="POST" action="<?= stripurl() ?>" onsubmit="return genReport(this,'callstats')">
 
-                    $source_cluster_id = intval($_REQUEST['s_source_cluster_id']);
+                        <input type="hidden" name="generate_agent_stat_report">
 
-                    $ignore_source_cluster_id = intval($_REQUEST['s_ignore_source_cluster_id']);
+                        <table border="0">
 
-                    ?>
-                    <table border="0" width="100%"><?
 
-                            //if(!isset($_REQUEST['no_script'])){
+                            <tr>
+                                <th>Cluster</th>
+                                <td><?
 
-                        ?>
-                        <script>
+                                        echo makeClusterDD('s_cluster_id', $cluster_id, "", '', 0);
 
-                            function toggleDateSearchMode(way) {
+                                    ?></td>
+                            </tr>
 
-                                if (way == 'daterange') {
-                                    $('#end_date_row').show();
-                                } else {
-                                    $('#end_date_row').hide();
-                                }
-                            }
 
-                        </script>
-                        <?
+                            <tr>
+                                <th>User Group</th>
+                                <td><?
 
-                            if (!isset($_REQUEST['no_nav'])) {
+                                        echo makeViciUserGroupDD('s_user_group[]', $_REQUEST['s_user_group'], "", '', 8, 1);
 
-                                ?>
-                                <tr>
-                                    <td height="40" class="ui-widget-header pad_left">Verifier Call Stats</td>
-                                </tr>
-                                <tr>
+                                    ?></td>
+                            </tr>
+                            <tr>
+                                <th>Date Start:</th>
                                 <td>
-                                    <form id="agentstatfrm" method="POST" action="<?= stripurl() ?>" onsubmit="return genReport(this,'callstats')">
+                                    <?php echo makeTimebar("strt_date_", 1, NULL, false, $timestamp); ?>
+                                    <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Date End:</th>
+                                <td>
+                                    <?php echo makeTimebar("end_date_", 1, NULL, false, $timestamp2); ?>
+                                    <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Use Time?</th>
+                                <td>
+                                    <input type="checkbox" name="timeFilter" id="timeFilter">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>SOURCE Cluster (<a href="#" onclick="alert('Only show deals that come FROM this cluster.');return false;">help?</a>)</th>
+                                <td><?
 
-                                        <input type="hidden" name="generate_agent_stat_report">
+                                        echo makeClusterDD('s_source_cluster_id', $source_cluster_id, "", '', 1);
 
-                                        <table border="0">
+                                    ?></td>
+                            </tr>
 
+                            <tr>
+                                <th>Ignore SOURCE Cluster (<a href="#" onclick="alert('Skip the deals that come FROM this cluster.');return false;">help?</a>)</th>
+                                <td><?
 
-                                            <tr>
-                                                <th>Cluster</th>
-                                                <td><?
+                                        echo makeClusterDD('s_ignore_source_cluster_id', $ignore_source_cluster_id, "", '', 1);
 
-                                                        echo makeClusterDD('s_cluster_id', $cluster_id, "", '', 0);
+                                    ?></td>
+                            </tr>
+                            <tr>
+                                <th>SOURCE User Group</th>
+                                <td><?
 
-                                                    ?></td>
-                                            </tr>
+                                        echo makeViciUserGroupDD('s_source_user_group[]', $_REQUEST['s_source_user_group'], "", '', 8, 1);
 
+                                    ?></td>
+                            </tr>
 
-                                            <tr>
-                                                <th>User Group</th>
-                                                <td><?
+                            <tr>
+                                <th>Ignore Users: (<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
 
-                                                        echo makeViciUserGroupDD('s_user_group[]', $_REQUEST['s_user_group'], "", '', 8, 1);
+                                <td>
+                                    <input type="text" size="30" name="ignore_users_list" id="ignore_users_list" value="<?= htmlentities($_REQUEST['ignore_users_list']) ?>">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" align="right">
 
-                                                    ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Date Mode:</th>
-                                                <td><select name="date_mode" onchange="toggleDateSearchMode(this.value)">
-                                                        <option value="date">Date</option>
-                                                        <option value="daterange"<?= ($_REQUEST['date_mode'] == 'daterange') ? ' SELECTED' : '' ?>>Date Range</option>
-                                                    </select></td>
-                                            </tr>
-                                            <tr>
-                                                <th>Date:</th>
-                                                <td><?
+                                    <span id="callstats_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0"/> Loading, Please wait...</span>
 
-                                                        echo makeTimebar("s_date_", 1, NULL, false, $stime, "");
-
-                                                    ?></td>
-                                            </tr>
-                                            <tr id="end_date_row" class="nod">
-                                                <th>End Date:</th>
-                                                <td><?
-
-                                                        echo makeTimebar("e_date_", 1, NULL, false, $etime, "");
-
-                                                    ?></td>
-                                            </tr>
-
-                                            <tr>
-                                                <th>SOURCE Cluster (<a href="#" onclick="alert('Only show deals that come FROM this cluster.');return false;">help?</a>)</th>
-                                                <td><?
-
-                                                        echo makeClusterDD('s_source_cluster_id', $source_cluster_id, "", '', 1);
-
-                                                    ?></td>
-                                            </tr>
-
-                                            <tr>
-                                                <th>Ignore SOURCE Cluster (<a href="#" onclick="alert('Skip the deals that come FROM this cluster.');return false;">help?</a>)</th>
-                                                <td><?
-
-                                                        echo makeClusterDD('s_ignore_source_cluster_id', $ignore_source_cluster_id, "", '', 1);
-
-                                                    ?></td>
-                                            </tr>
-                                            <tr>
-                                                <th>SOURCE User Group</th>
-                                                <td><?
-
-                                                        echo makeViciUserGroupDD('s_source_user_group[]', $_REQUEST['s_source_user_group'], "", '', 8, 1);
-
-                                                    ?></td>
-                                            </tr>
-
-                                            <tr>
-                                                <th>Ignore Users: (<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
-
-                                                <td>
-                                                    <input type="text" size="30" name="ignore_users_list" id="ignore_users_list" value="<?= htmlentities($_REQUEST['ignore_users_list']) ?>">
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td colspan="2" align="right">
-
-                                                    <span id="callstats_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0"/> Loading, Please wait...</span>
-
-                                                    <span id="callstats_submit_report_button">
+                                    <span id="callstats_submit_report_button">
 
 							<?
                                 /**<input type="submit" name="no_script" value="Generate Printable" onclick="this.form.target='_blank';">**/ ?>
@@ -1420,77 +1241,74 @@
 							<input type="submit" value="Generate Now" onclick="this.form.target='';">
 
 						</span>
-                                                </td>
-                                            </tr>
-
-                                        </table>
                                 </td>
-                                </tr><?
+                            </tr>
 
-                                ?></form><?
+                        </table>
+                </td>
+                </tr>
+                </form>
+                <?
+
+            } else {
+
+                ?>
+                <meta charset="UTF-8">
+                <meta name="google" content="notranslate">
+                <meta http-equiv="Content-Language" content="en"><?
+            }
+
+            //}
+
+            if (isset($_REQUEST['generate_agent_stat_report'])) {
+
+                ?>
+                <tr>
+                    <td><?
+
+                            $ignore_arr = preg_split("/,|;|:| /", $_REQUEST['ignore_users_list'], -1, PREG_SPLIT_NO_EMPTY);
+
+                            $source_cluster_id = intval($_REQUEST['s_source_cluster_id']);
+
+                            $report = $this->makeHTMLReport($timestamp, $timestamp2, $cluster_id, $_REQUEST['s_user_group'], $ignore_arr, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
+
+                            if (!$report) {
+
+                                echo "No data";
 
                             } else {
-
-                                ?>
-                                <meta charset="UTF-8">
-                                <meta name="google" content="notranslate">
-                                <meta http-equiv="Content-Language" content="en"><?
+                                echo $report;
                             }
 
-                            //}
+                        ?></td>
+                </tr>
+                <script>
 
-                            if (isset($_REQUEST['generate_agent_stat_report'])) {
+                    toggleDateSearchMode('<?=$_REQUEST['date_mode']?>');
 
-                                ?>
-                                <tr>
-                                    <td><?
+                </script><?
 
-                                            $ignore_arr = preg_split("/,|;|:| /", $_REQUEST['ignore_users_list'], -1, PREG_SPLIT_NO_EMPTY);
+                if (!isset($_REQUEST['no_nav'])) {
+                    ?>
+                    <script>
+                        $(document).ready(function () {
 
-                                            $source_cluster_id = intval($_REQUEST['s_source_cluster_id']);
+                            $('#verifier_report_table').DataTable({
 
-                                            $report = $this->makeHTMLReport($stime, $etime, $cluster_id, $_REQUEST['s_user_group'], $ignore_arr, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
-
-                                            if (!$report) {
-
-                                                echo "No data";
-
-                                            } else {
-                                                echo $report;
-                                            }
-
-                                        ?></td>
-                                </tr>
-                                <script>
-
-                                    toggleDateSearchMode('<?=$_REQUEST['date_mode']?>');
-
-                                </script><?
-
-                                if (!isset($_REQUEST['no_nav'])) {
-                            ?>
-                                <script>
-                                    $(document).ready(function () {
-
-                                        $('#verifier_report_table').DataTable({
-
-                                            "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]]
+                                "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]]
 
 
-                                        });
+                            });
 
 
-                                    });
-                                </script><?
-                            }
-
-                            } // END IF GENERATE REPORT
-
-                        ?></table><?
-
+                        });
+                    </script><?
                 }
 
-            }
+            } // END IF GENERATE REPORT
+
+            ?></table><?
+
         }
-    }
-// END OF CLASS
+
+    } // END OF CLASS

@@ -837,7 +837,8 @@ class SalesAnalysis{
 
 
 		if(!isset($_REQUEST['no_nav'])){
-			?><form id="saleanal_report" method="POST" action="<?=$_SERVER['PHP_SELF']?>?area=sales_analysis&no_script=1" onsubmit="return genReport(this, 'sales')">
+			?>
+            <form id="saleanal_report" method="POST" action="<?=$_SERVER['PHP_SELF']?>?area=sales_analysis&no_script=1" onsubmit="return genReport(this, 'sales')">
 
 				<input type="hidden" name="generate_report">
 
@@ -895,12 +896,7 @@ class SalesAnalysis{
 
                             echo $this->makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0)?-1:$_REQUEST['agent_cluster_id'], '', ""); ?></td>
 					</tr>
-					<?/*<tr>
-						<th>Verifier Cluster:</th>
-						<td><?php
 
-                            echo $this->makeClusterDD("verifier_cluster_id", $_REQUEST['verifier_cluster_id'], '', ""); ?></td>
-					</tr>**/?>
 					<tr>
 						<th>PX Campaign ID:</th>
 						<td><?php
