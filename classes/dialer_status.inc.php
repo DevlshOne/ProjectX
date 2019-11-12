@@ -124,7 +124,7 @@
                 $('#dialerStatusZone').ready(function () {
                     var refreshInterval = 40;
                     var refreshEnabled = true;
-                    var frontEnd_debug = true;
+                    var frontEnd_debug = false;
                     dispTimer = false;
                     // clusterInfo is an array that stores all the available information for a cluster, including the selectable campaigns and usergroups
                     var clusterInfo = <?=json_encode($this->clusterInfo);?>;
@@ -287,6 +287,8 @@
                         buttons: {
                             'Save': function (e) {
                                 let tileID = $(this).data('tileID');
+                                tileDefs[tileID].groups = new Array();
+                                tileDefs[tileID].user_group_filter = new Array();
                                 $('#campaignFilter option:selected').each(function (i, v) {
                                     tileDefs[tileID].groups.push(v.innerText);
                                 });
@@ -543,16 +545,6 @@
                         clusterSelect += '</select>';
                         dlgObj.dialog('open');
                         dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
-                        //
-                        // let dlgObj = $('#dialog-modal-select-clusters');
-                        // let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection" multiple size="6">';
-                        // $.each(availableClusters, function (i, v) {
-                        //     clusterSelect += '<option value="' + v + '">' + clusterInfo[i].name + '</option>';
-                        // });
-                        // clusterSelect += '</select>';
-                        // dlgObj.dialog('open');
-                        // dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
-                        // $('#clusterSelection').val(tileDefs);
                     });
                     $('#refreshRateButton').on('click', function () {
                         let dlgObj = $('#dialog-modal-change-refresh');
