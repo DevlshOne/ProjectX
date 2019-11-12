@@ -58,7 +58,7 @@ class DialerStatus {
                             <tr>
                                 <td class="pct100">
                                     <div class="align_center" style="float:left;margin:7px;">Dialer Status Dashboard</div>
-                                    <button id="clusterSelectButton" class="align_center ui-state-highlight" style="float:right;">Select Clusters</button>
+                                    <button id="clusterSelectButton" class="align_center ui-state-highlight" style="float:right;">Add Cluster Tile</button>
                                     <button id="refreshRateButton" class="align_center refreshButton" style="float:right;">Change Refresh [40]</button>
                                     <button id="stopDialersButton" class="align_center ui-state-error" style="float:right;">Stop All Dialing</button>
                                     <button id="forceHopperButton" class="align_center" style="float:right;">Force Hopper</button>
@@ -76,16 +76,14 @@ class DialerStatus {
             </table>
             <div id="dialog-modal-add-tile" title="Add tile" class="nod"></div>
             <div id="dialog-modal-rename-tile" title="Rename tile" class="nod">
-                <form method="post">
-                    <table class="tightTable pct100">
-                        <tbody>
-                        <tr>
-                            <td class="align_left"><label for="new_tile_name">Tile Name :</label></td>
-                            <td class="align_right"><input type="text" id="new_tile_name" name="new_tile_name"/></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
+                <table class="tightTable pct100">
+                    <tbody>
+                    <tr>
+                        <td class="align_left"><label for="new_tile_name">Tile Name :</label></td>
+                        <td class="align_right"><input type="text" id="new_tile_name" name="new_tile_name"/></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div id="dialog-modal-select-clusters" title="Cluster selection" class="nod"></div>
             <div id="dialog-modal-change-refresh" title="Modify refresh rate" class="nod"></div>
@@ -94,31 +92,27 @@ class DialerStatus {
             <div id="dialog-modal-second-confirm" title="Confirmation Required" class="nod"></div>
             <div id="dialog-modal-cluster-action-confirm" title="Confirmation Required" class="nod"></div>
             <div id="dialog-modal-vici-credentials" title="Vici Username/Password Required" class="nod">
-                <form method="post">
-                    <table class="tightTable pct100">
-                        <tbody>
-                        <tr>
-                            <td class="align_left"><label for="vici_username">Username :</label></td>
-                            <td class="align_right"><input type="text" id="vici_username" name="vici_username"/></td>
-                        </tr>
-                        <tr>
-                            <td class="align_left"><label for="vici_password">Password :</label></td>
-                            <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
+                <table class="tightTable pct100">
+                    <tbody>
+                    <tr>
+                        <td class="align_left"><label for="vici_username">Username :</label></td>
+                        <td class="align_right"><input type="text" id="vici_username" name="vici_username"/></td>
+                    </tr>
+                    <tr>
+                        <td class="align_left"><label for="vici_password">Password :</label></td>
+                        <td class="align_right"><input type="password" id="vici_password" name="vici_password" required/></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <div id="dialog-modal-load-userprefs" title="Load User Preferences" class="nod">
-                <form method="post">
-                    <table class="tightTable pct100">
-                        <tbody>
-                        <tr>
-                            <td class="align_left">Would you like to load your user preferences?</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </form>
+                <table class="tightTable pct100">
+                    <tbody>
+                    <tr>
+                        <td class="align_left">Would you like to load your user preferences?</td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
             <script>
                 /*
@@ -205,7 +199,7 @@ class DialerStatus {
                         buttons: {
                             'Save': function () {
                                 let tileID = $(this).data('tileID');
-                                if($('#new_tile_name') != '') {
+                                if ($('#new_tile_name') != '') {
                                     tileDefs[tileID].name = $('#new_tile_name').val();
                                 }
                                 if (frontEnd_debug) {
@@ -215,6 +209,10 @@ class DialerStatus {
                                 initScreen();
                                 getDialerStatusData();
                                 $(this).dialog('close');
+                                if (frontEnd_debug) {
+                                    console.log('Renamed tile :: ', tileID);
+                                    console.log('Prefs have just been saved :: ', tileDefs);
+                                }
                             },
                             'Cancel': function () {
                                 $(this).dialog('close');
@@ -292,7 +290,6 @@ class DialerStatus {
                                 $('#campaignFilter option:selected').each(function (i, v) {
                                     tileDefs[tileID].groups.push(v.innerText);
                                 });
-                                tileDefs[tileID].groups = tmpArr;
                                 $('#usergroupFilter option:selected').each(function (i, v) {
                                     tileDefs[tileID].user_group_filter.push(v.innerText);
                                 });
@@ -465,14 +462,14 @@ class DialerStatus {
                                     tileDefs = prefs;
                                     let oldPrefsData = false;
                                     $.each(tileDefs, function (i, v) {
-                                        if (tileDefs.name === undefined || tileDefs.name === '') {
+                                        if (v.name === undefined || v.name === '') {
                                             // missing tileDef data because the prefs format is outdated
                                             oldPrefsData = true;
                                             let clusterData = getClusterInfoByClusterID(v.cluster_id);
                                             tileDefs[i] = new clusterDef(v.cluster_id, clusterData['0'].type, clusterData['0'].name, clusterData['0'].ip, v.groups, v.user_group_filter);
                                         }
                                     });
-                                    if(oldPrefsData) saveUserPrefs();
+                                    if (oldPrefsData) saveUserPrefs();
                                     if (frontEnd_debug) {
                                         console.log('Prefs have just been loaded :: ', tileDefs);
                                         console.log('User Preferences loaded');
@@ -538,15 +535,24 @@ class DialerStatus {
                     }
 
                     $('#clusterSelectButton').on('click', function () {
-                        let dlgObj = $('#dialog-modal-select-clusters');
-                        let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection" multiple size="6">';
-                        $.each(availableClusters, function (i, v) {
-                            clusterSelect += '<option value="' + v + '">' + clusterInfo[i].name + '</option>';
+                        let dlgObj = $('#dialog-modal-add-tile');
+                        let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection">';
+                        $.each(availableClusters, function (i) {
+                            clusterSelect += '<option value="' + i + '">' + clusterInfo[i].name + '</option>';
                         });
                         clusterSelect += '</select>';
                         dlgObj.dialog('open');
-                        dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
-                        $('#clusterSelection').val(tileDefs);
+                        dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
+                        //
+                        // let dlgObj = $('#dialog-modal-select-clusters');
+                        // let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection" multiple size="6">';
+                        // $.each(availableClusters, function (i, v) {
+                        //     clusterSelect += '<option value="' + v + '">' + clusterInfo[i].name + '</option>';
+                        // });
+                        // clusterSelect += '</select>';
+                        // dlgObj.dialog('open');
+                        // dlgObj.html('<table class="pct100 tightTable"><tbody><tr><td class="align_left"><label for="clusterSelection">Select Cluster(s) : </label></td><td class="align_right">' + clusterSelect + '</td></tr></tbody></table>');
+                        // $('#clusterSelection').val(tileDefs);
                     });
                     $('#refreshRateButton').on('click', function () {
                         let dlgObj = $('#dialog-modal-change-refresh');
@@ -628,19 +634,16 @@ class DialerStatus {
 
                     $('#dialerStatusZone').on('click', '.tileName', function () {
                         let tileID = $(this).closest('li').attr('id').split('_')[1].toString();
+                        let currentTileName = $(this)[0].innerText;
                         let dlgObj = $('#dialog-modal-rename-tile');
                         dlgObj.data('tileID', tileID);
                         dlgObj.dialog('open');
-                        saveUserPrefs();
-                        if (frontEnd_debug) {
-                            console.log('Renamed tile :: ', tileID);
-                            console.log('Prefs have just been saved :: ', tileDefs);
-                        }
+                        $('#new_tile_name').val(currentTileName);
                     });
 
                     $('#dialerStatusZone').on('click', '.removeClusterButton', function () {
-                        let tileID = $(this).attr('id').split('_')[1].toString();
-                        $('#tile_' + tileID).remove();
+                        let tileID = $(this).attr('id').split('_')[1];
+                        $('#tile_' + tileID.toString()).remove();
                         tileDefs.splice(tileID, 1);
                         saveUserPrefs();
                         if (frontEnd_debug) {
@@ -791,11 +794,8 @@ class DialerStatus {
                         if (parseInt(v) < warn) {
                             return '<span style="color:yellow;">' + v.toString() + '</span>';
                         }
-
                         if (default_color) {
-
                             return '<span style="color:' + default_color + ';">' + v.toString() + '</span>';
-
                         } else {
                             return v;
                         }
@@ -986,7 +986,7 @@ class DialerStatus {
 
                         function loadClusterAssessment(t) {
                             let out = "?ADD=";
-                            if(tileDefs[t].groups.length > 0 && tileDefs[t].groups[0] !== 'ALL-ACTIVE') {
+                            if (tileDefs[t].groups.length > 0 && tileDefs[t].groups[0] !== 'ALL-ACTIVE') {
                                 out += '31&campaign_id=' + encodeURIComponent(tileDefs[t].groups[0]);
                             } else {
                                 out += '10';
@@ -1060,9 +1060,9 @@ class DialerStatus {
                                 }
                             });
                         });
-                        if ($('li#tile_add').length === 0) {
-                            $('#dialerStatusZone').append(tileAdder);
-                        }
+                        // if ($('li#tile_add').length === 0) {
+                        //     $('#dialerStatusZone').append(tileAdder);
+                        // }
                         applyUniformity();
                         if (highContrast) {
                             $('body').css('background-color', '#000000');
