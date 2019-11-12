@@ -1185,7 +1185,7 @@
 
 
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right">$<?= number_format($running_total_paid_sales_amount, 2) ?></td>
-
+;
 
                                 <?
                                     /**
