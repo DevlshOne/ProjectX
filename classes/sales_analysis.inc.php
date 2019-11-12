@@ -84,14 +84,15 @@ class SalesAnalysis{
 	
 	
 	
-	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null, $vici_campaign_id=''){
+	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code='',$ignore_arr = null, $vici_campaign_id=''){
 		
 		$campaign_id = 0;
-		//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_id)<br />\n";
+		//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code, $ignore_arr, $vici_campaign_id)<br />\n";
 		
 		connectPXDB();
 		
 		$sql_campaign = "";
+		$sql_vici_campaign = "";
 		$sql_cluster = "";
 		$sql_user_group = "";
 		$sql_ignore_group = "";
@@ -169,10 +170,16 @@ class SalesAnalysis{
 		}
 		
 		
+		if($vici_campaign_code){
+			
+			$sql_campaign .= " AND `campaign_code`='".mysqli_real_escape_string($_SESSION['db'],$vici_campaign_code)."' ";
+			
+		}
+		
 		if($vici_campaign_id){
 			
-			$sql_campaign .= " AND campaign_code='".mysqli_real_escape_string($_SESSION['db'],$vici_campaign_id)."' ";
 			
+			$sql_vici_campaign .= " AND `vici_campaign_id`='".mysqli_real_escape_string($_SESSION['db'],$vici_campaign_id)."' ";
 		}
 		
 		
@@ -284,16 +291,17 @@ class SalesAnalysis{
 		$where = " WHERE sale_time BETWEEN '$stime' AND '$etime' ".
 				
 				// EXCLUDE ANYTHING ROUSTING RELATED
-		" AND `is_paid` != 'roustedcc' ".
-		
-		//	" AND `account_id`='".$_SESSION['account']['id']."' ".
-		$sql_campaign.
-		$sql_cluster.
-		$sql_user_group.
-		$sql_ignore_group.
-		$ofcsql.
-		//							(($verifier_cluster_id > -1)?" AND verifier_cluster_id='".$_SESSION['site_config']['db'][$verifier_cluster_id]['cluster_id']."' ":"").
-		"";
+				" AND `is_paid` != 'roustedcc' ".
+				
+				//	" AND `account_id`='".$_SESSION['account']['id']."' ".
+				$sql_campaign.
+				$sql_vici_campaign.
+				$sql_cluster.
+				$sql_user_group.
+				$sql_ignore_group.
+				$ofcsql.
+				//	(($verifier_cluster_id > -1)?" AND verifier_cluster_id='".$_SESSION['site_config']['db'][$verifier_cluster_id]['cluster_id']."' ":"").
+				"";
 		
 		//echo $where;
 		
@@ -315,19 +323,25 @@ class SalesAnalysis{
 		$cluster_array=array();
 		
 		
-		$sql = "SELECT DISTINCT(agent_username), agent_cluster_id FROM transfers ".
-				" WHERE xfer_time BETWEEN '$stime' AND '$etime' AND agent_cluster_id > 0".
+		$sql = "SELECT DISTINCT(transfers.agent_username), transfers.agent_cluster_id FROM transfers ".
+				" LEFT JOIN `lead_tracking` ON `lead_tracking`.id = transfers.lead_tracking_id ".
+				" WHERE transfers.xfer_time BETWEEN '$stime' AND '$etime' ".
+				" AND transfers.agent_cluster_id > 0 ".
+				
+				$sql_vici_campaign.
 				
 				// EXCLUDE ANYTHING ROUSTING RELATED
-		" AND verifier_dispo != 'SALECC' ".
+				" AND transfers.verifier_dispo != 'SALECC' ".
 		
-		//" AND `account_id`='".$_SESSION['account']['id']."' ".
-		$sql_cluster.
-		$sql_campaign.
-		$sql_user_group.
-		$sql_ignore_group.
-		$ofcsql.
-		" ORDER BY agent_username ASC";
+				//" AND `account_id`='".$_SESSION['account']['id']."' ".
+				$sql_cluster.
+				$sql_campaign.
+				$sql_user_group.
+				$sql_ignore_group.
+				$ofcsql.
+				" ORDER BY agent_username ASC";
+		
+				
 		//echo $sql;
 		$res = $_SESSION['dbapi']->ROquery($sql);
 		//$res = query("SELECT DISTINCT(agent_username),agent_cluster_id FROM sales ".$where." ORDER BY agent_username ASC");
@@ -498,19 +512,20 @@ class SalesAnalysis{
 					" WHERE `time` BETWEEN '$stime' AND '$etime' ".
 					
 					// EXCLUDE ANYTHING ROUSTING RELATED
-			" AND dispo != 'SALECC' ".
+					" AND dispo != 'SALECC' ".
 			
-			//	" AND `account_id`='".$_SESSION['account']['id']."' ".
-			" AND lead_id > 0 ".
-			(($combine_users)?
-					// GET USER AND USER2
-					" AND (agent_username IN ('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') ) "
-					:
-					// ELSE JUST GET THE SPECIFIED USER
-					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
-			).
-			$ofcsql.
-			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
+					//	" AND `account_id`='".$_SESSION['account']['id']."' ".
+					" AND lead_id > 0 ".
+					(($combine_users)?
+							// GET USER AND USER2
+							" AND (agent_username IN ('".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."','".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."2') ) "
+							:
+							// ELSE JUST GET THE SPECIFIED USER
+							" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
+					).
+					$ofcsql.
+				(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"").
+				$sql_vici_campaign;
 			
 			list($num_total_calls_px) = $_SESSION['dbapi']->ROqueryROW($sql);
 			
@@ -537,7 +552,8 @@ class SalesAnalysis{
 			).
 			" AND (`dispo`='NI' OR `dispo`='ni') ".
 			$ofcsql.
-			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
+			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"").
+			$sql_vici_campaign;
 			
 			//echo "\n".$sql."\n";
 			
@@ -571,7 +587,8 @@ class SalesAnalysis{
 					).
 			" AND (`dispo`='A' OR `dispo`='a') ".
 			$ofcsql.
-			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"");
+			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"").
+			$sql_vici_campaign;
 			//echo "\n".$sql."\n";
 			// ANSWERING MACHINE STATS
 			list($num_AnswerMachines) = $_SESSION['dbapi']->ROqueryROW($sql);
@@ -589,7 +606,8 @@ class SalesAnalysis{
 					// ELSE JUST GET THE SPECIFIED USER
 					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
 					).
-					(($campaign_id > 0)?" AND campaign_id='".intval($campaign_id)."' ":"");
+					(($campaign_id > 0)?" AND campaign_id='".intval($campaign_id)."' ":"").
+					$sql_vici_campaign;
 					
 					
 					
