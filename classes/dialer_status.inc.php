@@ -33,8 +33,8 @@
                 $this->clusterInfo[$i]['type'] = getClusterType($v);
                 $this->clusterInfo[$i]['name'] = getClusterName($v);
                 $this->clusterInfo[$i]['ip'] = getClusterWebHost($v);
-                $this->clusterInfo[$i]['sel_campaigns'] = array("ALL-ACTIVE");//getClusterCampaigns($v);
-                $this->clusterInfo[$i]['sel_user_groups'] = array("ALL-GROUPS");//getClusterUserGroups($v);
+                $this->clusterInfo[$i]['groups'] = getClusterCampaigns($v);
+                $this->clusterInfo[$i]['user_group_filter'] = getClusterUserGroups($v);
                 $this->clusterInfo[$i]['campaign_options'] = getClusterCampaigns($v);
                 $this->clusterInfo[$i]['usergroup_options'] = getClusterUserGroups($v);
             }
@@ -124,7 +124,7 @@
                 $('#dialerStatusZone').ready(function () {
                     var refreshInterval = 40;
                     var refreshEnabled = true;
-                    var frontEnd_debug = false;
+                    var frontEnd_debug = true;
                     dispTimer = false;
                     // clusterInfo is an array that stores all the available information for a cluster, including the selectable campaigns and usergroups
                     var clusterInfo = <?=json_encode($this->clusterInfo);?>;
@@ -145,7 +145,7 @@
                     }
 
                     $(clusterInfo).each(function (i, v) {
-                        tileDefs.push(new clusterDef(v.cluster_id, v.type, v.name, v.ip, v.sel_campaigns, v.sel_user_groups));
+                        tileDefs.push(new clusterDef(v.cluster_id, v.type, v.name, v.ip, v.groups, v.user_group_filter));
                     });
                     if (frontEnd_debug) {
                         console.log('Initializing the variable `clusterInfo` :: ', clusterInfo);
