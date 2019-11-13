@@ -173,7 +173,7 @@ FILES TO CREATE
 	
 	if($reload_asterisk){
 		
-		echo "Reloading Asterisk ".`asterisk -rx reload`;
+		echo "Reloading Asterisk ".`/usr/sbin/asterisk -rx reload`;
 		echo "\n";
 		
 	}else{
