@@ -620,8 +620,14 @@
                         });
                         ugSelect += '</select>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
-                        $('#campaignFilter').val(tileDefs[tileID].groups);
-                        $('#usergroupFilter').val(tileDefs[tileID].user_group_filter);
+                        $.each(tileDefs[tileID].groups, function(i, v) {
+                            $('#campaignFilter option[value="' + v + '"]').prop('selected', 'selected');
+                        });
+                        // $('#campaignFilter').val(tileDefs[tileID].groups);
+                        $.each(tileDefs[tileID].user_group_filter, function(i, v) {
+                            $('#usergroupFilter option[value="' + v + '"]').prop('selected', 'selected');
+                        });
+                        // $('#usergroupFilter').val(tileDefs[tileID].user_group_filter);
                     });
 
                     $('#dialerStatusZone').on('click', '.tileName', function () {
