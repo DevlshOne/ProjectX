@@ -609,25 +609,33 @@
                         dlgObj.data('clusterID', tileDefs[tileID].cluster_id);
                         dlgObj.dialog('open');
                         dlgObj.dialog({title: 'Change Cluster Filters - ' + tileDefs[tileID].name});
-                        let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option value="ALL-ACTIVE">ALL-ACTIVE</option>';
+                        let campaignSelect = '<select name="groups" id="campaignFilter" multiple size="6"><option value="ALL-ACTIVE"';
+                        if (tileDefs[tileID].groups.includes("ALL-ACTIVE")) {
+                            campaignSelect += ' selected';
+                        }
+                        campaignSelect += '>ALL-ACTIVE</option>';
                         $.each(clusterInfo[tileID]['campaign_options'], function (i, v) {
-                            campaignSelect += '<option value="' + v.groups + '">' + v.groups + '</option>';
+                            campaignSelect += '<option value="' + v.groups + '"';
+                            if (tileDefs[tileID].groups.includes(v.groups)) {
+                                campaignSelect += ' selected';
+                            }
+                            campaignSelect += '>' + v.groups + '</option>';
                         });
                         campaignSelect += '</select>';
-                        let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8"><option>ALL-GROUPS</option>';
+                        let ugSelect = '<select name="user_group_filter" id="usergroupFilter" multiple size="8"><option value="ALL-GROUPS"';
+                        if (tileDefs[tileID].user_group_filter.includes("ALL-GROUPS")) {
+                            ugSelect += ' selected';
+                        }
+                        ugSelect += '>ALL-GROUPS</option>';
                         $.each(clusterInfo[tileID]['usergroup_options'], function (i, v) {
-                            ugSelect += '<option value="' + v.user_group_filter + '">' + v.user_group_filter + '</option>';
+                            ugSelect += '<option value="' + v.user_group_filter + '"';
+                            if (tileDefs[tileID].user_group_filter.includes(v.user_group_filter)) {
+                                ugSelect += ' selected';
+                            }
+                            ugSelect += '>' + v.user_group_filter + '</option>';
                         });
                         ugSelect += '</select>';
                         dlgObj.html('<table class="pct100 tightTable"><tr><td class="align_left"><label for="filterCampaigns">Select Campaign(s) : </label></td><td class="align_right">' + campaignSelect + '</td></tr><tr><td class="align_left"><label for="usergroupFilter">Select User Group(s) : </label></td><td class="align_right">' + ugSelect + '</td></tr></table>');
-                        $.each(tileDefs[tileID].groups, function(i, v) {
-                            $('#campaignFilter option[value="' + v + '"]').prop('selected', 'selected');
-                        });
-                        // $('#campaignFilter').val(tileDefs[tileID].groups);
-                        $.each(tileDefs[tileID].user_group_filter, function(i, v) {
-                            $('#usergroupFilter option[value="' + v + '"]').prop('selected', 'selected');
-                        });
-                        // $('#usergroupFilter').val(tileDefs[tileID].user_group_filter);
                     });
 
                     $('#dialerStatusZone').on('click', '.tileName', function () {
