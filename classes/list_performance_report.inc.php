@@ -259,12 +259,20 @@ where sale_time > unix_timestamp(curdate() - interval 35 day);
 // 				$timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." ".$_REQUEST['end_time_hour'].":".$_REQUEST['end_time_min'].$_REQUEST['end_time_timemode']);
 // 			}else{
 				
-// 				$timestamp = strtotime($_REQUEST['strt_date_month']."/".$_REQUEST['strt_date_day']."/".$_REQUEST['strt_date_year']." 00:00:00");
-// 				$timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." 23:59:59");
+			if($_REQUEST['report_time_mode'] == 'history'){
+				
+				$timestamp = strtotime($_REQUEST['date_month']."/".$_REQUEST['date_day']."/".$_REQUEST['date_year']." 00:00:00");
+				$timestamp2 = $timestamp + 86399;
+				
+			}else{
+				
+				$timestamp = mktime(0,0,0);
+				$timestamp2 = mktime(23,59,59);
+			}
+				//$timestamp2 = strtotime($_REQUEST['end_date_month']."/".$_REQUEST['end_date_day']."/".$_REQUEST['end_date_year']." 23:59:59");
 // 			}
 			
-			$timestamp = mktime(0,0,0);
-			$timestamp2 = mktime(23,59,59);
+			
 			
 		}else{
 			
@@ -277,7 +285,21 @@ where sale_time > unix_timestamp(curdate() - interval 35 day);
 		
 		
 		if(!isset($_REQUEST['no_nav'])){
-			?><form id="listperf_report" method="POST" action="<?=$_SERVER['PHP_SELF']?>?area=list_tools&tool=performance_reports&no_script=1" onsubmit="return genReport(this, 'list_performance')">
+			?><script>
+
+			function togHistSearch(way){
+				if(way == 'history'){
+					ieDisplay('most_recent_cell', 0);
+					ieDisplay('historical_cell', 1);
+					
+				}else{
+					ieDisplay('most_recent_cell', 1);
+					ieDisplay('historical_cell', 0);
+				}//report_time_mode
+			}
+			
+			</script>
+			<form id="listperf_report" method="POST" action="<?=$_SERVER['PHP_SELF']?>?area=list_tools&tool=performance_reports&no_script=1" onsubmit="return genReport(this, 'list_performance')">
 
 				<input type="hidden" name="generate_report">
 
@@ -351,10 +373,42 @@ $(function() {
 					</td>
 				</tr>
 				<tr>
-					<td height="30" colspan="2" align="center">
+					<td height="30" colspan="2" align="left">
+						<input type="radio" name="report_time_mode" value="current"<?=($_REQUEST['report_time_mode'] != 'history')?' CHECKED ':''?> onclick="togHistSearch(this.value)">Today/Most current
+					</td>
+				</tr>
+				<tr>
+					<td height="30" colspan="2" align="center" id="most_recent_cell" <?=($_REQUEST['report_time_mode'] == 'history')?' class="nod" ':''?>>
 					
-						<input type="checkbox" name="force_fresh_pull" value="1" /> Force fresh data pull (Slower)
+						<table border="0" align="center" width="100%">
+						<tr>
+							<td align="center">
+								<input type="checkbox" name="force_fresh_pull" value="1" /> Force fresh data pull (Slower)
+							</td>
+						</tr>
+						</table>
 					
+					</td>
+				</tr>
+				<tr>
+					<td height="30" colspan="2" align="left">
+						<input type="radio" name="report_time_mode" value="history" <?=($_REQUEST['report_time_mode'] == 'history')?' CHECKED ':''?> onclick="togHistSearch(this.value)">Historical 
+					</td>
+				</tr>
+				<tr>
+					<td height="30" colspan="2" align="center" id="historical_cell"<?=($_REQUEST['report_time_mode'] != 'history')?' class="nod" ':''?>>
+					
+						<table border="0">
+						<tr>
+							<th>Date:</th>
+							<td>
+          						<?php  echo makeTimebar("date_", 1, null, false, $timestamp); ?>
+          						
+            				</td>
+						</tr>
+
+						</table>
+						
 					</td>
 				</tr>
 				<tr>
@@ -504,7 +558,7 @@ $(function() {
     			$json_data = json_encode($data_arr);
     			
     			$sql = "INSERT INTO `list_performance_history` (`time`, `vici_cluster_id`, `json_data`) VALUES ".
-      			"(".$report_stime.",".$vici_cluster_id.",'".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."') ".
+      			"(".$etime.",".$vici_cluster_id.",'".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."') ".
       			"ON DUPLICATE KEY UPDATE `json_data`='".mysqli_real_escape_string($_SESSION['dbapi']->db, $json_data)."' ";
     			
     			
@@ -526,7 +580,10 @@ $(function() {
 
         // ACTIVATE OUTPUT BUFFERING
         ob_start();
-        ob_clean(); ?><h1><?php
+        ob_clean(); 
+        
+        
+        ?><h1><?php
 
 			if($campaign_code){
 				echo $campaign_code.' ';
@@ -570,9 +627,9 @@ $(function() {
         
         if($row['time'] > 0){
         	
-        	echo '<h2 align="center">(Cached, as of '.date("h:i:s T", $row['time']).')</h2>';
+        	echo '<h2 align="center">(Cached, as of '.date("h:i:s T, m/d/Y", $row['time']).')</h2>';
         }else{
-        	echo '<h2 align="center">(as of '.date("h:i:s T", $report_stime).')</h2>';
+        	echo '<h2 align="center">(as of '.date("h:i:s T, m/d/Y", $report_stime).')</h2>';
         }
         
 
