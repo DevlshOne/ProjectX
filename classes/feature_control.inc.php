@@ -533,6 +533,7 @@ class FeatureControl{
 							$this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes')?true:false );
 							$this->renderFeatureRow('server_status', 'Server Status', ($row['server_status'] == 'yes')?true:false );
 							$this->renderFeatureRow('extensions', 'Extensions', ($row['extensions'] == 'yes')?true:false );
+							$this->renderFeatureRow('process_tracker_schedules', 'Process Tracker Schedules', ($row['process_tracker_schedules'] == 'yes')?true:false );
 
 
 						?><tr>

@@ -112,7 +112,8 @@
                             		checkAccess('ringing_calls') || 
                             		checkAccess('messages') || 
                             		checkAccess('server_status') || 
-                            		checkAccess('extensions')
+                                    checkAccess('extensions') ||
+                                    checkAccess('process_tracker_schedules')
                             ) {
                                 ?>
                                 <li class="has-children bookmarks">
@@ -183,6 +184,12 @@
                                             ?>
                                             <li><a href="?area=extensions&no_script=1"
                                                    onclick="loadSection(this.href);return false">Extensions</a></li><?
+                                        } 
+
+                                        if (checkAccess('process_tracker_schedules')) {
+                                            ?>
+                                            <li><a href="?area=process_tracker_schedules&no_script=1"
+                                                   onclick="loadSection(this.href);return false">Process Tracker Schedules</a></li><?
                                         } ?></ul>
                                 </li><?
                             }

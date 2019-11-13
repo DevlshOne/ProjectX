@@ -15,6 +15,7 @@
 class ProcessTrackerAPI{
 
 	var $table = "process_tracker";
+	var $schedule_table = "process_tracker_schedules";
 
 
 
@@ -37,6 +38,20 @@ class ProcessTrackerAPI{
 		$id = intval($id);
 
 		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->table."` ".
+						" WHERE id='".$id."' "
+
+					);
+	}
+
+	/**
+	 * Get a Name by ID
+	 * @param 	$id		The database ID of the record
+	 * 	 * @return	assoc-array of the database record
+	 */
+	function getScheduleByID($id){
+		$id = intval($id);
+
+		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->schedule_table."` ".
 						" WHERE id='".$id."' "
 
 					);
