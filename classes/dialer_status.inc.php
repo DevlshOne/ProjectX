@@ -139,8 +139,9 @@
                             this.type = t;
                             this.name = n;
                             this.web_ip = ip;
-                            this.groups = (g === undefined ? new Array('ALL-ACTIVE') : g);
-                            this.user_group_filter = (ugf === undefined ? new Array('ALL-GROUPS') : ugf);
+                            this.groups = ((g === undefined || g.length == 0) ? new Array('ALL-ACTIVE') : g);
+                            this.user_group_filter = ((ugf === undefined || ugf.length == 0) ? new Array('ALL-GROUPS') : ugf);
+                            debugger;
                         }
                     }
 
@@ -857,9 +858,11 @@
                             let tmpAgentData = '';
                             tmpAgentData = preString.match(rgxPre)[0];
                             let tmpAgentDataSplit = new Array();
-                            tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/gi).map(function (val) {
-                                return val.replace(/<\/?b>/gi, '').trim();
-                            });
+                            if (tmpAgentData.match(/<b>(.*?)<\/b>/gi) !== null) {
+                                tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/gi).map(function (val) {
+                                    return val.replace(/<\/?b>/gi, '').trim();
+                                });
+                            }
                             let parsedAgentData = [];
                             let rowNumber = 0;
                             let colNumber = 0;
