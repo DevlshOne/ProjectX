@@ -932,6 +932,21 @@
                         let tdValues = [];
                         let clusterValues = [];
                         let summaryValues = [];
+
+                        function initSummaryValues() {
+                            summaryValues['calls_active'] = '0';
+                            summaryValues['calls_ringing'] = '0';
+                            summaryValues['calls_waiting'] = '0';
+                            summaryValues['calls_ivr'] = '0';
+                            summaryValues['agents_on'] = '0';
+                            summaryValues['agents_active'] = '0';
+                            summaryValues['agents_waiting'] = '0';
+                            summaryValues['agents_paused'] = '0';
+                            summaryValues['agents_dead'] = '0';
+                            summaryValues['agents_dispo'] = '0';
+                        }
+
+                        initSummaryValues();
                         let noCalls = false;
                         let noAgents = false;
                         $(clusterData).find('TD').each(function (i, n) {
@@ -962,6 +977,7 @@
                                     break;
                             }
                         });
+
                         if (summaryData.length > 8) {
                             noCalls = summaryData.includes('NO LIVE CALLS');
                             noAgents = summaryData.includes('NO AGENTS ON CALLS');
