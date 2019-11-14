@@ -172,7 +172,8 @@
                         buttons: {
                             'Save': function () {
                                 $('#clusterSelection option:selected').each(function () {
-                                    tileDefs.push(new clusterDef(clusterInfo[this.value].cluster_id, clusterInfo[this.value].type, clusterInfo[this.value].name, clusterInfo[this.value].web_ip, clusterInfo[this.value].groups, clusterInfo[this.value].user_group_filter));
+                                    let clusterData = getClusterInfoByClusterID(this.value)[0];
+                                    tileDefs.push(new clusterDef(this.value, clusterData.type, clusterData.name, clusterData.web_ip, new Array('ALL-ACTIVE'), new Array('ALL-GROUPS')));
                                 });
                                 if (frontEnd_debug) {
                                     console.log('Clusters have just been changed :: ', tileDefs);
@@ -232,7 +233,7 @@
                             'Save': function () {
                                 tileDefs = [];
                                 $('#clusterSelection option:selected').each(function () {
-                                    tileDefs.push(new clusterDef(this.value));
+                                    tileDefs.push(new clusterDef(clusterInfo[this.value].cluster_id, clusterInfo[this.value].type, clusterInfo[this.value].name, clusterInfo[this.value].web_ip, clusterInfo[this.value].groups, clusterInfo[this.value].user_group_filter));
                                 });
                                 if (frontEnd_debug) {
                                     console.log('Clusters have just been changed :: ', tileDefs);
@@ -540,7 +541,7 @@
                         let dlgObj = $('#dialog-modal-add-tile');
                         let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection">';
                         $.each(availableClusters, function (i) {
-                            clusterSelect += '<option value="' + i + '">' + clusterInfo[i].name + '</option>';
+                            clusterSelect += '<option value="' + clusterInfo[i].cluster_id + '">' + clusterInfo[i].name + '</option>';
                         });
                         clusterSelect += '</select>';
                         dlgObj.dialog('open');
@@ -595,7 +596,7 @@
                         let dlgObj = $('#dialog-modal-add-tile');
                         let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection">';
                         $.each(availableClusters, function (i) {
-                            clusterSelect += '<option value="' + i + '">' + clusterInfo[i].name + '</option>';
+                            clusterSelect += '<option value="' + clusterInfo[i].cluster_id + '">' + clusterInfo[i].name + '</option>';
                         });
                         clusterSelect += '</select>';
                         dlgObj.dialog('open');
