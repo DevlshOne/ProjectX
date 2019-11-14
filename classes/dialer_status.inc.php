@@ -141,7 +141,6 @@
                             this.web_ip = ip;
                             this.groups = ((g === undefined || g.length == 0) ? new Array('ALL-ACTIVE') : g);
                             this.user_group_filter = ((ugf === undefined || ugf.length == 0) ? new Array('ALL-GROUPS') : ugf);
-                            debugger;
                         }
                     }
 
