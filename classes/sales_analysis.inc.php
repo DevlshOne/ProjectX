@@ -94,6 +94,7 @@ class SalesAnalysis{
 		$sql_campaign = "";
 		$sql_vici_campaign = "";
 		$sql_cluster = "";
+		$sql_agent_cluster = "";
 		$sql_user_group = "";
 		$sql_ignore_group = "";
 		$ofcsql = "";
@@ -189,25 +190,29 @@ class SalesAnalysis{
 			if(is_array($agent_cluster_id)){
 				
 				$sql_cluster = " AND ( ";
+				$sql_agent_cluster = " AND ( ";
 				$x=0;
 				foreach($agent_cluster_id as $cidx){
 					
 					if($x++ > 0)$sql_cluster .= " OR ";
 					
 					$sql_cluster .= " agent_cluster_id='".$_SESSION['site_config']['db'][$cidx]['cluster_id']."' ";
+					$sql_agent_cluster .= " vici_cluster_id='".$_SESSION['site_config']['db'][$cidx]['cluster_id']."' ";
 					
 				}
 				
 				$sql_cluster .= ") ";
-				
+				$sql_agent_cluster .= ") ";
 				
 				if($x == 0){
 					$sql_cluster .= "";
+					$sql_agent_cluster .= "";
 				}
 				
 			}else{
 				
 				$sql_cluster = " AND agent_cluster_id='".$_SESSION['site_config']['db'][$agent_cluster_id]['cluster_id']."' ";
+				$sql_agent_cluster = " AND vici_cluster_id='".$_SESSION['site_config']['db'][$agent_cluster_id]['cluster_id']."' ";
 				
 			}
 			
@@ -525,8 +530,11 @@ class SalesAnalysis{
 					).
 					$ofcsql.
 				(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"").
+				$sql_agent_cluster.
 				$sql_vici_campaign;
 			
+			//echo $sql."<br />\n\n";
+				
 			list($num_total_calls_px) = $_SESSION['dbapi']->ROqueryROW($sql);
 			
 			
@@ -550,9 +558,10 @@ class SalesAnalysis{
 					// ELSE JUST GET THE SPECIFIED USER
 					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
 			).
-			" AND (`dispo`='NI' OR `dispo`='ni') ".
+			" AND (`dispo`='NI') ".
 			$ofcsql.
 			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"").
+			$sql_agent_cluster.
 			$sql_vici_campaign;
 			
 			//echo "\n".$sql."\n";
@@ -585,13 +594,20 @@ class SalesAnalysis{
 					// ELSE JUST GET THE SPECIFIED USER
 					" AND agent_username='".mysqli_real_escape_string($_SESSION['db'],$agentobj->username)."' "
 					).
-			" AND (`dispo`='A' OR `dispo`='a') ".
+			" AND (`dispo`='A') ".
 			$ofcsql.
 			(($campaign_id )?" AND campaign_id='".$campaign_id."' ":"").
+			$sql_agent_cluster.
 			$sql_vici_campaign;
+			
+			
 			//echo "\n".$sql."\n";
 			// ANSWERING MACHINE STATS
 			list($num_AnswerMachines) = $_SESSION['dbapi']->ROqueryROW($sql);
+			
+			
+			//if($num_AnswerMachines > $num_total_calls_px)echo $sql."<br />\n\n";
+			//echo $agentobj->username.' '.$agent_cluster_id.' Calls: '.$num_total_calls_px." A: ".$num_AnswerMachines."<br />\n";
 			
 			
 			$sql = "SELECT COUNT(id) FROM transfers ".
@@ -746,7 +762,7 @@ class SalesAnalysis{
 					// TOTALS ADDUP
 					$total_paid_hrs += $paid_hrs;
 					$total_active_hrs += $active_hrs;
-					$total_calls += $activity_num_calls;
+					$total_calls += $num_total_calls_px;//$activity_num_calls;
 					$total_ni += $num_NI;
 					$total_xfer += $num_XFER;
 					

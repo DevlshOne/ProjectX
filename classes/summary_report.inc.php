@@ -109,7 +109,8 @@ class SummaryReport{
 			$cluster_idx = getClusterIndex($cluster_id);
 
 			//list($output_array, $totals) = $_SESSION['sales_analysis']->generateData($stime, $etime, null, $cluster_idx, 1);
-			$cluster_out = $_SESSION['sales_analysis']->generateData($stime, $etime, null, $cluster_idx, 1);
+			//generateData($stime, $etime, $campaign_code, $agent_cluster_idx, $combine_users, $user_group, $ignore_group, $vici_campaign_code='',$ignore_arr = null, $vici_campaign_id='')
+			$cluster_out = $_SESSION['sales_analysis']->generateData($stime, $etime, null, $cluster_idx, 1); //
 
 			// returns array($output_array, $totals);
 
