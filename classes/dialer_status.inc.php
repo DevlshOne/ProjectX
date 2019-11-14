@@ -173,7 +173,7 @@ class DialerStatus {
                             'Save': function () {
                                 $('#clusterSelection option:selected').each(function () {
                                     let clusterData = getClusterInfoByClusterID(this.value)[0];
-                                    tileDefs.push(new clusterDef(this.value, clusterData.type, clusterData.name, clusterData.web_ip, new Array('ALL-ACTIVE'), new Array('ALL-GROUPS')));
+                                    tileDefs.push(new clusterDef(this.value, clusterData.type, clusterData.name, clusterData.ip, new Array('ALL-ACTIVE'), new Array('ALL-GROUPS')));
                                 });
                                 if (frontEnd_debug) {
                                     console.log('Clusters have just been changed :: ', tileDefs);
@@ -233,7 +233,8 @@ class DialerStatus {
                             'Save': function () {
                                 tileDefs = [];
                                 $('#clusterSelection option:selected').each(function () {
-                                    tileDefs.push(new clusterDef(clusterInfo[this.value].cluster_id, clusterInfo[this.value].type, clusterInfo[this.value].name, clusterInfo[this.value].web_ip, clusterInfo[this.value].groups, clusterInfo[this.value].user_group_filter));
+                                    let clusterData = getClusterInfoByClusterID(this.value)[0];
+                                    tileDefs.push(new clusterDef(this.value, clusterData.type, clusterData.name, clusterData.ip, new Array('ALL-ACTIVE'), new Array('ALL-GROUPS')));
                                 });
                                 if (frontEnd_debug) {
                                     console.log('Clusters have just been changed :: ', tileDefs);
@@ -297,6 +298,9 @@ class DialerStatus {
                                     tileDefs[tileID].user_group_filter.push(v.innerText);
                                 });
                                 saveUserPrefs();
+                                if (frontEnd_debug) {
+                                    console.log('Cluster filters have just been changed on tile ' + tileID + ' :: ', tileDefs);
+                                }
                                 $(this).dialog('close');
                             },
                             'Cancel': function () {
@@ -468,8 +472,8 @@ class DialerStatus {
                                         if (v.name === undefined || v.name === '') {
                                             // missing tileDef data because the prefs format is outdated
                                             oldPrefsData = true;
-                                            let clusterData = getClusterInfoByClusterID(v.cluster_id);
-                                            tileDefs[i] = new clusterDef(v.cluster_id, clusterData['0'].type, clusterData['0'].name, clusterData['0'].ip, v.groups, v.user_group_filter);
+                                            let clusterData = getClusterInfoByClusterID(v.cluster_id)[0];
+                                            tileDefs[i] = new clusterDef(v.cluster_id, clusterData.type, clusterData.name, clusterData.ip, v.groups, v.user_group_filter);
                                         }
                                     });
                                     if (oldPrefsData) saveUserPrefs();
@@ -606,6 +610,7 @@ class DialerStatus {
                     $('#dialerStatusZone').on('click', '.selectFiltersButton', function () {
                         let tileID = $(this).closest('button').attr('id').split('_')[1];
                         let dlgObj = $('#dialog-modal-cluster-filters');
+                        let clusterData = getClusterInfoByClusterID(tileDefs[tileID].cluster_id)[0];
                         dlgObj.data('tileID', tileID);
                         dlgObj.data('clusterID', tileDefs[tileID].cluster_id);
                         dlgObj.dialog('open');
@@ -615,7 +620,7 @@ class DialerStatus {
                             campaignSelect += ' selected';
                         }
                         campaignSelect += '>ALL-ACTIVE</option>';
-                        $.each(clusterInfo[tileID]['campaign_options'], function (i, v) {
+                        $.each(clusterData['campaign_options'], function (i, v) {
                             campaignSelect += '<option value="' + v.groups + '"';
                             if (tileDefs[tileID].groups.includes(v.groups)) {
                                 campaignSelect += ' selected';
@@ -628,7 +633,7 @@ class DialerStatus {
                             ugSelect += ' selected';
                         }
                         ugSelect += '>ALL-GROUPS</option>';
-                        $.each(clusterInfo[tileID]['usergroup_options'], function (i, v) {
+                        $.each(clusterData['usergroup_options'], function (i, v) {
                             ugSelect += '<option value="' + v.user_group_filter + '"';
                             if (tileDefs[tileID].user_group_filter.includes(v.user_group_filter)) {
                                 ugSelect += ' selected';
@@ -809,6 +814,9 @@ class DialerStatus {
                     }
 
                     function parseTable(tile_id, tbl) {
+                        if (frontEnd_debug) {
+                            console.log('Parsing data for Tile ID :: ', tile_id);
+                        }
                         let cltype = tileDefs[tile_id].type;
                         let clusterDataFields = [
                             'dial_level',
@@ -1056,6 +1064,9 @@ class DialerStatus {
                         $tile.empty();
                         $tile.append(titleRow);
                         let prsdData = parseTable(tileID, dialerStatusData);
+                        if (frontEnd_debug) {
+                            console.log('Rebuilding Tile ID :: ', tileID);
+                        }
                         $tile.append(prsdData);
                     }
 
@@ -1076,7 +1087,7 @@ class DialerStatus {
                                 contentType: 'application/x-www-form-urlencoded',
                                 crossDomain: false,
                                 crossOrigin: false,
-                                url: 'api/api.php?get=dialer_status&mode=json&action=getClusterDataByUserPrefs&c=' + v.cluster_id.toString(),
+                                url: 'api/api.php?get=dialer_status&mode=json&action=getClusterDataByUserPrefs&t=' + i.toString(),
                                 success: function (response) {
                                     parseDialerStatusData(i, response);
                                 },
@@ -1085,9 +1096,6 @@ class DialerStatus {
                                 }
                             });
                         });
-                        // if ($('li#tile_add').length === 0) {
-                        //     $('#dialerStatusZone').append(tileAdder);
-                        // }
                         applyUniformity();
                         if (highContrast) {
                             $('body').css('background-color', '#000000');
