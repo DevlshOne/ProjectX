@@ -83,7 +83,7 @@ class Extensions{
 			var ExtensionsTableFormat = [
 				['number','align_center'],
 				['[get:server_name:server_id]','align_left'],
-
+				['iax_host','align_center'],
 				['in_use','align_center'],
 				['[get:username:in_use_by_userid]','align_center'],
 				['status','align_center'],
@@ -270,7 +270,12 @@ class Extensions{
 		<tr>
 			<td colspan="2"><table border="0" width="100%">
 			<tr>
+				<td rowspan="2" width="70" align="center" style="border-right:1px solid #000">
 
+
+					<div id="total_count_div"></div>
+
+				</td>
 				<th class="row2">Extension</th>
 				<th class="row2">Server</th>
 				<th class="row2">In Use</th>
@@ -310,6 +315,7 @@ class Extensions{
 			<tr>
 				<th class="row2" align="center"><?=$this->getOrderLink('number')?>Extension</a></th>
 				<th class="row2" align="left"><?=$this->getOrderLink('server_id')?>Server</a></th>
+				<th class="row2"><?=$this->getOrderLink('iax_host')?>Dialer Host</a></th>
 				<th class="row2"><?=$this->getOrderLink('in_use')?>In Use</a></th>
 				<th class="row2"><?=$this->getOrderLink('in_use_by_userid')?>In Use By</a></th>
 				<th class="row2"><?=$this->getOrderLink('status')?>Status</a></th>
@@ -505,8 +511,12 @@ class Extensions{
 		</tr>
 **/?>
 		<tr>
-			<th align="left" height="30">SIP Password</th>
-			<td><input name="password" type="text" size="30" value="<?=htmlentities($row['password'])?>"></td>
+			<th align="left" height="30">IAX Host</th>
+			<td><input name="iax_host" type="text" size="30" value="<?=htmlentities($row['iax_host'])?>"></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">IAX Password</th>
+			<td><input name="iax_password" type="text" size="30" value="<?=htmlentities($row['iax_password'])?>"></td>
 		</tr>
 <?/**		<tr>
 			<th align="left" height="30" <?

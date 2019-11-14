@@ -99,12 +99,12 @@ class API_Extensions{
 			$dat['station_id']	= $dat['number'];//intval($_POST['station_id']);
 
 
+			$dat['iax_host'] = trim($_POST['iax_host']);
+			$dat['iax_password'] = trim($_POST['iax_password']);
 
-
-
-			if(strlen(trim($_POST['password'])) > 0){
-				$dat['password'] = $_POST['password'];
-			}
+// 			if(strlen(trim($_POST['password'])) > 0){
+// 				$dat['password'] = $_POST['password'];
+// 			}
 
 			$dat['register_as'] = trim($_POST['register_as']);
 			$dat['register_pass'] = trim($_POST['register_pass']);
