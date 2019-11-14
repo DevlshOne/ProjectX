@@ -139,8 +139,8 @@ class DialerStatus {
                             this.type = t;
                             this.name = n;
                             this.web_ip = ip;
-                            this.groups = (g === undefined ? new Array('ALL-ACTIVE') : g);
-                            this.user_group_filter = (ugf === undefined ? new Array('ALL-GROUPS') : ugf);
+                            this.groups = ((g === undefined || g.length == 0) ? new Array('ALL-ACTIVE') : g);
+                            this.user_group_filter = ((ugf === undefined || ugf.length == 0) ? new Array('ALL-GROUPS') : ugf);
                         }
                     }
 
@@ -172,7 +172,8 @@ class DialerStatus {
                         buttons: {
                             'Save': function () {
                                 $('#clusterSelection option:selected').each(function () {
-                                    tileDefs.push(new clusterDef(clusterInfo[this.value].cluster_id, clusterInfo[this.value].type, clusterInfo[this.value].name, clusterInfo[this.value].web_ip, clusterInfo[this.value].groups, clusterInfo[this.value].user_group_filter));
+                                    let clusterData = getClusterInfoByClusterID(this.value)[0];
+                                    tileDefs.push(new clusterDef(this.value, clusterData.type, clusterData.name, clusterData.web_ip, new Array('ALL-ACTIVE'), new Array('ALL-GROUPS')));
                                 });
                                 if (frontEnd_debug) {
                                     console.log('Clusters have just been changed :: ', tileDefs);
@@ -232,7 +233,7 @@ class DialerStatus {
                             'Save': function () {
                                 tileDefs = [];
                                 $('#clusterSelection option:selected').each(function () {
-                                    tileDefs.push(new clusterDef(this.value));
+                                    tileDefs.push(new clusterDef(clusterInfo[this.value].cluster_id, clusterInfo[this.value].type, clusterInfo[this.value].name, clusterInfo[this.value].web_ip, clusterInfo[this.value].groups, clusterInfo[this.value].user_group_filter));
                                 });
                                 if (frontEnd_debug) {
                                     console.log('Clusters have just been changed :: ', tileDefs);
@@ -540,7 +541,7 @@ class DialerStatus {
                         let dlgObj = $('#dialog-modal-add-tile');
                         let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection">';
                         $.each(availableClusters, function (i) {
-                            clusterSelect += '<option value="' + i + '">' + clusterInfo[i].name + '</option>';
+                            clusterSelect += '<option value="' + clusterInfo[i].cluster_id + '">' + clusterInfo[i].name + '</option>';
                         });
                         clusterSelect += '</select>';
                         dlgObj.dialog('open');
@@ -595,7 +596,7 @@ class DialerStatus {
                         let dlgObj = $('#dialog-modal-add-tile');
                         let clusterSelect = '<select class="align_left" name="clusterSelection" id="clusterSelection">';
                         $.each(availableClusters, function (i) {
-                            clusterSelect += '<option value="' + i + '">' + clusterInfo[i].name + '</option>';
+                            clusterSelect += '<option value="' + clusterInfo[i].cluster_id + '">' + clusterInfo[i].name + '</option>';
                         });
                         clusterSelect += '</select>';
                         dlgObj.dialog('open');
@@ -857,9 +858,11 @@ class DialerStatus {
                             let tmpAgentData = '';
                             tmpAgentData = preString.match(rgxPre)[0];
                             let tmpAgentDataSplit = new Array();
-                            tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/gi).map(function (val) {
-                                return val.replace(/<\/?b>/gi, '').trim();
-                            });
+                            if (tmpAgentData.match(/<b>(.*?)<\/b>/gi) !== null) {
+                                tmpAgentDataSplit = tmpAgentData.match(/<b>(.*?)<\/b>/gi).map(function (val) {
+                                    return val.replace(/<\/?b>/gi, '').trim();
+                                });
+                            }
                             let parsedAgentData = [];
                             let rowNumber = 0;
                             let colNumber = 0;
@@ -929,6 +932,21 @@ class DialerStatus {
                         let tdValues = [];
                         let clusterValues = [];
                         let summaryValues = [];
+
+                        function initSummaryValues() {
+                            summaryValues['calls_active'] = '0';
+                            summaryValues['calls_ringing'] = '0';
+                            summaryValues['calls_waiting'] = '0';
+                            summaryValues['calls_ivr'] = '0';
+                            summaryValues['agents_on'] = '0';
+                            summaryValues['agents_active'] = '0';
+                            summaryValues['agents_waiting'] = '0';
+                            summaryValues['agents_paused'] = '0';
+                            summaryValues['agents_dead'] = '0';
+                            summaryValues['agents_dispo'] = '0';
+                        }
+
+                        initSummaryValues();
                         let noCalls = false;
                         let noAgents = false;
                         $(clusterData).find('TD').each(function (i, n) {
@@ -959,6 +977,7 @@ class DialerStatus {
                                     break;
                             }
                         });
+
                         if (summaryData.length > 8) {
                             noCalls = summaryData.includes('NO LIVE CALLS');
                             noAgents = summaryData.includes('NO AGENTS ON CALLS');
