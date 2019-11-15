@@ -74,7 +74,7 @@ class ProcessTrackerAPI{
 
 
 	/**
-	 * getResults($asso_array)
+	 * getScheduleResults($asso_array)
 
 	 * Array Fields:
 	 * 	fields	: The select fields for the sql query, * is default
@@ -90,6 +90,86 @@ class ProcessTrackerAPI{
 	 * 		"count"=>(amount to limit by)
 	 * 		"offset"=>(optional, the number of records to skip)
 	 */
+	function getScheduleResults($info){
+
+		$fields = ($info['fields'])?$info['fields']:'*';
+
+
+		$sql = "SELECT $fields FROM `".$this->schedule_table."` ";
+
+
+		## ID FIELD SEARCH
+		## ARRAY OF id's SEARCH
+		if(is_array($info['id'])){
+
+			$sql .= " AND (";
+
+			$x=0;
+			foreach($info['id'] as $idx=>$sid){
+				if($x++ > 0)$sql .= " OR ";
+
+				$sql .= "`id`='".intval($sid)."' ";
+			}
+
+			$sql .= ") ";
+
+		## SINGLE ID SEARCH
+		}else if($info['id']){
+
+			$sql .= " AND `id`='".intval($info['id'])."' ";
+
+		}
+
+
+
+		### ENABLED SEARCH
+		if($info['enabled']){
+
+			$sql .= " AND `enabled` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['enabled'])."%' ";
+
+		}
+
+		### SCHEDULE NAME SEARCH
+		if($info['schedule_name']){
+
+			$sql .= " AND `schedule_name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['schedule_name'])."%' ";
+
+		}
+		
+		### SCRIPT PROCESS CODE SEARCH
+		if($info['script_process_code']){
+
+			$sql .= " AND `script_process_code` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['script_process_code'])."%' ";
+
+		}
+
+		
+		### ORDER BY
+		if(is_array($info['order'])){
+
+			$sql .= " ORDER BY ";
+			$x=0;
+			foreach($info['order'] as $k=>$v){
+				if($x++ > 0)$sql .= ",";
+
+				$sql .= "`$k` ".mysqli_real_escape_string($_SESSION['dbapi']->db,$v)." ";
+			}
+
+		}
+
+		if(is_array($info['limit'])){
+
+			$sql .= " LIMIT ".
+						(($info['limit']['offset'])?$info['limit']['offset'].",":'').
+						$info['limit']['count'];
+
+		}
+
+		## RETURN RESULT SET
+		return $_SESSION['dbapi']->query($sql);
+
+	}
+
 	function getResults($info){
 
 		$fields = ($info['fields'])?$info['fields']:'*';
@@ -277,7 +357,7 @@ class ProcessTrackerAPI{
 
 		## RETURN RESULT SET
 		return $_SESSION['dbapi']->query($sql);
-	}
+	}	
 
 
 

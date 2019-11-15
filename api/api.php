@@ -97,6 +97,12 @@
 			$login_tracker->handleSecondaryAjax();
 
 			break;
+		case 'process_tracker_schedules':
+			include_once($basedir."api/process_tracker_schedules.api.php");
+			$process_tracker_schedules = new API_ProcessTrackerSchedules();
+			$process_tracker_schedules->handleSecondaryAjax();
+
+			break;			
 		case 'voice':
 
 			include_once($basedir."api/voices.api.php");
@@ -347,6 +353,14 @@
 		include_once($basedir."api/login_tracker.api.php");
 		$login_tracker = new API_LoginTracker();
 		$login_tracker->handleAPI();
+
+		break;
+
+	case 'process_tracker_schedules':
+
+		include_once($basedir."api/process_tracker_schedules.api.php");
+		$process_tracker_schedules = new API_ProcessTrackerSchedules();
+		$process_tracker_schedules->handleAPI();
 
 		break;
 
