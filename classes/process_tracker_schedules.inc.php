@@ -199,20 +199,22 @@ class ProcessTrackerSchedules{
 			}
 
 
-			function handlePTSListClick(id){
+			function handleScheduleListClick(id){
 
-				displayViewPTSDialog(id);
+				displayViewScheduleDialog(id);
 
 			}
 
 
-			function displayViewPTSDialog(id){
+			function displayViewScheduleDialog(id){
 
 				var objname = 'dialog-modal-view-schedule';
 
 
 				if(id > 0){
-					$('#'+objname).dialog( "option", "title", 'Viewing Schedule' );
+					$('#'+objname).dialog( "option", "title", 'Editing Schedule' );
+				}else{
+					$('#'+objname).dialog( "option", "title", 'Adding new Schedule' );
 				}
 
 
@@ -264,7 +266,7 @@ class ProcessTrackerSchedules{
 						<td width="500">
 						Process Tracker Schedules
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayViewPTSDialog(0)">
+						<input type="button" value="Add" onclick="displayViewScheduleDialog(0)">
 						</td>
 
 						<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadPTS();return false">
@@ -372,28 +374,189 @@ class ProcessTrackerSchedules{
 
 		}
 
-		?>
-		<form method="POST" id="pts_add_frm" action="<?=stripurl('')?>" autocomplete="off" onsubmit="">
+		?><script>
+
+			function validateScheduleField(name,value,frm){
+
+				switch(name){
+				default:
+
+					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
+					return true;
+					break;
+
+				case 'schedule_name':
+
+					if(!value)return false;
+
+					return true;
+
+					break;
+					
+				case 'script_process_code':
+
+					if(!value)return false;
+
+					return true;
+
+					break;
+					
+				case 'script_frequency':
+
+					if(!value)return false;
+
+					return true;
+
+					break;
+
+				}
+
+				return true;
+
+			}
+
+
+
+			function checkScheduleFrm(frm){
+
+				var params = getFormValues(frm,'validateScheduleField');
+
+				// FORM VALIDATION FAILED!
+				// param[0] == field name
+				// param[1] == field value
+				if(typeof params == "object"){
+
+					switch(params[0]){
+					default:
+
+						alert("Error submitting form. Check your values");
+
+						break;
+
+					case 'schedule_name':
+
+						alert("Please enter a name for this schedule.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+						
+					case 'script_process_code':
+
+						alert("Please select a script process code for this schedule.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+						
+					case 'script_frequency':
+
+						alert("Please select a script frequency for this schedule.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;					
+
+					}
+
+				}else{
+
+
+					$.ajax({
+						type: "POST",
+						cache: false,
+						url: 'api/api.php?get=process_tracker_schedules&mode=xml&action=edit',
+						data: params,
+						error: function(){
+							alert("Error saving process tracker schedule form. Please contact an admin.");
+						},
+						success: function(msg){
+
+							var result = handleEditXML(msg);
+							var res = result['result'];
+
+							if(res <= 0){
+
+								alert(result['message']);
+
+								return;
+
+							}
+
+
+							loadPTS();
+
+
+							displayViewScheduleDialog(res);
+
+							alert(result['message']);
+
+						}
+
+
+					});
+
+				}
+
+				return false;
+
+			}
+
+
+			function doScheduleFormSubmit(params){
+
+				$.ajax({
+					type: "POST",
+					cache: false,
+					url: 'api/api.php?get=process_tracker_schedules&mode=xml&action=edit',
+					data: params,
+					error: function(){
+						alert("Error saving process tracker schedule form. Please contact an admin.");
+					},
+
+					success: function(msg){
+
+
+						var result = handleEditXML(msg);
+						var res = result['result'];
+
+						if(res <= 0){
+
+							alert(result['message']);
+
+							return;
+
+						}
+
+
+						loadPTS();
+
+
+						displayViewScheduleDialog(res);
+
+					}
+
+				});
+
+			}
+
+			// SET TITLEBAR
+			$('#dialog-modal-view-schedule').dialog( "option", "title", '<?=($id)?'Editing Schedule #'.$id.' - '.htmlentities($row['schedule_name']):'Adding new Schedule'?>' );
+
+		</script>
+
+		<form method="POST" id="pts_add_frm" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkScheduleFrm(this); return false">
 			
 			<input type="hidden" id="adding_schedule" name="adding_schedule" value="<?=$id?>">
 
 			<table border="0" width="100%">
-			<tr>
-				<td colspan="2" class="ui-widget-header pad_left" height="40">Add Process Tracker Schedule</td>
-			</tr>
 			<tr>
 				<th align="left" height="30">Enabled:</th>
 				<td><input type="checkbox" name="enabled" value="yes" <?=($row['enabled'] == 'yes')?" CHECKED ":''?>></td>
 			</tr>
 			<tr>
 				<th align="left" height="30">Schedule Name:</th>
-				<td><input name="name" type="text" size="50" value="<?=htmlentities($row['schedule_name'])?>"></td>
+				<td><input name="schedule_name" type="text" size="50" value="<?=htmlentities($row['schedule_name'])?>"></td>
 			</tr>
 			<tr>
 				<th align="left" height="30">Script Process Code:</th>
 				<td><?
 
-				echo $this->makeProcessCodeDD('script_process_code',$row['script_process_code'],'','');
+					echo $this->makeProcessCodeDD('script_process_code',$row['script_process_code'],'','');
 
 				?></td>
 			</tr>

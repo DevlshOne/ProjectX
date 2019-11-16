@@ -47,6 +47,52 @@ class API_ProcessTrackerSchedules{
 
 			break;
 
+		case 'edit':
+
+			$id = intval($_POST['adding_schedule']);
+
+
+			unset($dat);
+			$dat['enabled']	 				= (isset($_POST['enabled']))?'yes':'no';
+			$dat['schedule_name']			= trim($_POST['schedule_name']);
+			$dat['script_process_code']		= trim($_POST['script_process_code']);
+			$dat['script_frequency']		= trim($_POST['script_frequency']);
+			$dat['notification_email']		= trim($_POST['notification_email']);
+
+			$dat['time_start']				= 0;
+			$dat['time_end']				= 0;
+
+			$dat['time_margin']				= intval($_POST['time_margin']);
+
+
+
+			if($id){
+
+
+				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->process_tracker->schedule_table);
+
+				logAction('edit', 'process_tracker_schedules', $id, "");
+
+			}else{
+
+
+				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->process_tracker->schedule_table);
+				$id = mysqli_insert_id($_SESSION['dbapi']->db);
+
+
+				logAction('add', 'process_tracker_schedules', $id, "");
+
+			}
+
+
+
+
+			$_SESSION['api']->outputEditSuccess($id);
+
+
+
+			break;			
+
 		default:
 		case 'list':
 
