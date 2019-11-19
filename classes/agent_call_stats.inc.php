@@ -603,35 +603,8 @@
 
                             </tr>
                             </thead>
-                            <?
-                                /**<tr style="font-style: italic;">
-                                 * <th style="border-bottom:1px solid #000" align="left">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">7:30+</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th nowrap style="border-bottom:1px solid #000" align="right">30 or less</th>
-                                 * <th nowrap style="border-bottom:1px solid #000" align="right">1:10 - 1:20</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th nowrap style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="right">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="center">&nbsp;</th>
-                                 *
-                                 * <th style="border-bottom:1px solid #000" align="center">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="center">&nbsp;</th>
-                                 * <th style="border-bottom:1px solid #000" align="center">&nbsp;</th>
-                                 * </tr>**/ ?>
-
-                            <tbody><?
+                        <tbody>
+                        <?
                                 //
 
                                 $stmicro = $stime * 1000;
@@ -705,11 +678,7 @@
 
                                     // DISPO LOGGGGGGG
                                     $reviewcnt = $row['reviewcnt'];
-//				list($reviewcnt) = $_SESSION['dbapi']->queryROW("SELECT COUNT(`id`) FROM `dispo_log` ".
-//										" WHERE `agent_username`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$row['username'])."' ".
-//										" AND `micro_time` BETWEEN '$stmicro' AND '$etmicro' ".
-//										" AND `dispo` = 'REVIEW' ".
-//										" AND `result`='success' ");
+
 
                                     $running_total_calls += $row['call_cnt'];
                                     $running_total_sales += ($row['sale_cnt']);
@@ -1280,13 +1249,10 @@
                                 echo $report;
                             }
 
-                        ?></td>
+                        ?>
+                    </td>
                 </tr>
-                <script>
-
-                    toggleDateSearchMode('<?=$_REQUEST['date_mode']?>');
-
-                </script><?
+            <?
 
                 if (!isset($_REQUEST['no_nav'])) {
                     ?>
