@@ -53,6 +53,13 @@ class Extensions{
 
 				$this->makeAdd($_REQUEST['add_extension']);
 
+			}else if(isset($_REQUEST['bulk_tools'])){
+				
+				//echo "BULK TOOLZZZ EXT";
+				
+				//print_r($_REQUEST);
+				$this->makeBulkTools();
+				
 			}else{
 				$this->listEntrys();
 			}
@@ -64,7 +71,224 @@ class Extensions{
 
 
 
+	function makeBulkTools(){
+		
+		?><script>
 
+
+				/**
+		* The "submit" function essentially
+		*/
+		function applyTheChanges(frm){
+
+				
+			if(frm.bulk_sip.checked){
+
+				//if(!frm.cluster_id.value)return recheck('Please select a cluster then a group for that cluster.', frm.cluster_id);
+				if(!frm.new_sip_password.value)return recheck('Please enter the new SIP password.', frm.new_sip_password);
+
+			}
+
+
+			if(frm.bulk_iax.checked){
+
+				if(!frm.new_iax_password.value) return recheck('Please enter the new IAX password.', frm.new_iax_password);
+
+			}
+
+			if(frm.bulk_iax_host.checked){
+
+				if(!frm.new_iax_host.value) return recheck('Please enter the new IAX host.', frm.new_iax_host);
+
+			}
+
+			// AJAX POST
+			// GATHER PARAMS INTO STRING
+			var params = getFormValues(frm);
+
+			$.ajax({
+					type: "POST",
+					cache: false,
+					url: 'api/api.php?get=extensions&mode=xml&action=bulk_operations',
+					data: params,
+					error: function(){
+						alert("Error saving bulk operations form. Please contact an admin.");
+					},
+					success: function(msg){
+
+
+
+						var result = handleEditXML(msg);
+						var res = result['result'];
+
+						if(res <= 0){
+
+							alert(result['message']);
+
+							return;
+
+						}
+
+						if(result['message']){
+							alert(result['message']);
+						}
+
+						// CLOSE THE VICI ADD FRAME
+						$('#dialog-modal-bulk-tools').dialog("close");
+
+
+						// REFRESH LIST
+						loadExtensions();
+					}
+
+
+				});
+
+
+
+			// CANCEL SENDING ACTUAL FORM SUBMIT
+			return false;
+		}
+		
+		</script>
+		
+		
+		
+		<form method="POST" action="<?=stripurl('')?>" onsubmit="return applyTheChanges(this);">
+
+			<input type="hidden" name="bulk_operations">
+
+
+		<table border="0" width="100%">
+		<tr>
+			<td colspan="2" align="center">
+			
+			<div style="height:150px;overflow:scroll">
+				<table border="0" align="center" width="100%">
+				<tr>
+					<th colspan="4" class="row2" align="left">Extensions(s)</th>
+				</tr><?
+
+				$x=0;
+				$cols=4;
+				foreach($_REQUEST['extchk'] as $ext_id){
+					
+					
+					$extrow = $_SESSION['dbapi']->extensions->getByID($ext_id);
+					list($servername) = $_SESSION['dbapi']->queryROW("SELECT name FROM servers WHERE id='".intval($extrow['server_id'])."' ");
+					
+					?><input type="hidden" name="editing_extensions[]" value="<?=$ext_id?>"><?
+
+					if($x%$cols == 0)echo "<tr>\n";
+
+					?><td align="left"><?=$extrow['number']?>@<?=$servername?></td>
+					<?
+
+					if(($x+1)%$cols == 0)echo "</tr>\n";
+					$x++;
+				}
+
+				if($x%$cols != 0){
+					echo '<td colspan="'.($cols-($x%$cols)).'">&nbsp;</td></tr>';
+				}
+
+				?></table>
+			</div>
+				<br />
+			</td>
+		</tr>
+		
+		
+		
+		<tr>
+			<td width="<?=$align_offset?>" align="right"><input type="checkbox" name="bulk_sip" value="1" onclick="if(this.checked){$('#change_sippw_row').show();}else{$('#change_sippw_row').hide();}"></td>
+			<th align="left">Change SIP Password</th>
+		</tr>
+		<tr id="change_sippw_row" class="nod">
+			<td colspan="2" style="padding-left:<?=$align_offset?>px">
+				<table border="0">
+				<tr>
+					<th>SIP Password</th>
+					<td><input type="text" name="new_sip_password" size="30" value="" /></td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
+					<td>
+						<input type="submit" value="Submit Changes">
+					</td>
+				</tr>
+				</table>
+
+			</td>
+		</tr>
+
+
+		<tr>
+			<td width="<?=$align_offset?>" align="right"><input type="checkbox" name="bulk_iax" value="1" onclick="if(this.checked){$('#change_iaxpw_row').show();}else{$('#change_iaxpw_row').hide();}"></td>
+			<th align="left">Change IAX Password</th>
+		</tr>
+		<tr id="change_iaxpw_row" class="nod">
+			<td colspan="2" style="padding-left:<?=$align_offset?>px">
+				<table border="0">
+				<tr>
+					<th>IAX Password</th>
+					<td><input type="text" name="new_iax_password" size="30" value="" /></td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
+					<td>
+						<input type="submit" value="Submit Changes">
+					</td>
+				</tr>
+				</table>
+
+			</td>
+		</tr>
+
+
+		<tr>
+			<td width="<?=$align_offset?>" align="right"><input type="checkbox" name="bulk_iax_host" value="1" onclick="if(this.checked){$('#change_iaxhost_row').show();}else{$('#change_iaxhost_row').hide();}"></td>
+			<th align="left">Change IAX Host</th>
+		</tr>
+		<tr id="change_iaxhost_row" class="nod">
+			<td colspan="2" style="padding-left:<?=$align_offset?>px">
+				<table border="0">
+				<tr>
+					<th>IAX Host</th>
+					<td><input type="text" name="new_iax_host" size="30" value="" /></td>
+				</tr>
+
+				<tr>
+					<td>&nbsp;</td>
+					<td>
+						<input type="submit" value="Submit Changes">
+					</td>
+				</tr>
+				</table>
+
+			</td>
+		</tr>
+
+
+
+<?/**
+		<tr>
+			<td width="<?=$align_offset?>" align="right"><input type="checkbox" name="bulk_login_reset" value="1" onclick="if(this.checked){$('#change_loginreset_row').show();}else{$('#change_loginreset_row').hide();}"></td>
+			<th align="left">Reset Vicidial's Failed Login counter</th>
+		</tr>
+		<tr id="change_loginreset_row" class="nod">
+			<td colspan="2" style="padding-left:<?=$align_offset?>px">
+
+				<input type="submit" value="Submit Changes">
+
+			</td>
+		</tr>**/?>
+
+		</form>
+		</table><?
+	}
 
 	function listEntrys(){
 
@@ -81,6 +305,7 @@ class Extensions{
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
 
 			var ExtensionsTableFormat = [
+				['[checkbox:extchk:id]','align_center'],
 				['number','align_center'],
 				['[get:server_name:server_id]','align_left'],
 				['iax_host','align_center'],
@@ -141,6 +366,8 @@ class Extensions{
 				// PAGE SIZE SUPPORT!
 				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
 
+				$('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
+				
 
 				loadAjaxData(getExtensionsURL(),'parseExtensions');
 
@@ -218,13 +445,75 @@ class Extensions{
 
 
 
+//			name="extchk0"
+
+	function displayBulkToolsDialog(frm){
+	
+		var objname = 'dialog-modal-bulk-tools';
+	
+	
+	
+		var ext_urlstr="";
+	
+		// GRAB ARRAY OF CHECKED USERS
+		var obj=null;
+		for(var x=0, y=0;(obj=getEl('extchk'+x)) != null;x++){
+	
+			if(!obj.checked)continue;
+	
+			ext_urlstr += (y++ > 0)?'&':'';
+			ext_urlstr += 'extchk['+x+']='+obj.value;
+	
+		}
+	
+		//alert(user_urlstr);
+	
+		$('#'+objname).dialog("open");
+		$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+	
+	
+		// BULK THE QUERY STRING AND LOAD
+		//$('#'+objname).post("index.php?area=users&bulk_tools&printable=1&no_script=1",user_urlstr);
+	
+		$.post("index.php?area=extensions&bulk_tools&printable=1&no_script=1",ext_urlstr, function( data){
+			$('#'+objname).html(data);
+		});
+	
+	}
+
+
+	function toggleAllOnScreen(way){
+
+		// GRAB ARRAY OF CHECKED USERS
+		var obj=null;
+		for(var x=0, y=0;(obj=getEl('extchk'+x)) != null;x++){
+
+
+			if(way == 0){
+
+				obj.checked = false;
+			}else if(way == 1){
+
+				obj.checked = true;
+			}else{
+				obj.checked = !obj.checked;
+			}
+
+		}
+
+		applyUniformity();
+
+	}
+
 
 		</script>
 		<div id="dialog-modal-add-extension" title="Adding new Extension" class="nod">
 		<?
 
 		?>
-		</div><?
+		</div>
+		
+		<div id="dialog-modal-bulk-tools" title="Bulk Tools" class="nod"></div><?
 
 
 
@@ -313,6 +602,7 @@ class Extensions{
 		<tr>
 			<td colspan="2"><table border="0" width="100%" id="extension_table">
 			<tr>
+				<th class="row2" align="center">&nbsp;</th>
 				<th class="row2" align="center"><?=$this->getOrderLink('number')?>Extension</a></th>
 				<th class="row2" align="left"><?=$this->getOrderLink('server_id')?>Server</a></th>
 				<th class="row2"><?=$this->getOrderLink('iax_host')?>Dialer Host</a></th>
@@ -323,20 +613,60 @@ class Extensions{
 			</tr><?
 
 			?></table></td>
-		</tr></table>
+		</tr>
+		
+		
+		<tr>
+			<td colspan="2">
+
+				<table border="0">
+				<tr>
+					<td  height="30" nowrap >
+						<a href="#" onclick="toggleAllOnScreen(1);return false">[CHECK ALL]</a>
+						&nbsp;
+						<a href="#" onclick="toggleAllOnScreen(0);return false">[UNCHECK ALL]</a>
+						&nbsp;
+						<a href="#" onclick="toggleAllOnScreen(2);return false">[TOGGLE ALL]</a>
+					</td>
+				</tr>
+				<tr>
+					<td><input type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)"></td>
+
+				</tr>
+				</table>
+
+			</td>
+		</tr>
+		
+		
+		
+		</table>
 
 		<script>
 
+		$(document).ready(function(){
+			
 			$("#dialog-modal-add-extension").dialog({
 				autoOpen: false,
 				width: 430,
-				height: 375,
+				height: 410,
 				modal: false,
 				draggable:true,
 				resizable: false
 			});
 
+			$( "#dialog-modal-bulk-tools" ).dialog({
+				autoOpen: false,
+				width:600,
+				height: 330,
+				modal: false,
+				draggable:true,
+				resizable: true
+			});
+
 			loadExtensions();
+
+		});
 
 		</script><?
 
@@ -518,6 +848,11 @@ class Extensions{
 			<th align="left" height="30">IAX Password</th>
 			<td><input name="iax_password" type="text" size="30" value="<?=htmlentities($row['iax_password'])?>"></td>
 		</tr>
+		
+		<tr>
+			<th align="left" height="30">SIP Password</th>
+			<td><input name="sip_password" type="text" size="30" value="<?=htmlentities($row['sip_password'])?>"></td>
+		</tr>
 <?/**		<tr>
 			<th align="left" height="30" <?
 
@@ -566,7 +901,7 @@ class Extensions{
 			</tr>
 			<tr>
 				<th align="left" height="30">Time Started:</th>
-				<td><?=date("g:ia m/d/Y", $row['time_started'])?></td>
+				<td><?=($row['time_started'] > 0)?date("g:ia m/d/Y", $row['time_started']):'n/a'?></td>
 			</tr><?
 
 		}

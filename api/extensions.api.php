@@ -82,6 +82,47 @@ class API_Extensions{
 
 
 			break;
+		case 'bulk_operations':
+			
+			
+			$dat = array();
+			
+			if($_POST['bulk_iax']){
+				
+				$dat['iax_password'] = trim($_POST['new_iax_password']);
+			
+			}
+			
+			
+			if($_POST['bulk_iax_host']){
+				
+				$dat['iax_host'] = trim($_POST['new_iax_host']);
+				
+			}
+			
+			if($_POST['bulk_sip']){
+				
+				$dat['sip_password'] = trim($_POST['new_sip_password']);
+				
+			}
+			
+			// ONLY EDIT IF THERE IS SOEMTHING TO EDIT
+			if(count($dat) > 0){
+				
+				foreach($_POST['editing_extensions'] as $ext_id){
+					
+					aedit($ext_id, $dat, "extensions");
+
+				}
+				
+			}
+
+			
+			$_SESSION['api']->outputEditSuccess(1);
+			exit;
+			
+			
+			break;
 		case 'edit':
 
 			$id = intval($_POST['adding_extension']);
@@ -102,6 +143,7 @@ class API_Extensions{
 			$dat['iax_host'] = trim($_POST['iax_host']);
 			$dat['iax_password'] = trim($_POST['iax_password']);
 
+			$dat['sip_password'] = trim($_POST['sip_password']);
 // 			if(strlen(trim($_POST['password'])) > 0){
 // 				$dat['password'] = $_POST['password'];
 // 			}
