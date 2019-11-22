@@ -18,33 +18,33 @@
 	 *  "taps"
 	 */
 
-	$cluster = "cold4";
+	include_once("config.php");
 
-	//$cluster = "cold2";
-	//$cluster = "taps";
+	$cluster = "cold1";
+	
+	$clusters = array(
+			'cold1' => array('db_host'=>"10.101.1.2",'db_port'=>"3306",'db_user'=>"vicidb",'db_pass'=>"vuy4Re4EneFre9R",'db_name'=>"asterisk"),
+	);
+	
+	
 
 
-	$default_iax_password = "LfIetSBrW70I1ZD";	// THE PASSWORD VICI AND PX USE, TO CONNECT THE VICI SESSION TO THE PX CONFERENCE, VIA IAX
+	$default_iax_password = $iax_password;	// THE PASSWORD VICI AND PX USE, TO CONNECT THE VICI SESSION TO THE PX CONFERENCE, VIA IAX
 
-	$phone_login = "ccihn";		// THE PASSWORD FOR THE PHONE, THAT THEY TYPE INTO VICIDIAL
+	$phone_login = $vici_phone_password;		// THE PASSWORD FOR THE PHONE, THAT THEY TYPE INTO VICIDIAL
 
 
-
-	$local_gmt = "-8.00";		// MIGHT NEED TO ADJUST FOR THEIR TIMEZONE
 
 	$protocol = "IAX2";			// NORMALLY "IAX2", "SIP" is an option, but can break shit.
 
 	$phone_type = "";			// THERE ARE 3 OPTIONS THAT IM AWARE OF, BLANK, "sipcompressx", and "sipcompress"
 
-	$add_script = "/ProjectX-Server/scripts/px_add_extension.php";
+	$add_script = "/ProjectX-Server/scripts/px_add_extension_new.php";
 
 /*****************************/
 
 
 
-	$clusters = array(
-		'cold4' => array('db_host'=>"10.101.4.2",'db_port'=>"3306",'db_user'=>"vicidb",'db_pass'=>"vuy4Re4EneFre9R",'db_name'=>"asterisk"),
-	);
 
 
 
