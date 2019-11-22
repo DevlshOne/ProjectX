@@ -143,11 +143,13 @@
         	
         	$row = $_SESSION['dbapi']->user_groups_master->getByID($master_group_id);
         	
-        	$res = query("SELECT * FROM vici_clusters WHERE status='enabled' ",1);
+        	
+        	
+        	$res = $_SESSION['dbapi']->query("SELECT * FROM vici_clusters WHERE status='enabled' ",1);
         	$clusters = array();
-        	while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+        	while($r2 = mysqli_fetch_array($res, MYSQLI_ASSOC)){
         		
-        		$clusters[$row['id']] = $row;
+        		$clusters[$r2['id']] = $r2;
         		
         	}
         	
@@ -156,6 +158,12 @@
         		
         		// LOCATE WHICH DB INDEX IT IS
         		$dbidx = getClusterIndex($cluster_id);
+        		
+        		if($dbidx < 0){
+        			
+        			//echo "Skipping Cluster $cluster_id: Not found\n";
+        			continue;
+        		}
         		
         		// CONNECT TO VICIDIAL DB
         		connectViciDB($dbidx);

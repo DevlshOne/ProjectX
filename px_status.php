@@ -92,12 +92,12 @@
 
 	<div id="tabs-<?=$tabidx++?>">
 
-		<iframe src="http://10.101.15.51/dev/" width="100%" height="670"></iframe>
+		<iframe src="http://10.101.15.51/reports/" width="100%" height="670"></iframe>
 
 	</div>
 	<div id="tabs-<?=$tabidx++?>">
 
-		<iframe src="http://10.101.15.51/dev2/" width="100%" height="670"></iframe>
+		<iframe src="http://10.101.15.51/staging-git/" width="100%" height="670"></iframe>
 
 	</div>
 	<div id="tabs-<?=$tabidx++?>">

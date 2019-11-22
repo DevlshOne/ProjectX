@@ -29,12 +29,20 @@ class ExtensionsAPI{
 	function getByID($extension_id){
 		$extension_id = intval($extension_id);
 
-		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->table."` ".
+		return $_SESSION['dbapi']->ROquerySQL("SELECT * FROM `".$this->table."` ".
 						" WHERE id='".$extension_id."' "
 
 					);
 	}
-
+	function getExtensionByID($extension_id){
+		$extension_id = intval($extension_id);
+		
+		list($ext) = $_SESSION['dbapi']->ROqueryROW("SELECT number FROM `".$this->table."` ".
+				" WHERE id='".$extension_id."' "
+				
+				);
+		return $ext;
+	}
 
 	/**
 	 * getResults($asso_array)

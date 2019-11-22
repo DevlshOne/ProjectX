@@ -807,6 +807,10 @@ class SalesManagement{
 							<td><?=format_phone($row['phone'])?></td>
 						</tr>
 						<tr>
+							<th align="left" height="25">Caller ID #:</th>
+							<td><?=($lead_row['outbound_phone_num'] > 0)?format_phone($lead_row['outbound_phone_num']):'-'?></td>
+						</tr>
+						<tr>
 							<th align="left" height="25">Sale Time:</th>
 							<td><?=date("g:ia m/d/Y", $row['sale_time'])?></td>
 						</tr>

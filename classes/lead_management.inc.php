@@ -2021,6 +2021,10 @@ class LeadManagement{
 							<td><?=format_phone($row['phone_num'])?></td>
 						</tr>
 						<tr>
+							<th align="left" height="25">Caller ID #:</th>
+							<td><?=($row['outbound_phone_num'] > 0)?format_phone($row['outbound_phone_num']):'-'?></td>
+						</tr>
+						<tr>
 							<th align="left" height="25">Time Added:</th>
 							<td><?=date("g:ia m/d/Y", $row['time'])?></td>
 						</tr>
