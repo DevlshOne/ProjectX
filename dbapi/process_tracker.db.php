@@ -20,12 +20,10 @@ class ProcessTrackerAPI{
 
 
 	/**
-	 * Marks a campaign as deleted
+	 * Deletes a Process Tracker Schedule
 	 */
-	function delete($id){
-
-		return false;
-		//$_SESSION['dbapi']->adelete($id,$this->table);
+	function deleteSchedule($id){
+		$_SESSION['dbapi']->adelete($id,$this->schedule_table);
 	}
 
 

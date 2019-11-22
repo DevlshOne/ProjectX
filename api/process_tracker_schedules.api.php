@@ -21,6 +21,18 @@ class API_ProcessTrackerSchedules{
 		}
 
 		switch($_REQUEST['action']){
+		case 'delete':
+
+			$id = intval($_REQUEST['id']);
+
+			$_SESSION['dbapi']->process_tracker->deleteSchedule($id);
+
+			logAction('delete', 'process_tracker_schedules', $id, "");
+
+			$_SESSION['api']->outputDeleteSuccess();
+
+
+			break;			
 		case 'view':
 
 

@@ -9,7 +9,7 @@ class ProcessTrackerSchedules{
 
 
 	var $table		= 'process_tracker_schedules';		## Class main table to operate on
-	var $orderby	= 'script_process_code';							## Default Order field
+	var $orderby	= 'id';							## Default Order field
 	var $orderdir	= 'DESC';							## Default order direction
 
 
@@ -65,11 +65,12 @@ class ProcessTrackerSchedules{
 
 	}
 
-	function makeProcessCodeDD($name, $sel, $class, $onchange, $blank_option = 1){
+	function makeProcessCodeDD($name, $sel, $class, $onchange, $required = 0, $blank_option = 1){
 
 		$out = '<select name="'.$name.'" id="'.$name.'" ';
 		$out.= ($class)?' class="'.$class.'" ':'';
 		$out.= ($onchange)?' onchange="'.$onchange.'" ':'';
+		$out.= ($required)?' required':'';
 		$out.= '>';
 
 		if($blank_option){
@@ -100,6 +101,8 @@ class ProcessTrackerSchedules{
 		?>
 		<script>
 
+			var schedule_delmsg = 'Are you sure you want to delete this schedule?';
+
 			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
 
@@ -108,18 +111,19 @@ class ProcessTrackerSchedules{
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
 
 
-			var PTSTableFormat = [
+			var SchedulesTableFormat = [
 				['id','align_left'],
 				['enabled','align_left'],
 				['schedule_name','align_left'],
 				['script_process_code','align_left'],
-				['[time:time_start]','align_left']
+				['[time:time_start]','align_left'],
+				['[delete]','align_center']
 			];
 
 			/**
 			* Build the URL for AJAX to hit, to build the list
 			*/
-			function getPTSURL(){
+			function getSchedulesURL(){
 
 				var frm = getEl('<?=$this->frm_name?>');
 
@@ -137,16 +141,16 @@ class ProcessTrackerSchedules{
 			}
 
 
-			var pts_loading_flag = false;
+			var schedules_loading_flag = false;
 
 			/**
 			* Load the Process Tracker Schedules data - make the ajax call, callback to the parse function
 			*/
-			function loadPTS(){
+			function loadSchedules(){
 
 				// ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
 				var val = null;
-				eval('val = pts_loading_flag');
+				eval('val = schedules_loading_flag');
 
 
 				// CHECK IF WE ARE ALREADY LOADING THIS DATA
@@ -156,14 +160,14 @@ class ProcessTrackerSchedules{
 
 				}else{
 
-					eval('pts_loading_flag = true');
+					eval('schedules_loading_flag = true');
 				}
 
 				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
 
 				$('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
 
-				loadAjaxData(getPTSURL(),'parsePTS');
+				loadAjaxData(getSchedulesURL(),'parseSchedules');
 
 			}
 
@@ -172,9 +176,9 @@ class ProcessTrackerSchedules{
 			* CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
 			*/
 			var <?=$this->order_prepend?>totalcount = 0;
-			function parsePTS(xmldoc){
+			function parseSchedules(xmldoc){
 
-				<?=$this->order_prepend?>totalcount = parseXMLData('schedule',PTSTableFormat,xmldoc);
+				<?=$this->order_prepend?>totalcount = parseXMLData('schedule',SchedulesTableFormat,xmldoc);
 
 
 				// ACTIVATE PAGE SYSTEM!
@@ -186,7 +190,7 @@ class ProcessTrackerSchedules{
 									<?=$this->order_prepend?>totalcount,
 									<?=$this->index_name?>,
 									<?=$this->order_prepend?>pagesize,
-									'loadPTS()'
+									'loadSchedules()'
 								);
 
 				}else{
@@ -195,7 +199,7 @@ class ProcessTrackerSchedules{
 
 				}
 
-				eval('pts_loading_flag = false');
+				eval('schedules_loading_flag = false');
 			}
 
 
@@ -230,7 +234,7 @@ class ProcessTrackerSchedules{
 				$('#'+objname).dialog('option', 'height', '350');
 			}
 
-			function resetPTSForm(frm){
+			function resetSchedulesForm(frm){
 
 				// SET FORM VALUES TO BLANK
 				frm.s_id.value = '';
@@ -254,7 +258,7 @@ class ProcessTrackerSchedules{
 
 
 		?>
-		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadPTS();return false">
+		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadSchedules();return false">
 		
 		<input type="hidden" name="searching_schedule">
 
@@ -269,7 +273,7 @@ class ProcessTrackerSchedules{
 						<input type="button" value="Add" onclick="displayViewScheduleDialog(0)">
 						</td>
 
-						<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadPTS();return false">
+						<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadSchedules();return false">
 							<option value="20">20</option>
 							<option value="50">50</option>
 							<option value="100">100</option>
@@ -320,7 +324,7 @@ class ProcessTrackerSchedules{
 							?>
 
 						
-						<td><input type="button" value="Reset" onclick="resetPTSForm(this.form);resetPageSystem('<?=$this->index_name?>');loadPTS();"></td>
+						<td><input type="button" value="Reset" onclick="resetSchedulesForm(this.form);resetPageSystem('<?=$this->index_name?>');loadSchedules();"></td>
 					</tr>
 				</table>
 			</td>
@@ -355,7 +359,7 @@ class ProcessTrackerSchedules{
 
 
 
-			loadPTS();
+			loadSchedules();
 
 		</script><?
 
@@ -400,14 +404,15 @@ class ProcessTrackerSchedules{
 					return true;
 
 					break;
-					
-				case 'script_frequency':
+
+				case 'notification_email':
 
 					if(!value)return false;
 
 					return true;
 
-					break;
+					break;					
+					
 
 				}
 
@@ -417,87 +422,9 @@ class ProcessTrackerSchedules{
 
 
 
-			function checkScheduleFrm(frm){
+			function submitScheduleFrm(frm){
 
-				var params = getFormValues(frm,'validateScheduleField');
-
-				// FORM VALIDATION FAILED!
-				// param[0] == field name
-				// param[1] == field value
-				if(typeof params == "object"){
-
-					switch(params[0]){
-					default:
-
-						alert("Error submitting form. Check your values");
-
-						break;
-
-					case 'schedule_name':
-
-						alert("Please enter a name for this schedule.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-						
-					case 'script_process_code':
-
-						alert("Please select a script process code for this schedule.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-						
-					case 'script_frequency':
-
-						alert("Please select a script frequency for this schedule.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;					
-
-					}
-
-				}else{
-
-
-					$.ajax({
-						type: "POST",
-						cache: false,
-						url: 'api/api.php?get=process_tracker_schedules&mode=xml&action=edit',
-						data: params,
-						error: function(){
-							alert("Error saving process tracker schedule form. Please contact an admin.");
-						},
-						success: function(msg){
-
-							var result = handleEditXML(msg);
-							var res = result['result'];
-
-							if(res <= 0){
-
-								alert(result['message']);
-
-								return;
-
-							}
-
-
-							loadPTS();
-
-
-							displayViewScheduleDialog(res);
-
-							alert(result['message']);
-
-						}
-
-
-					});
-
-				}
-
-				return false;
-
-			}
-
-
-			function doScheduleFormSubmit(params){
+				var params = getFormValues(frm,'');
 
 				$.ajax({
 					type: "POST",
@@ -507,9 +434,7 @@ class ProcessTrackerSchedules{
 					error: function(){
 						alert("Error saving process tracker schedule form. Please contact an admin.");
 					},
-
 					success: function(msg){
-
 
 						var result = handleEditXML(msg);
 						var res = result['result'];
@@ -522,24 +447,28 @@ class ProcessTrackerSchedules{
 
 						}
 
-
 						loadPTS();
-
 
 						displayViewScheduleDialog(res);
 
+						alert(result['message']);
+
 					}
+
 
 				});
 
+				return false;
+
 			}
+
 
 			// SET TITLEBAR
 			$('#dialog-modal-view-schedule').dialog( "option", "title", '<?=($id)?'Editing Schedule #'.$id.' - '.htmlentities($row['schedule_name']):'Adding new Schedule'?>' );
 
 		</script>
 
-		<form method="POST" id="pts_add_frm" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkScheduleFrm(this); return false">
+		<form method="POST" id="pts_add_frm" action="<?=stripurl('')?>" autocomplete="off" onsubmit="submitScheduleFrm(this); return false">
 			
 			<input type="hidden" id="adding_schedule" name="adding_schedule" value="<?=$id?>">
 
@@ -550,19 +479,24 @@ class ProcessTrackerSchedules{
 			</tr>
 			<tr>
 				<th align="left" height="30">Schedule Name:</th>
-				<td><input name="schedule_name" type="text" size="50" value="<?=htmlentities($row['schedule_name'])?>"></td>
+				<td><input name="schedule_name" type="text" size="50" value="<?=htmlentities($row['schedule_name'])?>" required placeholder="Enter a name for this schedule."></td>
 			</tr>
 			<tr>
 				<th align="left" height="30">Script Process Code:</th>
 				<td><?
 
-					echo $this->makeProcessCodeDD('script_process_code',$row['script_process_code'],'','');
+					echo $this->makeProcessCodeDD('script_process_code',$row['script_process_code'],'','',1);
 
 				?></td>
 			</tr>
 			<tr>
 				<th align="left" height="30">Script Frequency:</th>
-				<td><input type="radio" name="script_frequency" value="hourly" <?=($row['script_frequency'] == 'hourly')?" CHECKED ":''?>>Hourly <input type="radio" name="script_frequency" value="daily" <?=($row['script_frequency'] == 'daily')?" CHECKED ":''?>>Daily <input type="radio" name="script_frequency" value="weekly" <?=($row['script_frequency'] == 'weekly')?" CHECKED ":''?>>Weekly <input type="radio" name="script_frequency" value="monthly" <?=($row['script_frequency'] == 'monthly')?" CHECKED ":''?>>Monthly</td>
+				<td>
+					<input type="radio" name="script_frequency" value="hourly" <?=($row['script_frequency'] == 'hourly')?" CHECKED ":''?> required>Hourly 
+					<input type="radio" name="script_frequency" value="daily" <?=($row['script_frequency'] == 'daily')?" CHECKED ":''?>>Daily 
+					<input type="radio" name="script_frequency" value="weekly" <?=($row['script_frequency'] == 'weekly')?" CHECKED ":''?>>Weekly 
+					<input type="radio" name="script_frequency" value="monthly" <?=($row['script_frequency'] == 'monthly')?" CHECKED ":''?>>Monthly
+				</td>
 			</tr>
 			<tr>
 				<th align="left" height="30">Start Time:</th>
@@ -592,7 +526,7 @@ class ProcessTrackerSchedules{
 			</tr>
 			<tr>
 				<th align="left" height="30">Alert Email:</th>
-				<td><input name="notification_email" type="text" size="50" value="<?=htmlentities($row['notification_email'])?>"></td>
+				<td><input name="notification_email" type="email" size="50" value="<?=htmlentities($row['notification_email'])?>" required placeholder="Enter a valid email address."></td>
 			</tr>
 			<tr>
 				<th colspan="2" align="center" height="50">
