@@ -441,7 +441,11 @@
                             title: 'Remove field from this form',
                             icon: 'ui-icon-trash',
                             click: function () {
-                                deleteField(i);
+                                if (formFields.length < 2) {
+                                    window.alert('You may not delete the last field of this form');
+                                } else {
+                                    deleteField(i);
+                                }
                                 $(this).dialog('close');
                             }
                         },
