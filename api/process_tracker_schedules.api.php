@@ -63,18 +63,56 @@ class API_ProcessTrackerSchedules{
 
 			$id = intval($_POST['adding_schedule']);
 
-
 			unset($dat);
 			$dat['enabled']	 				= (isset($_POST['enabled']))?'yes':'no';
 			$dat['schedule_name']			= trim($_POST['schedule_name']);
 			$dat['script_process_code']		= trim($_POST['script_process_code']);
 			$dat['script_frequency']		= trim($_POST['script_frequency']);
-			$dat['notification_email']		= trim($_POST['notification_email']);
 
-			$dat['time_start']				= 0;
-			$dat['time_end']				= 0;
+			switch ($dat['script_frequency']) {
+				
+				case 'hourly':
+
+					# CONVERT START TIME TO 24HR TO STORE IN TABLE
+					$time_start_24h = date("H:i", strtotime(trim($_POST['time_starthour']).":".trim($_POST['time_startmin'])." ".trim($_POST['time_starttimemode'])));
+
+					$dat['time_start']		= $time_start_24h;
+					$dat['time_end']		= 0;
+
+					break;
+
+				case 'daily':
+
+					# CONVERT START AND END TIME TO 24HR TO STORE IN TABLE
+					$time_start_24h = date("H:i", strtotime(trim($_POST['time_starthour']).":".trim($_POST['time_startmin'])." ".trim($_POST['time_starttimemode'])));
+					$time_end_24h = date("H:i", strtotime(trim($_POST['time_endhour']).":".trim($_POST['time_endmin'])." ".trim($_POST['time_endtimemode'])));
+
+					$dat['time_start']		= $time_start_24h;
+					$dat['time_end']		= $time_end_24h;
+
+					break;
+
+				case 'weekly':
+
+					# CONVERT START AND END TIME TO 24HR TO STORE IN TABLE
+					$time_start_24h = date("H:i", strtotime(trim($_POST['time_starthour']).":".trim($_POST['time_startmin'])." ".trim($_POST['time_starttimemode'])));
+					$time_end_24h = date("H:i", strtotime(trim($_POST['time_endhour']).":".trim($_POST['time_endmin'])." ".trim($_POST['time_endtimemode'])));
+
+					$dat['time_start']		= $time_start_24h;
+					$dat['time_end']		= $time_end_24h;
+
+					# GET DAY OF WEEK FROM CHECKBOX ## LEFT OFF HERE
+					$dat['time_dayofweek']	= "";
+
+					break;
+
+				case 'monthly':
+
+			}
+			
 
 			$dat['time_margin']				= intval($_POST['time_margin']);
+			$dat['notification_email']		= trim($_POST['notification_email']);
 
 
 
@@ -89,19 +127,14 @@ class API_ProcessTrackerSchedules{
 
 
 				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->process_tracker->schedule_table);
-				$id = mysqli_insert_id($_SESSION['dbapi']->db);
 
+				$id = mysqli_insert_id($_SESSION['dbapi']->db);
 
 				logAction('add', 'process_tracker_schedules', $id, "");
 
 			}
 
-
-
-
 			$_SESSION['api']->outputEditSuccess($id);
-
-
 
 			break;			
 

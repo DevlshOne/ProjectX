@@ -116,7 +116,8 @@ class ProcessTrackerSchedules{
 				['enabled','align_left'],
 				['schedule_name','align_left'],
 				['script_process_code','align_left'],
-				['[time:time_start]','align_left'],
+				['script_frequency','align_left'],
+				//['[time:time_start]','align_left'],
 				['[delete]','align_center']
 			];
 
@@ -231,7 +232,7 @@ class ProcessTrackerSchedules{
 
 				$('#'+objname).dialog('option', 'position', 'center');
 
-				$('#'+objname).dialog('option', 'height', '350');
+				$('#'+objname).dialog('option', 'height', '375');
 			}
 
 			function resetSchedulesForm(frm){
@@ -338,7 +339,7 @@ class ProcessTrackerSchedules{
 						<th class="row2" align="left"><?=$this->getOrderLink('enabled')?>Enabled</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('schedule_name')?>Schedule Name</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('script_process_code')?>Script Process Code</a></th>
-						<th class="row2" align="left"><?=$this->getOrderLink('time_start')?>Time Start</a></th>
+						<th class="row2" align="left"><?=$this->getOrderLink('script_frequency')?>Script Frequency</a></th>
 					</tr>
 				</table>
 			</td>
@@ -351,7 +352,7 @@ class ProcessTrackerSchedules{
 			$("#dialog-modal-view-schedule").dialog({
 				autoOpen: false,
 				width: 500,
-				height: 200,
+				height: 375,
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -380,48 +381,6 @@ class ProcessTrackerSchedules{
 
 		?><script>
 
-			function validateScheduleField(name,value,frm){
-
-				switch(name){
-				default:
-
-					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-					return true;
-					break;
-
-				case 'schedule_name':
-
-					if(!value)return false;
-
-					return true;
-
-					break;
-					
-				case 'script_process_code':
-
-					if(!value)return false;
-
-					return true;
-
-					break;
-
-				case 'notification_email':
-
-					if(!value)return false;
-
-					return true;
-
-					break;					
-					
-
-				}
-
-				return true;
-
-			}
-
-
-
 			function submitScheduleFrm(frm){
 
 				var params = getFormValues(frm,'');
@@ -447,7 +406,7 @@ class ProcessTrackerSchedules{
 
 						}
 
-						loadPTS();
+						loadSchedules();
 
 						displayViewScheduleDialog(res);
 
@@ -462,9 +421,40 @@ class ProcessTrackerSchedules{
 
 			}
 
+			function toggleDayMode(way){
+
+				if(way == 'hourly'){
+					$('#day_of_week_tr').hide();
+					$('#day_of_month_tr').hide();
+					$('#time_end_tr').hide();
+
+				} else if(way == 'daily'){
+
+					$('#day_of_week_tr').hide();
+					$('#day_of_month_tr').hide();
+					$('#time_end_tr').show();
+
+				} else if(way == 'weekly'){
+
+					$('#day_of_week_tr').show();	
+					$('#day_of_month_tr').hide();
+					$('#time_end_tr').show();				
+
+				} else {
+
+					$('#day_of_week_tr').hide();
+					$('#day_of_month_tr').show();
+					$('#time_end_tr').show();
+
+				}
+
+			}
 
 			// SET TITLEBAR
 			$('#dialog-modal-view-schedule').dialog( "option", "title", '<?=($id)?'Editing Schedule #'.$id.' - '.htmlentities($row['schedule_name']):'Adding new Schedule'?>' );
+
+			<?=($id)?'toggleDayMode(\''.$row['script_frequency'].'\');':''?>
+
 
 		</script>
 
@@ -492,11 +482,31 @@ class ProcessTrackerSchedules{
 			<tr>
 				<th align="left" height="30">Script Frequency:</th>
 				<td>
-					<input type="radio" name="script_frequency" value="hourly" <?=($row['script_frequency'] == 'hourly')?" CHECKED ":''?> required>Hourly 
-					<input type="radio" name="script_frequency" value="daily" <?=($row['script_frequency'] == 'daily')?" CHECKED ":''?>>Daily 
-					<input type="radio" name="script_frequency" value="weekly" <?=($row['script_frequency'] == 'weekly')?" CHECKED ":''?>>Weekly 
-					<input type="radio" name="script_frequency" value="monthly" <?=($row['script_frequency'] == 'monthly')?" CHECKED ":''?>>Monthly
+					<input type="radio" name="script_frequency" value="hourly" onchange="toggleDayMode(this.value);" <?=($row['script_frequency'] == 'hourly')?" CHECKED ":''?> required>Hourly 
+					<input type="radio" name="script_frequency" value="daily" onchange="toggleDayMode(this.value);" <?=($row['script_frequency'] == 'daily')?" CHECKED ":''?>>Daily 
+					<input type="radio" name="script_frequency" value="weekly" onchange="toggleDayMode(this.value);" <?=($row['script_frequency'] == 'weekly')?" CHECKED ":''?>>Weekly 
+					<input type="radio" name="script_frequency" value="monthly" onchange="toggleDayMode(this.value);" <?=($row['script_frequency'] == 'monthly')?" CHECKED ":''?>>Monthly	
 				</td>
+			</tr>
+			<tr class="nod" id="day_of_week_tr">
+				<th align="left" height="30">Day(s) of Week:</th>
+				<td>
+					<input type="checkbox" name="time_dayofweek[]" value="mon">Mon
+					<input type="checkbox" name="time_dayofweek[]" value="tue">Tue
+					<input type="checkbox" name="time_dayofweek[]" value="wed">Wed
+					<input type="checkbox" name="time_dayofweek[]" value="thu">Thu
+					<input type="checkbox" name="time_dayofweek[]" value="fri">Fri
+					<input type="checkbox" name="time_dayofweek[]" value="sat">Sat
+					<input type="checkbox" name="time_dayofweek[]" value="sun">Sun
+				</td>
+			</tr>
+			<tr class="nod" id="day_of_month_tr">
+				<th align="left" height="30">Day Of Month:</th>
+				<td><?
+
+					echo getDayDD("time_dayofmonth",""," onchange=\"\" ");
+
+				?></td>
 			</tr>
 			<tr>
 				<th align="left" height="30">Start Time:</th>
@@ -506,7 +516,7 @@ class ProcessTrackerSchedules{
 
 				?></td>
 			</tr>
-			<tr>
+			<tr class="nod" id="time_end_tr">
 				<th align="left" height="30">End Time:</th>
 				<td><?
 
@@ -550,7 +560,7 @@ class ProcessTrackerSchedules{
 
 		$var .= "((".$this->order_prepend."orderdir == 'DESC')?'ASC':'DESC')";
 
-		$var.= ");loadPTS();return false;\">";
+		$var.= ");loadSchedules();return false;\">";
 
 		return $var;
 	}

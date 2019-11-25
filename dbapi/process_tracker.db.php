@@ -93,7 +93,7 @@ class ProcessTrackerAPI{
 		$fields = ($info['fields'])?$info['fields']:'*';
 
 
-		$sql = "SELECT $fields FROM `".$this->schedule_table."` ";
+		$sql = "SELECT $fields FROM `".$this->schedule_table."` WHERE 1 ";
 
 
 		## ID FIELD SEARCH
@@ -123,7 +123,7 @@ class ProcessTrackerAPI{
 		### ENABLED SEARCH
 		if($info['enabled']){
 
-			$sql .= " AND `enabled` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['enabled'])."%' ";
+			$sql .= " AND `enabled`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['enabled'])."' ";
 
 		}
 
@@ -137,7 +137,7 @@ class ProcessTrackerAPI{
 		### SCRIPT PROCESS CODE SEARCH
 		if($info['script_process_code']){
 
-			$sql .= " AND `script_process_code` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['script_process_code'])."%' ";
+			$sql .= " AND `script_process_code`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['script_process_code'])."' ";
 
 		}
 

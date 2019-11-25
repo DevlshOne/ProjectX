@@ -620,6 +620,7 @@
 					accessDenied("UserStatusReport");
 
 				}	
+				break;
 				
 			case 'process_tracker_schedules':
 

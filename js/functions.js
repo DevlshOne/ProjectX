@@ -253,32 +253,34 @@ function getFormValues(fobj,valFunc){
 	   
 	   
        switch(fobj.elements[i].type){ 
-       case "text": 
-       case "textarea":
-       case "password":
-            if(valFunc){ 
+	
+		case "email":
+		case "text": 
+		case "textarea":
+		case "password":
+				if(valFunc){ 
 
-            	// use single quotes for argument so that the value of 
-            	// fobj.elements[i].value is treated as a string not a literal 
+					// use single quotes for argument so that the value of 
+					// fobj.elements[i].value is treated as a string not a literal 
 
-            	cmd = valFunc + "("+'fobj.elements[i].name'+"," + 'fobj.elements[i].value' + ","+'fobj'+")"; 
+					cmd = valFunc + "("+'fobj.elements[i].name'+"," + 'fobj.elements[i].value' + ","+'fobj'+")"; 
 
-            	val = eval(cmd);
+					val = eval(cmd);
 
-                if(!val){
+					if(!val){
 
-                	var outarr = new Array();
-                	outarr[0] = fobj.elements[i].name;
-                	outarr[1] = fobj.elements[i].value;
-                	
-                	return outarr;
-                }
-            } 
+						var outarr = new Array();
+						outarr[0] = fobj.elements[i].name;
+						outarr[1] = fobj.elements[i].value;
+						
+						return outarr;
+					}
+				} 
 
-            // NAME = VALUE &
-            str += fobj.elements[i].name+"="+escape(fobj.elements[i].value)+"&"; 
+				// NAME = VALUE &
+				str += fobj.elements[i].name+"="+escape(fobj.elements[i].value)+"&"; 
 
-            break; 
+				break; 
 
 
        case "hidden":
