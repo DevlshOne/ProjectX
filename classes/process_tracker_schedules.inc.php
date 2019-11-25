@@ -491,20 +491,20 @@ class ProcessTrackerSchedules{
 			<tr class="nod" id="day_of_week_tr">
 				<th align="left" height="30">Day(s) of Week:</th>
 				<td>
-					<input type="checkbox" name="time_dayofweek[]" value="mon">Mon
-					<input type="checkbox" name="time_dayofweek[]" value="tue">Tue
-					<input type="checkbox" name="time_dayofweek[]" value="wed">Wed
-					<input type="checkbox" name="time_dayofweek[]" value="thu">Thu
-					<input type="checkbox" name="time_dayofweek[]" value="fri">Fri
-					<input type="checkbox" name="time_dayofweek[]" value="sat">Sat
-					<input type="checkbox" name="time_dayofweek[]" value="sun">Sun
+					<input type="checkbox" name="time_dayofweek[]" value="mon" <?=(in_array('mon',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Mon
+					<input type="checkbox" name="time_dayofweek[]" value="tue" <?=(in_array('tue',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Tue
+					<input type="checkbox" name="time_dayofweek[]" value="wed" <?=(in_array('wed',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Wed
+					<input type="checkbox" name="time_dayofweek[]" value="thu" <?=(in_array('thu',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Thu
+					<input type="checkbox" name="time_dayofweek[]" value="fri" <?=(in_array('fri',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Fri
+					<input type="checkbox" name="time_dayofweek[]" value="sat" <?=(in_array('sat',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Sat
+					<input type="checkbox" name="time_dayofweek[]" value="sun" <?=(in_array('sun',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Sun
 				</td>
 			</tr>
 			<tr class="nod" id="day_of_month_tr">
 				<th align="left" height="30">Day Of Month:</th>
 				<td><?
 
-					echo getDayDD("time_dayofmonth",""," onchange=\"\" ");
+					echo getDayDD("time_dayofmonth",$row['time_dayofmonth']," onchange=\"\" ");
 
 				?></td>
 			</tr>
@@ -512,15 +512,33 @@ class ProcessTrackerSchedules{
 				<th align="left" height="30">Start Time:</th>
 				<td><?
 
-						echo makeTimebar("time_start",2,null,false,time()," onchange=\"\" ");
+						if(isset($row['time_start'])){
+
+							$time_start_sel = explode(":",$row['time_start']);
+
+						}else{
+
+							$time_start_sel = time();
+
+						}
+						echo makeTimebar("time_start",2,$time_start_sel,false,0," onchange=\"\" ");
 
 				?></td>
 			</tr>
 			<tr class="nod" id="time_end_tr">
 				<th align="left" height="30">End Time:</th>
 				<td><?
+						if(isset($row['time_end'])){
 
-						echo makeTimebar("time_end",2,null,false,time()+3600," onchange=\"\" ");
+							$time_end_sel = explode(":",$row['time_end']);
+
+						}else{
+
+							$time_end_sel = time()+3600;
+
+						}
+
+						echo makeTimebar("time_end",2,$time_end_sel,false,0," onchange=\"\" ");
 
 				?></td>
 			</tr>

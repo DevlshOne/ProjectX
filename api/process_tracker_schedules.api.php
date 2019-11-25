@@ -64,10 +64,10 @@ class API_ProcessTrackerSchedules{
 			$id = intval($_POST['adding_schedule']);
 
 			unset($dat);
-			$dat['enabled']	 				= (isset($_POST['enabled']))?'yes':'no';
-			$dat['schedule_name']			= trim($_POST['schedule_name']);
-			$dat['script_process_code']		= trim($_POST['script_process_code']);
-			$dat['script_frequency']		= trim($_POST['script_frequency']);
+			$dat['enabled']	 						= (isset($_POST['enabled']))?'yes':'no';
+			$dat['schedule_name']					= trim($_POST['schedule_name']);
+			$dat['script_process_code']				= trim($_POST['script_process_code']);
+			$dat['script_frequency']				= trim($_POST['script_frequency']);
 
 			switch ($dat['script_frequency']) {
 				
@@ -76,8 +76,10 @@ class API_ProcessTrackerSchedules{
 					# CONVERT START TIME TO 24HR TO STORE IN TABLE
 					$time_start_24h = date("H:i", strtotime(trim($_POST['time_starthour']).":".trim($_POST['time_startmin'])." ".trim($_POST['time_starttimemode'])));
 
-					$dat['time_start']		= $time_start_24h;
-					$dat['time_end']		= 0;
+					$dat['time_start']				= $time_start_24h;
+					$dat['time_end']				= 0;
+					$dat['time_dayofweek']			= '';
+					$dat['time_dayofmonth']			= 0;
 
 					break;
 
@@ -87,8 +89,10 @@ class API_ProcessTrackerSchedules{
 					$time_start_24h = date("H:i", strtotime(trim($_POST['time_starthour']).":".trim($_POST['time_startmin'])." ".trim($_POST['time_starttimemode'])));
 					$time_end_24h = date("H:i", strtotime(trim($_POST['time_endhour']).":".trim($_POST['time_endmin'])." ".trim($_POST['time_endtimemode'])));
 
-					$dat['time_start']		= $time_start_24h;
-					$dat['time_end']		= $time_end_24h;
+					$dat['time_start']				= $time_start_24h;
+					$dat['time_end']				= $time_end_24h;
+					$dat['time_dayofweek']			= '';
+					$dat['time_dayofmonth']			= 0;
 
 					break;
 
@@ -98,21 +102,39 @@ class API_ProcessTrackerSchedules{
 					$time_start_24h = date("H:i", strtotime(trim($_POST['time_starthour']).":".trim($_POST['time_startmin'])." ".trim($_POST['time_starttimemode'])));
 					$time_end_24h = date("H:i", strtotime(trim($_POST['time_endhour']).":".trim($_POST['time_endmin'])." ".trim($_POST['time_endtimemode'])));
 
-					$dat['time_start']		= $time_start_24h;
-					$dat['time_end']		= $time_end_24h;
+					$dat['time_start']				= $time_start_24h;
+					$dat['time_end']				= $time_end_24h;
+					$dat['time_dayofmonth']			= 0;
 
-					# GET DAY OF WEEK FROM CHECKBOX ## LEFT OFF HERE
-					$dat['time_dayofweek']	= "";
+					# GET DAY OF WEEK FROM CHECKBOX AND STORE COMMA SEPERATED
+					if(is_array($_POST['time_dayofweek'])){
+
+						$dat['time_dayofweek']		= implode(",",$_POST['time_dayofweek']);
+
+					}
 
 					break;
 
 				case 'monthly':
 
+					# CONVERT START AND END TIME TO 24HR TO STORE IN TABLE
+					$time_start_24h = date("H:i", strtotime(trim($_POST['time_starthour']).":".trim($_POST['time_startmin'])." ".trim($_POST['time_starttimemode'])));
+					$time_end_24h = date("H:i", strtotime(trim($_POST['time_endhour']).":".trim($_POST['time_endmin'])." ".trim($_POST['time_endtimemode'])));
+
+					$dat['time_start']				= $time_start_24h;
+					$dat['time_end']				= $time_end_24h;
+					$dat['time_dayofweek']			= '';
+
+					# GET DAY OF MONTH FROM DROPDOWN
+					$dat['time_dayofmonth']			= intval($_POST['time_dayofmonth']);
+
+					break;
+
 			}
 			
 
-			$dat['time_margin']				= intval($_POST['time_margin']);
-			$dat['notification_email']		= trim($_POST['notification_email']);
+			$dat['time_margin']						= intval($_POST['time_margin']);
+			$dat['notification_email']				= trim($_POST['notification_email']);
 
 
 
