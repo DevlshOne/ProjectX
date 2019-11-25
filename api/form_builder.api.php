@@ -22,6 +22,10 @@
                     $_SESSION['api']->outputCopySuccess();
                     break;
                 case 'new':
+                    // select campaign
+                    // select form name
+                    // create new form
+                    // open form
                     break;
                 case 'delete':
                     $id = intval($_REQUEST['id']);

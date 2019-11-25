@@ -139,7 +139,7 @@
                     displayCopyFormBuilderDialog(id);
                 }
 
-                function handleForm_builderListClick(id) {
+                function handleForm_builderNewClick(id) {
                     displayAddFormBuilderDialog(id);
                 }
 
@@ -186,7 +186,7 @@
                                             <option value="500">500</option>
                                         </select></td>
                                     <td align="right">
-                                        <!--                                        <input type="button" value="New" onclick="displayNewFormBuilderDialog(); return false;">-->
+                                        <input class="righty" title="Create new form" type="button" value="New" onclick="displayNewFormBuilderDialog(); return false;">
                                         <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
                                             <tr>
                                                 <td id="form_builder_prev_td" class="page_system_prev"></td>
@@ -385,7 +385,7 @@
 
                 function saveForm() {
                     for (let i = 0; i < formFields.length; i++) {
-                        var f = formFields[i];
+                        let f = formFields[i];
                         let campID = f.campID;
                         let screenNum = f.screenNum;
                         f.saveToDB();
