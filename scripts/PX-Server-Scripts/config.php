@@ -16,16 +16,16 @@
 	
 	$server_id_file = "/etc/px-server-id";
 	
-	$sip_password = "hr439t8hJ8t9uTAa";
-	$iax_password = "cyQoEku81oDE4GU";
+	$sip_password = "8xEBZgDJUTTpza";
+	$iax_password = "NMPG3bjTbNvJwxN";
 	$px_sip_pass = "t1g3rstyl3";	// THE PASSWORD PX LINPHONE USES TO REGISTER (as px-system user)
 	$meetme_prefix = "1024";
-	$vici_phone_password = "drlv";		// THE PASSWORD FOR THE PHONE, THAT THEY TYPE INTO VICIDIAL
+	$vici_phone_password = "ccihn";		// THE PASSWORD FOR THE PHONE, THAT THEY TYPE INTO VICIDIAL
 	
 	$local_gmt = "-8.00";		// MIGHT NEED TO ADJUST FOR THEIR TIMEZONE
 	
 	$config_dir = "/etc/asterisk/"; // change this if you want to test it first in another dir
-	$config_gen_cmd = "/ProjectX-Server/scripts/px_config_generator.php";
+	$config_gen_cmd = "/bin/true";//"/ProjectX-Server/scripts/px_config_generator.php";
 	
 	
 	// LOAD SERVER ID FROM TEH FILE

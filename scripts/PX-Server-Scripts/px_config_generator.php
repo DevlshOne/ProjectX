@@ -93,7 +93,7 @@
 		//print_r($row);
 
 		$ext = $row['number'];
-		$pw = $row['password'];
+		$pw = $row['sip_password'];
 		$iaxpw = $row['iax_password'];
 		$iaxhost=$row['iax_host'];
 		$context = (trim($row['context']))?$row['context']:"px-sip";
