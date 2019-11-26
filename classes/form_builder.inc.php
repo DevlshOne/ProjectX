@@ -144,7 +144,7 @@
                 }
 
                 function displayCopyFormBuilderDialog(id) {
-                    var objname = 'dialog-modal-copy-form-builder';
+                    let objname = 'dialog-modal-copy-form-builder';
                     $('#' + objname).dialog("option", "title", 'Copying forms and custom fields');
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
@@ -153,12 +153,12 @@
                 }
 
                 function displayNewFormBuilderDialog() {
-                    var objname = 'dialog-modal-add-form-builder';
-                    $('#' + objname).dialog("option", "title", 'Create new form');
+                    let objname = 'dialog-modal-add-form-builder';
+                    // $('#' + objname).dialog("option", "title", 'Create new form');
                     $('#' + objname).dialog("open");
-                    $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                    $('#' + objname).load("index.php?area=form_builder&new=1&printable=1&no_script=1");
-                    $('#' + objname).dialog('option', 'position', 'center');
+                    // $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    // $('#' + objname).load("index.php?area=form_builder&new=1&printable=1&no_script=1");
+                    // $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 function displayAddFormBuilderDialog(id) {
@@ -186,7 +186,7 @@
                                             <option value="500">500</option>
                                         </select></td>
                                     <td align="right">
-                                        <input class="righty" title="Create new form" type="button" value="New" onclick="displayNewFormBuilderDialog(); return false;">
+                                        <input class="righty" title="Create new form" type="button" value="New Form" onclick="displayNewFormBuilderDialog(); return false;">
                                         <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
                                             <tr>
                                                 <td id="form_builder_prev_td" class="page_system_prev"></td>
@@ -213,7 +213,18 @@
                 </td>
             </tr>
             </table>
-            <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod"></div>
+            <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod">
+                <?= $this->makeNew();?>
+<!--                <table border="0" style="text-align:center;">-->
+<!--                    <tr>-->
+<!--                        <th class="lefty pct50 ht30">Choose campaign for new form :</th>-->
+<!--                        <td class="righty pct50 ht30">--><?//= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?><!--</td>-->
+<!--                    </tr>-->
+<!--                    <tr>-->
+<!--                        <th colspan="2" class="centery"><input type="submit" value="Go" onclick="displayAddFormBuilderDialog(0)"></th>-->
+<!--                    </tr>-->
+<!--                </table>-->
+            </div>
             <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <script>
                 $("#dialog-modal-copy-form-builder").dialog({
@@ -223,6 +234,7 @@
                     modal: false,
                     draggable: true,
                     resizable: false,
+                    position: 'center'
                 });
                 $("#dialog-modal-add-form-builder").dialog({
                     autoOpen: false,
@@ -230,7 +242,22 @@
                     height: 160,
                     modal: false,
                     draggable: true,
-                    resizable: false
+                    resizable: false,
+                    title: 'Create New Form',
+                    buttons: {
+                        'Create': function () {
+                            let targetID = $('#targetCampaign').val();
+                            $.post('api/api.php?get=form_builder&mode=json&action=new&targetID=' + targetID, function () {
+                                confirm('Forms created');
+                                loadForm_builders();
+                            });
+                            $(this).dialog('close');
+                        },
+                        'Cancel': function () {
+                            $(this).dialog('close');
+                        }
+                    },
+                    position: 'center'
                 });
                 loadForm_builders();
             </script><?
@@ -279,17 +306,12 @@
 
         function makeNew() {
             ?>
-            <form method="POST" action="<?= stripurl('new') . 'add=0' ?>" autocomplete="off">
                 <table border="0" style="text-align:center;">
                     <tr>
                         <th class="lefty pct50 ht30">Choose campaign for new form :</th>
                         <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
                     </tr>
-                    <tr>
-                        <th colspan="2" class="centery"><input type="submit" value="Go" onclick="displayAddFormBuilderDialog(0)"></th>
-                    </tr>
                 </table>
-            </form>
             <?
         }
 

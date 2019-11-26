@@ -19,6 +19,11 @@ class FormBuilderAPI{
 		return $_SESSION['dbapi']->adelete($id,$this->table);
 	}
 
+	function createNewForm($campID) {
+	    return;
+//	    return $_SESSION['dbapi']->
+    }
+
 	/**
 	 * Get a Name by ID
 	 * @param 	$id		The database ID of the record
