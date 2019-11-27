@@ -1,3 +1,4 @@
+<script type="text/javascript" src="js/form_builder.js"></script>
 <? /***************************************************************
  *    Names - Handles list/search/import names
  *    Written By: Jonathan Will
@@ -61,8 +62,7 @@
                 var form_builder_copymsg = 'Copying forms and custom fields';
                 var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-                var <?=$this->index_name?> =
-                0;
+                var <?=$this->index_name?> = 0;
                 var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
                 var FormBuildersTableFormat = [
                     ['[get:campaign_name:campaign_id]', 'align-left'],
@@ -80,9 +80,7 @@
                         "?get=form_builder&" +
                         "mode=xml&" +
                         "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
-                )
-                    +
-                        "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
+                ) + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
                     "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
 
@@ -154,17 +152,41 @@
 
                 function displayNewFormBuilderDialog() {
                     let objname = 'dialog-modal-add-form-builder';
-                    // $('#' + objname).dialog("option", "title", 'Create new form');
                     $('#' + objname).dialog("open");
-                    // $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                    // $('#' + objname).load("index.php?area=form_builder&new=1&printable=1&no_script=1");
-                    // $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 function displayAddFormBuilderDialog(id) {
                     let objname = 'main_content';
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=form_builder&add=" + id + "&printable=1&no_script=1");
+                }
+
+                function addNewField(c, s) {
+                    let newIndex = formFields.length;
+                    let newObj = {};
+                    newObj.campID = c;
+                    newObj.campaign_id = c;
+                    newObj.screenNum = s;
+                    newObj.screen_num = s;
+                    // let's set some default values per Jon
+                    newObj.name = 'New Field';
+                    newObj.label_x = 0;
+                    newObj.label_y = 0;
+                    newObj.field_x = 100;
+                    newObj.field_y = 0;
+                    newObj.label_height = 30;
+                    newObj.label_width = 100;
+                    newObj.field_height = 30;
+                    newObj.field_width = 100;
+                    newObj.field_type = 0;
+                    newObj.max_length = 50;
+                    newObj.field_step = -1;
+                    newObj.is_hidden = 0;
+                    newObj.is_locked = 0;
+                    newObj.value = '';
+                    let formField = new frmField(newIndex, newObj);
+                    formFields.push(formField);
+                    formField.saveToDB();
                 }
             </script>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
@@ -185,8 +207,7 @@
                                             <option value="100">100</option>
                                             <option value="500">500</option>
                                         </select></td>
-                                    <td align="right">
-                                        <input class="righty" title="Create new form" type="button" value="New Form" onclick="displayNewFormBuilderDialog(); return false;">
+                                    <td class="righty">
                                         <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
                                             <tr>
                                                 <td id="form_builder_prev_td" class="page_system_prev"></td>
@@ -194,6 +215,7 @@
                                                 <td id="form_builder_next_td" class="page_system_next"></td>
                                             </tr>
                                         </table>
+                                        <input class="righty" title="Create new form" type="button" value="New Form" onclick="displayNewFormBuilderDialog(); return false;">
                                     </td>
                                 </tr>
                             </table>
@@ -213,18 +235,7 @@
                 </td>
             </tr>
             </table>
-            <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod">
-                <?= $this->makeNew();?>
-<!--                <table border="0" style="text-align:center;">-->
-<!--                    <tr>-->
-<!--                        <th class="lefty pct50 ht30">Choose campaign for new form :</th>-->
-<!--                        <td class="righty pct50 ht30">--><?//= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?><!--</td>-->
-<!--                    </tr>-->
-<!--                    <tr>-->
-<!--                        <th colspan="2" class="centery"><input type="submit" value="Go" onclick="displayAddFormBuilderDialog(0)"></th>-->
-<!--                    </tr>-->
-<!--                </table>-->
-            </div>
+            <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod"><?= $this->makeNew();?></div>
             <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <script>
                 $("#dialog-modal-copy-form-builder").dialog({
@@ -247,11 +258,12 @@
                     buttons: {
                         'Create': function () {
                             let targetID = $('#targetCampaign').val();
-                            $.post('api/api.php?get=form_builder&mode=json&action=new&targetID=' + targetID, function () {
-                                confirm('Forms created');
-                                loadForm_builders();
-                            });
+                            // $.post('api/api.php?get=form_builder&mode=json&action=new&targetID=' + targetID, function () {
+                                addNewField(targetID, 0);
+                                confirm('New form created');
+                            // });
                             $(this).dialog('close');
+                            loadForm_builders();
                         },
                         'Cancel': function () {
                             $(this).dialog('close');
@@ -260,7 +272,8 @@
                     position: 'center'
                 });
                 loadForm_builders();
-            </script><?
+            </script>
+            <?
 
         }
 
@@ -322,10 +335,9 @@
                 $row = $_SESSION['dbapi']->form_builder->getByID($id);
             }
             ?>
-            <script type="text/javascript" src="js/form_builder.js"></script>
             <script>
                 var formID = '<?=$id;?>';
-                var formFields = [];
+                // var formFields = [];
                 var currentScreen = 0;
                 $("#dialog-modal-preview-form-builder").dialog({
                     autoOpen: false,
@@ -416,6 +428,13 @@
                     changeScreen(f.campID, f.screenNum);
                 }
 
+                function deleteField(i) {
+                    let f = formFields[i];
+                    $.post('api/api.php?get=form_builder&mode=json&action=markDeleted&id=' + f.dbID, function () {
+                        changeScreen(f.campID, f.screenNum);
+                    });
+                }
+
                 function addField(c, s) {
                     let newIndex = formFields.length;
                     let newObj = {};
@@ -442,13 +461,6 @@
                     let formField = new frmField(newIndex, newObj);
                     formFields.push(formField);
                     editField(newIndex);
-                }
-
-                function deleteField(i) {
-                    let f = formFields[i];
-                    $.post('api/api.php?get=form_builder&mode=json&action=markDeleted&id=' + f.dbID, function () {
-                        changeScreen(f.campID, f.screenNum);
-                    });
                 }
 
                 function editField(i) {
