@@ -83,7 +83,7 @@ function frmField(index, o) {
 frmField.prototype = {
     constructor: frmField,
     saveToDB: function() {
-        $.post('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function() {
+        $.post('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function(response) {
         })
             .done(function() {
                 return 1;

@@ -1,4 +1,4 @@
-<?php 
+<?php
 /***************************************************************
  *    Drop Down Functions
  *    Written By:    Jonathan Will
@@ -406,7 +406,7 @@
         $out .= '</select>';
         return $out;    }
 
-        
+
         /**
     function makeTimebar($basename="time_", $mode=0, $selarr=null, $stack=false, $timestamp=0, $extra_attr="")
     {
@@ -431,7 +431,7 @@
     function makeNoFormsCampaignDD($name, $selected, $css, $onchange, $blank_option = 1)
     {
         connectPXDB();
-        $res = query("SELECT DISTINCT(`c`.`name`), `c`.`id` FROM `campaigns` AS `c` WHERE `c`.`status`='active' AND `c`.`id` NOT IN (SELECT `campaign_id` FROM `custom_fields`)");
+        $res = query("SELECT DISTINCT(`c`.`name`), `c`.`id` FROM `campaigns` AS `c` WHERE `c`.`status`='active' AND `c`.`id` NOT IN (SELECT `campaign_id` FROM `custom_fields`) ORDER BY `c`.`name`");
         $out = '<select name="' . $name . '" id="' . $name . '" ';
         $out .= ($css) ? ' class="' . $css . '" ' : '';
         $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';

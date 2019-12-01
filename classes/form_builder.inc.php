@@ -141,6 +141,10 @@
                     displayAddFormBuilderDialog(id);
                 }
 
+                function handleForm_builderListClick(id) {
+                    displayAddFormBuilderDialog(id);
+                }
+
                 function displayCopyFormBuilderDialog(id) {
                     let objname = 'dialog-modal-copy-form-builder';
                     $('#' + objname).dialog("option", "title", 'Copying forms and custom fields');
@@ -258,10 +262,8 @@
                     buttons: {
                         'Create': function () {
                             let targetID = $('#targetCampaign').val();
-                            // $.post('api/api.php?get=form_builder&mode=json&action=new&targetID=' + targetID, function () {
                                 addNewField(targetID, 0);
                                 confirm('New form created');
-                            // });
                             $(this).dialog('close');
                             loadForm_builders();
                         },
