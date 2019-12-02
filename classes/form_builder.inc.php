@@ -241,6 +241,9 @@
             </table>
             <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod"><?= $this->makeNew();?></div>
             <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
+            <div id="dialog-modal-delete-last-field" title="CONFIRM - Deleting Last Field" class="nod">
+                <div class="warning">This is the last field of this form. If you delete this field by clicking "Confirm", the form for this campaign will be completely removed.</div>
+            </div>
             <script>
                 $("#dialog-modal-copy-form-builder").dialog({
                     autoOpen: false,
@@ -269,6 +272,27 @@
                         },
                         'Cancel': function () {
                             $(this).dialog('close');
+                        }
+                    },
+                    position: 'center'
+                });
+                $("#dialog-modal-delete-last-field").dialog({
+                    autoOpen: false,
+                    width: 500,
+                    height: 160,
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    title: 'CONFIRM - Delete Last Field',
+                    buttons: {
+                        'Confirm': function () {
+                                deleteField(i);
+                                $(this).dialog('close');
+                            loadForm_builders();
+                        },
+                        'Cancel': function () {
+                            $(this).dialog('close');
+                            loadForm_builders();
                         }
                     },
                     position: 'center'
@@ -477,8 +501,9 @@
                             title: 'Remove field from this form',
                             icon: 'ui-icon-trash',
                             click: function () {
-                                if (formFields.length < 2) {
-                                    window.alert('You may not delete the last field of this form');
+                                if (formFields.length === 1) {
+                                    let $dlgObj = $('#dialog-modal-delete-last-field');
+                                    $dlgObj.dialog('open');
                                 } else {
                                     deleteField(i);
                                 }
