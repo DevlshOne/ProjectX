@@ -2030,7 +2030,34 @@ class LeadManagement{
 						</tr>
 						<tr>
 							<th align="left" height="25">PX lead ID#</th>
-							<td><?=htmlentities($row['id'])?></td>
+							<td>
+								<?
+								
+									echo htmlentities($row['id']);
+									
+									
+									
+									
+									if($row['px_server_id'] > 0 ){
+										
+										$server = getPXServer($row['px_server_id']);
+										
+										echo ' - PX Server: ';
+										
+										echo $server['name'];
+										
+										if($_SESSION['user']['priv'] >= 5){
+											echo ' ('.$server['ip_address'].')';
+										}
+
+									}
+								
+								
+								
+								?>
+							
+							
+							</td>
 						</tr>
 						<tr>
 							<th align="left" height="25">Vici Lead ID#:</th>
