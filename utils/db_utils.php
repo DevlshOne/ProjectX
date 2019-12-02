@@ -238,6 +238,20 @@
 		}
 		return null;
 	}
+	
+	function getPXServer($px_server_id){
+		connectPXDB();
+		
+		return querySQL("SELECT * FROM `servers` WHERE `id` = '" . intval($px_server_id) . "'");
+
+	}
+	
+	function getServerName($px_server_id){
+		connectPXDB();
+		
+		list($name) = queryROW("SELECT `name` FROM `servers` WHERE `id` = '" . intval($px_server_id) . "'");
+		return $name;
+	}
 
 
 	function getClusterWebHost($vici_cluster_id){
