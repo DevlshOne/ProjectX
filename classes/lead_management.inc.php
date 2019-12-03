@@ -1197,6 +1197,59 @@ class LeadManagement{
 
 		</script><?
 	}
+	
+	function makeRecentCalls($leadrow){
+	
+		$phone = $leadrow['phone_num'];
+		
+		connectPXDB();
+		
+		$rowarr = fetchAllAssoc("SELECT * FROM `lead_tracking` WHERE `phone_num`='".$phone."' ORDER BY `time` DESC");
+
+		$colspan = 5;
+		
+		?>
+		<table border="0" width="100%">
+		<tr>
+			<th class="ui-widget-header row2 padleft" height="40" colspan="<?=$colspan?>">Recent calls to '<?=$phone?>'</th>
+		</tr>
+		<tr>
+			<th class="row2">Call Time</th>
+			<th class="row2">Duration</th>
+			<th class="row2">Dispo</th>
+			<th class="row2">Outbound Phone#</th>
+			<th class="row2">&nbsp;</th>
+		</tr><?
+
+
+
+		if(count($rowarr) == 0){
+
+			?><tr><td colspan="<?=$colspan?>" align="center"><i>No records found</i></tr><?
+		}
+
+		$total = 0;
+
+
+		foreach($rowarr as $row){
+
+			$class = ($row['id'] == $leadrow['id'])?' class="greenbg" ':"";
+			?><tr>
+				<td align="center" <?=$class?>><?=date("g:i:sa m/d/Y", $row['time'])?></td>
+				<td align="center" <?=$class?>><?=renderTimeFormatted($row['agent_duration'])?></td>
+				<td align="center" <?=$class?>><?=htmlentities($row['dispo'])?></td>
+				<td align="center" <?=$class?>><?=htmlentities($row['outbound_phone_num'])?></td>
+				<td align="center"><a href="#" onclick="displayEditLeadDialog(<?=$row['id']?>, 'general');return false">[View Lead]</a></td>
+			</tr><?
+
+		}
+
+		/**?><tr><th align="left" colspan="<?=$colspan?>">Total: $<?=number_format($total)?></th></tr><?**/
+
+
+		?></table><?
+		
+	}
 
 	function makeResendSale($leadrow, $sale_id){
 		
@@ -1897,6 +1950,7 @@ class LeadManagement{
 
 			}
 
+
 			function loadSaleSection(id){
 
 				loadSectionInTab('?area=lead_management&edit_lead=<?=$id?>&sub=create_sale&xfer_id='+id+'&printable=1&no_script=2');
@@ -1938,6 +1992,7 @@ class LeadManagement{
 			<ul>
 				<li><a href="?area=lead_management&edit_lead=<?=$id?>&sub=general&printable=1&no_script=2">General</a></li>
 				<li><a href="?area=lead_management&edit_lead=<?=$id?>&sub=sales&printable=1&no_script=2">Xfers/Sales</a></li>
+				<li><a href="?area=lead_management&edit_lead=<?=$id?>&sub=calls&printable=1&no_script=2">Recent Calls</a></li>
 				<li><a href="?area=lead_management&edit_lead=<?=$id?>&sub=recordings&printable=1&no_script=2">Recordings</a></li>
 			</ul>
 		</div><?
@@ -2291,6 +2346,14 @@ class LeadManagement{
 
 				break;
 
+			case 'calls':	
+			
+				
+				$this->makeRecentCalls($row);
+				
+				
+				break;
+				
 			case 'resend_sale'://&sale_id'
 
 				$this->makeResendSale($row, $_REQUEST['sale_id']);
