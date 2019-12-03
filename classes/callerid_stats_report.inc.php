@@ -369,7 +369,9 @@ Query #2 is the old method. (has not been coverted over)
                                 <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="center">CallerID State</th>
                                 <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Total Calls</th>
 								<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right"># Answering</th>
+								<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Answering %</th>
 								<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Contacts</th>
+								<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Contact %</th>
                             </tr>
                             </thead>
                         <tbody>
@@ -399,8 +401,11 @@ Query #2 is the old method. (has not been coverted over)
                                     
                                     
                                     <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['cnt_total'])?></td>
-                                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['cnt_answer_machine'])?>(<?=$ans_percent?>%)</td>
-                                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['cnt_contacts'])?> (<?=$con_percent?>%)</td>
+                                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['cnt_answer_machine'])?></td>
+                                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=$ans_percent?>%</td>                                    
+                                
+                                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=number_format($row['cnt_contacts'])?></td>
+                                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?=$con_percent?>%</td>
                                 </tr><?
 	                                $running_calls += $row['cnt_total'];
 	                                $running_ans += $row['cnt_answer_machine'];
@@ -430,8 +435,10 @@ Query #2 is the old method. (has not been coverted over)
                             	<th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left" colspan="3">Totals:</th>
                                 
                                 <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right"><?=number_format($running_calls)?></th>
-                               	<th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right"><?=number_format($running_ans)?> (<?=$t_ans_percent?>%)</th>
-                                <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right"><?=number_format($running_contact)?> (<?=$t_con_percent?>%)</th>
+                               	<th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right"><?=number_format($running_ans)?></th>
+                               	<th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right"><?=$t_ans_percent?>%</th>
+                                <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right"><?=number_format($running_contact)?></th>
+                                <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right"><?=$t_con_percent?>%</th>
                                 
                             </tr>
                             </tfoot>
