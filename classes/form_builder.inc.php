@@ -80,8 +80,8 @@
                         "?get=form_builder&" +
                         "mode=xml&" +
                         "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
-                ) + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
-                    "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+                        ) + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
+                        "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
 
                 function getFieldsURL(c, s) {
@@ -192,6 +192,57 @@
                     formFields.push(formField);
                     formField.saveToDB();
                 }
+                $("#dialog-modal-copy-form-builder").dialog({
+                    autoOpen: false,
+                    width: 500,
+                    height: 160,
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    position: 'center'
+                });
+                $("#dialog-modal-add-form-builder").dialog({
+                    autoOpen: false,
+                    width: 500,
+                    height: 160,
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    title: 'Create New Form',
+                    buttons: {
+                        'Create': function () {
+                            let targetID = $('#targetCampaign').val();
+                            addNewField(targetID, 0);
+                            confirm('New form created');
+                            $(this).dialog('close');
+                            loadForm_builders();
+                        },
+                        'Cancel': function () {
+                            $(this).dialog('close');
+                        }
+                    },
+                    position: 'center'
+                });
+                $("#dialog-modal-delete-last-field").dialog({
+                    autoOpen: false,
+                    width: 500,
+                    height: 160,
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    title: 'CONFIRM - Delete Last Field',
+                    position: 'center',
+                    buttons: {
+                        'Confirm': function () {
+                            let i = $(this).data('fieldID');
+                            deleteField(i);
+                            $(this).dialog('close');
+                        },
+                        'Cancel': function () {
+                            $(this).dialog('close');
+                        }
+                    }
+                });
             </script>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
                   action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForm_builders();return false">
@@ -239,64 +290,12 @@
                 </td>
             </tr>
             </table>
-            <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod"><?= $this->makeNew();?></div>
+            <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod"><?= $this->makeNew(); ?></div>
             <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <div id="dialog-modal-delete-last-field" title="CONFIRM - Deleting Last Field" class="nod">
-                <div class="warning">This is the last field of this form. If you delete this field by clicking "Confirm", the form for this campaign will be completely removed.</div>
+                <div class="warning">Are you sure you want to delete the last field of this form?</div>
             </div>
             <script>
-                $("#dialog-modal-copy-form-builder").dialog({
-                    autoOpen: false,
-                    width: 500,
-                    height: 160,
-                    modal: false,
-                    draggable: true,
-                    resizable: false,
-                    position: 'center'
-                });
-                $("#dialog-modal-add-form-builder").dialog({
-                    autoOpen: false,
-                    width: 500,
-                    height: 160,
-                    modal: false,
-                    draggable: true,
-                    resizable: false,
-                    title: 'Create New Form',
-                    buttons: {
-                        'Create': function () {
-                            let targetID = $('#targetCampaign').val();
-                                addNewField(targetID, 0);
-                                confirm('New form created');
-                            $(this).dialog('close');
-                            loadForm_builders();
-                        },
-                        'Cancel': function () {
-                            $(this).dialog('close');
-                        }
-                    },
-                    position: 'center'
-                });
-                $("#dialog-modal-delete-last-field").dialog({
-                    autoOpen: false,
-                    width: 500,
-                    height: 160,
-                    modal: false,
-                    draggable: true,
-                    resizable: false,
-                    title: 'CONFIRM - Delete Last Field',
-                    buttons: {
-                        'Confirm': function () {
-                                deleteField(i);
-                                $(this).dialog('close');
-                            loadForm_builders();
-                        },
-                        'Cancel': function () {
-                            $(this).dialog('close');
-                            loadForm_builders();
-                        }
-                    },
-                    position: 'center'
-                });
                 loadForm_builders();
             </script>
             <?
@@ -345,12 +344,12 @@
 
         function makeNew() {
             ?>
-                <table border="0" style="text-align:center;">
-                    <tr>
-                        <th class="lefty pct50 ht30">Choose campaign for new form :</th>
-                        <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
-                    </tr>
-                </table>
+            <table border="0" style="text-align:center;">
+                <tr>
+                    <th class="lefty pct50 ht30">Choose campaign for new form :</th>
+                    <td class="righty pct50 ht30"><?= makeNoFormsCampaignDD('targetCampaign', NULL, NULL, NULL, NULL); ?></td>
+                </tr>
+            </table>
             <?
         }
 
@@ -503,6 +502,7 @@
                             click: function () {
                                 if (formFields.length === 1) {
                                     let $dlgObj = $('#dialog-modal-delete-last-field');
+                                    $dlgObj.data('fieldID', i);
                                     $dlgObj.dialog('open');
                                 } else {
                                     deleteField(i);
@@ -588,7 +588,7 @@
             <div class="pct100">
                 <div class="ht40 pd10 ui-widget-header">
                     <div style="float:left;">Editing Form for Campaign : <?= $sourceName; ?></div>
-                    <div style="float:right;"><input type="button" value="Back" onclick="loadSection('?area=form_builder&no_script=1');" /></div>
+                    <div style="float:right;"><input type="button" value="Back" onclick="loadSection('?area=form_builder&no_script=1');"/></div>
                 </div>
                 <div id="screenTabs">
                     <ul>
