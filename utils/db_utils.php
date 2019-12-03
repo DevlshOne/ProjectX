@@ -6,6 +6,46 @@
 
 
 
+
+	/**
+	 * SKUNKWORKS CALLERID DATABASE CONNECTION
+	 */
+	function connectCallerIDDB(){
+		
+		$db = mysqli_connect(
+				$_SESSION['site_config']['callerid_db']['sqlhost'],
+				$_SESSION['site_config']['callerid_db']['sqllogin'],
+				$_SESSION['site_config']['callerid_db']['sqlpass'],
+				$_SESSION['site_config']['callerid_db']['sqldb']
+				);
+		
+		if(!$db){
+			
+			echo "CallerID DB: ".$_SESSION['site_config']['callerid_db']['sqlhost'].": Error connecting to ". $_SESSION['site_config']['callerid_db']['sqlhost']."\n";
+			return false;
+			
+		}
+		
+		
+		// DB CONNECTED AT THIS POINT
+		// SELECT THE DATABASE
+		//		if(!mysql_select_db($_SESSION['site_config']['ccidb']['sqldb'])){
+		//
+		//			echo $_SESSION['site_config']['ccidb']['sqlhost'].": Error - Cannot select db.\n";
+		//
+		//			return false;
+		//		}
+		
+		
+		
+		// SAVE DB TO SESSION, SO THE db.inc.php FUNCTIONS WORK
+		$_SESSION['db'] = $db;
+		
+		
+		return true;
+	}
+		
+		
 	function connectCCIDB(){
 
 		$db = mysqli_connect(
