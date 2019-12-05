@@ -1,11 +1,12 @@
 <? /***************************************************************
- *User GROUPS - Vici User Group Management Tools
- * Written By: Jonathan Will
+ *  User Team Manager - Vici User Team Management Tools
+ *  Written By: Jonathan Will
+ *  Mods: Dave Mednick
  ***************************************************************/
 
     $_SESSION['user_teams'] = new UserTeamsClass;
 
-    class UserGroupsClass {
+    class UserTeamsClass {
         var $table = 'user_teams';            ## Classes main table to operate on
         var $orderby = 'name';        ## Default Order field
         var $orderdir = 'ASC';            ## Default order direction
@@ -16,7 +17,7 @@
         var $frm_name = 'userteam_nextfrm';
         var $order_prepend = 'userteam_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
-        function UserGroupsClass() {
+        function UserTeamsClass() {
             $this->handlePOST();
         }
 
@@ -34,7 +35,7 @@
                 accessDenied("Users");
                 return;
             } else {
-                ## ADD/EDIT USER
+                ## ADD/EDIT USER TEAM
                 if (isset($_REQUEST['add_user_team'])) {
                     $uid = intval($_REQUEST['add_user_team']);
                     $this->makeAdd($uid);
@@ -49,8 +50,8 @@
             ?>
             <div id="grouptabs" style="position: absolute">
                 <ul>
-                    <li><a href="<?= stripurl('group_sub') ?>group_sub=master">Master Group List</a></li>
-                    <li><a href="<?= stripurl('group_sub') ?>group_sub=cluster">Group Cluster Assignment</a></li>
+                    <li><a href="<?= stripurl('group_sub') ?>group_sub=master">Master Team List</a></li>
+                    <li><a href="<?= stripurl('group_sub') ?>group_sub=user">User Team Assignment</a></li>
                 </ul>
 
             </div>
@@ -64,191 +65,125 @@
                         }
                     });
                 });
-            </script><?
+            </script>
+            <?
         }
 
-        /**
-         * Jon, All verifiers groups are GT unless the group specifies 94/98
-         * so they would be allied
-         */
         function listEntrys() {
-
             ?>
             <script>
-
-                var usergroup_delmsg = "THIS WILL DELETE THE GROUP FROM THE VICIDIAL CLUSTER AS WELL!\nAre you sure you want to delete this user group?";
-
-                var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
-                var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-
-
-                var <?=$this->index_name?> = 0;
-                var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-
-                var UserGroupsTableFormat = [
-
+                let userteam_delmsg = "Are you sure you want to delete this team?";
+                let <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
+                let <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
+                let <?=$this->index_name?> = 0;
+                let <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
+                let UserTeamsTableFormat = [
                     ['user_team', 'align_left'],
                     ['name', 'align_left'],
-                    ['[get:cluster_name:vici_cluster_id]', 'align_center'],
-                    ['office', 'align_center'],
-
+                    ['[get:user_count:team_id]', 'align_center'],
                     ['[delete]', 'align_center']
                 ];
 
                 /**
                  * Build the URL for AJAX to hit, to build the list
                  */
-                function getUserGroupsURL() {
-
-                    var frm = getEl('<?=$this->frm_name?>');
-
+                function getUserTeamsURL() {
+                    let frm = getEl('<?=$this->frm_name?>');
                     return 'api/api.php' +
                         "?get=user_teams&" +
                         "mode=xml&" +
-
-                        's_name=' + escape(frm.s_name.value) + "&" +
-                        's_group_name=' + escape(frm.s_group_name.value) + "&" +
-                        's_cluster_id=' + escape(frm.s_cluster_id.value) + "&" +
-
-
+                        's_team_name=' + escape(frm.s_team_name.value) + "&" +
                         "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
                         "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
 
-
-                var usergroups_loading_flag = false;
+                let userteams_loading_flag = false;
 
                 /**
                  * Load the license data - make the ajax call, callback to the parse function
                  */
                 function loadUsergroups() {
-
                     // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
-                    var val = null;
-                    eval('val = usergroups_loading_flag');
-
-
+                    let val = null;
+                    eval('val = userteams_loading_flag');
                     // CHECK IF WE ARE ALREADY LOADING THIS DATA
                     if (val == true) {
-
-                        //console.log("USERGROUPS ALREADY LOADING (BYPASSED) \n");
                         return;
                     } else {
-
-                        eval('usergroups_loading_flag = true');
+                        eval('userteams_loading_flag = true');
                     }
-
                     <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-
                     $('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
-
-                    loadAjaxData(getUserGroupsURL(), 'parseUserGroups');
-
+                    loadAjaxData(getUserTeamsURL(), 'parseUserTeams');
                 }
-
 
                 /**
                  * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
                  */
                 var <?=$this->order_prepend?>totalcount = 0;
 
-                function parseUserGroups(xmldoc) {
-
-                    <?=$this->order_prepend?>totalcount = parseXMLData('usergroup', UserGroupsTableFormat, xmldoc);
-
-
+                function parseUserTeams(xmldoc) {
+                    <?=$this->order_prepend?>totalcount = parseXMLData('userteam', UserteamsTableFormat, xmldoc);
                     // ACTIVATE PAGE SYSTEM!
                     if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
-
-
-                        makePageSystem('usergroups',
+                        makePageSystem('userteams',
                             '<?=$this->index_name?>',
                             <?=$this->order_prepend?>totalcount,
                             <?=$this->index_name?>,
                             <?=$this->order_prepend?>pagesize,
-                            'loadUsergroups()'
+                            'loadUserteams()'
                         );
-
                     } else {
-
-                        hidePageSystem('usergroups');
-
+                        hidePageSystem('userteams');
                     }
-
-                    eval('usergroups_loading_flag = false');
+                    eval('userteams_loading_flag = false');
                 }
 
-
-                function handleUsergroupListClick(id) {
-
-                    displayAddUserGroupDialog(id);
-
+                function handleUserteamListClick(id) {
+                    displayAddUserTeamDialog(id);
                 }
 
-
-                function displayAddUserGroupDialog(id) {
-
-                    var objname = 'dialog-modal-add-user-group';
-
-
+                function displayAddUserTeamDialog(id) {
+                    let objname = 'dialog-modal-add-user-team';
                     if (id > 0) {
-                        $('#' + objname).dialog("option", "title", 'Editing User Group');
+                        $('#' + objname).dialog("option", "title", 'Editing User Team');
                     } else {
-                        $('#' + objname).dialog("option", "title", 'Adding new User Group');
+                        $('#' + objname).dialog("option", "title", 'Adding new User Team');
                     }
-
                     $('#' + objname).dialog("open");
-
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
                     $('#' + objname).load("index.php?area=user_teams&add_user_team=" + id + "&printable=1&no_script=1");
-
                     $('#' + objname).dialog('option', 'position', 'center');
-
                 }
 
-
-                function resetUserGroupForm(frm) {
-
+                function resetUserTeamForm(frm) {
                     frm.s_name.value = '';
-                    frm.s_cluster_id.value = '';
                     frm.s_group_name.value = '';
-
-
                 }
-
             </script>
-            <div id="dialog-modal-add-user-group" title="Adding new User Group" class="nod"></div>
-
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#usergroupsarea" onsubmit="loadUsergroups();return false">
-                <input type="hidden" name="searching_usergroups">
-
+            <div id="dialog-modal-add-user-team" title="Adding new User Team" class="nod"></div>
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#userteamsarea" onsubmit="loadUserteams();return false">
+                <input type="hidden" name="searching_userteams">
                 <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
                 <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
                 <a name="usersarea"></a>
                 <table border="0" width="100%" class="lb" cellspacing="0">
                     <tr>
                         <td height="40" class="pad_left ui-widget-header">
-
-                            <table border="0" width="100%">
+                            <table class="tightTable">
                                 <tr>
                                     <th width="500" align="left">
                                         User Groups
                                         &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="button" value="Add" onclick="displayAddUserGroupDialog(0);<?
-                                            /**,'_blank','width=500,height=400,scrollbars=1,resizable=1')**/ ?>">
+                                        <input type="button" value="Add" onclick="displayAddUserGroupDialog(0);">
                                     </th>
-
                                     <td width="150" align="center">PAGE SIZE: <select name="<?= $this->order_prepend ?>pagesizeDD" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0; loadUsergroups();return false">
                                             <option value="20">20</option>
                                             <option value="50">50</option>
                                             <option value="100">100</option>
                                             <option value="500">500</option>
                                         </select></td>
-
                                     <td align="right">
-                                        <?
-                                            /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/ ?>
                                         <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
                                             <tr>
                                                 <td id="usergroups_prev_td" class="page_system_prev"></td>
@@ -263,15 +198,12 @@
                     </tr>
                     <tr>
                         <td>
-                            <table border="0" id="usrgrp_search_table">
+                            <table border="0" id="userteam_search_table">
                                 <tr>
                                     <td rowspan="2" width="100" align="center" style="border-right:1px solid #000">
-
                                         <span id="total_count_div"></span>
-
                                     </td>
                                     <th class="row2">Name</th>
-                                    <th class="row2">Group</th>
                                     <th class="row2">Cluster</th>
                                     <td>
                                         <input type="submit" value="Search" onclick="<?= $this->index_name ?> = 0;">
@@ -280,12 +212,6 @@
                                 <tr>
                                     <td><input type="text" name="s_name" size="10" value="<?= htmlentities($_REQUEST['s_name']) ?>"></td>
                                     <td><input type="text" name="s_group_name" size="10" value="<?= htmlentities($_REQUEST['s_group_name']) ?>"></td>
-                                    <?/*<td><?
-
-					echo $_SESSION['campaigns']->makeDD('s_campaign_id',$_REQUEST['s_campaign_id'],'',"",'',1);
-
-
-				?></td>*/ ?>
                                     <td><?
 
                                             echo $this->makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", 1);

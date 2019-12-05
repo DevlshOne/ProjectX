@@ -343,16 +343,34 @@
 	function getUserByID($id){
 		$id = intval($id);
 
-        return $_SESSION['dbapi']->querySQL("SELECT * FROM `users` WHERE id='".$id."' ");
-	}
+        return $_SESSION['dbapi']->querySQL("SELECT * FROM `users` WHERE id='" . $id . "' ");
+    }
 
-	function getUsername($id){
-		$id = intval($id);
+    function getUsername($id) {
+        $id = intval($id);
 
-        list($name) = $_SESSION['dbapi']->queryROW("SELECT name FROM `users` WHERE id='".$id."' ");
-		return $name;
-	}
+        list($name) = $_SESSION['dbapi']->queryROW("SELECT name FROM `users` WHERE id='" . $id . "' ");
+        return $name;
+    }
 
-	// AUTO LOAD OPENSIPS DBS
-	loadOpenSipsDBs();
+    function makeTeamsDD($name, $selected, $css, $onchange, $blank_option = 1) {
+        $out = '<select name="' . $name . '" id="' . $name . '" ';
+        $out .= ($css) ? ' class="' . $css . '" ' : '';
+        $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
+        $out .= '>';
+        if ($blank_option) {
+            $out .= '<option value="" ' . (($selected == '') ? ' SELECTED ' : '') . '>' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
+        }
+        $userteams = getUserTeams();
+        foreach ($userteams as $i => $v) {
+            $out .= '<option value="' . $v['team_id'] . '" ';
+            $out .= ($selected == $v['team_id']) ? ' SELECTED ' : '';
+            $out .= '>' . htmlentities($v['team_name']) . '</option>';
+        }
+        $out .= '</select>';
+        return $out;
+    }
+
+    // AUTO LOAD OPENSIPS DBS
+    loadOpenSipsDBs();
 
