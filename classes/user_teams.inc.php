@@ -102,7 +102,7 @@
                 /**
                  * Load the license data - make the ajax call, callback to the parse function
                  */
-                function loadUsergroups() {
+                function loadUserteams() {
                     // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
                     let val = null;
                     eval('val = userteams_loading_flag');
@@ -153,7 +153,6 @@
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=user_teams&add_user_team=" + id + "&printable=1&no_script=1");
-                    $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 function resetUserTeamForm(frm) {
@@ -167,30 +166,31 @@
                 <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
                 <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
                 <a name="usersarea"></a>
-                <table border="0" width="100%" class="lb" cellspacing="0">
+                <table class="lb tightTable">
                     <tr>
                         <td height="40" class="pad_left ui-widget-header">
                             <table class="tightTable">
                                 <tr>
-                                    <th width="500" align="left">
-                                        User Groups
-                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="button" value="Add" onclick="displayAddUserGroupDialog(0);">
+                                    <th width="15%">
+                                        <div class="lefty">User Teams</div> &nbsp;&nbsp;&nbsp;&nbsp;
                                     </th>
-                                    <td width="150" align="center">PAGE SIZE: <select name="<?= $this->order_prepend ?>pagesizeDD" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0; loadUsergroups();return false">
+                                    <td width="50%" class="centery">PAGE SIZE: <select name="<?= $this->order_prepend ?>pagesizeDD" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0; loadUsergroups();return false">
                                             <option value="20">20</option>
                                             <option value="50">50</option>
                                             <option value="100">100</option>
                                             <option value="500">500</option>
                                         </select></td>
-                                    <td align="right">
-                                        <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
+                                    <td width="15%" class="righty">
+                                        <table class="page_system_container tightTable">
                                             <tr>
                                                 <td id="usergroups_prev_td" class="page_system_prev"></td>
                                                 <td id="usergroups_page_td" class="page_system_page"></td>
                                                 <td id="usergroups_next_td" class="page_system_next"></td>
                                             </tr>
                                         </table>
+                                    </td>
+                                    <td>
+                                        <div class="righty"><input type="button" value="Add" onclick="displayAddUserTeamDialog(0);"></div>
                                     </td>
                                 </tr>
                             </table>
@@ -211,34 +211,25 @@
                                 </tr>
                                 <tr>
                                     <td><input type="text" name="s_name" size="10" value="<?= htmlentities($_REQUEST['s_name']) ?>"></td>
-                                    <td><input type="text" name="s_group_name" size="10" value="<?= htmlentities($_REQUEST['s_group_name']) ?>"></td>
-                                    <td><?
-
-                                            echo $this->makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", 1);
-
-                                        ?></td>
+                                    <td><input type="text" name="s_team_name" size="10" value="<?= htmlentities($_REQUEST['s_team_name']) ?>"></td>
                                     <td>
-
-                                        <input type="button" value="Reset" onclick="resetUserGroupForm(this.form);loadUsergroups();">
-
+                                        <?
+                                            echo $this->makeTeamsDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", 1); ?>
+                                    </td>
+                                    <td>
+                                        <input type="button" value="Reset" onclick="resetUserTeamForm(this.form);loadUserteams();">
                                     </td>
                                 </tr>
-
-
                             </table>
                         </td>
                     </tr>
-
-
             </form>
             <tr>
                 <td colspan="2">
-                    <table border="0" width="100%" id="usergroup_table">
+                    <table border="0" width="100%" id="userteam_table">
                         <tr>
-                            <th class="row2" align="left"><?= $this->getOrderLink('user_team') ?>User Group</a></th>
-                            <th class="row2" align="left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                            <th class="row2" align="center"><?= $this->getOrderLink('vici_cluster_id') ?>Cluster</a></th>
-                            <th class="row2" align="center"><?= $this->getOrderLink('office') ?>Office</a></th>
+                            <th class="row2" align="left"><?= $this->getOrderLink('user_team') ?>User Team</a></th>
+                            <th class="row2" align="center"><?= $this->getOrderLink('user_count') ?>Member Count</a></th>
                             <th class="row2">&nbsp;</th>
                         </tr>
                         <tr>
@@ -251,300 +242,110 @@
                 </td>
             </tr>
             </table>
-
             <script>
-
                 $(document).ready(function () {
-
-                    $("#dialog-modal-add-user-group").dialog({
+                    $("#dialog-modal-add-user-team").dialog({
                         autoOpen: false,
                         width: 380,
                         height: 160,
                         modal: false,
                         draggable: true,
-                        resizable: true
+                        resizable: true,
+                        position: 'center'
                     });
-
-
-                    loadUsergroups();
-
+                    loadUserteams();
                 });
-
-            </script><?
-
+            </script>
+            <?
         }
-
         function makeAdd($id) {
-
             $id = intval($id);
-
             if ($id) {
-
                 $row = $_SESSION['dbapi']->user_teams->getByID($id);
-
             }
-
             ?>
             <script src="js/md5.js"></script>
             <script>
-
-                function validateUserGroupField(name, value, frm) {
-
+                function validateUserTeamField(name, value, frm) {
                     //alert(name+","+value);
-
-
                     switch (name) {
                         default:
-
-                            // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
                             return true;
                             break;
-
-                        case 'group_name':
-
-
+                        case 'team_name':
                             if (!value) return false;
-
                             return true;
-
-                        case 'name':
-
-
-                            if (!value) return false;
-
-                            return true;
-
-                        case 'office':
-
-
-                            if (!value) return false;
-
-                            return true;
-
-                        case 'vici_cluster_id':
-
-
-                            if (!value) return false;
-
-                            return true;
-
-
                             break;
                     }
                     return true;
                 }
 
-
-                function checkUserGroupFrm(frm) {
-
-
-                    var params = getFormValues(frm, 'validateUserGroupField');
-//alert(params);
-//return;
-
-                    // FORM VALIDATION FAILED!
-                    // param[0] == field name
-                    // param[1] == field value
+                function checkUserTeamFrm(frm) {
+                    let params = getFormValues(frm, 'validateUserTeamField');
                     if (typeof params == "object") {
-
                         switch (params[0]) {
                             default:
-
                                 alert("Error submitting form. Check your values");
-
                                 break;
-
-                            case 'name':
-
-                                alert("Please enter a name for this group");
-                                eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                break;
-                            case 'user_team':
-
-                                alert("Please enter the user group");
-                                eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                break;
-                            case 'office':
-
-                                alert("Please select the office for this group");
-                                eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                break;
-                            case 'vici_cluster_id':
-
-                                alert("Please select the cluster for this group");
+                            case 'team_name':
+                                alert("Please enter the team name");
                                 eval('try{frm.' + params[0] + '.select();}catch(e){}');
                                 break;
                         }
-
-                        // SUCCESS - POST AJAX TO SERVER
                     } else {
-
-
-                        //alert("Form validated, posting");
-
                         $.ajax({
                             type: "POST",
                             cache: false,
                             url: 'api/api.php?get=user_teams&mode=xml&action=edit',
                             data: params,
                             error: function () {
-                                alert("Error saving user form. Please contact an admin.");
+                                alert("Error saving user team form. Please contact an admin.");
                             },
                             success: function (msg) {
-
-
-                                var result = handleEditXML(msg);
-                                var res = result['result'];
-
+                                let result = handleEditXML(msg);
+                                let res = result['result'];
                                 if (res <= 0) {
-
                                     alert(result['message']);
-
                                     return;
-
                                 }
-
                                 alert(result['message']);
-
                                 try {
-
-                                    loadUsergroups();
-
-
-                                    displayAddUserGroupDialog(res);
+                                    loadUserteams();
+                                    displayAddUserTeamDialog(res);
                                 } catch (e) {
-
                                     go('?area=user_teams');
-
                                 }
-
-
                             }
-
-
                         });
-
                     }
-
                     return false;
-
                 }
-
-                // SET TITLEBAR
-                $('#dialog-modal-add-user').dialog("option", "title", '<?=($id) ? 'Editing User #' . $id . ' - ' . htmlentities($row['username']) : 'Adding new User'?>');
-
-
             </script>
-            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkUserGroupFrm(this); return false">
+            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkUserTeamFrm(this); return false">
                 <input type="hidden" id="adding_user_team" name="adding_user_team" value="<?= $id ?>">
-
-                <table border="0" width="100%">
+                <table class="tightTable">
                     <tr valign="top">
                         <td align="center">
-
                             <table border="0" align="center">
-
                                 <tr>
-                                    <th align="left">Cluster:</th>
-                                    <td><?
-
-                                            echo $this->makeClusterDD('vici_cluster_id', $row['vici_cluster_id'], '', "", 0); //(($id > 0)?0:1) );// DISABLED THE [ALL] OPTION FOR NOW, SINCE WE DONT TUNE IN ALL THE PARAMS AND HAVE TO LINK THEM TO VICI TO EDIT
-
-                                        ?></td>
+                                    <th align="left">Team Name:</th>
+                                    <td><input name="team_name" type="text" size="30" value="<?= htmlentities($row['team_name']) ?>"></td>
                                 </tr>
-
-                                <tr>
-                                    <th align="left">User Group:</th>
-                                    <td><?
-
-                                            if ($id) {
-
-                                                echo htmlentities($row['user_team']);
-
-                                                $url = "http://" . getClusterWebHost($row['vici_cluster_id']) . "/vicidial/admin.php?ADD=311111&user_team=" . $row['user_team'];
-
-                                                ?><input type="button" value="EDIT IN VICIDIAL" onclick="window.open('<?= $url ?>')"><?
-
-                                            } else {
-                                                ?><input name="user_team" type="text" size="30" maxlength="20" value="<?= htmlentities($row['user_team']) ?>"><?
-                                            }
-
-                                        ?></td>
-                                </tr>
-                                <tr>
-                                    <th align="left">Name:</th>
-                                    <td><input name="name" type="text" size="30" value="<?= htmlentities($row['name']) ?>"></td>
-                                </tr>
-
-                                <tr>
-                                    <th align="left">Office:</th>
-                                    <td><?
-
-                                            echo makeOfficeDD('office', $row['office'], '', "", 0);
-
-                                        ?></td>
-                                </tr>
-
                                 <tr>
                                     <th colspan="2"><input type="submit" value="Save Changes"></th>
                                 </tr>
-
-
                             </table>
-
-
                         </td>
-
                     </tr>
                 </table>
-
-
-                </div>
-                <script>
-
-
-                </script>
-            </form><?
-
-        }
-
-        function makeClusterDD($name, $sel, $css, $onchange, $blank_option = 1) {
-
-            $out = '<select name="' . $name . '" id="' . $name . '" ';
-
-            $out .= ($css) ? ' class="' . $css . '" ' : '';
-            $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
-            $out .= '>';
-
-            //$out .= '<option value="">[All]</option>';
-
-            if ($blank_option) {
-                $out .= '<option value="" ' . (($sel == '') ? ' SELECTED ' : '') . '>' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
-            }
-
-            $res = query("SELECT id,name FROM vici_clusters WHERE `status`='enabled' ORDER BY `name` ASC", 1);
-
-            while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-
-                $out .= '<option value="' . htmlentities($row['id']) . '" ';
-                $out .= ($sel == $row['id']) ? ' SELECTED ' : '';
-                $out .= '>' . htmlentities($row['name']) . '</option>';
-
-            }
-
-            $out .= '</select>';
-
-            return $out;
+            </form>
+            <?
         }
 
         function getOrderLink($field) {
-
             $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
-
             $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-
-            $var .= ");loadUsergroups();return false;\">";
-
+            $var .= ");loadUserteams();return false;\">";
             return $var;
         }
     }

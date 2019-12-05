@@ -90,9 +90,7 @@
         // INIT THE TIMERS
         public $page_start_time = 0;
         public $page_query_count = 0;
-
         public $read_slave_query_count = 0;
-
         public $read_slave_behind_master_time = 0;
 
         // API OBJECTS
@@ -102,7 +100,6 @@
         public $campaigns;
         public $campaign_parents;
         public $login_tracker;
-
         public $extensions;
         public $messages;
         public $names;
@@ -114,9 +111,11 @@
         public $user_groups_master;
         public $voices;
         public $report_emails;
+
         // FEATURE CONTROL
         public $features;
         public $imports;
+
         // MERGED FROM REPORT SYSTEM
         public $ringing_calls;
         public $lead_management;
@@ -131,11 +130,8 @@
         public $dialer_status;
         public $form_builder;
         public $user_prefs;
-
         public $my_notes;
-
         public $sales_management;
-
         public $process_tracker;
 
         /**
