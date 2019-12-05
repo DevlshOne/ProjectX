@@ -92,7 +92,7 @@
                     return 'api/api.php' +
                         "?get=user_teams&" +
                         "mode=xml&" +
-                        's_team_name=' + escape(frm.s_team_name.value) + "&" +
+                        's_team_id=' + escape(frm.s_id.value) + "&" +
                         "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
                         "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
@@ -123,7 +123,7 @@
                 var <?=$this->order_prepend?>totalcount = 0;
 
                 function parseUserTeams(xmldoc) {
-                    <?=$this->order_prepend?>totalcount = parseXMLData('userteam', UserteamsTableFormat, xmldoc);
+                    <?=$this->order_prepend?>totalcount = parseXMLData('userteam', UserTeamsTableFormat, xmldoc);
                     // ACTIVATE PAGE SYSTEM!
                     if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
                         makePageSystem('userteams',
@@ -166,7 +166,7 @@
                 <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
                 <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
                 <a name="usersarea"></a>
-                <table class="lb tightTable">
+                <table class="lb tightTable pct100">
                     <tr>
                         <td height="40" class="pad_left ui-widget-header">
                             <table class="tightTable">
@@ -203,19 +203,13 @@
                                     <td rowspan="2" width="100" align="center" style="border-right:1px solid #000">
                                         <span id="total_count_div"></span>
                                     </td>
-                                    <th class="row2">Name</th>
-                                    <th class="row2">Cluster</th>
+                                    <th class="row2">Team Name</th>
                                     <td>
                                         <input type="submit" value="Search" onclick="<?= $this->index_name ?> = 0;">
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><input type="text" name="s_name" size="10" value="<?= htmlentities($_REQUEST['s_name']) ?>"></td>
                                     <td><input type="text" name="s_team_name" size="10" value="<?= htmlentities($_REQUEST['s_team_name']) ?>"></td>
-                                    <td>
-                                        <?
-                                            echo $this->makeTeamsDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", 1); ?>
-                                    </td>
                                     <td>
                                         <input type="button" value="Reset" onclick="resetUserTeamForm(this.form);loadUserteams();">
                                     </td>
