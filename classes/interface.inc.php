@@ -106,12 +106,12 @@
                             }
 
                             if(
-                            		checkAccess('sales_management') || 
-                            		checkAccess('lead_management') || 
-                            		checkAccess('employee_hours') || 
-                            		checkAccess('ringing_calls') || 
-                            		checkAccess('messages') || 
-                            		checkAccess('server_status') || 
+                            		checkAccess('sales_management') ||
+                            		checkAccess('lead_management') ||
+                            		checkAccess('employee_hours') ||
+                            		checkAccess('ringing_calls') ||
+                            		checkAccess('messages') ||
+                            		checkAccess('server_status') ||
                             		checkAccess('extensions')
                             ) {
                                 ?>
@@ -132,7 +132,7 @@
                                                    onclick="loadSection(this.href);return false">Sales Management</a>
                                             </li><?
                                         }
-                                        
+
                                         if (checkAccess('employee_hours')) {
                                             ?>
                                             <li><a href="?area=employee_hours&no_script=1"
@@ -211,8 +211,8 @@
                                     ?>
                                     <li><a href="?area=list_tools&tool=view_imports&no_script=1"
                                            onclick="loadSection(this.href);return false">List Imports/Counts</a></li><?
-                                           
-                                           
+
+
                                     ?><li><a href="?area=list_tools&tool=performance_reports&no_script=1"
                                            onclick="loadSection(this.href);return false">List Performance Report</a></li><?
 
@@ -300,26 +300,26 @@
                                             <li><a href="?area=dispo_log&no_script=1"
                                                    onclick="loadSection(this.href);return false">Dispo Log</a></li><?
                                         }
-                                        
+
                                         if (checkAccess('capacity_report')) {
                                         	?>
                                             <li><a href="?area=capacity_report&no_script=1"
                                                    onclick="loadSection(this.href);return false">Capacity Report</a></li><?
                                         }
-                                        
+
                                         if (checkAccess('report_emails')) {
                                             ?>
                                             <li><a href="?area=report_emails&no_script=1"
                                                    onclick="loadSection(this.href);return false">Report Email Setup</a>
                                             </li><?
                                         }
-                                        
+
                                         if (checkAccess('user_status_report')) {
                                             ?>
                                             <li><a href="?area=user_status_report&no_script=1"
                                                    onclick="loadSection(this.href);return false">User Status Report</a>
                                             </li><?
-                                        } ?>                                        
+                                        } ?>
                                         </ul>
                                 </li><?
                             }
@@ -352,7 +352,9 @@
                                             Users</a></li>
                                     <li><a href="?area=user_groups&no_script=1"
                                            onclick="loadSection(this.href);return false">Group Manager</a></li>
-									<li><a href="?area=user_groups_master&no_script=1"
+                                    <li><a href="?area=user_teams&no_script=1"
+                                           onclick="loadSection(this.href);return false">Team Manager</a></li>
+                                    <li><a href="?area=user_groups_master&no_script=1"
                                            onclick="loadSection(this.href);return false">Master User Groups</a></li>
 
                                     <?
@@ -372,7 +374,7 @@
                                             <li><a href="?area=login_tracker&no_script=1"
                                                    onclick="loadSection(this.href);return false">Login Tracker</a>
                                             </li><?
-                                        }                                     
+                                        }
 
                                         if (checkAccess('action_log')) {//if($_SESSION['user']['priv'] >= 5){
                                             ?>
@@ -433,8 +435,8 @@
 				<?
 					include_once("classes/home.inc.php");
 					$_SESSION['home']->handleFLOW();
-                    
-                    
+
+
                     ## CHECK IF PASSWORD IS OLDER THAN 6 MONTHS FOR PRIV 4 OR GREATER
                     if($_SESSION['user']['priv'] >= 4){
 
@@ -454,9 +456,9 @@
                                     draggable: false,
                                     resizable: false
                                 });
-                                
+
                                 function loadChangeExpiredPassword() {
-                                
+
                                     $('#change-password-expired-div').dialog("open");
 
                                     $('#change-password-expired-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
@@ -466,14 +468,14 @@
                                 }
 
                                 loadChangeExpiredPassword();
-                            
+
                             </script><?
 
                         }
 
 
                     }
-				
+
 					/**
 					 *<center>
                         <img src="graph.php?area=user_charts&max_mode=1&time_frame=day&width=650&height=300" border="0"

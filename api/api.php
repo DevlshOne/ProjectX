@@ -60,9 +60,9 @@
 
 	// UPDATE THE USERS LAST ACTION TIME
 	$_SESSION['dbapi']->users->updateLastActionTime();
-	
-	
-	
+
+
+
 ## SELECT THE DATA TYPES TO RETRIEVE
 	switch($_REQUEST['get']){
 	default:
@@ -254,15 +254,15 @@
 
 		case 'sales_management':
 		case 'sale':
-			
+
 			include_once($basedir."classes/home.inc.php");
 			include_once($basedir."api/sales_management.api.php");
-			
+
 			$obj = new API_Sales_Management();
 			$obj->handleSecondaryAjax();
-			
+
 			break;
-			
+
 //		case 'account':
 //
 //			include_once($basedir."api/accounts.api.php");
@@ -438,12 +438,16 @@
 
 	case 'usergroups':
 	case 'user_groups':
-
 		include_once($basedir."api/user_groups.api.php");
 		$obj = new API_UserGroups();
 		$obj->handleAPI();
-
 		break;
+
+        case 'user_teams':
+            include_once($basedir."api/user_groups.api.php");
+            $obj = new API_UserGroups();
+            $obj->handleAPI();
+            break;
 
 	case 'user_groups_master':
 		include_once($basedir . "api/user_groups_master.api.php");
@@ -550,12 +554,12 @@
 		$obj->handleAPI();
 
 		break;
-		
+
 	case 'sales_management':
 		include_once($basedir."classes/home.inc.php");
 		include_once($basedir."api/sales_management.api.php");
 		$obj = new API_Sales_Management();
 		$obj->handleAPI();
-		
+
 		break;
 	}
