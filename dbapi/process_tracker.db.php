@@ -141,6 +141,13 @@ class ProcessTrackerAPI{
 
 		}
 
+		### SCRIPT FREQUENCY SEARCH
+		if($info['script_frequency']){
+
+			$sql .= " AND `script_frequency`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['script_frequency'])."' ";
+
+		}
+
 		
 		### ORDER BY
 		if(is_array($info['order'])){

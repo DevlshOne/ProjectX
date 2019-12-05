@@ -136,6 +136,7 @@ class ProcessTrackerSchedules{
 								's_enabled='+escape(frm.s_enabled.value)+"&"+
 								's_schedule_name='+escape(frm.s_schedule_name.value)+"&"+
 								's_script_process_code='+escape(frm.s_script_process_code.value)+"&"+
+								's_script_frequency='+escape(frm.s_script_frequency.value)+"&"+
 
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
@@ -242,6 +243,7 @@ class ProcessTrackerSchedules{
 				frm.s_enabled.value = '';
 				frm.s_schedule_name.value='';
 				frm.s_script_process_code.value='';
+				frm.s_script_frequency.value='';
 			
 
 			
@@ -305,13 +307,13 @@ class ProcessTrackerSchedules{
 						<th class="row2">Enabled</th>
 						<th class="row2">Schedule Name</th>
 						<th class="row2">Script Process Code</th>
+						<th class="row2">Script Frequency</th>
 						<td><input type="submit" value="Search" name="the_Search_button"></td>
 					</tr>
 					<tr>
 						<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
 						<td align="center"><select name="s_enabled" id="s_enabled">
 								<option value="">[All]</option>
-
 								<option value="yes">yes</option>
 								<option value="no">no</option>
 							</select></td>
@@ -323,8 +325,14 @@ class ProcessTrackerSchedules{
 								echo $this->makeProcessCodeDD('s_script_process_code',$_REQUEST['s_script_process_code'],'','');
 
 							?>
-
-						
+						</td>
+						<td align="center"><select name="s_script_frequency" id="s_script_frequency">
+								<option value="">[All]</option>
+								<option value="hourly">hourly</option>
+								<option value="daily">daily</option>
+								<option value="weekly">weekly</option>
+								<option value="monthly">monthly</option>
+							</select></td>
 						<td><input type="button" value="Reset" onclick="resetSchedulesForm(this.form);resetPageSystem('<?=$this->index_name?>');loadSchedules();"></td>
 					</tr>
 				</table>
@@ -381,6 +389,17 @@ class ProcessTrackerSchedules{
 
 		?><script>
 
+			$(function(){
+				var requiredCheckboxes = $('.dayofweek_options :checkbox[required]');
+				requiredCheckboxes.change(function(){
+					if(requiredCheckboxes.is(':checked')) {
+						requiredCheckboxes.removeAttr('required');
+					} else {
+						requiredCheckboxes.attr('required', 'required');
+					}
+				});
+			});
+
 			function submitScheduleFrm(frm){
 
 				var params = getFormValues(frm,'');
@@ -423,28 +442,38 @@ class ProcessTrackerSchedules{
 
 			function toggleDayMode(way){
 
+				var requiredCheckboxes = $('.dayofweek_options :checkbox');
+
 				if(way == 'hourly'){
 					$('#day_of_week_tr').hide();
 					$('#day_of_month_tr').hide();
 					$('#time_end_tr').hide();
+					requiredCheckboxes.removeAttr('required');
 
 				} else if(way == 'daily'){
 
 					$('#day_of_week_tr').hide();
 					$('#day_of_month_tr').hide();
 					$('#time_end_tr').show();
+					requiredCheckboxes.removeAttr('required');
 
 				} else if(way == 'weekly'){
 
 					$('#day_of_week_tr').show();	
 					$('#day_of_month_tr').hide();
-					$('#time_end_tr').show();				
+					$('#time_end_tr').show();
+					if(requiredCheckboxes.is(':checked')) {
+						requiredCheckboxes.removeAttr('required');
+					} else {
+						requiredCheckboxes.attr('required', 'required');
+					}	
 
 				} else {
 
 					$('#day_of_week_tr').hide();
 					$('#day_of_month_tr').show();
 					$('#time_end_tr').show();
+					requiredCheckboxes.removeAttr('required');
 
 				}
 
@@ -490,14 +519,16 @@ class ProcessTrackerSchedules{
 			</tr>
 			<tr class="nod" id="day_of_week_tr">
 				<th align="left" height="30">Day(s) of Week:</th>
-				<td>
-					<input type="checkbox" name="time_dayofweek[]" value="mon" <?=(in_array('mon',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Mon
-					<input type="checkbox" name="time_dayofweek[]" value="tue" <?=(in_array('tue',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Tue
-					<input type="checkbox" name="time_dayofweek[]" value="wed" <?=(in_array('wed',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Wed
-					<input type="checkbox" name="time_dayofweek[]" value="thu" <?=(in_array('thu',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Thu
-					<input type="checkbox" name="time_dayofweek[]" value="fri" <?=(in_array('fri',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Fri
-					<input type="checkbox" name="time_dayofweek[]" value="sat" <?=(in_array('sat',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Sat
-					<input type="checkbox" name="time_dayofweek[]" value="sun" <?=(in_array('sun',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?>>Sun
+				<td>				
+				<div class="form-group dayofweek_options">
+					<input type="checkbox" name="time_dayofweek[]" value="mon" <?=(in_array('mon',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?> required>Mon
+					<input type="checkbox" name="time_dayofweek[]" value="tue" <?=(in_array('tue',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?> required>Tue
+					<input type="checkbox" name="time_dayofweek[]" value="wed" <?=(in_array('wed',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?> required>Wed
+					<input type="checkbox" name="time_dayofweek[]" value="thu" <?=(in_array('thu',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?> required>Thu
+					<input type="checkbox" name="time_dayofweek[]" value="fri" <?=(in_array('fri',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?> required>Fri
+					<input type="checkbox" name="time_dayofweek[]" value="sat" <?=(in_array('sat',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?> required>Sat
+					<input type="checkbox" name="time_dayofweek[]" value="sun" <?=(in_array('sun',explode(",",$row['time_dayofweek'])))?" CHECKED ":""?> required>Sun
+				</div>
 				</td>
 			</tr>
 			<tr class="nod" id="day_of_month_tr">
@@ -515,13 +546,14 @@ class ProcessTrackerSchedules{
 						if(isset($row['time_start'])){
 
 							$time_start_sel = explode(":",$row['time_start']);
+							echo makeTimebar("time_start",2,$time_start_sel,false,0," onchange=\"\" ");
 
 						}else{
 
-							$time_start_sel = time();
+							echo makeTimebar("time_start",2,null,false,time()," onchange=\"\" ");
 
 						}
-						echo makeTimebar("time_start",2,$time_start_sel,false,0," onchange=\"\" ");
+						
 
 				?></td>
 			</tr>
@@ -531,25 +563,26 @@ class ProcessTrackerSchedules{
 						if(isset($row['time_end'])){
 
 							$time_end_sel = explode(":",$row['time_end']);
+							echo makeTimebar("time_end",2,$time_end_sel,false,0," onchange=\"\" ");
 
 						}else{
 
-							$time_end_sel = time()+3600;
+							echo makeTimebar("time_end",2,null,false,time()+3600," onchange=\"\" ");
 
 						}
 
-						echo makeTimebar("time_end",2,$time_end_sel,false,0," onchange=\"\" ");
+						
 
 				?></td>
 			</tr>
 			<tr>
 				<th align="left" height="30">Time Margin:</th>
 				<td><select name="time_margin">
-					<option value="0">0 minutes</option>
-					<option value="5">+5 minutes</option>
-					<option value="10">+10 minutes</option>
-					<option value="15">+15 minutes</option>
-					<option value="30">+30 minutes</option>
+					<option value="0" <?=(intval($row['time_margin']) == 0)?" SELECTED ":''?>>0 minutes</option>
+					<option value="5" <?=(intval($row['time_margin']) == 5)?" SELECTED ":''?>>+5 minutes</option>
+					<option value="10" <?=intval(($row['time_margin']) == 10)?" SELECTED ":''?>>+10 minutes</option>
+					<option value="15" <?=(intval($row['time_margin']) == 15)?" SELECTED ":''?>>+15 minutes</option>
+					<option value="30" <?=(intval($row['time_margin']) == 30)?" SELECTED ":''?>>+30 minutes</option>
 				</select></td>
 			</tr>
 			<tr>

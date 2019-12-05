@@ -195,7 +195,14 @@ class API_ProcessTrackerSchedules{
 				$dat['script_process_code'] = trim($_REQUEST['s_script_process_code']);
 
 			}
-			
+
+			## SCRIPT FREQUENCY SEARCH
+			if($_REQUEST['s_script_frequency']){
+
+				$dat['script_frequency'] = trim($_REQUEST['s_script_frequency']);
+
+			}
+		
 
 			## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
 			if(isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])){
