@@ -78,8 +78,8 @@
                 let <?=$this->index_name?> = 0;
                 let <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
                 let UserTeamsTableFormat = [
-                    ['[get:team_name:team_id', 'align_left'],
-                    ['[get:num_users:team_id]', 'align_center'],
+                    ['team_name', 'align_left'],
+                    ['[get:num_users:id]', 'align_center'],
                     ['[delete]', 'align_center']
                 ];
 

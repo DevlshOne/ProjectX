@@ -119,7 +119,7 @@
                 case 'userteam':
                     include_once($basedir . "api/user_teams.api.php");
                     $obj = new API_UserTeams();
-//                    $obj->handleSecondaryAjax();
+                    $obj->handleSecondaryAjax();
                     break;
                 case 'form_builder':
                     include_once($basedir . "api/form_builder.api.php");

@@ -77,7 +77,7 @@
                 $sql .= " LIMIT " . (($info['limit']['offset']) ? $info['limit']['offset'] . "," : '') . $info['limit']['count'];
             }
             ## RETURN RESULT SET
-            if ($this->debug) echo $sql;
+            if ($this->debug) echo $sql . PHP_EOL;
             return $_SESSION['dbapi']->query($sql);
         }
         function getCount() {
