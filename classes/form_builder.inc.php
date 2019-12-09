@@ -79,11 +79,9 @@
                     return 'api/api.php' +
                         "?get=form_builder&" +
                         "mode=xml&" +
-                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
-                )
-                    +
+                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) +
                         "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
-                    "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+                        "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
 
                 function getFieldsURL(c, s) {

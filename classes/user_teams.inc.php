@@ -8,7 +8,7 @@
 
     class UserTeamsClass {
         var $table = 'user_teams';            ## Classes main table to operate on
-        var $orderby = 'name';        ## Default Order field
+        var $orderby = 'team_name';        ## Default Order field
         var $orderdir = 'ASC';            ## Default order direction
         ## Page  Configuration
         var $pagesize = 20;
@@ -78,9 +78,8 @@
                 let <?=$this->index_name?> = 0;
                 let <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
                 let UserTeamsTableFormat = [
-                    ['user_team', 'align_left'],
-                    ['name', 'align_left'],
-                    ['[get:user_count:team_id]', 'align_center'],
+                    ['[get:team_name:team_id', 'align_left'],
+                    ['[get:num_users:team_id]', 'align_center'],
                     ['[delete]', 'align_center']
                 ];
 
@@ -92,7 +91,7 @@
                     return 'api/api.php' +
                         "?get=user_teams&" +
                         "mode=xml&" +
-                        's_team_id=' + escape(frm.s_id.value) + "&" +
+                        's_team_name=' + escape(frm.s_team_name.value) + "&" +
                         "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
                         "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
@@ -222,7 +221,7 @@
                 <td colspan="2">
                     <table border="0" width="100%" id="userteam_table">
                         <tr>
-                            <th class="row2" align="left"><?= $this->getOrderLink('user_team') ?>User Team</a></th>
+                            <th class="row2" align="left"><?= $this->getOrderLink('team_name') ?>Team Name</a></th>
                             <th class="row2" align="center"><?= $this->getOrderLink('user_count') ?>Member Count</a></th>
                             <th class="row2">&nbsp;</th>
                         </tr>

@@ -5,6 +5,7 @@
 
     class UserTeamsAPI {
         var $table = "user_teams";
+        var $debug = false;
         /**
          * Marks a User Team as deleted
          */
@@ -76,6 +77,7 @@
                 $sql .= " LIMIT " . (($info['limit']['offset']) ? $info['limit']['offset'] . "," : '') . $info['limit']['count'];
             }
             ## RETURN RESULT SET
+            if ($this->debug) echo $sql;
             return $_SESSION['dbapi']->query($sql);
         }
         function getCount() {
