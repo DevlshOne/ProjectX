@@ -1052,7 +1052,13 @@
 				
 				
 				break;
+			case 'callerid_stats_report':
 				
+				include_once("classes/callerid_stats_report.inc.php");
+				$_SESSION['callerid_stats_report']->handleFLOW();
+				
+				
+				break;
 //			case 'fec_filer':
 //
 //				include_once("classes/fec_filer.inc.php");

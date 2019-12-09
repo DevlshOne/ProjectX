@@ -44,14 +44,12 @@
 
 	$offices = array();
 
-	$res = query("SELECT * FROM offices WHERE status='enabled'", 1);
+	$res = query("SELECT * FROM offices WHERE enabled='yes'", 1);
 	while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 
 		$offices[$row['id']] = $row;
 
 	}
-
-
 
 
 
@@ -81,6 +79,8 @@
 			// SHIT THEM OUT SO I CAN COMPARE
 		//	print_r($row);
 
+			if(!trim($row['user_group'])) continue;
+			
 			$master_groups[] = $row;
 
 		}

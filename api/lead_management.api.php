@@ -1325,6 +1325,13 @@ class API_Lead_Management{
 					
 				}
 				
+				if($_REQUEST['s_outbound_phone_num']){
+					
+					$dat['outbound_phone_num'] = preg_replace("/[^0-9]/","",trim($_REQUEST['s_outbound_phone_num']));
+					
+				}
+				
+				
 				
 				// CITY
 				if($_REQUEST['s_city']){
