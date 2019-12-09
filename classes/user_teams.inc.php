@@ -35,38 +35,24 @@
                 accessDenied("Users");
                 return;
             } else {
-                ## ADD/EDIT USER TEAM
-                if (isset($_REQUEST['add_user_team'])) {
-                    $uid = intval($_REQUEST['add_user_team']);
-                    $this->makeAdd($uid);
-                    ## LIST USERS
+                ## USER TEAM ACTIONS
+                if (isset($_REQUEST['action'])) {
+                    switch ($_REQUEST['action']) {
+                        default:
+                            break;
+                        case 'edit':
+                            $uid = intval($_REQUEST['team_id']);
+                            $this->makeEdit($uid);
+                            break;
+                        case 'add':
+                            $this->makeAdd();
+                            break;
+                    }
                 } else {
+                    ## LIST USERS
                     $this->listEntrys();
                 }
             }
-        }
-
-        function makeTabInterface() {
-            ?>
-            <div id="grouptabs" style="position: absolute">
-                <ul>
-                    <li><a href="<?= stripurl('group_sub') ?>group_sub=master">Master Team List</a></li>
-                    <li><a href="<?= stripurl('group_sub') ?>group_sub=user">User Team Assignment</a></li>
-                </ul>
-
-            </div>
-            <script>
-                $(function () {
-                    $("#grouptabs").tabs({
-                        beforeLoad: function (event, ui) {
-                            ui.jqXHR.fail(function () {
-                                ui.panel.html("Couldn't load this tab. We'll try to fix this as soon as possible. ");
-                            });
-                        }
-                    });
-                });
-            </script>
-            <?
         }
 
         function listEntrys() {
@@ -139,19 +125,23 @@
                 }
 
                 function handleUserteamListClick(id) {
-                    displayAddUserTeamDialog(id);
+                    displayEditUserTeamDialog(id);
                 }
 
-                function displayAddUserTeamDialog(id) {
-                    let objname = 'dialog-modal-add-user-team';
-                    if (id > 0) {
-                        $('#' + objname).dialog("option", "title", 'Editing User Team');
-                    } else {
-                        $('#' + objname).dialog("option", "title", 'Adding new User Team');
-                    }
-                    $('#' + objname).dialog("open");
-                    $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                    $('#' + objname).load("index.php?area=user_teams&add_user_team=" + id + "&printable=1&no_script=1");
+                function displayEditUserTeamDialog(id) {
+                    let $dlgObj = $('dialog-modal-edit-user-team');
+                    $dlgObj.dialog("option", "title", 'Editing User Team');
+                    $dlgObj.dialog("open");
+                    $dlgObj.html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    $dlgObj.load("index.php?area=user_teams&action=edit&team_id=" + id + "&printable=1&no_script=1");
+                }
+
+                function displayAddUserTeamDialog() {
+                    let $dlgObj = $('dialog-modal-add-user-team');
+                    $dlgObj.dialog("option", "title", 'Adding New User Team');
+                    $dlgObj.dialog("open");
+                    $dlgObj.html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    $dlgObj.load("index.php?area=user_teams&action=add&printable=1&no_script=1");
                 }
 
                 function resetUserTeamForm(frm) {
@@ -159,7 +149,8 @@
                     frm.s_group_name.value = '';
                 }
             </script>
-            <div id="dialog-modal-add-user-team" title="Adding new User Team" class="nod"></div>
+            <div id="dialog-modal-edit-user-team" class="nod"></div>
+            <div id="dialog-modal-add-user-team" class="nod"></div>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#userteamsarea" onsubmit="loadUserteams();return false">
                 <input type="hidden" name="searching_userteams">
                 <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">

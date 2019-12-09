@@ -13,11 +13,19 @@
             $id = intval($id);
             $_SESSION['dbapi']->execSQL("UPDATE `" . $this->table . "` SET `status` = 'deleted' WHERE id = '$id' ");
         }
+
         function getName($id) {
             $id = intval($id);
             list($name) = $_SESSION['dbapi']->queryROW("SELECT `team_name` FROM `" . $this->table . "` " . " WHERE id = '" . $id . "' ");
             return $name;
         }
+
+        function getTeamMembers($team_id) {
+            $team_id = intval($team_id);
+            list($team_members) = $_SESSION['dbapi']->queryROW("SELECT `user_id`, `username` FROM `" . $this->table . "` " . " WHERE `team_id` = " . $team_id);
+            return $team_members;
+        }
+
         /**
          * getResults($asso_array)
          * Array Fields:
