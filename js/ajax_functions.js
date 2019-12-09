@@ -487,10 +487,10 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     cell.onclick = function () {
                         handleListClick(tagname, this.parentNode.getAttribute('record_id'));
                     }
-                    
-                    
+
+
                 } else if(special_tag.indexOf("maxlen:") == 0) {
-                    
+
                 	 tmparr = special_tag.split(":");
                      tmpstr = dataarr[x].getAttribute(tmparr[1]);
                      tmptime = parseInt(""+tmparr[2]);
@@ -543,16 +543,16 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     // CONCAT 2 FIELDS TOGETHER WITH A SPACE SEPERATOR
                 } else if (special_tag.indexOf("concat:") >= 0) {
                     tmparr = special_tag.split(":");
-                    
+
                     tmpstr = "";
-                    
+
 
                     for(var z=1;z < tmparr.length;z++){
                     	if(z > 1) tmpstr += " ";
                     	tmpstr += dataarr[x].getAttribute(tmparr[z]);
                     }
-                    
-                    
+
+
                     cell.innerHTML = tmpstr;//dataarr[x].getAttribute(tmparr[1]) + " " + dataarr[x].getAttribute(tmparr[2]);
                     cell.className = clsname + ' hand' + cur_class;
                     cell.onclick = function () {
@@ -760,7 +760,9 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     } else {
                         // allow the ability to re-use the copy function for other areas
                     }
-                } else {
+                }
+
+                else {
                     cell.innerHTML = '<a href="#" onclick="deleteItem(' + delete_message_varname + ',\'' + delete_area + '\',' + dataarr[x].getAttribute('id') + ', \'' + callback_func_name + '\' );return false;">' +
                         '<img id="' + delete_area + '-delete-img-' + dataarr[x].getAttribute('id') + '" src="images/delete.png" width="24" height="24" onmouseover="this.src=\'images/delete.png\'" onmouseout="this.src=\'images/delete.png\'" border="0" />' +
                         '</a>';
@@ -768,10 +770,10 @@ function parseXMLData(area, tableFormat, xmldoc) {
                 }
             } else {
                 cur_data = dataarr[x].getAttribute(cur_name);
-                
-                
+
+
                // cur_data = priorityProcessing(cur_data);
-                
+
                 cell.innerHTML = (cur_data) ? cur_data : '&nbsp;';
                 cell.className = clsname + ' hand' + cur_class;
                 cell.onclick = function () {
@@ -793,9 +795,9 @@ function parseXMLData(area, tableFormat, xmldoc) {
 
 function priorityProcessing(inputstr){
 	inputstr = inputstr.trim();
-	
+
 	var priority = 0;
-	
+
 	if(inputstr.startsWith("!")){
 		if(inputstr.startsWith("!!!")){
 			priority = 3;
@@ -804,14 +806,14 @@ function priorityProcessing(inputstr){
 		}else{
 			priority = 1;
 		}
-		
+
 		inputstr = inputstr.replace( /^\!+/, '').trim();
-		
+
 		switch(priority){
 		default:
 		case 1:
 			//inputstr = '<span style="background-color:#ffcc00">!</span>'+inputstr;
-			
+
 			inputstr = '<span title="Low Priority"><img src="images/priority_low.png" height="15" border="0" />'+inputstr+'</span>';
 			break;
 		case 2:
@@ -824,7 +826,7 @@ function priorityProcessing(inputstr){
 			break;
 		}
 	}
-	
+
 	return inputstr;
 }
 
