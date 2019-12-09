@@ -215,6 +215,9 @@ class LeadManagement{
 								's_lastname='+escape(frm.s_lastname.value)+"&"+
 
 								's_phone='+escape(frm.s_phone.value)+"&"+
+
+								's_outbound_phone_num='+escape(frm.s_outbound_phone_num.value.trim())+"&"+
+								
 								's_cluster_id='+escape(frm.s_cluster_id.value)+"&"+
 
 								's_status='+escape(frm.s_status.value)+"&"+
@@ -514,6 +517,7 @@ class LeadManagement{
 
 				</td>
 				<th class="row2">PX ID</th>
+				<th class="row2">Outbound Ph#</th>
 				<th class="row2">Cluster</th>
 				<th class="row2">Campaign</th>
 				<th class="row2">Dispo</th>
@@ -532,6 +536,7 @@ class LeadManagement{
 			</tr>
 			<tr>
 				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
+				<td align="center"><input type="text" name="s_outbound_phone_num" size="10" value="<?=htmlentities($_REQUEST['s_outbound_phone_num'])?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"></td>
 				<td align="center">
 					<?
 						echo makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', ""); //loadLeads();
@@ -586,10 +591,10 @@ class LeadManagement{
 						ANY/ALL DATES
 					</span>
 				</td>
-				<td><input type="button" value="Reset" onclick="resetLeadForm(this.form);resetPageSystem('<?=$this->index_name?>');loadLeads();"></td>
+				<td><input type="button" value="Reset" onclick="resetLeadForm(this.form);resetPageSystem('<?=$this->index_name?>');loadLeads();" /></td>
 			</tr>
 			<tr>
-				<td colspan="5"><table border="0" width="100%">
+				<td colspan="7"><table border="0" width="100%">
 				<tr>
 					<th class="row2">Agent</th>
 					<th class="row2">Verifier</th>
@@ -603,21 +608,21 @@ class LeadManagement{
 					<th class="row2">Office</th>
 				</tr>
 				<tr>
-					<td align="center"><input type="text" name="s_agent_username" size="5" value="<?=htmlentities($_REQUEST['s_agent_username'])?>"></td>
-					<td align="center"><input type="text" name="s_verifier_username" size="5" value="<?=htmlentities($_REQUEST['s_verifier_username'])?>"></td>
+					<td align="center"><input type="text" name="s_agent_username" size="5" value="<?=htmlentities($_REQUEST['s_agent_username'])?>" /></td>
+					<td align="center"><input type="text" name="s_verifier_username" size="5" value="<?=htmlentities($_REQUEST['s_verifier_username'])?>" /></td>
 					<td align="center" NOWRAP >
-						<input type="text" name="s_firstname" size="5" value="<?=htmlentities($_REQUEST['s_firstname'])?>">
-						<input type="text" name="s_lastname" size="5" value="<?=htmlentities($_REQUEST['s_lastname'])?>">
+						<input type="text" name="s_firstname" size="5" value="<?=htmlentities($_REQUEST['s_firstname'])?>" />
+						<input type="text" name="s_lastname" size="5" value="<?=htmlentities($_REQUEST['s_lastname'])?>" />
 					</td>
 
-					<td align="center"><input type="text" name="s_lead_id" size="5" value="<?=htmlentities($_REQUEST['s_lead_id'])?>"></td>
+					<td align="center"><input type="text" name="s_lead_id" size="5" value="<?=htmlentities($_REQUEST['s_lead_id'])?>" /></td>
 
 
-					<td align="center"><input type="text" name="s_phone" size="10" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
-					<td align="center"><input type="text" name="s_city" size="10" value="<?=htmlentities($_REQUEST['s_city'])?>"></td>
-					<td align="center"><input type="text" name="s_state" size="10" value="<?=htmlentities($_REQUEST['s_state'])?>"></td>
+					<td align="center"><input type="text" name="s_phone" size="10" value="<?=htmlentities($_REQUEST['s_phone'])?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" /></td>
+					<td align="center"><input type="text" name="s_city" size="10" value="<?=htmlentities($_REQUEST['s_city'])?>" /></td>
+					<td align="center"><input type="text" name="s_state" size="10" value="<?=htmlentities($_REQUEST['s_state'])?>" /></td>
 
-					<td align="center"><input type="text" name="s_vici_list_id" size="5" value="<?=htmlentities($_REQUEST['s_vici_list_id'])?>"></td>
+					<td align="center"><input type="text" name="s_vici_list_id" size="5" value="<?=htmlentities($_REQUEST['s_vici_list_id'])?>" /></td>
 
 
 					<td align="center"><?
@@ -2073,15 +2078,36 @@ class LeadManagement{
 						<table border="0" align="center">
 						<tr>
 							<th align="left" height="25">Phone Number:</th>
-							<td><?=format_phone($row['phone_num'])?></td>
+							<td><?
+							
+								echo format_phone($row['phone_num']);
+								
+								
+							
+							
+							?></td>
 						</tr>
 						<tr>
 							<th align="left" height="25">Caller ID #:</th>
 							<td><?=($row['outbound_phone_num'] > 0)?format_phone($row['outbound_phone_num']):'-'?></td>
 						</tr>
 						<tr>
-							<th align="left" height="25">Time Added:</th>
-							<td><?=date("g:ia m/d/Y", $row['time'])?></td>
+							<th align="left" height="25">Time:</th>
+							<td><?
+							
+								echo date("g:ia m/d/Y", $row['time']);
+								
+								
+								echo "&nbsp;&nbsp;&nbsp;".
+									"Duration:".
+									"&nbsp;&nbsp;";
+								
+								if($row['agent_duration'] > 0){
+									
+									echo renderTimeFormatted($row['agent_duration']);
+									
+								}
+							?></td>
 						</tr>
 						<tr>
 							<th align="left" height="25">PX lead ID#</th>
@@ -2143,10 +2169,28 @@ class LeadManagement{
 
 						?><tr>
 
-							<th align="left" height="25">Office/Group:</th>
+							<th align="left" height="20">Office/Group:</th>
 							<td><?
 
 								echo $row['office'].' / '.$row['user_group'];
+
+							?></td>
+						</tr>
+						<tr>
+
+							<th align="left" height="20">Campaign/Code:</th>
+							<td><?
+
+								echo $row['campaign'].' / '.$row['campaign_code'];
+
+							?></td>
+						</tr>
+						<tr>
+
+							<th align="left" height="20">Vici Campaign:</th>
+							<td><?
+
+								echo $row['vici_campaign_id'];
 
 							?></td>
 						</tr><?
