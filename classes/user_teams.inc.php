@@ -129,15 +129,14 @@
                 }
 
                 function displayEditUserTeamDialog(id) {
-                    let $dlgObj = $('dialog-modal-edit-user-team');
-                    $dlgObj.dialog("option", "title", 'Editing User Team');
+                    let $dlgObj = $('#dialog-modal-edit-user-team');
                     $dlgObj.dialog("open");
                     $dlgObj.html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $dlgObj.load("index.php?area=user_teams&action=edit&team_id=" + id + "&printable=1&no_script=1");
                 }
 
                 function displayAddUserTeamDialog() {
-                    let $dlgObj = $('dialog-modal-add-user-team');
+                    let $dlgObj = $('#dialog-modal-add-user-team');
                     $dlgObj.dialog("option", "title", 'Adding New User Team');
                     $dlgObj.dialog("open");
                     $dlgObj.html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
@@ -149,8 +148,65 @@
                     frm.s_group_name.value = '';
                 }
             </script>
-            <div id="dialog-modal-edit-user-team" class="nod"></div>
+            <div id="dialog-modal-edit-user-team" class="nod">
+                <table class="tightTable pct100">
+                    <thead>
+                    <tr>
+                        <th class="pct33">Team Name</th>
+                        <th>&nbsp;</th>
+                        <th>Select Users</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>
+                            <div id="team_member_adder"></div>
+                        </td>
+                        <td>
+                            <div id="team_member_remover"></div>
+                        </td>
+                        <td>
+                            <div>
+                                <select id="group_select" name="group_select">
+                                    // group ids, names as options
+                                </select>
+                            </div>
+                            <div>
+                                <input id="user_autocomplete" name="user_autocomplete" type="text" maxlength="128"
+                            </div>
+                            <div id="team_members"></div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
             <div id="dialog-modal-add-user-team" class="nod"></div>
+            <script>
+                let user_groups = '';
+                $('#user_autocomplete').autocomplete({
+                    minlength: 3,
+                    source: user_groups
+                });
+                $("#dialog-modal-edit-user-team").dialog({
+                    autoOpen: false,
+                    width: 800,
+                    height: 'auto',
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    title: 'Editing User Team'
+                });
+                $("#dialog-modal-add-user-team").dialog({
+                    autoOpen: false,
+                    width: 500,
+                    height: 160,
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    title: 'Add User Team'
+                });
+                loadUserteams();
+            </script>
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#userteamsarea" onsubmit="loadUserteams();return false">
                 <input type="hidden" name="searching_userteams">
                 <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
@@ -226,22 +282,13 @@
                 </td>
             </tr>
             </table>
-            <script>
-                $(document).ready(function () {
-                    $("#dialog-modal-add-user-team").dialog({
-                        autoOpen: false,
-                        width: 380,
-                        height: 160,
-                        modal: false,
-                        draggable: true,
-                        resizable: true,
-                        position: 'center'
-                    });
-                    loadUserteams();
-                });
-            </script>
             <?
         }
+
+        function makeEdit($id) {
+            return;
+        }
+
         function makeAdd($id) {
             $id = intval($id);
             if ($id) {
