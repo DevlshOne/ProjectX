@@ -470,11 +470,29 @@ td.countsRow {
 	background-color: yellow;
 	color: black;
 }
+
 .redThresh {
 	background-color: red;
 	color: white;
 }
+
 .no-close .ui-dialog-titlebar-close {
 	display: none;
-  }
+}
+
+.userList {
+	border: 1px solid #eee;
+	width: 325px;
+	min-height: 120px;
+	list-style-type: none;
+	padding: 5px 0 0 0;
+	float: left;
+	margin: 0 8px 0 0;
+}
+
+.userList li {
+	margin: 0 5px 5px 5px;
+	padding: 5px;
+	width: 320px;
+}
 

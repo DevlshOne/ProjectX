@@ -149,36 +149,6 @@
                 }
             </script>
             <div id="dialog-modal-edit-user-team" class="nod">
-                <table class="tightTable pct100">
-                    <thead>
-                    <tr>
-                        <th class="pct33">Team Name</th>
-                        <th>&nbsp;</th>
-                        <th>Select Users</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>
-                            <div id="team_member_adder"></div>
-                        </td>
-                        <td>
-                            <div id="team_member_remover"></div>
-                        </td>
-                        <td>
-                            <div>
-                                <select id="group_select" name="group_select">
-                                    // group ids, names as options
-                                </select>
-                            </div>
-                            <div>
-                                <input id="user_autocomplete" name="user_autocomplete" type="text" maxlength="128"
-                            </div>
-                            <div id="team_members"></div>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
             <div id="dialog-modal-add-user-team" class="nod"></div>
             <script>
@@ -187,14 +157,40 @@
                     minlength: 3,
                     source: user_groups
                 });
+                $('#team_member_adder, #team_members').sortable({
+                    connectWith: '.userList'
+                }).disableSelection();
                 $("#dialog-modal-edit-user-team").dialog({
                     autoOpen: false,
                     width: 800,
                     height: 'auto',
-                    modal: false,
-                    draggable: true,
+                    modal: true,
+                    draggable: false,
                     resizable: false,
-                    title: 'Editing User Team'
+                    title: 'Editing User Team',
+                    position: 'center'
+                    // buttons: {
+                    //     'Done': function () {
+                    //         let tileID = $(this).data('tileID');
+                    //         if ($('#new_tile_name') != '') {
+                    //             tileDefs[tileID].name = $('#new_tile_name').val();
+                    //         }
+                    //         if (frontEnd_debug) {
+                    //             console.log('Tile name has just been changed :: ', tileDefs);
+                    //         }
+                    //         saveUserPrefs();
+                    //         initScreen();
+                    //         getDialerStatusData();
+                    //         $(this).dialog('close');
+                    //         if (frontEnd_debug) {
+                    //             console.log('Renamed tile :: ', tileID);
+                    //             console.log('Prefs have just been saved :: ', tileDefs);
+                    //         }
+                    //     },
+                    //     'Cancel': function () {
+                    //         $(this).dialog('close');
+                    //     }
+                    // }
                 });
                 $("#dialog-modal-add-user-team").dialog({
                     autoOpen: false,
@@ -203,7 +199,8 @@
                     modal: false,
                     draggable: true,
                     resizable: false,
-                    title: 'Add User Team'
+                    title: 'Add User Team',
+                    position: 'center'
                 });
                 loadUserteams();
             </script>
@@ -286,7 +283,45 @@
         }
 
         function makeEdit($id) {
-            return;
+            ?>
+            <table class="tightTable pct100">
+                <tr>
+                    <td>&nbsp;</td>
+                    <td colspan="2">
+                        <div>
+                            <label for="user_autocomplete">Enter username to search : </label>
+                            <input id="user_autocomplete" name="user_autocomplete" type="text" maxlength="128"/>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="pct33">Team Name</th>
+                    <th>&nbsp;</th>
+                    <th class="pct33">Select Users</th>
+                </tr>
+                <tr>
+                    <td>
+                        <ul id="team_member_adder" class="userList">
+                            <li class="ui-state-default">User Draggable</li>
+                        </ul>
+                    </td>
+                    <td>
+                        <div id="team_member_remover"></div>
+                    </td>
+                    <td>
+                        <div>
+                            <label for="group_select">Group Filter : </label>
+                            <select id="group_select" name="group_select">
+                                // group ids, names as options
+                            </select>
+                        </div>
+                        <ul id="team_members" class="userList">
+                            <li class="ui-state-highlight">User Draggable</li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+            <?
         }
 
         function makeAdd($id) {
