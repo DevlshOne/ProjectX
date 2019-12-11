@@ -255,7 +255,6 @@
         return $res;
     }
 
-
     function getClusterUserGroups($vici_cluster_id) {
         $res = fetchAllAssoc("SELECT DISTINCT (`group_name`) AS `user_group_filter` FROM `user_group_translations` WHERE `cluster_id` = " . intval($vici_cluster_id) . " ORDER BY `group_name`", 3);
         return $res;
@@ -267,14 +266,19 @@
         return $r[0];
     }
 
-	function getEditLeadURL($vici_cluster_id, $lead_id){
+    function getUserGroups() {
+        $res = fetchAllAssoc("SELECT DISTINCT (`user_group`) AS `group_name`, `id` FROM `user_groups` WHERE 1 ORDER BY `user_group`", 3);
+        return json_encode($res);
+    }
 
-		$vici_ip = getClusterWebHost($vici_cluster_id);
+    function getEditLeadURL($vici_cluster_id, $lead_id) {
 
-		$url = "http://".$vici_ip."/vicidial/admin_modify_lead.php?lead_id=".$lead_id."&archive_search=No&archive_log=0";
+        $vici_ip = getClusterWebHost($vici_cluster_id);
 
-		return $url;
-	}
+        $url = "http://" . $vici_ip . "/vicidial/admin_modify_lead.php?lead_id=" . $lead_id . "&archive_search=No&archive_log=0";
+
+        return $url;
+    }
 
 	function getSearchLeadURL($vici_cluster_id, $phone_num){
 

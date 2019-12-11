@@ -152,14 +152,6 @@
             </div>
             <div id="dialog-modal-add-user-team" class="nod"></div>
             <script>
-                let user_groups = '';
-                $('#user_autocomplete').autocomplete({
-                    minlength: 3,
-                    source: user_groups
-                });
-                $('#team_member_adder, #team_members').sortable({
-                    connectWith: '.userList'
-                }).disableSelection();
                 $("#dialog-modal-edit-user-team").dialog({
                     autoOpen: false,
                     width: 800,
@@ -284,13 +276,26 @@
 
         function makeEdit($id) {
             ?>
+            <script>
+                let objUserGroups = <?=getUserGroups();?>;
+                $(objUserGroups).each(function (i, v) {
+                    $('#group_select').append('<option value="${v.id}">${v.name}</option>');
+                });
+                $('#do_user_search').on('click', function () {
+
+                });
+                $('#team_member_adder, #team_members').sortable({
+                    connectWith: '.userList'
+                }).disableSelection();
+            </script>
             <table class="tightTable pct100">
                 <tr>
                     <td>&nbsp;</td>
                     <td colspan="2">
                         <div>
-                            <label for="user_autocomplete">Enter username to search : </label>
-                            <input id="user_autocomplete" name="user_autocomplete" type="text" maxlength="128"/>
+                            <label for="user_search">Enter username to search : </label>
+                            <input id="user_search" name="user_search" type="text" maxlength="128"/>
+                            <button title="Click to Search" id="do_user_search">SEARCH</button>
                         </div>
                     </td>
                 </tr>
@@ -311,9 +316,7 @@
                     <td>
                         <div>
                             <label for="group_select">Group Filter : </label>
-                            <select id="group_select" name="group_select">
-                                // group ids, names as options
-                            </select>
+                            <select id="group_select" name="group_select"></select>
                         </div>
                         <ul id="team_members" class="userList">
                             <li class="ui-state-highlight">User Draggable</li>
