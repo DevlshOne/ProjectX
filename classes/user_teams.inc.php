@@ -41,8 +41,8 @@
                         default:
                             break;
                         case 'edit':
-                            $uid = intval($_REQUEST['team_id']);
-                            $this->makeEdit($uid);
+                            $teamid = intval($_REQUEST['team_id']);
+                            $this->makeEdit($teamid);
                             break;
                         case 'add':
                             $this->makeAdd();
@@ -53,6 +53,11 @@
                     $this->listEntrys();
                 }
             }
+        }
+
+        function getTeamName($teamid) {
+            $res = queryROW("SELECT `team_name` FROM user_teams WHERE id = " . $teamid, 1);
+            echo $res[0];
         }
 
         function listEntrys() {
@@ -160,29 +165,7 @@
                     draggable: false,
                     resizable: false,
                     title: 'Editing User Team',
-                    position: 'center'
-                    // buttons: {
-                    //     'Done': function () {
-                    //         let tileID = $(this).data('tileID');
-                    //         if ($('#new_tile_name') != '') {
-                    //             tileDefs[tileID].name = $('#new_tile_name').val();
-                    //         }
-                    //         if (frontEnd_debug) {
-                    //             console.log('Tile name has just been changed :: ', tileDefs);
-                    //         }
-                    //         saveUserPrefs();
-                    //         initScreen();
-                    //         getDialerStatusData();
-                    //         $(this).dialog('close');
-                    //         if (frontEnd_debug) {
-                    //             console.log('Renamed tile :: ', tileID);
-                    //             console.log('Prefs have just been saved :: ', tileDefs);
-                    //         }
-                    //     },
-                    //     'Cancel': function () {
-                    //         $(this).dialog('close');
-                    //     }
-                    // }
+                    position: 'center top'
                 });
                 $("#dialog-modal-add-user-team").dialog({
                     autoOpen: false,
@@ -278,8 +261,11 @@
             ?>
             <script>
                 let frontEnd_debug = false;
+                let team_id = <?=$id;?>;
+                let team_name = '<?=$this->getTeamName($id);?>';
+                $('#team_name').val(team_name);
 
-                function loadUserGroups(cluster_id) {
+                function loadTeamMembers(tid) {
                     $.ajax({
                         type: "POST",
                         cache: false,
@@ -287,7 +273,30 @@
                         dataType: 'json',
                         crossDomain: false,
                         crossOrigin: false,
-                        url: 'api/api.php?get=user_teams&mode=json&action=getClusterUserGroups&clusterid=' + cluster_id,
+                        url: 'api/api.php?get=user_teams&mode=json&action=getTeamMembers&team=' + tid,
+                        success: function (teamMembers) {
+                            $('#team_member_adder').empty();
+                            $(teamMembers).each(function (i, v) {
+                                $('#team_member_adder').append('<li id="memberid_' + v.user_id + '" class="ui-state-highlight">' + v.username + '</li>');
+                                $('#userid_' + v.user_id).remove();
+                            });
+                            if (frontEnd_debug) {
+                                console.log('Prefs have just been loaded :: ', tileDefs);
+                                console.log('User Preferences loaded');
+                            }
+                        }
+                    });
+                }
+
+                function loadUserGroups() {
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        dataType: 'json',
+                        crossDomain: false,
+                        crossOrigin: false,
+                        url: 'api/api.php?get=user_teams&mode=json&action=getUserGroups',
                         success: function (userGroups) {
                             $('#group_select').empty();
                             $(userGroups).each(function (i, v) {
@@ -301,7 +310,7 @@
                     });
                 }
 
-                function loadUserList(group_name) {
+                function loadUserListByGroup(group_name) {
                     $.ajax({
                         type: "POST",
                         cache: false,
@@ -309,12 +318,13 @@
                         dataType: 'json',
                         crossDomain: false,
                         crossOrigin: false,
-                        url: 'api/api.php?get=user_teams&mode=json&action=getClusterGroupUserList&group=' + group_name,
+                        url: 'api/api.php?get=user_teams&mode=json&action=getGroupUserList&group=' + group_name,
                         success: function (userList) {
                             $('#team_members').empty();
                             $(userList).each(function (i, v) {
-                                $('#team_members').append('<li id="userid_' + v.user_id + '" data-vici_id="' + v.vici_user_id + '" class="ui-state-highlight">' + v.username + '</li>');
+                                $('#team_members').append('<li id="userid_' + v.user_id + '" data-vici_id="' + v.vici_user_id + '" class="ui-state-highlight" title="' + v.fullname + '">' + v.username + '</li>');
                             });
+                            loadTeamMembers(team_id);
                             if (frontEnd_debug) {
                                 console.log('Prefs have just been loaded :: ', tileDefs);
                                 console.log('User Preferences loaded');
@@ -323,58 +333,89 @@
                     });
                 }
 
-                $('#cluster_select').on('change', function (e, ui) {
-                    loadUserGroups($(this).val());
-                })
-                $('#group_select').on('change', function (e, ui) {
-                    loadUserList($(":selected", this).text());
-                });
-                $('#do_user_search').on('click', function () {
+                function loadUserListByName(user_name) {
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        dataType: 'json',
+                        crossDomain: false,
+                        crossOrigin: false,
+                        url: 'api/api.php?get=user_teams&mode=json&action=getUserList&user=' + user_name,
+                        success: function (userList) {
+                            $('#team_members').empty();
+                            $(userList).each(function (i, v) {
+                                $('#team_members').append('<li id="userid_' + v.user_id + '" data-vici_id="' + v.vici_user_id + '" class="ui-state-highlight" title="' + v.fullname + '">' + v.username + '</li>');
+                            });
+                            loadTeamMembers(team_id);
+                            if (frontEnd_debug) {
+                                console.log('Prefs have just been loaded :: ', tileDefs);
+                                console.log('User Preferences loaded');
+                            }
+                        }
+                    });
+                }
 
+                $('#group_select').on('change', function (e, ui) {
+                    loadUserListByGroup($(":selected", this).text());
+                });
+                $('#user_search').on('keyup', function () {
+                    loadUserListByName($('#user_search').val());
                 });
                 $('#team_member_adder, #team_members').sortable({
                     connectWith: '.userList'
                 }).disableSelection();
-                loadUserGroups(1);
-                loadUserList('UE-TAP');
+                $('#team_member_adder').sortable({
+                    receive: function (e, ui) {
+                        // add this user id to the team
+                        alert('adding member');
+                        // change userid_ to memberid_
+                    }
+                });
+                $('#team_members').sortable({
+                    receive: function (e, ui) {
+                        // remove this user id from the team
+                        alert('removing member');
+                    }
+                });
+                loadUserGroups();
+                loadUserListByName(' ');
             </script>
             <table class="tightTable pct100">
                 <tr>
-                    <td>&nbsp;</td>
                     <td colspan="2">
-                        <div>
+                        <div class="pct100">
+                            <label for="team_name">Edit team name : </label>
+                            <input id="team_name" name="team_name" type="text" maxlength="128"/>
+                            <button id="saveTeamName" value="Save" title="Save Team Name">Save</button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Team Members</th>
+                    <th>User List</th>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        <div class="pct100">
                             <label for="user_search">Enter username to search : </label>
                             <input id="user_search" name="user_search" type="text" maxlength="128"/>
-                            <button title="Click to Search" id="do_user_search">SEARCH</button>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th class="pct33">Team Name</th>
-                    <th>&nbsp;</th>
-                    <th class="pct33">Select Users</th>
-                </tr>
-                <tr>
                     <td>
-                        <ul id="team_member_adder" class="userList">
-                            <li class="ui-state-default">User Draggable</li>
-                        </ul>
+                        <ul id="team_member_adder" class="userList"></ul>
                     </td>
                     <td>
-                        <div id="team_member_remover"></div>
-                    </td>
-                    <td>
-                        <div>
-                            <label for="cluster_select">Select Cluster : </label>
-                            <select id="cluster_select" name="cluster_select"></select>
-                        </div>
-                        <div>
+                        <div class="pct100">
                             <label for="group_select">Group Filter : </label>
                             <select id="group_select" name="group_select"></select>
                         </div>
-                        <ul id="team_members" class="userList">
-                            <li class="ui-state-highlight">User Draggable</li>
-                        </ul>
+                        <div class="pct100">
+                            <ul id="team_members" class="userList"></ul>
+                        </div>
                     </td>
                 </tr>
             </table>

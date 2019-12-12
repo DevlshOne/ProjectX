@@ -50,16 +50,27 @@
                     }
                     $_SESSION['api']->outputEditSuccess($id);
                     break;
-                case 'getClusterUserGroups':
-                    $clusterid = trim($_REQUEST['clusterid']);
-                    $q = "SELECT DISTINCT ( UPPER(`group_name`) ) AS `group_name`, `id` FROM `user_group_translations` WHERE `cluster_id` = " . intval($clusterid) . " GROUP BY `group_name` ORDER BY `group_name`";
+                case 'getTeamMembers':
+                    $res = fetchAllAssoc("SELECT `user_id`, `username` FROM user_teams_members WHERE 1 ORDER BY `username` ASC", 1);
+                    $out = json_encode($res);
+                    echo $out;
+                    break;
+                case 'getUserGroups':
+                    $res = fetchAllAssoc("SELECT DISTINCT(`user_group`) AS `group_name`, `id` FROM user_groups_master GROUP BY `user_group` ORDER BY `user_group` ASC", 1);
+                    $out = json_encode($res);
+                    echo $out;
+                    break;
+                case 'getGroupUserList':
+                    $groupname = (!empty($_REQUEST['group']) ? strtoupper(trim($_REQUEST['group'])) : ' ');
+                    // empty case vs populated
+                    $q = "SELECT ugt.user_id, ugt.vici_user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username IS NOT NULL) AND u.enabled = 'yes' AND UPPER(ugt.group_name) = '" . $groupname . "' GROUP BY ugt.user_id ORDER BY u.username ASC";
                     $res = fetchAllAssoc($q, 3);
                     $out = json_encode($res);
                     echo $out;
                     break;
-                case 'getClusterGroupUserList':
-                    $groupname = strtoupper(trim($_REQUEST['group']));
-                    $q = "SELECT ugt.user_id, ugt.vici_user_id, u.username FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE UPPER(ugt.group_name) = '" . $groupname . "' GROUP BY ugt.user_id";
+                case 'getUserList':
+                    $username = strtoupper(trim($_REQUEST['user']));
+                    $q = "SELECT ugt.user_id, ugt.vici_user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username LIKE '%" . $username . "%') AND u.enabled = 'yes' GROUP BY ugt.user_id ORDER BY u.username ASC";
                     $res = fetchAllAssoc($q, 3);
                     $out = json_encode($res);
                     echo $out;
