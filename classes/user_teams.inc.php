@@ -277,9 +277,57 @@
         function makeEdit($id) {
             ?>
             <script>
-                let objUserGroups = <?=getUserGroups();?>;
-                $(objUserGroups).each(function (i, v) {
-                    $('#group_select').append('<option value="${v.id}">${v.name}</option>');
+                let frontEnd_debug = false;
+
+                function loadUserGroups(cluster_id) {
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        dataType: 'json',
+                        crossDomain: false,
+                        crossOrigin: false,
+                        url: 'api/api.php?get=user_teams&mode=json&action=getClusterUserGroups&clusterid=' + cluster_id,
+                        success: function (userGroups) {
+                            $('#group_select').empty();
+                            $(userGroups).each(function (i, v) {
+                                $('#group_select').append('<option value="' + v.id + '">' + v.group_name + '</option>');
+                            });
+                            if (frontEnd_debug) {
+                                console.log('Prefs have just been loaded :: ', tileDefs);
+                                console.log('User Preferences loaded');
+                            }
+                        }
+                    });
+                }
+
+                function loadUserList(group_name) {
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        dataType: 'json',
+                        crossDomain: false,
+                        crossOrigin: false,
+                        url: 'api/api.php?get=user_teams&mode=json&action=getClusterGroupUserList&group=' + group_name,
+                        success: function (userList) {
+                            $('#team_members').empty();
+                            $(userList).each(function (i, v) {
+                                $('#team_members').append('<li id="userid_' + v.user_id + '" data-vici_id="' + v.vici_user_id + '" class="ui-state-highlight">' + v.username + '</li>');
+                            });
+                            if (frontEnd_debug) {
+                                console.log('Prefs have just been loaded :: ', tileDefs);
+                                console.log('User Preferences loaded');
+                            }
+                        }
+                    });
+                }
+
+                $('#cluster_select').on('change', function (e, ui) {
+                    loadUserGroups($(this).val());
+                })
+                $('#group_select').on('change', function (e, ui) {
+                    loadUserList($(":selected", this).text());
                 });
                 $('#do_user_search').on('click', function () {
 
@@ -287,6 +335,8 @@
                 $('#team_member_adder, #team_members').sortable({
                     connectWith: '.userList'
                 }).disableSelection();
+                loadUserGroups(1);
+                loadUserList('UE-TAP');
             </script>
             <table class="tightTable pct100">
                 <tr>
@@ -314,6 +364,10 @@
                         <div id="team_member_remover"></div>
                     </td>
                     <td>
+                        <div>
+                            <label for="cluster_select">Select Cluster : </label>
+                            <select id="cluster_select" name="cluster_select"></select>
+                        </div>
                         <div>
                             <label for="group_select">Group Filter : </label>
                             <select id="group_select" name="group_select"></select>

@@ -50,6 +50,20 @@
                     }
                     $_SESSION['api']->outputEditSuccess($id);
                     break;
+                case 'getClusterUserGroups':
+                    $clusterid = trim($_REQUEST['clusterid']);
+                    $q = "SELECT DISTINCT ( UPPER(`group_name`) ) AS `group_name`, `id` FROM `user_group_translations` WHERE `cluster_id` = " . intval($clusterid) . " GROUP BY `group_name` ORDER BY `group_name`";
+                    $res = fetchAllAssoc($q, 3);
+                    $out = json_encode($res);
+                    echo $out;
+                    break;
+                case 'getClusterGroupUserList':
+                    $groupname = strtoupper(trim($_REQUEST['group']));
+                    $q = "SELECT ugt.user_id, ugt.vici_user_id, u.username FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE UPPER(ugt.group_name) = '" . $groupname . "' GROUP BY ugt.user_id";
+                    $res = fetchAllAssoc($q, 3);
+                    $out = json_encode($res);
+                    echo $out;
+                    break;
                 default:
                 case 'list':
                     $dat = array();

@@ -266,11 +266,6 @@
         return $r[0];
     }
 
-    function getUserGroups() {
-        $res = fetchAllAssoc("SELECT DISTINCT (`user_group`) AS `group_name`, `id` FROM `user_groups` WHERE 1 ORDER BY `user_group`", 3);
-        return json_encode($res);
-    }
-
     function getEditLeadURL($vici_cluster_id, $lead_id) {
 
         $vici_ip = getClusterWebHost($vici_cluster_id);
