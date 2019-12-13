@@ -75,6 +75,27 @@
                     $out = json_encode($res);
                     echo $out;
                     break;
+                case 'addTeamMember':
+                    $teamid = intval($_REQUEST['team']);
+                    $userid = intval($_REQUEST['userid']);
+                    $q = "INSERT INTO user_teams_members (team_id, user_id, username) SELECT $teamid, $userid, users.username AS username FROM users WHERE users.id = $userid";
+                    $res = query($q, 3);
+                    echo $res;
+                    break;
+                case 'removeTeamMember':
+                    $teamid = intval($_REQUEST['team']);
+                    $userid = intval($_REQUEST['userid']);
+                    $q = "DELETE FROM user_teams_members WHERE team_id = $teamid AND user_id = $userid";
+                    $res = query($q, 3);
+                    echo $res;
+                    break;
+                case 'changeTeamName':
+                    $teamid = intval($_REQUEST['team']);
+                    $teamname = trim($_REQUEST['name']);
+                    $q = "UPDATE user_teams SET team_name = '" . $teamname . "' WHERE id = $teamid";
+                    $res = query($q, 3);
+                    echo $res;
+                    break;
                 default:
                 case 'list':
                     $dat = array();

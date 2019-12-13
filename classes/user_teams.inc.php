@@ -277,7 +277,7 @@
                         success: function (teamMembers) {
                             $('#team_member_adder').empty();
                             $(teamMembers).each(function (i, v) {
-                                $('#team_member_adder').append('<li id="memberid_' + v.user_id + '" class="ui-state-highlight">' + v.username + '</li>');
+                                $('#team_member_adder').append('<li id="memberid_' + v.user_id + '" class="ui-state-default">' + v.username + '</li>');
                                 $('#userid_' + v.user_id).remove();
                             });
                             if (frontEnd_debug) {
@@ -359,23 +359,87 @@
                 $('#group_select').on('change', function (e, ui) {
                     loadUserListByGroup($(":selected", this).text());
                 });
-                $('#user_search').on('keyup', function () {
+                $('#user_search').on('keyup', function (e, ui) {
                     loadUserListByName($('#user_search').val());
                 });
                 $('#team_member_adder, #team_members').sortable({
                     connectWith: '.userList'
                 }).disableSelection();
-                $('#team_member_adder').sortable({
-                    receive: function (e, ui) {
-                        // add this user id to the team
-                        alert('adding member');
-                        // change userid_ to memberid_
+                $('#saveTeamName').on('click', function (e, ui) {
+                    if ($('#team_name').length) {
+                        $.ajax({
+                            type: "POST",
+                            cache: false,
+                            async: false,
+                            dataType: 'json',
+                            crossDomain: false,
+                            crossOrigin: false,
+                            url: 'api/api.php?get=user_teams&mode=json&action=changeTeamName&team=' + team_id + '&name=' + $('#team_name').val(),
+                            success: function () {
+                                alert('Team name has been changed');
+                                team_name = $('#team_name').val();
+                                if (frontEnd_debug) {
+                                    console.log('Prefs have just been loaded :: ', tileDefs);
+                                    console.log('User Preferences loaded');
+                                }
+                            }
+                        });
+                    } else {
+                        alert('Team name may not be empty');
                     }
                 });
-                $('#team_members').sortable({
+                $('#team_member_adder').sortable({
                     receive: function (e, ui) {
-                        // remove this user id from the team
-                        alert('removing member');
+                        let current_id = ui.item[0].id.split('_')[1];
+                        console.log('Adding :: ' + current_id);
+                        ui.item.removeClass('ui-state-highlight').addClass('ui-state-default');
+                        $(ui.item).attr('id', 'memberid_' + current_id);
+                        $.ajax({
+                            type: "POST",
+                            cache: false,
+                            async: false,
+                            dataType: 'json',
+                            crossDomain: false,
+                            crossOrigin: false,
+                            url: 'api/api.php?get=user_teams&mode=json&action=addTeamMember&team=' + team_id + '&userid=' + current_id,
+                            success: function () {
+                                alert('Member has been added to ' + team_name);
+                                if (frontEnd_debug) {
+                                    console.log('Prefs have just been loaded :: ', tileDefs);
+                                    console.log('User Preferences loaded');
+                                }
+                            },
+                            fail: function () {
+
+                            }
+
+                        });
+                    },
+                    remove: function (e, ui) {
+                        let current_id = ui.item[0].id.split('_')[1];
+                        console.log('Removing :: ' + current_id);
+                        ui.item.removeClass('ui-state-default').addClass('ui-state-highlight');
+                        $(ui.item).attr('id', 'userid_' + current_id);
+                        $.ajax({
+                            type: "POST",
+                            cache: false,
+                            async: false,
+                            dataType: 'json',
+                            crossDomain: false,
+                            crossOrigin: false,
+                            url: 'api/api.php?get=user_teams&mode=json&action=removeTeamMember&team=' + team_id + '&userid=' + current_id,
+                            success: function () {
+                                alert('Member has been removed from ' + team_name);
+                                if (frontEnd_debug) {
+                                    console.log('Prefs have just been loaded :: ', tileDefs);
+                                    console.log('User Preferences loaded');
+                                }
+                            },
+                            fail: function () {
+
+                            }
+
+                        });
                     }
                 });
                 loadUserGroups();
@@ -405,10 +469,10 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
+                    <td style="vertical-align: top;">
                         <ul id="team_member_adder" class="userList"></ul>
                     </td>
-                    <td>
+                    <td style="vertical-align: top;">
                         <div class="pct100">
                             <label for="group_select">Group Filter : </label>
                             <select id="group_select" name="group_select"></select>
