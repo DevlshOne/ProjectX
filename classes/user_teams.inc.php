@@ -63,7 +63,7 @@
         function listEntrys() {
             ?>
             <script>
-                let userteam_delmsg = "Are you sure you want to delete this team?";
+                var userteam_delmsg = "Are you sure you want to delete this team?";
                 let <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 let <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
                 let <?=$this->index_name?> = 0;
@@ -277,7 +277,7 @@
                         success: function (teamMembers) {
                             $('#team_member_adder').empty();
                             $(teamMembers).each(function (i, v) {
-                                $('#team_member_adder').append('<li id="memberid_' + v.user_id + '" class="ui-state-default">' + v.username + '</li>');
+                                $('#team_member_adder').append('<li id="memberid_' + v.user_id + '" class="ui-state-default" title="' + v.fullname + '">' + v.username + '</li>');
                                 $('#userid_' + v.user_id).remove();
                             });
                             if (frontEnd_debug) {
@@ -322,7 +322,7 @@
                         success: function (userList) {
                             $('#team_members').empty();
                             $(userList).each(function (i, v) {
-                                $('#team_members').append('<li id="userid_' + v.user_id + '" data-vici_id="' + v.vici_user_id + '" class="ui-state-highlight" title="' + v.fullname + '">' + v.username + '</li>');
+                                $('#team_members').append('<li id="userid_' + v.user_id + '" class="ui-state-highlight" title="' + v.fullname + '">' + v.username + '</li>');
                             });
                             loadTeamMembers(team_id);
                             if (frontEnd_debug) {
@@ -345,7 +345,7 @@
                         success: function (userList) {
                             $('#team_members').empty();
                             $(userList).each(function (i, v) {
-                                $('#team_members').append('<li id="userid_' + v.user_id + '" data-vici_id="' + v.vici_user_id + '" class="ui-state-highlight" title="' + v.fullname + '">' + v.username + '</li>');
+                                $('#team_members').append('<li id="userid_' + v.user_id + '" class="ui-state-highlight" title="' + v.fullname + '">' + v.username + '</li>');
                             });
                             loadTeamMembers(team_id);
                             if (frontEnd_debug) {

@@ -14,10 +14,9 @@
             }
             switch ($_REQUEST['action']) {
                 case 'delete':
-                    $id = intval($_REQUEST['id']);
-                    // DELETE FROM VICI, THEN FROM PX, USING THE ACTION PACKED, EDGE OF YOUR SEAT, ALL-IN-WONDER FUNCTION, delete()
-                    $_SESSION['dbapi']->user_teams->delete($id);
-                    logAction('delete', 'user_teams', $id, "");
+                    $teamid = intval($_REQUEST['id']);
+                    $q = "UPDATE user_teams SET status='deleted' WHERE id = $teamid";
+                    $res = query($q, 3);
                     $_SESSION['api']->outputDeleteSuccess();
                     break;
                 case 'view':
@@ -51,7 +50,7 @@
                     $_SESSION['api']->outputEditSuccess($id);
                     break;
                 case 'getTeamMembers':
-                    $res = fetchAllAssoc("SELECT `user_id`, `username` FROM user_teams_members WHERE 1 ORDER BY `username` ASC", 1);
+                    $res = fetchAllAssoc("SELECT utm.`user_id`, utm.`username`, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_teams_members AS utm INNER JOIN users AS u ON u.id = utm.user_id WHERE 1 ORDER BY utm.`username` ASC", 1);
                     $out = json_encode($res);
                     echo $out;
                     break;
@@ -63,14 +62,14 @@
                 case 'getGroupUserList':
                     $groupname = (!empty($_REQUEST['group']) ? strtoupper(trim($_REQUEST['group'])) : ' ');
                     // empty case vs populated
-                    $q = "SELECT ugt.user_id, ugt.vici_user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username IS NOT NULL) AND u.enabled = 'yes' AND UPPER(ugt.group_name) = '" . $groupname . "' GROUP BY ugt.user_id ORDER BY u.username ASC";
+                    $q = "SELECT ugt.user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username IS NOT NULL) AND u.enabled = 'yes' AND UPPER(ugt.group_name) = '" . $groupname . "' GROUP BY ugt.user_id ORDER BY u.username ASC";
                     $res = fetchAllAssoc($q, 3);
                     $out = json_encode($res);
                     echo $out;
                     break;
                 case 'getUserList':
                     $username = strtoupper(trim($_REQUEST['user']));
-                    $q = "SELECT ugt.user_id, ugt.vici_user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username LIKE '%" . $username . "%') AND u.enabled = 'yes' GROUP BY ugt.user_id ORDER BY u.username ASC";
+                    $q = "SELECT ugt.user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username LIKE '%" . $username . "%') AND u.enabled = 'yes' GROUP BY ugt.user_id ORDER BY u.username ASC";
                     $res = fetchAllAssoc($q, 3);
                     $out = json_encode($res);
                     echo $out;
@@ -80,21 +79,21 @@
                     $userid = intval($_REQUEST['userid']);
                     $q = "INSERT INTO user_teams_members (team_id, user_id, username) SELECT $teamid, $userid, users.username AS username FROM users WHERE users.id = $userid";
                     $res = query($q, 3);
-                    echo $res;
+                    echo boolval($res);
                     break;
                 case 'removeTeamMember':
                     $teamid = intval($_REQUEST['team']);
                     $userid = intval($_REQUEST['userid']);
                     $q = "DELETE FROM user_teams_members WHERE team_id = $teamid AND user_id = $userid";
                     $res = query($q, 3);
-                    echo $res;
+                    echo boolval($res);
                     break;
                 case 'changeTeamName':
                     $teamid = intval($_REQUEST['team']);
                     $teamname = trim($_REQUEST['name']);
                     $q = "UPDATE user_teams SET team_name = '" . $teamname . "' WHERE id = $teamid";
                     $res = query($q, 3);
-                    echo $res;
+                    echo boolval($res);
                     break;
                 default:
                 case 'list':

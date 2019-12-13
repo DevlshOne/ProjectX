@@ -222,7 +222,7 @@ function loadAjaxData(loadurl, callback_func_name, mode) {
         url: loadurl,
         type: "POST",
         success: function (data) {
-            if(mode === 'json') {
+            if (mode === 'json') {
                 eval(callback_func_name + '(data)');
             } else {
                 let xmldoc = getXMLDoc(data);
@@ -242,11 +242,9 @@ function loadAjaxData(loadurl, callback_func_name, mode) {
  * @return Total count of items (not limited by the limit field, the full total, or if not usign page system, total records returned)
  */
 function parseXMLData(area, tableFormat, xmldoc) {
-    /** some debugging if you get hosed
-     console.log('Area =' + area);
-     console.log('tableFormat = ' + tableFormat);
-     console.log('xmldoc = ' + xmldoc);
-     */
+    // console.log('Area =' + area);
+    // console.log('tableFormat = ' + tableFormat);
+    // console.log('xmldoc = ' + xmldoc);
     var obj;
     var tagname = "";
     var callback_func_name = "";
@@ -487,18 +485,18 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     cell.onclick = function () {
                         handleListClick(tagname, this.parentNode.getAttribute('record_id'));
                     }
-                    
-                    
-                } else if(special_tag.indexOf("maxlen:") == 0) {
-                    
-                	 tmparr = special_tag.split(":");
-                     tmpstr = dataarr[x].getAttribute(tmparr[1]);
-                     tmptime = parseInt(""+tmparr[2]);
-                     cell.innerHTML = htmlEntities((tmpstr.length > tmptime)?tmpstr.substr(0,tmptime).trim()+"...":tmpstr.trim())  ;
-                     cell.className = clsname + ' hand' + cur_class;
-                     cell.onclick = function () {
-                         handleListClick(tagname, this.parentNode.getAttribute('record_id'));
-                     }
+
+
+                } else if (special_tag.indexOf("maxlen:") == 0) {
+
+                    tmparr = special_tag.split(":");
+                    tmpstr = dataarr[x].getAttribute(tmparr[1]);
+                    tmptime = parseInt("" + tmparr[2]);
+                    cell.innerHTML = htmlEntities((tmpstr.length > tmptime) ? tmpstr.substr(0, tmptime).trim() + "..." : tmpstr.trim());
+                    cell.className = clsname + ' hand' + cur_class;
+                    cell.onclick = function () {
+                        handleListClick(tagname, this.parentNode.getAttribute('record_id'));
+                    }
                     // RENDER TIME
                 } else if (special_tag.indexOf("time:") == 0) {
                     tmparr = special_tag.split(":");
@@ -543,16 +541,16 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     // CONCAT 2 FIELDS TOGETHER WITH A SPACE SEPERATOR
                 } else if (special_tag.indexOf("concat:") >= 0) {
                     tmparr = special_tag.split(":");
-                    
-                    tmpstr = "";
-                    
 
-                    for(var z=1;z < tmparr.length;z++){
-                    	if(z > 1) tmpstr += " ";
-                    	tmpstr += dataarr[x].getAttribute(tmparr[z]);
+                    tmpstr = "";
+
+
+                    for (var z = 1; z < tmparr.length; z++) {
+                        if (z > 1) tmpstr += " ";
+                        tmpstr += dataarr[x].getAttribute(tmparr[z]);
                     }
-                    
-                    
+
+
                     cell.innerHTML = tmpstr;//dataarr[x].getAttribute(tmparr[1]) + " " + dataarr[x].getAttribute(tmparr[2]);
                     cell.className = clsname + ' hand' + cur_class;
                     cell.onclick = function () {
@@ -752,7 +750,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     }
                     // DELETE IS DEFAULT OPTION
                 } else if (special_tag.indexOf("copy") == 0) {
-                    if(area === 'form_builder') {
+                    if (area === 'form_builder') {
                         cell.innerHTML = '<a href="#" onclick="handleForm_builderCopyClick(' + dataarr[x].getAttribute('campaign_id') + ');return false;">' +
                             '<img title="Copy form to another campaign" id="' + copy_area + '-formcopy-img-' + dataarr[x].getAttribute('id') + '" src="images/data_copy_icon.png" width="24" height="24" onmouseover="this.src=\'images/data_copy_icon.png\'" onmouseout="this.src=\'images/data_copy_icon.png\'" border="0" />' +
                             '</a>';
@@ -768,10 +766,10 @@ function parseXMLData(area, tableFormat, xmldoc) {
                 }
             } else {
                 cur_data = dataarr[x].getAttribute(cur_name);
-                
-                
-               // cur_data = priorityProcessing(cur_data);
-                
+
+
+                // cur_data = priorityProcessing(cur_data);
+
                 cell.innerHTML = (cur_data) ? cur_data : '&nbsp;';
                 cell.className = clsname + ' hand' + cur_class;
                 cell.onclick = function () {
@@ -791,41 +789,41 @@ function parseXMLData(area, tableFormat, xmldoc) {
 } // END parseXMLData()
 
 
-function priorityProcessing(inputstr){
-	inputstr = inputstr.trim();
-	
-	var priority = 0;
-	
-	if(inputstr.startsWith("!")){
-		if(inputstr.startsWith("!!!")){
-			priority = 3;
-		}else if(inputstr.startsWith("!!")){
-			priority = 2;
-		}else{
-			priority = 1;
-		}
-		
-		inputstr = inputstr.replace( /^\!+/, '').trim();
-		
-		switch(priority){
-		default:
-		case 1:
-			//inputstr = '<span style="background-color:#ffcc00">!</span>'+inputstr;
-			
-			inputstr = '<span title="Low Priority"><img src="images/priority_low.png" height="15" border="0" />'+inputstr+'</span>';
-			break;
-		case 2:
-			inputstr = '<span title="Medium Priority"><img src="images/priority_medium.png" height="15" border="0">'+inputstr+'</span>';
-			//inputstr = '<span style="background-color:#ff9933">!</span>'+inputstr;
-			break;
-		case 3:
-			inputstr = '<span title="High Priority"><img src="images/priority_high.png" height="15" border="0">'+inputstr+'</span>';
-			//inputstr = '<span style="background-color:#ff3300">!</span>'+inputstr;
-			break;
-		}
-	}
-	
-	return inputstr;
+function priorityProcessing(inputstr) {
+    inputstr = inputstr.trim();
+
+    var priority = 0;
+
+    if (inputstr.startsWith("!")) {
+        if (inputstr.startsWith("!!!")) {
+            priority = 3;
+        } else if (inputstr.startsWith("!!")) {
+            priority = 2;
+        } else {
+            priority = 1;
+        }
+
+        inputstr = inputstr.replace(/^\!+/, '').trim();
+
+        switch (priority) {
+            default:
+            case 1:
+                //inputstr = '<span style="background-color:#ffcc00">!</span>'+inputstr;
+
+                inputstr = '<span title="Low Priority"><img src="images/priority_low.png" height="15" border="0" />' + inputstr + '</span>';
+                break;
+            case 2:
+                inputstr = '<span title="Medium Priority"><img src="images/priority_medium.png" height="15" border="0">' + inputstr + '</span>';
+                //inputstr = '<span style="background-color:#ff9933">!</span>'+inputstr;
+                break;
+            case 3:
+                inputstr = '<span title="High Priority"><img src="images/priority_high.png" height="15" border="0">' + inputstr + '</span>';
+                //inputstr = '<span style="background-color:#ff3300">!</span>'+inputstr;
+                break;
+        }
+    }
+
+    return inputstr;
 }
 
 

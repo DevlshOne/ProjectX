@@ -276,6 +276,7 @@
             $obj = new API_UserGroups();
             $obj->handleAPI();
             break;
+        case 'userteams':
         case 'user_teams':
             include_once($basedir . "api/user_teams.api.php");
             $obj = new API_UserTeams();
