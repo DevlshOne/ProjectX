@@ -14,6 +14,9 @@ class Extensions{
 	var $orderdir	= 'DESC';	## Default order direction
 
 
+	var $max_bulk_add_size = 200;
+	
+	
 	## Page  Configuration
 	var $pagesize	= 20;	## Adjusts how many items will appear on each page
 	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
@@ -68,7 +71,292 @@ class Extensions{
 
 	}
 
+	function makeBulkAdd(){
+		
 
+		
+		?><script>
+			var current_ext_count = 0;
+			
+			function countExtensions(){
+	
+				let frm = getEl('blkextfrm');
+				let start = parseInt(frm.start_number.value);
+				let end = parseInt(frm.end_number.value);
+	
+				current_ext_count = 1 + ((start > end)?start - end:end - start);
+				
+				$('#exten_cnt_spn').html(""+current_ext_count);
+
+				//alert(current_ext_count);
+			}
+		
+			function validateBulkExtensionField(name,value,frm){
+
+				//alert(name+","+value);
+
+
+				switch(name){
+				default:
+
+					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
+					return true;
+					break;
+
+				case 'start_number':
+				case 'end_number':
+
+					value = parseInt(value);
+					
+					if(!value || value < 1000 || value > 999999)return false;
+
+					return true;
+
+
+					break;
+				case 'iax_password':
+				case 'sip_password':
+				
+					if(!value || (value.length < 8))return false;
+
+					return true;
+
+
+				case 'iax_host':
+					
+					// 1.1.1.1 is LENGTH=7
+					if(!value || (value.length < 7))return false;
+
+					return true;
+
+				case 'phone_password':
+					if(!value)return false;
+
+					return true;
+					
+//				case 'port_num':
+//
+//					if(value%2 != 0)return false;
+//
+//					value = parseInt(value);
+//
+//					if(value <= 0)return false;
+//
+//					break;
+				}
+
+
+				return true;
+			}
+
+
+
+			function checkBulkExtensionFrm(frm){
+
+				// FINAL RECOUNT
+				countExtensions();
+
+				
+				if(current_ext_count > <?=$this->max_bulk_add_size?>){
+
+					
+					alert("ERROR: Attempting to add too many extensions at once. Maximum is <?=$this->max_bulk_add_size?> per run.");
+					eval('try{frm.start_number.select();}catch(e){}');
+					return false;
+				}
+				
+				var params = getFormValues(frm,'validateBulkExtensionField');
+
+
+				// FORM VALIDATION FAILED!
+				// param[0] == field name
+				// param[1] == field value
+				if(typeof params == "object"){
+
+					switch(params[0]){
+					default:
+
+						alert("Error submitting form. Check your values");
+
+						break;
+
+					case 'sip_password':
+
+						alert("Please enter a SIP Password. Minimum 8 letters.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+					case 'iax_password':
+
+						alert("Please enter an IAX Password. Minimum 8 letters.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+					case 'iax_host':
+
+						alert("Please enter a valid IP address for the IAX Registry.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;		
+
+
+					case 'phone_password':
+
+						alert("Please enter the password for agent to login to the phone in Vicidial.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+										
+					case 'start_number':
+
+						alert("Please enter a valid starting number for this extension range");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+					case 'end_number':
+
+						alert("Please enter a valid ending number for this extension range");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+
+					}
+
+				// SUCCESS - POST AJAX TO SERVER
+				}else{
+
+
+					//alert("Form validated, posting");
+//return false;
+
+					$.ajax({
+						type: "POST",
+						cache: false,
+						url: 'api/api.php?get=extensions&mode=xml&action=bulk_add',
+						data: params,
+						error: function(){
+							alert("Error saving form. Please contact an admin.");
+						},
+						success: function(msg){
+
+///alert(msg);
+
+							var result = handleEditXML(msg);
+							var res = result['result'];
+
+							if(res <= 0){
+
+								alert(result['message']);
+
+								return;
+
+							}
+
+
+							loadExtensions();
+
+
+							//displayAddExtensionDialog(res);
+							$('#dialog-modal-add-bulk-extension').dialog("close");
+							//alert(result['message']);
+
+						}
+
+
+					});
+
+				}
+
+				return false;
+
+			}
+
+
+			
+
+			// SET TITLEBAR
+			///$('#dialog-modal-add-bulk-extension').dialog( "option", "title", 'Adding Bulk Extensions');
+
+
+
+		</script>
+		<form id="blkextfrm" method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkBulkExtensionFrm(this); return false">
+			<input type="hidden" id="adding_bulk_extension" name="adding_bulk_extension" value="<?=$id?>" >
+
+
+		<table border="0" align="center">
+		<tr>
+			<th align="left" height="30">PX Server:</th>
+			<td><?
+
+				echo $this->makeServerDD('server_id', $row['server_id']);
+
+			?></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">Extension Start/End:</th>
+			<td>
+				<input name="start_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()" />
+				 to 
+				<input name="end_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()" />
+			
+			</td>
+		</tr>
+		<tr>
+			<th align="left" height="30">Description:</th>
+			<td><input type="text" name="description" size="30" value="" /></td>
+		</tr>
+		<tr>
+			<th align="left" height="30"># Ext. to add:</th>
+			<td><span id="exten_cnt_spn">0</span></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">IAX Host</th>
+			<td><input name="iax_host" type="text" size="20" value=""></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">IAX Password</th>
+			<td><input name="iax_password" type="text" size="20" value=""></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">SIP Password</th>
+			<td><input name="sip_password" type="text" size="20" value="<?=generateRandomString(16)?>"></td>
+		</tr>
+<?/**		<tr>
+			<th align="left" height="30" <?
+
+				if($id > 0 && intval($row['port_num']) <= 0){
+					echo ' style="background-color:#FF0000" ';
+				}
+
+			?>>Bind Port</th>
+			<td>
+				<input name="port_num" type="text" size="10" value="<?=htmlentities($row['port_num'])?>">
+				&nbsp;&nbsp;&nbsp;&nbsp;<?
+
+				/**if(intval($row['port_num']) <= 0){
+					?><input type="button" value="Suggest port" onclick="suggestPort()"><?
+				}**
+			?></td>
+		</tr>
+		**/
+
+		?><tr>
+			<th align="left" height="30">VICI Phone Password</th>
+			<td><input name="phone_password" type="text" size="10" value="drlv"></td>
+		</tr>
+		
+		
+		<tr>
+			<th align="left" height="30">PX Register as User</th>
+			<td><input name="register_as" type="text" size="30" value=""><br />(Blank means use default)</td>
+		</tr>
+		<tr>
+			<th align="left" height="30">PX Register Password</th>
+			<td><input name="register_pass" type="text" size="30" value=""><br />(Blank means use default)</td>
+		</tr>
+		<tr>
+			<th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
+		</tr>
+		</form>
+		</table><?
+		
+		
+	}
 
 
 	function makeBulkTools(){
@@ -434,6 +722,22 @@ class Extensions{
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
+			
+			function displayBulkAddExtensionDialog(){
+
+				var objname = 'dialog-modal-add-bulk-extension';
+
+
+
+				$('#'+objname).dialog("open");
+
+// 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+// 				$('#'+objname).load("index.php?area=extensions&add_extension="+extensionid+"&printable=1&no_script=1");
+
+				$('#'+objname).dialog('option', 'position', 'center');
+			}
+
+			
 			function resetExtensionForm(frm){
 
 				frm.s_id.value='';
@@ -513,8 +817,16 @@ class Extensions{
 		?>
 		</div>
 		
-		<div id="dialog-modal-bulk-tools" title="Bulk Tools" class="nod"></div><?
-
+		<div id="dialog-modal-bulk-tools" title="Bulk Tools" class="nod"></div>
+		
+		
+		
+		<div id="dialog-modal-add-bulk-extension" title="Adding Bulk Extensions" class="nod">
+		<?
+			$this->makeBulkAdd();
+		?>
+		</div><?
+		
 
 
 		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadExtensions();return false">
@@ -531,6 +843,9 @@ class Extensions{
 						Extensions
 						&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="button" value="Add" onclick="displayAddExtensionDialog(0)">
+						&nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="button" value="Bulk Add" onclick="displayBulkAddExtensionDialog()">
+
 					</td>
 					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadExtensions();return false">
 						<option value="20">20</option>
@@ -654,7 +969,16 @@ class Extensions{
 				draggable:true,
 				resizable: false
 			});
-
+			
+			$("#dialog-modal-add-bulk-extension").dialog({
+				autoOpen: false,
+				width: 430,
+				height: 410,
+				modal: false,
+				draggable:true,
+				resizable: false
+			});
+			
 			$( "#dialog-modal-bulk-tools" ).dialog({
 				autoOpen: false,
 				width:600,

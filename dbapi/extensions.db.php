@@ -43,6 +43,17 @@ class ExtensionsAPI{
 				);
 		return $ext;
 	}
+	
+	function getByServerAndExtension($server_id, $extension){
+		
+		$server_id = intval($server_id);
+		$extension = intval($extension);
+		
+		return $_SESSION['dbapi']->ROquerySQL("SELECT * FROM `".$this->table."` ".
+				" WHERE number='".$extension."' AND server_id='".$server_id."' AND `status`='enabled' "
+				
+				);
+	}
 
 	/**
 	 * getResults($asso_array)
