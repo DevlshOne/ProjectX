@@ -8,11 +8,11 @@
     class CallerIDStatsReport {
 
 
-    	var $answering_limit_red = 90;
-		var $total_calls_required = 100;
+    	var $answering_limit_red = 90;		// PERCENT OF ANSWERING MACHINES BEFORE TRIGGERING WARNING
+		var $total_calls_required = 100;	// NUMBER OF CALLS MINIMUM, BEFORE A CID IS CONSIDERED FOR ALERTING
     	
     	
-		var $default_days = 7;
+		var $default_days = 7; ## HOW FAR BACK TO LOOK, BY DEFAULT
 		
     	
         function CallerIDStatsReport() {
