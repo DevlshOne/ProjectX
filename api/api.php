@@ -57,6 +57,11 @@
 	include_once($basedir.'utils/db_utils.php');
 
 
+	
+	
+	// RELOAD THE USER/ACCOUNT/FEATURE SET, MAKE SURE USER STILL ENABLED, ACCOUNT STILL ACTIVE, ETC
+	$_SESSION['dbapi']->users->refreshFeaturesAndPrivs(1);
+	
 
 	// UPDATE THE USERS LAST ACTION TIME
 	$_SESSION['dbapi']->users->updateLastActionTime();

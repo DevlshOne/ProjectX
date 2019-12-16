@@ -280,7 +280,17 @@
 	// USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
 	if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
 
+		
+		
+		// RELOAD THE USER/ACCOUNT/FEATURE SET, MAKE SURE USER STILL ENABLED, ACCOUNT STILL ACTIVE, ETC
+		$_SESSION['dbapi']->users->refreshFeaturesAndPrivs();
+		
+		
+		
 		$_SESSION['dbapi']->users->updateLastActionTime();
+		
+		
+		
 		
 		
 		// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
