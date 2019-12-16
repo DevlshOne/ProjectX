@@ -60,9 +60,13 @@
                     echo $out;
                     break;
                 case 'getGroupUserList':
-                    $groupname = (!empty($_REQUEST['group']) ? strtoupper(trim($_REQUEST['group'])) : ' ');
-                    // empty case vs populated
-                    $q = "SELECT ugt.user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username IS NOT NULL) AND u.enabled = 'yes' AND UPPER(ugt.group_name) = '" . $groupname . "' GROUP BY ugt.user_id ORDER BY u.username ASC";
+                    $groupname = strtoupper(trim($_REQUEST['group']));
+                    if (empty($groupname)) {
+                        $q = "SELECT ugt.user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username IS NOT NULL) AND u.enabled = 'yes' GROUP BY ugt.user_id ORDER BY u.username ASC";
+                    } else {
+                        // empty case vs populated
+                        $q = "SELECT ugt.user_id, UPPER(u.username) AS username, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_group_translations AS ugt INNER JOIN users AS u ON ugt.user_id = u.id WHERE (u.username IS NOT NULL) AND u.enabled = 'yes' AND UPPER(ugt.group_name) = '" . $groupname . "' GROUP BY ugt.user_id ORDER BY u.username ASC";
+                    }
                     $res = fetchAllAssoc($q, 3);
                     $out = json_encode($res);
                     echo $out;
