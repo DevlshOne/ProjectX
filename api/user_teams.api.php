@@ -50,7 +50,8 @@
                     $_SESSION['api']->outputEditSuccess($id);
                     break;
                 case 'getTeamMembers':
-                    $res = fetchAllAssoc("SELECT utm.`user_id`, utm.`username`, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_teams_members AS utm INNER JOIN users AS u ON u.id = utm.user_id WHERE 1 ORDER BY utm.`username` ASC", 1);
+                    $teamid = intval($_REQUEST['team']);
+                    $res = fetchAllAssoc("SELECT utm.`user_id`, utm.`username`, CONCAT(UCASE(u.first_name), ' ', UCASE(u.last_name)) AS fullname FROM user_teams_members AS utm INNER JOIN users AS u ON u.id = utm.user_id WHERE utm.team_id = $teamid ORDER BY utm.`username` ASC", 1);
                     $out = json_encode($res);
                     echo $out;
                     break;

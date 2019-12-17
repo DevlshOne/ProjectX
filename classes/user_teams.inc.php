@@ -185,7 +185,6 @@
                     buttons: {
                         'Save': function () {
                             if ($('#team_name').val().length) {
-                                team_name = $('#team_name').val();
                                 $.ajax({
                                     type: "POST",
                                     cache: false,
@@ -193,7 +192,7 @@
                                     dataType: 'json',
                                     crossDomain: false,
                                     crossOrigin: false,
-                                    url: 'api/api.php?get=user_teams&mode=json&action=addNewTeam&name=' + team_name,
+                                    url: 'api/api.php?get=user_teams&mode=json&action=addNewTeam&name=' + $('#team_name').val(),
                                     done: function () {
                                         if (frontEnd_debug) {
                                         }
