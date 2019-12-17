@@ -44,9 +44,6 @@
                             $teamid = intval($_REQUEST['team_id']);
                             $this->makeEdit($teamid);
                             break;
-                        case 'add':
-                            $this->makeAdd();
-                            break;
                     }
                 } else {
                     ## LIST USERS
@@ -144,28 +141,37 @@
                     let $dlgObj = $('#dialog-modal-add-user-team');
                     $dlgObj.dialog("option", "title", 'Adding New User Team');
                     $dlgObj.dialog("open");
-                    $dlgObj.html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                    $dlgObj.load("index.php?area=user_teams&action=add&printable=1&no_script=1");
                 }
 
                 function resetUserTeamForm(frm) {
-                    frm.s_name.value = '';
-                    frm.s_group_name.value = '';
+                    frm.s_team_name.value = '';
                 }
             </script>
-            <div id="dialog-modal-edit-user-team" class="nod">
+            <div id="dialog-modal-edit-user-team" class="nod"></div>
+            <div id="dialog-modal-add-user-team" class="nod">
+                <table class="tightTable">
+                    <tr>
+                        <td class="righty">
+                            <table class="centery">
+                                <tr>
+                                    <th class="lefty">Team Name:</th>
+                                    <td><input id="team_name" name="team_name" type="text" size="30"/></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
             </div>
-            <div id="dialog-modal-add-user-team" class="nod"></div>
             <script>
                 $("#dialog-modal-edit-user-team").dialog({
                     autoOpen: false,
                     width: 800,
                     height: 'auto',
-                    modal: true,
-                    draggable: false,
+                    modal: false,
+                    draggable: true,
                     resizable: false,
                     title: 'Editing User Team',
-                    position: 'center top'
+                    position: 'center'
                 });
                 $("#dialog-modal-add-user-team").dialog({
                     autoOpen: false,
@@ -174,8 +180,35 @@
                     modal: false,
                     draggable: true,
                     resizable: false,
-                    title: 'Add User Team',
-                    position: 'center'
+                    title: 'Add New User Team',
+                    position: 'center',
+                    buttons: {
+                        'Save': function () {
+                            if ($('#team_name').val().length) {
+                                team_name = $('#team_name').val();
+                                $.ajax({
+                                    type: "POST",
+                                    cache: false,
+                                    async: false,
+                                    dataType: 'json',
+                                    crossDomain: false,
+                                    crossOrigin: false,
+                                    url: 'api/api.php?get=user_teams&mode=json&action=addNewTeam&name=' + team_name,
+                                    done: function () {
+                                        if (frontEnd_debug) {
+                                        }
+                                    }
+                                });
+                                $(this).dialog('close');
+                                location.href = 'index.php?area=user_teams';
+                            } else {
+                                alert('Team name may not be empty!');
+                            }
+                        },
+                        'Cancel': function () {
+                            $(this).dialog('close');
+                        }
+                    }
                 });
                 loadUserteams();
             </script>
@@ -183,7 +216,6 @@
                 <input type="hidden" name="searching_userteams">
                 <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
                 <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
-                <a name="usersarea"></a>
                 <table class="lb tightTable pct100">
                     <tr>
                         <td height="40" class="pad_left ui-widget-header">
@@ -201,14 +233,14 @@
                                     <td width="15%" class="righty">
                                         <table class="page_system_container tightTable">
                                             <tr>
-                                                <td id="usergroups_prev_td" class="page_system_prev"></td>
-                                                <td id="usergroups_page_td" class="page_system_page"></td>
-                                                <td id="usergroups_next_td" class="page_system_next"></td>
+                                                <td id="userteams_prev_td" class="page_system_prev"></td>
+                                                <td id="userteams_page_td" class="page_system_page"></td>
+                                                <td id="userteams_next_td" class="page_system_next"></td>
                                             </tr>
                                         </table>
                                     </td>
                                     <td>
-                                        <div class="righty"><input type="button" value="Add" onclick="displayAddUserTeamDialog(0);"></div>
+                                        <div class="righty"><input type="button" value="Add" onclick="displayAddUserTeamDialog();"></div>
                                     </td>
                                 </tr>
                             </table>
@@ -365,8 +397,8 @@
                 $('#team_member_adder, #team_members').sortable({
                     connectWith: '.userList'
                 }).disableSelection();
-                $('#saveTeamName').on('click', function (e, ui) {
-                    if ($('#team_name').length) {
+                $('#save_team_name').on('click', function (e, ui) {
+                    if ($('#team_name').val().length) {
                         $.ajax({
                             type: "POST",
                             cache: false,
@@ -375,13 +407,13 @@
                             crossDomain: false,
                             crossOrigin: false,
                             url: 'api/api.php?get=user_teams&mode=json&action=changeTeamName&team=' + team_id + '&name=' + $('#team_name').val(),
-                            success: function () {
+                            done: function () {
                                 alert('Team name has been changed');
                                 team_name = $('#team_name').val();
                                 if (frontEnd_debug) {
-                                    console.log('Prefs have just been loaded :: ', tileDefs);
-                                    console.log('User Preferences loaded');
+                                    console.log('Team name has been changed to :: ', team_name);
                                 }
+                                location.href = 'index.php?area=user_teams';
                             }
                         });
                     } else {
@@ -402,17 +434,13 @@
                             crossDomain: false,
                             crossOrigin: false,
                             url: 'api/api.php?get=user_teams&mode=json&action=addTeamMember&team=' + team_id + '&userid=' + current_id,
-                            success: function () {
+                            done: function () {
                                 alert('Member has been added to ' + team_name);
                                 if (frontEnd_debug) {
                                     console.log('Prefs have just been loaded :: ', tileDefs);
                                     console.log('User Preferences loaded');
                                 }
-                            },
-                            fail: function () {
-
                             }
-
                         });
                     },
                     remove: function (e, ui) {
@@ -451,7 +479,7 @@
                         <div class="pct100">
                             <label for="team_name">Edit team name : </label>
                             <input id="team_name" name="team_name" type="text" maxlength="128"/>
-                            <button id="saveTeamName" value="Save" title="Save Team Name">Save</button>
+                            <button id="save_team_name" value="Save" title="Save Team Name">Save</button>
                         </div>
                     </td>
                 </tr>
@@ -483,90 +511,6 @@
                     </td>
                 </tr>
             </table>
-            <?
-        }
-
-        function makeAdd($id) {
-            $id = intval($id);
-            if ($id) {
-                $row = $_SESSION['dbapi']->user_teams->getByID($id);
-            }
-            ?>
-            <script src="js/md5.js"></script>
-            <script>
-                function validateUserTeamField(name, value, frm) {
-                    //alert(name+","+value);
-                    switch (name) {
-                        default:
-                            return true;
-                            break;
-                        case 'team_name':
-                            if (!value) return false;
-                            return true;
-                            break;
-                    }
-                    return true;
-                }
-
-                function checkUserTeamFrm(frm) {
-                    let params = getFormValues(frm, 'validateUserTeamField');
-                    if (typeof params == "object") {
-                        switch (params[0]) {
-                            default:
-                                alert("Error submitting form. Check your values");
-                                break;
-                            case 'team_name':
-                                alert("Please enter the team name");
-                                eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                break;
-                        }
-                    } else {
-                        $.ajax({
-                            type: "POST",
-                            cache: false,
-                            url: 'api/api.php?get=user_teams&mode=xml&action=edit',
-                            data: params,
-                            error: function () {
-                                alert("Error saving user team form. Please contact an admin.");
-                            },
-                            success: function (msg) {
-                                let result = handleEditXML(msg);
-                                let res = result['result'];
-                                if (res <= 0) {
-                                    alert(result['message']);
-                                    return;
-                                }
-                                alert(result['message']);
-                                try {
-                                    loadUserteams();
-                                    displayAddUserTeamDialog(res);
-                                } catch (e) {
-                                    go('?area=user_teams');
-                                }
-                            }
-                        });
-                    }
-                    return false;
-                }
-            </script>
-            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkUserTeamFrm(this); return false">
-                <input type="hidden" id="adding_user_team" name="adding_user_team" value="<?= $id ?>">
-                <table class="tightTable">
-                    <tr valign="top">
-                        <td align="center">
-                            <table border="0" align="center">
-                                <tr>
-                                    <th align="left">Team Name:</th>
-                                    <td><input name="team_name" type="text" size="30" value="<?= htmlentities($row['team_name']) ?>"></td>
-                                </tr>
-                                <tr>
-                                    <th colspan="2"><input type="submit" value="Save Changes"></th>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-            </form>
             <?
         }
 
