@@ -155,7 +155,7 @@
                             <table class="centery">
                                 <tr>
                                     <th class="lefty">Team Name:</th>
-                                    <td><input id="team_name" name="team_name" type="text" size="30"/></td>
+                                    <td><input id="new_team_name" name="new_team_name" type="text" size="30"/></td>
                                 </tr>
                             </table>
                         </td>
@@ -184,7 +184,7 @@
                     position: 'center',
                     buttons: {
                         'Save': function () {
-                            if ($('#team_name').val().length) {
+                            if ($('#new_team_name').val().length) {
                                 $.ajax({
                                     type: "POST",
                                     cache: false,
@@ -192,7 +192,7 @@
                                     dataType: 'json',
                                     crossDomain: false,
                                     crossOrigin: false,
-                                    url: 'api/api.php?get=user_teams&mode=json&action=addNewTeam&name=' + $('#team_name').val(),
+                                    url: 'api/api.php?get=user_teams&mode=json&action=addNewTeam&name=' + $('#new_team_name').val(),
                                     done: function () {
                                         if (frontEnd_debug) {
                                         }
