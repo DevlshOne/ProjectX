@@ -95,21 +95,44 @@ foreach($clusters as $cluster_id){
 
 	foreach($tasks as $task){
 		
+		$sql = "SELECT `campaign_name`, `active`, `dial_statuses` FROM `vicidial_campaigns` WHERE campaign_id='".mysqli_real_escape_string($_SESSION['db'], $task['campaign'])."'";
+
+		//echo $sql;
 		
 		// GET THE CAMPAIGN RECORD IN VICI
-		$vici_campaign = querySQL("SELECT campaign_name, active, dial_statuses FROM `vicidial_campaign` WHERE campaign_id='".mysqli_real_escape_string($_SESSION['db'], $task['campaign'])."'");
+		$vici_campaign = querySQL($sql);
 		
 		if(!$vici_campaign || $vici_campaign['active'] != 'Y'){
 			
 			echo "Skipping task#".$task['id']." - Campaign ".$task['campaign']." - ".$vici_campaign['campaign_name']." is ".((!$vici_campaign)?"NOT FOUND":"NOT ACTIVE")."\n";
 			continue;
+		}else{
+			
+			echo "Task#".$task['id']." - Loaded Campaign ".$task['campaign']." - ".$vici_campaign['campaign_name']." Statuses:".$vici_campaign['dial_statuses']."\n";
 		}
 		
 		
 		
 		// THE TASK WAS PREVIOUSLY STARTED, AND WE'RE PAST OUR ENDING TIME
-		if($task['status'] == 'started' && $task['time_end'] <= $curtime){
+		if($task['status'] == 'started'){
 			
+			## PAST THE ENDING TIME
+			if($task['time_end'] <= $curtime){
+				
+				$action = "disable";
+				
+			}else{
+				
+				echo "Skipping task#".$task['id']." - Not time to turn off yet.\n";
+				continue;
+			}
+
+			
+		}else{
+			
+			
+			
+			$action = "enable";
 			
 		}
 		
@@ -132,15 +155,16 @@ foreach($clusters as $cluster_id){
 		
 		
 		$run_task = false;
+		$lead_count = 0;
+		
 		// "lead_count_trigger" set to 0, means enable immediately, dont count.
 		if($task['lead_count_trigger'] == 0){
 			
-			
 			$run_task = true;
+			
 		}else{
 			// COUNT FIRST
 			//			
-			$lead_count = 0;
 			
 			// GET ALL ACTIVE LISTS FOR THE CAMPAIGN
 			$lists = fetchAllAssoc("SELECT list_id FROM `vicidial_lists` WHERE `campaign_id`='".mysqli_real_escape_string($_SESSION['db'], $task['campaign'])."' AND `active`='Y' ");
@@ -158,8 +182,9 @@ foreach($clusters as $cluster_id){
 				if($x > 0){
 					$listsql.= ')';
 					
-					$sql = "SELECT COUNT(*) FROM `vicidial_list` WHERE 1 $dialable_status_sql $listsql";
-					//echo $sql;
+					$sql = "SELECT COUNT(*) FROM `vicidial_list` WHERE 1  $listsql $dialable_status_sql";
+// 					echo $sql;
+// 					exit;
 					list($lead_count) = queryROW($sql);
 					
 				}
@@ -171,7 +196,7 @@ foreach($clusters as $cluster_id){
 			}else{
 				
 				echo "Skipping task#".$task['id']." - Lead count $lead_count is above its trigger value: ".$task['lead_count_trigger']."\n";
-				
+				continue;
 			}
 			
 
@@ -180,16 +205,15 @@ foreach($clusters as $cluster_id){
 		
 		if($run_task == true){
 			
-			echo "Running task#".$task['id']." - ".$task['action']." ".$task['list_ids']." (Lead count: $lead_count / Trigger: ".$task['lead_count_trigger'].")\n";
+			echo "Running task#".$task['id']." - ".$action." ".$task['list_ids']." ".(($task['lead_count_trigger'] > 0)?"(Lead count: $lead_count / Trigger: ".$task['lead_count_trigger'].")":'')."\n";
+			
+// continue;
 			
 			
-
 			
-			
-			
-			switch($task['action']){
+			switch($action){
 			default:
-				echo "Skipping task#".$task['id']." - Action '".$task['action']."' Unknown\n";
+				echo "Skipping task#".$task['id']." - Action '".$action."' Unknown\n";
 				break;
 			case 'enable':
 				
@@ -198,7 +222,9 @@ foreach($clusters as $cluster_id){
 				echo $sql."\n";
 				execSQL($sql);
 				
-				$_SESSION['dbapi']->execSQL("UPDATE `list_hopper` SET `status`='done' WHERE id='".$task['id']."' ");
+				$status = ($task['time_end'] > 0)?"started":"done";
+				
+				$_SESSION['dbapi']->execSQL("UPDATE `list_hopper` SET `status`='$status' WHERE id='".$task['id']."' ");
 				
 				break;
 			case 'disable':
@@ -212,6 +238,8 @@ foreach($clusters as $cluster_id){
 				
 				break;
 			}
+			
+			echo "\n";
 		
 		}
 		
