@@ -379,9 +379,32 @@ class ProcessTrackerAPI{
 	
 	
 	
-	
-	
-	
+    function updateScheduleStatus($id,$mode,$time){
+
+        # UPDATE THE LAST SUCCESS OR FIELD FIELD FOR A SCHEDULE
+        # MODE = success or fail
+        $dat = [];
+
+        # SET FIELD VALUE
+        switch($mode){
+            case 'success':
+                $dat = array(
+                    'last_success' 	=> $time,
+                );
+                break;
+
+            case 'fail':
+                $dat = array(
+                    'last_failed' 	=> $time,
+                );
+                break;
+
+        }
+        
+        # UPDATE RECORD
+        $_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->process_tracker->schedule_table);
+
+    }	
 	
 	
 	
