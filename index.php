@@ -20,64 +20,62 @@
 
 		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
 	}
-	
+
 	if($uri != null){
 		header("Location: ".$uri);
 		exit;
 	}
-	
+
 	//print_r($_SERVER);
-	
-	
-	/**
+
+
+/**
 	 * Database connection made here
 	 */
 	include_once("site_config.php");
-	
+
 	// GENERIC DB FUNCTIONS
 	include_once("db.inc.php");
 	include_once("utils/microtime.php");
 	include_once("dbapi/dbapi.inc.php");
-		
+
 	/**
 	 * Additional includes/requires go here
 	 */
 	include_once("utils/jsfunc.php");
 	include_once("utils/stripurl.php");
-	
+
 	include_once("utils/format_phone.php");
 	include_once("utils/rendertime.php");
 	include_once("utils/DropDowns.php");
 	include_once("utils/functions.php");
 	include_once("utils/feature_functions.php");
 	include_once("utils/db_utils.php");
-	
-	
-	include_once("classes/genericDD.inc.php");
+
+
+include_once("classes/genericDD.inc.php");
 	include_once("classes/interface.inc.php");
 	include_once("classes/languages.inc.php");
-	
-	
-	// DESTROY THE SESSION/LOGOUT ?o
+
+
+// DESTROY THE SESSION/LOGOUT ?o
 	if(isset($_REQUEST['o'])){
-		
+
 		if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
-			
+
 			$_SESSION['dbapi']->users->updateLogoutTime();
-			
+
 		}
-		
-		
-		session_unset();
-		
-		
-		jsRedirect("index.php");
+
+        session_unset();
+
+        jsRedirect("index.php");
 		exit;
-		
+
 	}
-	
-	
-	
+
+
+
 /*?><!DOCTYPE HTML>
 <html>
 <head>
@@ -97,68 +95,45 @@
 
 		?><!DOCTYPE HTML>
 		<html>
-		<head>
-			<title>Project X - Management Tools and Reports</title>
+        <head>
+            <title>Project X - Management Tools and Reports</title>
+            <script src="js/functions.js"></script>
+            <link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
+            <META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
+            <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+            <link rel="stylesheet" type="text/css" href="css/style.css"/>
+            <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
+            <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/>
+            <link rel="stylesheet" href="themes/default/css/uniform.default.css" media="screen"/>
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+            <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+            <link rel="icon" type="image/x-icon" href="favicon.ico">
+            <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css"/>
+            <script src="js/jquery-1.10.2.min.js"></script>
+            <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+            <script src="js/jquery.uniform.min.js"></script>
+            <script src="js/jquery.dataTables.min.js"></script>
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+            <script src="js/ajax_functions.js"></script>
+            <script src="js/functions.js"></script>
+            <script src="js/page_system.js"></script>
+            <script src="js/modernizr.js"></script> <!-- Modernizr -->
+            <script src="js/jquery.menu-aim.js"></script>
+            <script src="js/main.js"></script> <!-- Resource jQuery -->
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+            <script>
+                var dispTimer = false;
 
-
-			<script src="js/functions.js"></script>
-
-			<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
-
-			<META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
-
-
-			<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
-
-			<link rel="stylesheet" type="text/css" href="css/style.css" />
-			<link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
-			<link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css" />
-
-			<link rel="stylesheet" href="themes/default/css/uniform.default.css" media="screen" />
-
-			<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-			<link rel="icon" type="image/x-icon"  href="favicon.ico">
-
-			<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />
-
-<?/*			<script src="js/jquery-1.9.1.js"></script>**/?>
-
-			<script src="js/jquery-1.10.2.min.js"></script>
-
-			<?/*<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>*/?>
-
-			<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
-			<script src="js/jquery.uniform.min.js"></script>
-
-
-			<?/*<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>*/?>
-
-			<script src="js/jquery.dataTables.min.js"></script>
-
-			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-
-			<script src="js/ajax_functions.js"></script>
-			<script src="js/functions.js"></script>
-			<script src="js/page_system.js"></script>
-			<?/** NEW NAVIGATION STUFF
-
-			*
-			***/?>
-			<script src="js/modernizr.js"></script> <!-- Modernizr -->
-			<script src="js/jquery.menu-aim.js"></script>
-			<script src="js/main.js"></script> <!-- Resource jQuery -->
-			<script>
-        		var dispTimer = false;
-				function genReport(frm, area, printable){
-					if(area){
-						$('#'+area+'_submit_report_button').hide();
-						$('#'+area+'_loading_plx_wait_span').show();
-					}
-					var url = frm.action;
-					if(printable){
-						url += "&no_nav=1";
-					}
+                function genReport(frm, area, printable) {
+                    if (area) {
+                        $('#' + area + '_submit_report_button').hide();
+                        $('#' + area + '_loading_plx_wait_span').show();
+                    }
+                    var url = frm.action;
+                    if (printable) {
+                        url += "&no_nav=1";
+                    }
 					$.post(url, $('#'+frm.id).serialize()).done(function(data){
 						if(printable){
 							//$('#main_content').html(data);
@@ -210,8 +185,8 @@
 
             		$('#main_content').css('background-color', '#FFFFFF');
                     $('#main_content').css('color', '#000000');
-            		
-					$('.cd-side-nav').find('.hover').removeClass('hover');
+
+                    $('.cd-side-nav').find('.hover').removeClass('hover');
 					$('.cd-side-nav').find('.selected').removeClass('selected');
 					$('.cd-side-nav').removeClass('nav-is-visible');
 					$('.cd-main-header').find('.nav-is-visible').removeClass('nav-is-visible');
@@ -235,23 +210,21 @@
 
 					$('#'+objname).dialog('option', 'position', 'center');
 
-				}
+                }
 
-				function applyUniformity(){
-					$("input:submit, button, input:button").button();
-					$("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
+                function applyUniformity() {
+                    $("input:submit, button, input:button").button();
+                    $("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
 
 
-					$('.priorityRender').each(function( index ) {
+                    $('.priorityRender').each(function (index) {
 
-						$(this).html( 
-								
-							priorityProcessing( $(this).html() )
-							 
-						);
-						 // console.log( index + ": " + $( this ).text() );
-					});
-				}
+                        $(this).html(
+                            priorityProcessing($(this).html())
+                        );
+                        // console.log( index + ": " + $( this ).text() );
+                    });
+                }
 
 
 
@@ -281,9 +254,8 @@
 	if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
 
 		$_SESSION['dbapi']->users->updateLastActionTime();
-		
-		
-		// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
+
+        // NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
 		if(!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])){
 
 			//$_SESSION['interface']->makeHeader();
@@ -380,9 +352,8 @@
 					accessDenied("Campaigns");
 				}
 				break;
-					
-					
-			case 'scripts':
+
+                case 'scripts':
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['scripts'] == 'yes') // MANAGERS WITH SCRIPT ACCESS
@@ -604,23 +575,22 @@
 				}
 
 				break;
-				
-			case 'user_status_report':
+
+                case 'user_status_report':
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['user_status_report'] == 'yes') // MANAGERS WITH USER STATUS REPORT ACCESS
-				){
+                ) {
 
-					include_once("classes/user_status_report.inc.php");
-					$_SESSION['user_status_report']->handleFLOW();
+                    include_once("classes/user_status_report.inc.php");
+                    $_SESSION['user_status_report']->handleFLOW();
 
+                } else {
 
-				}else{
+                    accessDenied("UserStatusReport");
 
-					accessDenied("UserStatusReport");
+                }
 
-				}				
-				
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
 //
 //					echo "You lack the ability to access this section. Access to advanced config is denied.";
@@ -709,28 +679,25 @@
 
 
 				break;
-			
-			case 'sales_management':
-				
-				if(	checkAccess('sales_management') // MANAGERS WITH LEAD MANAGEMENT ACCESS
+
+                case 'sales_management':
+
+                    if(	checkAccess('sales_management') // MANAGERS WITH LEAD MANAGEMENT ACCESS
 				){
-					
-					
-					include_once("classes/sales_management.inc.php");
-					
-					$_SESSION['sales_management']->handleFLOW();
-					
-					
-					
-				}else{
-					
-					accessDenied("Sales Management");
-					
-				}
-				
-				break;
-				
-			case 'lead_management':
+
+                        include_once("classes/sales_management.inc.php");
+
+                        $_SESSION['sales_management']->handleFLOW();
+
+                    }else{
+
+                        accessDenied("Sales Management");
+
+                    }
+
+                    break;
+
+                case 'lead_management':
 
 
 				if(	checkAccess('lead_management') // MANAGERS WITH LEAD MANAGEMENT ACCESS
@@ -982,8 +949,8 @@
 				}
 
 				break;
-				
-			case 'user_groups_master':
+
+                case 'user_groups_master':
 				if (checkAccess('users')) {
 					include_once("classes/user_groups_master.inc.php");
 					$_SESSION['user_groups_master']->handleFLOW();
@@ -991,9 +958,8 @@
 					accessDenied("Users");
 				}
 				break;
-				
 
-			case 'report_emails':
+                case 'report_emails':
 
 
 				if(checkAccess('report_emails')){
@@ -1046,19 +1012,17 @@
 				break;
 
 			case 'capacity_report':
-				
-				include_once("classes/capacity_report.inc.php");
+
+                include_once("classes/capacity_report.inc.php");
 				$_SESSION['capacity_report']->handleFLOW();
-				
-				
-				break;
+
+                break;
 			case 'callerid_stats_report':
-				
-				include_once("classes/callerid_stats_report.inc.php");
+
+                include_once("classes/callerid_stats_report.inc.php");
 				$_SESSION['callerid_stats_report']->handleFLOW();
-				
-				
-				break;
+
+                break;
 //			case 'fec_filer':
 //
 //				include_once("classes/fec_filer.inc.php");
@@ -1071,17 +1035,15 @@
 				include_once("classes/change_password.inc.php");
 				$_SESSION['change_password']->handleFLOW();
 
+                break;
 
-				break;
+                case 'change_expired_password':
 
-			case 'change_expired_password':
+                    include_once("classes/change_password.inc.php");
+                    $_SESSION['change_password']->handleFLOW(true);
 
-				include_once("classes/change_password.inc.php");
-				$_SESSION['change_password']->handleFLOW(true);
-
-
-				break;
-			}			
+                    break;
+            }
 
 			if(isset($_REQUEST['no_nav'])){
 				?></div><?

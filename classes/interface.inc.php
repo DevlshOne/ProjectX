@@ -1,496 +1,183 @@
 <?php
- /***************************************************************
- *    Interface class - handles generic interface stuff, like menus, navigation, etc
- *    Written By: Jonathan Will
- ***************************************************************/
+    /***************************************************************
+     *    Interface class - handles generic interface stuff, like menus, navigation, etc
+     *    Written By: Jonathan Will
+     ***************************************************************/
 
     $_SESSION['interface'] = new InterfaceClass;
 
-    class InterfaceClass
-    {
-        public function InterfaceClass(){
+    class InterfaceClass {
+        public function InterfaceClass() {
         }
 
-        public function makeNewHeader(){
+        public function makeNewHeader() {
             ?>
+            <script>
+                $('nav.navbar').ready(function () {
+                    $('nav.navbar a.dropdown-item').each(function (i, v) {
+                        $(this).on('click', function () {
+                            loadSection($(this).attr('href'));
+                            return false;
+                        });
+                    });
+                });
+            </script>
             <header class="cd-main-header">
-
-
-                <a href="index.php" class="cd-logo"><img src="images/cci-logo-200-2.png" height="55" border="0"></a>
-                <?
-
-                    if ($_SESSION['user']['username'] == 'phreak') {
-                        echo '<a href="px_status.php">UBERSTATUS</a>';
-                    } ?>
-
-                <!--<a href="#0" class="cd-logo"><img src="http://10.100.0.65/reports/graph.php?area=user_charts&max_mode=1&time_frame=day&width=650&height=100" border="0" height="100" width="650"></a>-->
-
-                <a href="#0" class="cd-nav-trigger">Menu<span></span></a>
-
-
-                <nav class="cd-nav">
-
-
-                    <ul class="cd-top-nav">
-
-
-                        <li><a href="#0">Support</a></li>
-                        <li class="has-children account">
-                            <a href="#0">
-
-                                Account
-                            </a>
-
-                            <ul>
-
-                                <li><a href="#0">My Account</a></li>
-                                <li><a href="#" onclick="loadChangePassword();return false">Change Password</a></li>
-                                <li><a href="?o">Logout</a></li>
-                            </ul>
-                        </li>
-                    </ul>
+                <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                        <ul class="navbar-nav">
+                            <li class="nav-item active">
+                                <a class="navbar-brand" href="index.php"><img src="images/cci-logo-200-2.png" height="30" border="0"></a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Campaigns
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="?area=campaigns&no_script=1">Setup Campaigns</a>
+                                    <a class="dropdown-item" href="?area=campaign_parents&no_script=1">Parent Campaigns</a>
+                                    <a class="dropdown-item" href="?area=form_builder&no_script=1">Form Builder</a>
+                                    <a class="dropdown-item" href="?area=voices&no_script=1">Voices</a>
+                                    <a class="dropdown-item" href="?area=names&no_script=1">Names</a>
+                                    <a class="dropdown-item" href="?area=scripts&no_script=1">Quiz Questions</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Management Tools
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="?area=lead_management">Lead Management</a>
+                                    <a class="dropdown-item" href="?area=sales_management">Sales Management</a>
+                                    <a class="dropdown-item" href="?area=employee_hours">Employee Hours</a>
+                                    <a class="dropdown-item" href="?area=phone_lookup">DRIPP Lookup</a>
+                                    <a class="dropdown-item" href="?area=quiz_results">Quiz Results</a>
+                                    <a class="dropdown-item" href="?area=ringing_calls">Ring Report</a>
+                                    <a class="dropdown-item" href="?area=messages">Agent Messages</a>
+                                    <a class="dropdown-item" href="?area=dialer_status">Dialer Status</a>
+                                    <a class="dropdown-item" href="?area=server_status">Server Status</a>
+                                    <a class="dropdown-item" href="?area=extensions">Extensons</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    List Tools
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="?area=list_tools&tool=build_list&no_script=1">List Builder</a>
+                                    <a class="dropdown-item" href="?area=list_tools&tool=dnc_tools&no_script=1">DNC Management</a>
+                                    <a class="dropdown-item" href="#">Vici List Management</a>
+                                    <a class="dropdown-item" href="#">Task / Status Management</a>
+                                    <a class="dropdown-item" href="#">Import Leads</a>
+                                    <a class="dropdown-item" href="#">List Imports / Counts</a>
+                                    <a class="dropdown-item" href="#">List Performance Report</a>
+                                    <a class="dropdown-item" href="#">Vicidial List Count</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Reports
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="#">List Builder</a>
+                                    <a class="dropdown-item" href="#">DNC Management</a>
+                                    <a class="dropdown-item" href="#">Vici List Management</a>
+                                    <a class="dropdown-item" href="#">Task / Status Management</a>
+                                    <a class="dropdown-item" href="#">Import Leads</a>
+                                    <a class="dropdown-item" href="#">List Imports / Counts</a>
+                                    <a class="dropdown-item" href="#">List Performance Report</a>
+                                    <a class="dropdown-item" href="#">Vicidial List Count</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    PACs Maintenance
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="#">List Builder</a>
+                                    <a class="dropdown-item" href="#">DNC Management</a>
+                                    <a class="dropdown-item" href="#">Vici List Management</a>
+                                    <a class="dropdown-item" href="#">Task / Status Management</a>
+                                    <a class="dropdown-item" href="#">Import Leads</a>
+                                    <a class="dropdown-item" href="#">List Imports / Counts</a>
+                                    <a class="dropdown-item" href="#">List Performance Report</a>
+                                    <a class="dropdown-item" href="#">Vicidial List Count</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Users
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="#">List Builder</a>
+                                    <a class="dropdown-item" href="#">DNC Management</a>
+                                    <a class="dropdown-item" href="#">Vici List Management</a>
+                                    <a class="dropdown-item" href="#">Task / Status Management</a>
+                                    <a class="dropdown-item" href="#">Import Leads</a>
+                                    <a class="dropdown-item" href="#">List Imports / Counts</a>
+                                    <a class="dropdown-item" href="#">List Performance Report</a>
+                                    <a class="dropdown-item" href="#">Vicidial List Count</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </nav>
             </header> <!-- .cd-main-header -->
-
             <main class="cd-main-content">
-                <nav class="cd-side-nav">
-                    <ul>
-                        <li class="cd-label">Navigation</li>
-                        <?
-
-                            if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
-                                ?>
-                                <li class="has-children comments">
-                                <a href="#0">Campaign Setup</a>
-
-                                <ul><?
-
-                                        if (checkAccess('campaigns')) {
-                                            ?>
-                                            <li><a href="?area=campaigns&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Campaigns</a></li>
-                                            <li><a href="?area=campaign_parents&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Campaign Parents</a>
-                                            </li>
-						                    <li><a href="?area=form_builder&no_script=1" onclick="loadSection(this.href);return false">Form Builder</a></li>
-                                            <?
-                                        }
-
-                                        if (checkAccess('voices')) {
-                                            ?>
-                                            <li><a href="?area=voices&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Voices</a></li><?
-                                        }
-
-                                        if (checkAccess('names')) {
-                                            ?>
-                                            <li><a href="?area=names&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Names</a></li><?
-                                        }
-
-                                        if (checkAccess('scripts')) {
-                                            ?>
-                                            <li><a href="?area=scripts&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Scripts</a></li><?
-                                        }
-
-                                        if (checkAccess('quiz_questions')) {
-                                            ?>
-                                            <li><a href="?area=quiz_questions&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Quiz Questions</a>
-                                            </li><?
-                                        } ?></ul>
-                                </li><?
-                            }
-
-                            if(
-                            		checkAccess('sales_management') || 
-                            		checkAccess('lead_management') || 
-                            		checkAccess('employee_hours') || 
-                            		checkAccess('ringing_calls') || 
-                            		checkAccess('messages') || 
-                            		checkAccess('server_status') || 
-                            		checkAccess('extensions')
-                            ) {
-                                ?>
-                                <li class="has-children bookmarks">
-                                <a href="#0">Management Tools</a>
-
-                                <ul><?
-
-                                        if (checkAccess('lead_management')) {
-                                            ?>
-                                            <li><a href="?area=lead_management&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Lead Management</a>
-                                            </li><?
-                                        }
-                                        if (checkAccess('sales_management')) {
-                                        	?>
-                                            <li><a href="?area=sales_management&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Sales Management</a>
-                                            </li><?
-                                        }
-                                        
-                                        if (checkAccess('employee_hours')) {
-                                            ?>
-                                            <li><a href="?area=employee_hours&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Employee Hours</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('phone_lookup')) {
-                                            ?>
-                                            <li><a href="?area=phone_lookup&no_script=1"
-                                                   onclick="loadSection(this.href);return false">DRIPP Phone lookup</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('quiz_results')) {
-                                            ?>
-                                            <li><a href="?area=quiz_results&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Quiz Results</a></li><?
-                                        }
-
-                                        if (checkAccess('ringing_calls')) {
-                                            ?>
-                                            <li><a href="?area=ringing_calls&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Ring Report</a></li><?
-                                        }
-
-                                        if (checkAccess('messages')) {
-                                            ?>
-                                            <li><a href="?area=messages&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Agent Messages</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('dialer_status')) {
-                                            ?>
-                                            <li><a href="?area=dialer_status&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Dialer Status</a></li><?
-                                        }
-
-                                        if (checkAccess('server_status')) {
-                                            ?>
-                                            <li><a href="?area=server_status&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Server Status</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('extensions')) {
-                                            ?>
-                                            <li><a href="?area=extensions&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Extensions</a></li><?
-                                        } ?></ul>
-                                </li><?
-                            }
-
-                            if (checkAccess('list_tools')) {
-                                ?>
-                                <li class="has-children bookmarks">
-                                <a href="#0">List Tools</a>
-
-                                <ul><?
-                                    ?>
-                                    <li><a href="?area=list_tools&tool=build_list&no_script=1"
-                                           onclick="loadSection(this.href);return false">Build List</a></li><?
-                                    ?>
-                                    <li><a href="?area=list_tools&tool=dnc_tools&no_script=1"
-                                           onclick="loadSection(this.href);return false">Manage DNC</a></li><?
-                                    ?>
-                                    <li><a href="?area=list_tools&tool=manage_lists&no_script=1"
-                                           onclick="loadSection(this.href);return false">Manage Vici Lists</a></li><?
-                                    ?>
-                                    <li><a href="?area=list_tools&tool=tasks&no_script=1"
-                                           onclick="loadSection(this.href);return false">Task List/Status</a></li><?
-                                    ?>
-                                    <li><a href="?area=list_tools&tool=load_list&no_script=1"
-                                           onclick="loadSection(this.href);return false">Import Leads</a></li><?
-                                    ?>
-                                    <li><a href="?area=list_tools&tool=view_imports&no_script=1"
-                                           onclick="loadSection(this.href);return false">List Imports/Counts</a></li><?
-                                           
-                                           
-                                    ?><li><a href="?area=list_tools&tool=performance_reports&no_script=1"
-                                           onclick="loadSection(this.href);return false">List Performance Report</a></li><?
-
-                                    ?>
-                                    <li><a href="?area=list_tools&tool=vici_report&no_script=1"
-                                           onclick="loadSection(this.href);return false">Vicidial List Count</a></li><?
-
-                                    ?></ul>
-                                </li><?
-                            }
-
-                            if (checkAccess('fronter_closer') || checkAccess('sales_analysis') || checkAccess('agent_call_stats') || checkAccess('user_charts') || checkAccess('recent_hangups') || checkAccess('script_statistics') || checkAccess('dispo_log') || checkAccess('user_status_report')
-
-                            ) {
-                                ?>
-                                <li class="has-children overview">
-                                <a href="#0">Reports</a>
-
-                                <ul><?
-
-                                        if (checkAccess('fronter_closer')) {
-                                            ?>
-                                            <li><a href="?area=fronter_closer&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Fronter/Closer</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('sales_analysis')) {
-                                            ?>
-                                            <li><a href="?area=sales_analysis&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Sales Analysis</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('agent_call_stats')) {
-                                            ?>
-                                            <li><a href="?area=agent_call_stats&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Verifier Call Stats</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('rouster_report')) {
-                                            ?>
-                                            <li><a href="?area=rouster_report&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Rouster Call Stats</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('summary_report')) {
-                                            ?>
-                                            <li><a href="?area=summary_report&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Summary Report</a>
-                                            </li><?
-                                        }
-
-                                        if ($_SESSION['user']['priv'] >= 5) {
-                                            ?>
-                                            <li><a href="?area=dialer_sales&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Area Code Sales By
-                                                    Dialer</a></li><?
-                                        }
-
-                                        if (checkAccess('callerid_stats_report')) {
-                                        	?>
-                                            <li><a href="?area=callerid_stats_report&no_script=1"
-                                                   onclick="loadSection(this.href);return false">CallerID Stats Report</a>
-                                            </li><?
-                                        }
-                                        
-                                        
-                                        
-                                        if (checkAccess('user_charts')) {
-                                            ?>
-                                            <li><a href="?area=user_charts&no_script=1"
-                                                   onclick="loadSection(this.href);return false">User Charts</a></li><?
-                                        }
-
-                                        if (checkAccess('recent_hangups')) {
-                                            ?>
-                                            <li><a href="?area=recent_hangups&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Recent Hangups</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('script_statistics')) {
-                                            ?>
-                                            <li><a href="?area=script_statistics&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Script Statistics</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('dispo_log')) {
-                                            ?>
-                                            <li><a href="?area=dispo_log&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Dispo Log</a></li><?
-                                        }
-                                        
-                                        if (checkAccess('capacity_report')) {
-                                        	?>
-                                            <li><a href="?area=capacity_report&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Capacity Report</a></li><?
-                                        }
-                                        
-                                        if (checkAccess('report_emails')) {
-                                            ?>
-                                            <li><a href="?area=report_emails&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Report Email Setup</a>
-                                            </li><?
-                                        }
-                                        
-                                        if (checkAccess('user_status_report')) {
-                                            ?>
-                                            <li><a href="?area=user_status_report&no_script=1"
-                                                   onclick="loadSection(this.href);return false">User Status Report</a>
-                                            </li><?
-                                        } ?>                                        
-                                        </ul>
-                                </li><?
-                            }
-
-                            if (checkAccess('pac_web_donations')) {
-                                ?>
-                                <li class="has-children comments">
-                                <a href="#0">PACs Maintenance </a>
-
-                                <ul><?
-
-                              			if (checkAccess('pac_web_donations')) {
-                                            ?>
-                                            <li><a href="?area=pac_reports&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Web Donations</a>
-                                            </li><?
-
-                                            /**?><li><a href="fec_filer.php" target="_blank">FEC Filer</a></li><?**/
-                                        } ?></ul>
-                                </li><?
-                            }
-
-                            if (checkAccess('users')) {
-                                ?>
-                                <li class="has-children users">
-                                <a href="#0">Users</a>
-
-                                <ul>
-                                    <li><a href="?area=users&no_script=1" onclick="loadSection(this.href);return false">Search/List
-                                            Users</a></li>
-                                    <li><a href="?area=user_groups&no_script=1"
-                                           onclick="loadSection(this.href);return false">Group Manager</a></li>
-									<li><a href="?area=user_groups_master&no_script=1"
-                                           onclick="loadSection(this.href);return false">Master User Groups</a></li>
-
-                                    <?
-                                        /**<li><a href="?area=users&add_user&no_script=1" onclick="loadSection(this.href);return false">Add User</a></li>
-                                         * <li><a href="?area=users&bulk_add&no_script=1" onclick="loadSection(this.href);return false">Bulk Add</a></li>**/ ?>
-                                    <?
-
-                                        if (checkAccess('feature_control')) {
-                                            ?>
-                                            <li><a href="?area=feature_control&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Feature Control</a>
-                                            </li><?
-                                        }
-
-                                        if (checkAccess('login_tracker')) {
-                                            ?>
-                                            <li><a href="?area=login_tracker&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Login Tracker</a>
-                                            </li><?
-                                        }                                     
-
-                                        if (checkAccess('action_log')) {//if($_SESSION['user']['priv'] >= 5){
-                                            ?>
-                                            <li><a href="?area=action_log&no_script=1"
-                                                   onclick="loadSection(this.href);return false">Action Log!</a></li><?
-                                        }
-
-                                    ?></ul>
-                                </li><?
-                            }
-
-                        ?></ul>
-
-
-                    <!--
-                                <ul>
-                                    <li class="cd-label">Secondary</li>
-                                    <li class="has-children bookmarks">
-                                        <a href="#0">Bookmarks</a>
-
-                                        <ul>
-                                            <li><a href="#0">All Bookmarks</a></li>
-                                            <li><a href="#0">Edit Bookmark</a></li>
-                                            <li><a href="#0">Import Bookmark</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="has-children images">
-                                        <a href="#0">Images</a>
-
-                                        <ul>
-                                            <li><a href="#0">All Images</a></li>
-                                            <li><a href="#0">Edit Image</a></li>
-                                        </ul>
-                                    </li>
-
-                                    <li class="has-children users">
-                                        <a href="#0">Users</a>
-
-                                        <ul>
-                                            <li><a href="#0">All Users</a></li>
-                                            <li><a href="#0">Edit User</a></li>
-                                            <li><a href="#0">Add User</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-
-                                <ul>
-                                    <li class="cd-label">Action</li>
-                                    <li class="action-btn"><a href="#0">+ Button</a></li>
-                                </ul>
-
-                    -->
-
-                </nav>
-
-
                 <div class="content-wrapper" id="main_content">
-				<?
-					include_once("classes/home.inc.php");
-					$_SESSION['home']->handleFLOW();
-                    
-                    
-                    ## CHECK IF PASSWORD IS OLDER THAN 6 MONTHS FOR PRIV 4 OR GREATER
-                    if($_SESSION['user']['priv'] >= 4){
+                    <?
+                        include_once("classes/home.inc.php");
+                        $_SESSION['home']->handleFLOW();
 
-                        $sixmonthsago = strtotime("-6 months");
+                        ## CHECK IF PASSWORD IS OLDER THAN 6 MONTHS FOR PRIV 4 OR GREATER
+                        if ($_SESSION['user']['priv'] >= 4) {
 
-                        if($_SESSION['user']['changedpw_time'] < $sixmonthsago){
+                            $sixmonthsago = strtotime("-6 months");
 
-                            ?><div id="change-password-expired-div" title="Password Expired - Change Required"></div>
-                            <script>
+                            if ($_SESSION['user']['changedpw_time'] < $sixmonthsago) {
 
-                                $('#change-password-expired-div').dialog({
-                                    dialogClass: "no-close",
-                                    autoOpen: false,
-                                    width: 400,
-                                    height: 280,
-                                    modal: true,
-                                    draggable: false,
-                                    resizable: false
-                                });
-                                
-                                function loadChangeExpiredPassword() {
-                                
-                                    $('#change-password-expired-div').dialog("open");
+                                ?>
+                                <div id="change-password-expired-div" title="Password Expired - Change Required"></div>
+                                <script>
 
-                                    $('#change-password-expired-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                                    $('#change-password-expired-div').dialog({
+                                        dialogClass: "no-close",
+                                        autoOpen: false,
+                                        width: 400,
+                                        height: 280,
+                                        modal: true,
+                                        draggable: false,
+                                        resizable: false
+                                    });
 
-                                    $('#change-password-expired-div').load("index.php?area=change_expired_password&printable=1&no_script=1");
+                                    function loadChangeExpiredPassword() {
 
-                                }
+                                        $('#change-password-expired-div').dialog("open");
 
-                                loadChangeExpiredPassword();
-                            
-                            </script><?
+                                        $('#change-password-expired-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+
+                                        $('#change-password-expired-div').load("index.php?area=change_expired_password&printable=1&no_script=1");
+
+                                    }
+
+                                    loadChangeExpiredPassword();
+
+                                </script><?
+
+                            }
 
                         }
 
-
-                    }
-				
-					/**
-					 *<center>
-                        <img src="graph.php?area=user_charts&max_mode=1&time_frame=day&width=650&height=300" border="0"
-                             height="300" width="650">
-                        <br/>
-                        <br/>
-                        <img src="graph.php?area=user_charts&max_mode=1&time_frame=week&start_time=<?= (time() - 604800) ?>&width=650&height=300"
-                             border="0" height="300" width="650">
-                    </center>
-               **/?>
+                        /**
+                         *<center>
+                         * <img src="graph.php?area=user_charts&max_mode=1&time_frame=day&width=650&height=300" border="0"
+                         * height="300" width="650">
+                         * <br/>
+                         * <br/>
+                         * <img src="graph.php?area=user_charts&max_mode=1&time_frame=week&start_time=<?= (time() - 604800) ?>&width=650&height=300"
+                         * border="0" height="300" width="650">
+                         * </center>
+                         **/ ?>
 
                 </div> <!-- .content-wrapper -->
             </main> <!-- .cd-main-content -->
@@ -533,8 +220,7 @@
             </script><?
         }
 
-        public function makeHeader()
-        {
+        public function makeHeader() {
             ?>
             <table style="border:0;width:100%">
                 <tr>
@@ -564,7 +250,7 @@
                             ?>
                             <li><a href="?area=campaigns&no_script">Campaigns</a></li>
                             <li><a href="?area=campaign_parents&no_script">Campaign Parents</a></li>
-				<li><a href="?area=form_builder&no_script=1">Form Builder</a></li>
+                            <li><a href="?area=form_builder&no_script=1">Form Builder</a></li>
                             <li><a href="?area=voices&no_script">Voices</a></li>
                             <li><a href="?area=names&no_script">Names</a></li>
 

@@ -477,6 +477,9 @@ td.countsRow {
 
 
 .no-close .ui-dialog-titlebar-close {
-	display: none;
-  }
+    display: none;
+}
 
+.dropdown-menu {
+    left: auto !important;
+}
