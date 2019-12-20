@@ -94,44 +94,44 @@ include_once("classes/genericDD.inc.php");
 	if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
 
 		?><!DOCTYPE HTML>
-		<html>
-        <head>
-            <title>Project X - Management Tools and Reports</title>
-            <script src="js/functions.js"></script>
-            <link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
-            <META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
-            <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
-            <link rel="stylesheet" type="text/css" href="css/style.css"/>
-            <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
-            <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/>
-            <link rel="stylesheet" href="themes/default/css/uniform.default.css" media="screen"/>
-            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-            <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
-            <link rel="icon" type="image/x-icon" href="favicon.ico">
-            <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css"/>
-            <script src="js/jquery-1.10.2.min.js"></script>
-            <script src="js/jquery-ui-1.10.3.custom.min.js"></script>
-            <script src="js/jquery.uniform.min.js"></script>
-            <script src="js/jquery.dataTables.min.js"></script>
-            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-            <script src="js/ajax_functions.js"></script>
-            <script src="js/functions.js"></script>
-            <script src="js/page_system.js"></script>
-            <script src="js/modernizr.js"></script> <!-- Modernizr -->
-            <script src="js/jquery.menu-aim.js"></script>
-            <script src="js/main.js"></script> <!-- Resource jQuery -->
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-            <script>
-                var dispTimer = false;
+<html>
+<head>
+    <title>Project X - Management Tools and Reports</title>
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script type="text/javascript" src="js/functions.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/reset.css"> <!-- CSS reset -->
+    <META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    <link rel="stylesheet" type="text/css" href="css/navstyle.css"> <!-- Resource style -->
+    <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/>
+    <link rel="stylesheet" type="text/css" href="themes/default/css/uniform.default.css" media="screen"/>
+    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css"/>
+    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="js/jquery.uniform.min.js"></script>
+    <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="js/ajax_functions.js"></script>
+    <script type="text/javascript" src="js/functions.js"></script>
+    <script type="text/javascript" src="js/page_system.js"></script>
+    <script type="text/javascript" src="js/modernizr.js"></script> <!-- Modernizr -->
+    <script type="text/javascript" src="js/jquery.menu-aim.js"></script>
+    <script type="text/javascript" src="js/main.js"></script> <!-- Resource jQuery -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script>
+        var dispTimer = false;
 
-                function genReport(frm, area, printable) {
-                    if (area) {
-                        $('#' + area + '_submit_report_button').hide();
-                        $('#' + area + '_loading_plx_wait_span').show();
-                    }
-                    var url = frm.action;
-                    if (printable) {
+        function genReport(frm, area, printable) {
+            if (area) {
+                $('#' + area + '_submit_report_button').hide();
+                $('#' + area + '_loading_plx_wait_span').show();
+            }
+            var url = frm.action;
+            if (printable) {
                         url += "&no_nav=1";
                     }
 					$.post(url, $('#'+frm.id).serialize()).done(function(data){

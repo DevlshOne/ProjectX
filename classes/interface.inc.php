@@ -14,16 +14,21 @@
             ?>
             <script>
                 $('nav.navbar').ready(function () {
-                    $('nav.navbar a.dropdown-item').each(function (i, v) {
+                    $('nav.navbar a.dropdown-item').not('#change_password').each(function () {
                         $(this).on('click', function () {
+                            $(this).parent('.dropdown-menu').toggle();
                             loadSection($(this).attr('href'));
                             return false;
                         });
                     });
+                    $('#change_password').on('click', function () {
+                        loadChangePassword();
+                        return false;
+                    });
                 });
             </script>
             <header class="cd-main-header">
-                <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-primary">
+                <nav class="navbar fixed-top navbar-expand navbar-light" style="background-color: #7abaff">
                     <div class="collapse navbar-collapse" id="navbarNavDropdown">
                         <ul class="navbar-nav">
                             <li class="nav-item active">
@@ -47,16 +52,16 @@
                                     Management Tools
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="?area=lead_management">Lead Management</a>
-                                    <a class="dropdown-item" href="?area=sales_management">Sales Management</a>
-                                    <a class="dropdown-item" href="?area=employee_hours">Employee Hours</a>
-                                    <a class="dropdown-item" href="?area=phone_lookup">DRIPP Lookup</a>
-                                    <a class="dropdown-item" href="?area=quiz_results">Quiz Results</a>
-                                    <a class="dropdown-item" href="?area=ringing_calls">Ring Report</a>
-                                    <a class="dropdown-item" href="?area=messages">Agent Messages</a>
-                                    <a class="dropdown-item" href="?area=dialer_status">Dialer Status</a>
-                                    <a class="dropdown-item" href="?area=server_status">Server Status</a>
-                                    <a class="dropdown-item" href="?area=extensions">Extensons</a>
+                                    <a class="dropdown-item" href="?area=lead_management&no_script=1">Lead Management</a>
+                                    <a class="dropdown-item" href="?area=sales_management&no_script=1">Sales Management</a>
+                                    <a class="dropdown-item" href="?area=employee_hours&no_script=1">Employee Hours</a>
+                                    <a class="dropdown-item" href="?area=phone_lookup&no_script=1">DRIPP Lookup</a>
+                                    <a class="dropdown-item" href="?area=quiz_results&no_script=1">Quiz Results</a>
+                                    <a class="dropdown-item" href="?area=ringing_calls&no_script=1">Ring Report</a>
+                                    <a class="dropdown-item" href="?area=messages&no_script=1">Agent Messages</a>
+                                    <a class="dropdown-item" href="?area=dialer_status&no_script=1">Dialer Status</a>
+                                    <a class="dropdown-item" href="?area=server_status&no_script=1">Server Status</a>
+                                    <a class="dropdown-item" href="?area=extensions&no_script=1">Extensons</a>
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -66,12 +71,12 @@
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                     <a class="dropdown-item" href="?area=list_tools&tool=build_list&no_script=1">List Builder</a>
                                     <a class="dropdown-item" href="?area=list_tools&tool=dnc_tools&no_script=1">DNC Management</a>
-                                    <a class="dropdown-item" href="#">Vici List Management</a>
-                                    <a class="dropdown-item" href="#">Task / Status Management</a>
-                                    <a class="dropdown-item" href="#">Import Leads</a>
-                                    <a class="dropdown-item" href="#">List Imports / Counts</a>
-                                    <a class="dropdown-item" href="#">List Performance Report</a>
-                                    <a class="dropdown-item" href="#">Vicidial List Count</a>
+                                    <a class="dropdown-item" href="?area=list_tools&tool=manage_lists&no_script=1">Vici List Management</a>
+                                    <a class="dropdown-item" href="?area=list_tools&tool=tasks&no_script=1">Task / Status Management</a>
+                                    <a class="dropdown-item" href="?area=list_tools&tool=load_list&no_script=1">Import Leads</a>
+                                    <a class="dropdown-item" href="?area=list_tools&tool=view_importss&no_script=1">List Imports / Counts</a>
+                                    <a class="dropdown-item" href="?area=list_tools&tool=performance_reports&no_script=1">List Performance Report</a>
+                                    <a class="dropdown-item" href="?area=list_tools&tool=vici_report&no_script=1">Vicidial List Count</a>
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -79,14 +84,18 @@
                                     Reports
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="#">List Builder</a>
-                                    <a class="dropdown-item" href="#">DNC Management</a>
-                                    <a class="dropdown-item" href="#">Vici List Management</a>
-                                    <a class="dropdown-item" href="#">Task / Status Management</a>
-                                    <a class="dropdown-item" href="#">Import Leads</a>
-                                    <a class="dropdown-item" href="#">List Imports / Counts</a>
-                                    <a class="dropdown-item" href="#">List Performance Report</a>
-                                    <a class="dropdown-item" href="#">Vicidial List Count</a>
+                                    <a class="dropdown-item" href="?area=fronter_closer&no_script=1">Fronter / Closer</a>
+                                    <a class="dropdown-item" href="?area=sales_analysis&no_script=1">Sales Analysis</a>
+                                    <a class="dropdown-item" href="?area=agent_call_stats&no_script=1">Verifier Call Stats</a>
+                                    <a class="dropdown-item" href="?area=rouster_report&no_script=1">Rouster Call Stats</a>
+                                    <a class="dropdown-item" href="?area=summary_report&no_script=1">Summary Report</a>
+                                    <a class="dropdown-item" href="?area=dialer_sales&no_script=1">Area Code Sales By Dialer</a>
+                                    <a class="dropdown-item" href="?area=user_charts&no_script=1">User Charts</a>
+                                    <a class="dropdown-item" href="?area=recent_hangups&no_script=1">Recent Hangups</a>
+                                    <a class="dropdown-item" href="?area=dispo_log&no_script=1">Disposition Logs</a>
+                                    <a class="dropdown-item" href="?area=capacity_report&no_script=1">Capacity Reports</a>
+                                    <a class="dropdown-item" href="?area=report_emails&no_script=1">Report Email Setup</a>
+                                    <a class="dropdown-item" href="?area=user_status_report&no_script=1">User Status Report</a>
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -94,14 +103,7 @@
                                     PACs Maintenance
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="#">List Builder</a>
-                                    <a class="dropdown-item" href="#">DNC Management</a>
-                                    <a class="dropdown-item" href="#">Vici List Management</a>
-                                    <a class="dropdown-item" href="#">Task / Status Management</a>
-                                    <a class="dropdown-item" href="#">Import Leads</a>
-                                    <a class="dropdown-item" href="#">List Imports / Counts</a>
-                                    <a class="dropdown-item" href="#">List Performance Report</a>
-                                    <a class="dropdown-item" href="#">Vicidial List Count</a>
+                                    <a class="dropdown-item" href="?area=pac_reports&no_script=1">Web Donations</a>
                                 </div>
                             </li>
                             <li class="nav-item">
@@ -109,14 +111,23 @@
                                     Users
                                 </a>
                                 <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                    <a class="dropdown-item" href="#">List Builder</a>
-                                    <a class="dropdown-item" href="#">DNC Management</a>
-                                    <a class="dropdown-item" href="#">Vici List Management</a>
-                                    <a class="dropdown-item" href="#">Task / Status Management</a>
-                                    <a class="dropdown-item" href="#">Import Leads</a>
-                                    <a class="dropdown-item" href="#">List Imports / Counts</a>
-                                    <a class="dropdown-item" href="#">List Performance Report</a>
-                                    <a class="dropdown-item" href="#">Vicidial List Count</a>
+                                    <a class="dropdown-item" href="?area=users&no_script=1">Search / List Users</a>
+                                    <a class="dropdown-item" href="?area=user_groups&no_script=1">Group Manager</a>
+                                    <a class="dropdown-item" href="?area=user_teams&no_script=1">Team Manager</a>
+                                    <a class="dropdown-item" href="?area=user_groups_master&no_script=1">Master Groups Manager</a>
+                                    <a class="dropdown-item" href="?area=feature_control&no_script=1">Feature Control</a>
+                                    <a class="dropdown-item" href="?area=login_tracker&no_script=1">Login tracker</a>
+                                    <a class="dropdown-item" href="?area=action_log&no_script=1">Action Logs!</a>
+                                </div>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Account
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <a class="dropdown-item" href="#0">My Account</a>
+                                    <a class="dropdown-item" id="change_password" href="#">Change Password</a>
+                                    <a class="dropdown-item" href="?o">Logout</a>
                                 </div>
                             </li>
                         </ul>

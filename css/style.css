@@ -367,11 +367,10 @@ a:hover {
 	color: lightgoldenrodyellow;
 }
 .clusterError {
-	font-size:large;
-	text-align:center;
-	font-weight:800;
-	color:red;
-	padding: auto;
+    font-size: large;
+    text-align: center;
+    font-weight: 800;
+    color: red;
 }
 .clusterDataTable {
 	margin: 8px 6px auto;
@@ -474,12 +473,9 @@ td.countsRow {
 	background-color: red;
 	color: white;
 }
-
-
 .no-close .ui-dialog-titlebar-close {
     display: none;
 }
-
 .dropdown-menu {
     left: auto !important;
 }
