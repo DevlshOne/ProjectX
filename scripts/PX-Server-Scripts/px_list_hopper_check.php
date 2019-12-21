@@ -182,7 +182,7 @@ foreach($clusters as $cluster_id){
 				if($x > 0){
 					$listsql.= ')';
 					
-					$sql = "SELECT COUNT(*) FROM `vicidial_list` WHERE 1  $listsql $dialable_status_sql";
+					$sql = "SELECT COUNT(*) FROM `vicidial_list` WHERE called_since_last_reset='N' $listsql $dialable_status_sql";
 // 					echo $sql;
 // 					exit;
 					list($lead_count) = queryROW($sql);
