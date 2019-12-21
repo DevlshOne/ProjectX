@@ -238,7 +238,9 @@
 	        
 	        if($res === FALSE){
 	            
-	            echo "(Bypassing) Error in execSQL(".$cmd."):".mysqli_error($_SESSION['db']);
+	        	if($ignore_error != 2){
+		            echo "(Bypassing) Error in execSQL(".$cmd."):".mysqli_error($_SESSION['db']);
+	        	}
 	            return FALSE;
 	        }
 	    }

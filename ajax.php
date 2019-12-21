@@ -26,6 +26,10 @@
 	}
 	
 	
+	// RELOAD THE USER/ACCOUNT/FEATURE SET, MAKE SURE USER STILL ENABLED, ACCOUNT STILL ACTIVE, ETC
+	$_SESSION['dbapi']->users->refreshFeaturesAndPrivs(2);
+	
+	
 	// UPDATE THE USERS LAST ACTION TIME
 	$_SESSION['dbapi']->users->updateLastActionTime();
 	

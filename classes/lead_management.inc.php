@@ -1211,7 +1211,7 @@ class LeadManagement{
 		
 		$rowarr = fetchAllAssoc("SELECT * FROM `lead_tracking` WHERE `phone_num`='".$phone."' ORDER BY `time` DESC");
 
-		$colspan = 5;
+		$colspan = 6;
 		
 		?>
 		<table border="0" width="100%">
@@ -1221,6 +1221,7 @@ class LeadManagement{
 		<tr>
 			<th class="row2">Call Time</th>
 			<th class="row2">Duration</th>
+			<th class="row2">Campaign</th>
 			<th class="row2">Dispo</th>
 			<th class="row2">Outbound Phone#</th>
 			<th class="row2">&nbsp;</th>
@@ -1242,6 +1243,7 @@ class LeadManagement{
 			?><tr>
 				<td align="center" <?=$class?>><?=date("g:i:sa m/d/Y", $row['time'])?></td>
 				<td align="center" <?=$class?>><?=renderTimeFormatted($row['agent_duration'])?></td>
+				<td align="center" <?=$class?>><?=htmlentities($row['campaign'].'/'.$row['campaign_code'])?></td>
 				<td align="center" <?=$class?>><?=htmlentities($row['dispo'])?></td>
 				<td align="center" <?=$class?>><?=htmlentities($row['outbound_phone_num'])?></td>
 				<td align="center"><a href="#" onclick="displayEditLeadDialog(<?=$row['id']?>, 'general');return false">[View Lead]</a></td>

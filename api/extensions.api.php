@@ -123,6 +123,170 @@ class API_Extensions{
 			
 			
 			break;
+		case 'bulk_add':
+			
+			
+			$phonepass = trim($_POST['phone_password']);
+			
+			
+			$dat = array();
+			
+			//adding_bulk_extension
+			$dat['status'] = 'enabled';
+			
+			$dat['server_id']	= intval($_POST['server_id']);
+			
+			$svrrow = getPXServer($dat['server_id']);
+			
+			
+			
+			$dat['iax_host'] 	= trim($_POST['iax_host']);
+			$dat['iax_password'] = trim($_POST['iax_password']);
+			$dat['sip_password'] = trim($_POST['sip_password']);
+			
+			// 			if(strlen(trim($_POST['password'])) > 0){
+			// 				$dat['password'] = $_POST['password'];
+			// 			}
+			
+			$dat['description'] = trim($_POST['description']);
+			
+			if(trim($_POST['register_as'])){
+				$dat['register_as'] = trim($_POST['register_as']);
+			}
+			
+			if(trim($_POST['register_pass'])){
+				$dat['register_pass'] = trim($_POST['register_pass']);
+			}
+			
+			$start = intval($_POST['start_number']);
+			$end = intval($_POST['end_number']);
+			
+			if($start > $end){
+				$tmp = $end;
+				$end = $start;
+				$start = $tmp;
+			}
+			
+			$cnt = 0;
+			$skipcnt = 0;
+			for($x = $start;$x <= $end;$x++){
+				
+				// BINDING THESE TOGETHER
+				$dat['number'] = $x;
+				$dat['station_id']	= $dat['number'];
+				
+				$existing = $_SESSION['dbapi']->extensions->getByServerAndExtension($dat['server_id'], $dat['number']);
+				
+				if(!$existing){
+
+					$cnt += $_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->extensions->table);
+					
+				}else{
+					
+					$skipcnt++;
+				}
+				//$id = mysqli_insert_id($_SESSION['dbapi']->db);
+			}
+			
+			$cluster_id = intval($svrrow['cluster_id']);
+			if($cluster_id > 0){
+				
+				$dbidx = getClusterIndex($cluster_id);
+				
+				if($dbidx > -1){
+					
+					connectViciDB($dbidx);
+					
+					$protocol = "IAX2";
+					$phone_type = "";
+					$local_gmt = "-8.00";		// MIGHT NEED TO ADJUST FOR THEIR TIMEZONE
+					
+					$ins_cmd_start = "INSERT INTO asterisk.phones(`extension`, `dialplan_number`, `voicemail_id`, `phone_ip`, `computer_ip`, `server_ip`,".
+							" `login`, `pass`, `status`, `active`, `phone_type`, `fullname`, `company`, `picture`, `messages`, `old_messages`, `protocol`,".
+							" `local_gmt`, `ASTmgrUSERNAME`, `ASTmgrSECRET`, `login_user`, `login_pass`, `login_campaign`, `park_on_extension`,".
+							" `conf_on_extension`, `VICIDIAL_park_on_extension`, `VICIDIAL_park_on_filename`, `monitor_prefix`, `recording_exten`,".
+							" `voicemail_exten`, `voicemail_dump_exten`, `ext_context`, `dtmf_send_extension`, `call_out_number_group`, `client_browser`,".
+							" `install_directory`, `local_web_callerID_URL`, `VICIDIAL_web_URL`, `AGI_call_logging_enabled`, `user_switching_enabled`, ".
+							" `conferencing_enabled`, `admin_hangup_enabled`, `admin_hijack_enabled`, `admin_monitor_enabled`, `call_parking_enabled`, ".
+							" `updater_check_enabled`, `AFLogging_enabled`, `QUEUE_ACTION_enabled`, `CallerID_popup_enabled`, `voicemail_button_enabled`,".
+							" `enable_fast_refresh`, `fast_refresh_rate`, `enable_persistant_mysql`, `auto_dial_next_number`, `VDstop_rec_after_each_call`,".
+							" `DBX_server`, `DBX_database`, `DBX_user`, `DBX_pass`, `DBX_port`, `DBY_server`, `DBY_database`,`DBY_user`, `DBY_pass`, `DBY_port`,".
+							" `outbound_cid`, `enable_sipsak_messages`, `email`, `template_id`, `conf_override`, `phone_context`, `phone_ring_timeout`,".
+							" `conf_secret`, `delete_vm_after_email`, `is_webphone`, `use_external_server_ip`, `codecs_list`, `codecs_with_template`,".
+							" `webphone_dialpad`, `on_hook_agent`, `webphone_auto_answer`, `voicemail_timezone`, `voicemail_options`, `user_group`,".
+							" `voicemail_greeting`, `voicemail_dump_exten_no_inst`, `voicemail_instructions`) VALUES ";
+					
+					//echo "Generating and inserting vicidial phone...\n";
+					
+					for($x = $start;$x <= $end;$x++){
+						
+						$curext = $x;
+						
+						$insert_cmd = $ins_cmd_start. " (";
+							
+						$insert_cmd.= "'$curext','$curext','$curext','','',"; // phone_ip and computer_ip blank
+						
+						// SERVER IP, USER, PHONE PASSWORD
+						$insert_cmd.= "'".$dat['iax_host']."','$curext','".addslashes($phonepass)."',";
+						
+						// ACTIVE, ACTIVE, PHONE TYPE, FULLNAME
+						$insert_cmd.= "'ACTIVE','Y', '".addslashes($phone_type)."', '".addslashes($dat['description'])."', ";
+						
+						
+						// COMPANY, PICTURE, MESSAGES, OLD MESSAGES, PROTOCOL
+						$insert_cmd.= "'','','0','0','$protocol',";
+						
+						// LOCAL GMT, THEN A BUNCH OF DEFAULT BULLSHIT
+						$insert_cmd.= "'$local_gmt','cron','1234',NULL,NULL,NULL,'8301','8302','8301','park','8612', '8309', '8501','85026666666666', ";
+						
+						// MORE DEFAULT BULLSHIT
+						$insert_cmd.= "'default','local/8500998@default','Zap/g2/','/usr/bin/mozilla','/usr/local/perl_TK',";
+						
+						$insert_cmd.= "'http://astguiclient.sf.net/test_callerid_output.php','http://astguiclient.sf.net/test_VICIDIAL_output.php',";
+						
+						// PERMISSIONS (AGI_call_logging_enabled, user_switching_enabled, conferencing_enabled, admin_hangup_enabled, admin_hijack_enabled, admin_monitor_enabled, call_parking_enabled, updater_check_enabled, AFLogging_enabled, QUEUE_ACTION_enabled, CallerID_popup_enabled, voicemail_button_enabled, enable_fast_refresh)
+						$insert_cmd.= "'1','1','1','0','0','1','1','1','1','1','1','1','0',";
+						
+						// REFRESH FREQ, FEW MORE DEFAULT FIELDS FOR CUSTOM DB CRAP OR SOMETHING
+						$insert_cmd.= "'1000','0','1','1',NULL,'asterisk','cron','1234','3306',NULL,'asterisk','cron','1234','3306',";
+						
+						// OUTBOUND CALLER ID, bla bla bla ring timeout
+						$insert_cmd.= "'$curext','0',NULL,'',NULL,'default',60,";
+						
+						// IAX PASSWORD!
+						$insert_cmd.= "'".addslashes($dat['iax_password'])."', 'N','N','N','','0','Y','N','Y',";
+						
+						// VOICEMAIL TIMEZONE, VM OPTIONS, USER GROUP, greeting, dump ext, vm instructions
+						$insert_cmd.="'pacific','','---ALL---','','85026666666667','Y'";
+						
+						$insert_cmd.= "); ";
+						
+						
+						// INSERT TO DB (IGNORE ERRORS QUIETLY)
+						execSQL($insert_cmd, 2);
+						//	echo $insert_cmd;
+							
+							
+					} // END FOR(EXTENSIONS) LOOP
+					
+					
+					
+					execSQL("UPDATE asterisk.servers SET rebuild_conf_files='Y'");
+				}
+				
+			}
+			
+			
+			
+			
+			logAction('bulk_add', 'extensions', 0, "Added Bulk Extensions $start to $end");
+			
+			
+			$_SESSION['api']->outputEditSuccess($cnt);
+			
+			break;
+			
+			
 		case 'edit':
 
 			$id = intval($_POST['adding_extension']);

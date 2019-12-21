@@ -373,6 +373,86 @@ class UsersAPI{
 	}
 
 
+	function refreshFeaturesAndPrivs($return_mode=0){
+		
+		// RELOAD THE USER RECORD
+		$_SESSION['user'] = $_SESSION['dbapi']->querySQL("SELECT * FROM `users` WHERE id='".$_SESSION['user']['id']."' ");
+		
+		$logout = false;
+		$reason = "";
+		if($_SESSION['user']['enabled'] != 'yes'){
+			$logout = true;
+			$reason .= '  User has been disabled.\n';
+			
+		}
+		
+		// LOAD AND CHECK ACCOUNT STATUS
+		$_SESSION['account'] = $_SESSION['dbapi']->accounts->getByID($_SESSION['user']['account_id']);
+		
+		if(!$_SESSION['account']['id'] || $_SESSION['account']['status'] != 'active'){
+			
+			$logout = true;
+			
+			$reason .= '  Account not found or inactive.\n';
+			
+		}
+		
+		
+		if($logout){
+			
+			if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
+				
+				$_SESSION['dbapi']->users->updateLogoutTime();
+				
+			}
+			
+			
+			
+
+			$reason = 'You have been logged out:\n'.$reason;
+			
+			
+			switch($return_mode){
+			default:
+			case 0:
+			
+				session_unset();
+				
+				jsAlert($reason, 1);
+			
+				jsRedirect("index.php");
+				exit;
+			
+			case 1:
+				
+				$_SESSION['api']->errorOut("$reason");
+				
+				session_unset();
+				
+				exit;
+				
+				
+			case 2:
+				
+				die("ERROR: ".$reason);
+				
+			}
+		}
+		
+
+		// RELOAD THE FEATURE RECORD
+		if($_SESSION['user']['feature_id'] > 0){
+			
+			$_SESSION['features'] = $_SESSION['dbapi']->querySQL("SELECT * FROM features WHERE id='".intval($_SESSION['user']['feature_id'])."' ");
+			
+		}
+
+		
+		
+	}
+	
+	
+	
 	/**
 	 * Updates the 'last_login' time field, to current time
 	 * Requires $_SESSION['user'] to be initialized already
