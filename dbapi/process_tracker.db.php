@@ -402,10 +402,34 @@ class ProcessTrackerAPI{
         }
         
         # UPDATE RECORD
-        $_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->process_tracker->schedule_table);
+        $_SESSION['dbapi']->aedit($id,$dat,$this->schedule_table);
 
     }	
 	
+
+	function processCheck($process_code,$process_time_start,$process_time_end) {
+
+        # CHECK FOR COMPLETED PROCESSES BASED ON PROCESS CODE AND TIME START/END
+        # RETURN TRUE/FALSE IF COMPLETED PROCESS FOUND
+
+        # BUILD SQL FOR COMPLETED PROCESS CHECK
+        $process_check_sql  =   "SELECT id FROM `".$this->table."` WHERE 1";
+        $process_check_sql .=   " AND `process_code` = '".$process_code."' AND `time_started` >= '".$process_time_start."' AND `time_ended` <= '".$process_time_end."' AND `result` = 'completed' ";
+
+        # RUN QUERY AGAINST PROCESS TRACKER TABLE AND MATCH WITH SCHEDULE INFO
+        $process_check_res = $_SESSION['dbapi']->query($process_check_sql);
+
+        # IF COMPLETED PROCESS FOUND RETURN FALSE
+        if(($processcnt=mysqli_num_rows($process_check_res)) > 0){
+
+            return true;
+            exit;
+
+        } 
+
+        return false;
+
+    }
 	
 	
 	

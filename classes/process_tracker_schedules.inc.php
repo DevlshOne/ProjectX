@@ -117,6 +117,8 @@ class ProcessTrackerSchedules{
 				['schedule_name','align_left'],
 				['script_process_code','align_left'],
 				['script_frequency','align_left'],
+				['[time:last_success]','align_left'],
+				['[time:last_failed]','align_left'],
 				//['[time:time_start]','align_left'],
 				['[delete]','align_center']
 			];
@@ -348,6 +350,8 @@ class ProcessTrackerSchedules{
 						<th class="row2" align="left"><?=$this->getOrderLink('schedule_name')?>Schedule Name</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('script_process_code')?>Script Process Code</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('script_frequency')?>Script Frequency</a></th>
+						<th class="row2" align="left">Last Success</a></th>
+						<th class="row2" align="left">Last Failed</a></th>
 					</tr>
 				</table>
 			</td>
@@ -617,4 +621,5 @@ class ProcessTrackerSchedules{
 	}
 
 }
+
 
