@@ -151,7 +151,7 @@
                     </td>
                 </tr>
             </table>
-
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
             <script>
                 $(function () {
                     var feDebug = false;
