@@ -271,6 +271,7 @@ class ListHopper{
 				
 				// CREATE A NEW TASK FOR TOMORROW
 				unset($task['id']);
+
 				
 				$task['time'] = mktime(date("H", $task['time']), date("i", $task['time']), date("s", $task['time'])) + 86400;
 				$task['time_end'] = ($task['time_end'] == 0)?0:mktime(date("H", $task['time_end']), date("i", $task['time_end']), date("s", $task['time_end'])) + 86400;
