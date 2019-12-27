@@ -350,8 +350,8 @@ class ProcessTrackerSchedules{
 						<th class="row2" align="left"><?=$this->getOrderLink('schedule_name')?>Schedule Name</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('script_process_code')?>Script Process Code</a></th>
 						<th class="row2" align="left"><?=$this->getOrderLink('script_frequency')?>Script Frequency</a></th>
-						<th class="row2" align="left">Last Success</a></th>
-						<th class="row2" align="left">Last Failed</a></th>
+						<th class="row2" align="left"><?=$this->getOrderLink('last_success')?>Last Success</a></th>
+						<th class="row2" align="left"><?=$this->getOrderLink('last_failed')?>Last Failed</a></th>
 					</tr>
 				</table>
 			</td>

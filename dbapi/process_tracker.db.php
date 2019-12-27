@@ -429,7 +429,53 @@ class ProcessTrackerAPI{
 
         return false;
 
-    }
+	}
+	
+	
+	function sendAlert($failed_check) {
+
+		// INCLUDE PEAR FUNCTIONS
+		include_once 'Mail.php';
+		include_once 'Mail/mime.php';
+
+		if(is_array($failed_check)) {
+
+
+			$alert_data 	 = "Schedule Name: ".$failed_check['schedule_name']."\n";
+			$alert_data 	.= "Script Process Code: ".$failed_check['script_process_code']."\n";
+			$alert_data 	.= "Script Frequency: ".$failed_check['script_frequency']."\n";
+			$alert_data 	.= "Last Alert: ".date("H:i:s m/d/Y",$failed_check['last_failed'])."\n";
+ 
+
+			$alert_subject 	= "Process Check Failed Alert - ".$failed_check['schedule_name']." - ".date("H:i:s m/d/Y",$failed_check['last_failed']);
+			
+			$alert_headers 	= array(
+				"From"		=> "dbrummer <dbrummer@localhost.localdomain>",
+				"Subject"	=> $alert_subject
+			);
+
+			$mime = new Mail_mime(array('eol' => "\n"));
+
+			$mime->setTXTBody($alert_data, false);
+
+			$mail_body = $mime->get();
+			$mail_header=$mime->headers($alert_headers);
+		
+			$mail =& Mail::factory('mail');
+
+			if ($mail->send($failed_check['notification_email'], $mail_header, $mail_body) != true) {
+				echo date("H:i:s m/d/Y")." - ERROR: Mail::send() call failed sending to ".$failed_check['notification_email'];
+		
+			}else{
+				
+				echo date("H:i:s m/d/Y")." - Successfully emailed ".$failed_check['notification_email']." - ".$alert_subject."\n";
+		
+			}
+
+
+		}
+
+	}
 	
 	
 	

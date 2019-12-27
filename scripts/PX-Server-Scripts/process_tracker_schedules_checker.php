@@ -42,7 +42,6 @@
     wh_log($logfile,"-------- PROCESS TRACKER SCHEDULES --------");
     
     ### HOURLY SCHEDULE CHECK
-    # RUN EVERYTIME SINCE CHECKER IS EXPECTED TO RUN EVERY HALF HOUR
     wh_log($logfile,"Running hourly schedule check...");
 
     # BUILD SQL AND GRAB ENABLED SCHEDULES TO BE CHECKED HOURLY
@@ -82,6 +81,7 @@
                 # PROCESS CHECK IS TRUE
                 wh_log($logfile,"- Schedule - process_code: ".$hourly_row['script_process_code']." found completed process.");
                 $_SESSION['dbapi']->process_tracker->updateScheduleStatus($hourly_row['id'],'success',$curtime);
+                $hourly_row['last_success'] = $curtime;
 
 
             } else {
@@ -106,7 +106,7 @@
     }
 
 
-    # RUN DAILY CHECK
+    ### DAILY SCHEDULE CHECK
     wh_log($logfile,"Running daily schedule check...");
 
     # BUILD SQL AND GET ENABLED SCHEDULES TO BE CHECKED DAILY
@@ -142,6 +142,7 @@
                 # PROCESS CHECK IS TRUE
                 wh_log($logfile,"- Schedule - process_code: ".$daily_row['script_process_code']." found completed processes.");
                 $_SESSION['dbapi']->process_tracker->updateScheduleStatus($daily_row['id'],'success',$curtime);
+                $daily_row['last_success'] = $curtime;
 
 
             } else {
@@ -165,7 +166,7 @@
                 
     }
 
-    # RUN WEEKLY CHECK
+    ### WEEKLY SCHEDULE CHECK
     wh_log($logfile,"Running weekly schedule check...");
 
     # BUILD SQL AND GET ENABLED SCHEDULES TO BE CHECKED DAILY
@@ -205,6 +206,7 @@
                 # PROCESS CHECK IS TRUE
                 wh_log($logfile,"- Schedule - process_code: ".$weekly_row['script_process_code']." found completed processes.");
                 $_SESSION['dbapi']->process_tracker->updateScheduleStatus($weekly_row['id'],'success',$curtime);
+                $weekly_row['last_success'] = $curtime;
 
 
             } else {
@@ -228,7 +230,7 @@
                 
     }    
 
-    # RUN MONTHLY CHECK
+    ### MONTHLY SCHEDULE CHECK
     wh_log($logfile,"Running monthly schedule check...");
 
     # BUILD SQL AND GET ENABLED SCHEDULES TO BE CHECKED DAILY
@@ -268,6 +270,7 @@
                 # PROCESS CHECK IS TRUE
                 wh_log($logfile,"- Schedule - process_code: ".$monthly_row['script_process_code']." found completed processes.");
                 $_SESSION['dbapi']->process_tracker->updateScheduleStatus($monthly_row['id'],'success',$curtime);
+                $monthly_row['last_success'] = $curtime;
 
 
             } else {
@@ -292,13 +295,16 @@
     }        
 
     # FAILED RUN BREAKDOWN AND ALERTING
+    wh_log($logfile,"Processing failed process checks and alerting...");
 
     # LOOP THROUGH FAILED CHECK ARRAY
+    foreach($failed_checks as $item) {
 
-    # LOG FAILED PROCESSES
+        # LOG FAILED PROCESSES AND SEND ALERT
+        wh_log($logfile," - Failed Check - Sending alert notification for ".$item['schedule_name']);
+        $_SESSION['dbapi']->process_tracker->sendAlert($item);
 
-    # SEND EMAIL ALERT
-    print_r($failed_checks);
+    }
 
     # CLEAN-UP AND CONSOLE OUTPUT
 
