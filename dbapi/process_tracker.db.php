@@ -444,10 +444,11 @@ class ProcessTrackerAPI{
 			$alert_data 	 = "Schedule Name: ".$failed_check['schedule_name']."\n";
 			$alert_data 	.= "Script Process Code: ".$failed_check['script_process_code']."\n";
 			$alert_data 	.= "Script Frequency: ".$failed_check['script_frequency']."\n";
-			$alert_data 	.= "Last Alert: ".date("H:i:s m/d/Y",$failed_check['last_failed'])."\n";
+			$alert_data 	.= "Time Start: ".$failed_check['time_start']."\n";
+			$alert_data 	.= "Last Alert: ".date("Y-m-d h:i:sa",$failed_check['last_failed'])."\n";
  
 
-			$alert_subject 	= "Process Check Failed Alert - ".$failed_check['schedule_name']." - ".date("H:i:s m/d/Y",$failed_check['last_failed']);
+			$alert_subject 	= "Process Check Failed Alert - ".$failed_check['schedule_name']." - ".date("Y-m-d h:i:sa",$failed_check['last_failed']);
 			
 			$alert_headers 	= array(
 				"From"		=> "dbrummer <dbrummer@localhost.localdomain>",
@@ -464,11 +465,11 @@ class ProcessTrackerAPI{
 			$mail =& Mail::factory('mail');
 
 			if ($mail->send($failed_check['notification_email'], $mail_header, $mail_body) != true) {
-				echo date("H:i:s m/d/Y")." - ERROR: Mail::send() call failed sending to ".$failed_check['notification_email'];
+				echo date("Y-m-d h:i:sa")." - ERROR: Mail::send() call failed sending to ".$failed_check['notification_email'];
 		
 			}else{
 				
-				echo date("H:i:s m/d/Y")." - Successfully emailed ".$failed_check['notification_email']." - ".$alert_subject."\n";
+				echo date("Y-m-d h:i:sa")." - Successfully emailed ".$failed_check['notification_email']." - ".$alert_subject."\n";
 		
 			}
 

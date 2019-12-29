@@ -13,4 +13,4 @@ CREATE TABLE `process_tracker_schedules` (
  `last_success` int(10) unsigned NOT NULL DEFAULT '0',
  `last_failed` int(10) unsigned NOT NULL DEFAULT '0',
  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=latin1
+) ENGINE=InnoDB DEFAULT CHARSET=latin1
