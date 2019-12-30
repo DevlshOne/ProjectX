@@ -629,6 +629,23 @@
 
 					accessDenied("UserStatusReport");
 
+				}	
+				break;
+				
+			case 'process_tracker_schedules':
+
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['process_tracker_schedules'] == 'yes') // MANAGERS WITH USER STATUS REPORT ACCESS
+				){
+
+					include_once("classes/process_tracker_schedules.inc.php");
+					$_SESSION['process_tracker_schedules']->handleFLOW();
+
+
+				}else{
+
+					accessDenied("ProcessTrackerSchedules");
+
 				}				
 				
 //				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){

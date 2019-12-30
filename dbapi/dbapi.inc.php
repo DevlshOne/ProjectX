@@ -401,6 +401,8 @@ class DBAPI {
 		include_once($_SESSION['site_config']['basedir']."dbapi/sales_management.db.php");
 		$this->sales_management = new SalesManagementAPI();
 		
+		include_once($_SESSION['site_config']['basedir']."dbapi/process_tracker.db.php");
+		$this->process_tracker = new ProcessTrackerAPI();
 		
 		
 		

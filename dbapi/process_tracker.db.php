@@ -15,16 +15,15 @@
 class ProcessTrackerAPI{
 
 	var $table = "process_tracker";
+	var $schedule_table = "process_tracker_schedules";
 
 
 
 	/**
-	 * Marks a campaign as deleted
+	 * Deletes a Process Tracker Schedule
 	 */
-	function delete($id){
-
-		return false;
-		//$_SESSION['dbapi']->adelete($id,$this->table);
+	function deleteSchedule($id){
+		$_SESSION['dbapi']->adelete($id,$this->schedule_table);
 	}
 
 
@@ -37,6 +36,20 @@ class ProcessTrackerAPI{
 		$id = intval($id);
 
 		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->table."` ".
+						" WHERE id='".$id."' "
+
+					);
+	}
+
+	/**
+	 * Get a Name by ID
+	 * @param 	$id		The database ID of the record
+	 * 	 * @return	assoc-array of the database record
+	 */
+	function getScheduleByID($id){
+		$id = intval($id);
+
+		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->schedule_table."` ".
 						" WHERE id='".$id."' "
 
 					);
@@ -59,7 +72,7 @@ class ProcessTrackerAPI{
 
 
 	/**
-	 * getResults($asso_array)
+	 * getScheduleResults($asso_array)
 
 	 * Array Fields:
 	 * 	fields	: The select fields for the sql query, * is default
@@ -75,6 +88,93 @@ class ProcessTrackerAPI{
 	 * 		"count"=>(amount to limit by)
 	 * 		"offset"=>(optional, the number of records to skip)
 	 */
+	function getScheduleResults($info){
+
+		$fields = ($info['fields'])?$info['fields']:'*';
+
+
+		$sql = "SELECT $fields FROM `".$this->schedule_table."` WHERE 1 ";
+
+
+		## ID FIELD SEARCH
+		## ARRAY OF id's SEARCH
+		if(is_array($info['id'])){
+
+			$sql .= " AND (";
+
+			$x=0;
+			foreach($info['id'] as $idx=>$sid){
+				if($x++ > 0)$sql .= " OR ";
+
+				$sql .= "`id`='".intval($sid)."' ";
+			}
+
+			$sql .= ") ";
+
+		## SINGLE ID SEARCH
+		}else if($info['id']){
+
+			$sql .= " AND `id`='".intval($info['id'])."' ";
+
+		}
+
+
+
+		### ENABLED SEARCH
+		if($info['enabled']){
+
+			$sql .= " AND `enabled`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['enabled'])."' ";
+
+		}
+
+		### SCHEDULE NAME SEARCH
+		if($info['schedule_name']){
+
+			$sql .= " AND `schedule_name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['schedule_name'])."%' ";
+
+		}
+		
+		### SCRIPT PROCESS CODE SEARCH
+		if($info['script_process_code']){
+
+			$sql .= " AND `script_process_code`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['script_process_code'])."' ";
+
+		}
+
+		### SCRIPT FREQUENCY SEARCH
+		if($info['script_frequency']){
+
+			$sql .= " AND `script_frequency`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['script_frequency'])."' ";
+
+		}
+
+		
+		### ORDER BY
+		if(is_array($info['order'])){
+
+			$sql .= " ORDER BY ";
+			$x=0;
+			foreach($info['order'] as $k=>$v){
+				if($x++ > 0)$sql .= ",";
+
+				$sql .= "`$k` ".mysqli_real_escape_string($_SESSION['dbapi']->db,$v)." ";
+			}
+
+		}
+
+		if(is_array($info['limit'])){
+
+			$sql .= " LIMIT ".
+						(($info['limit']['offset'])?$info['limit']['offset'].",":'').
+						$info['limit']['count'];
+
+		}
+
+		## RETURN RESULT SET
+		return $_SESSION['dbapi']->query($sql);
+
+	}
+
 	function getResults($info){
 
 		$fields = ($info['fields'])?$info['fields']:'*';
@@ -262,7 +362,7 @@ class ProcessTrackerAPI{
 
 		## RETURN RESULT SET
 		return $_SESSION['dbapi']->query($sql);
-	}
+	}	
 
 
 
@@ -279,10 +379,104 @@ class ProcessTrackerAPI{
 	
 	
 	
+    function updateScheduleStatus($id,$mode,$time){
+
+        # UPDATE THE LAST SUCCESS OR FIELD FIELD FOR A SCHEDULE
+        # MODE = success or fail
+        $dat = [];
+
+        # SET FIELD VALUE
+        switch($mode){
+            case 'success':
+                $dat = array(
+                    'last_success' 	=> $time,
+                );
+                break;
+
+            case 'fail':
+                $dat = array(
+                    'last_failed' 	=> $time,
+                );
+                break;
+
+        }
+        
+        # UPDATE RECORD
+        $_SESSION['dbapi']->aedit($id,$dat,$this->schedule_table);
+
+    }	
+	
+
+	function processCheck($process_code,$process_time_start,$process_time_end) {
+
+        # CHECK FOR COMPLETED PROCESSES BASED ON PROCESS CODE AND TIME START/END
+        # RETURN TRUE/FALSE IF COMPLETED PROCESS FOUND
+
+        # BUILD SQL FOR COMPLETED PROCESS CHECK
+        $process_check_sql  =   "SELECT id FROM `".$this->table."` WHERE 1";
+        $process_check_sql .=   " AND `process_code` = '".$process_code."' AND `time_started` >= '".$process_time_start."' AND `time_ended` <= '".$process_time_end."' AND `result` = 'completed' ";
+
+        # RUN QUERY AGAINST PROCESS TRACKER TABLE AND MATCH WITH SCHEDULE INFO
+        $process_check_res = $_SESSION['dbapi']->query($process_check_sql);
+
+        # IF COMPLETED PROCESS FOUND RETURN FALSE
+        if(($processcnt=mysqli_num_rows($process_check_res)) > 0){
+
+            return true;
+            exit;
+
+        } 
+
+        return false;
+
+	}
 	
 	
-	
-	
+	function sendAlert($failed_check) {
+
+		// INCLUDE PEAR FUNCTIONS
+		include_once 'Mail.php';
+		include_once 'Mail/mime.php';
+
+		if(is_array($failed_check)) {
+
+
+			$alert_data 	 = "Schedule Name: ".$failed_check['schedule_name']."\n";
+			$alert_data 	.= "Script Process Code: ".$failed_check['script_process_code']."\n";
+			$alert_data 	.= "Script Frequency: ".$failed_check['script_frequency']."\n";
+			$alert_data 	.= "Time Start: ".$failed_check['time_start']."\n";
+			$alert_data 	.= "Last Alert: ".date("Y-m-d h:i:sa",$failed_check['last_failed'])."\n";
+ 
+
+			$alert_subject 	= "Process Check Failed Alert - ".$failed_check['schedule_name']." - ".date("Y-m-d h:i:sa",$failed_check['last_failed']);
+			
+			$alert_headers 	= array(
+				"From"		=> "dbrummer <dbrummer@localhost.localdomain>",
+				"Subject"	=> $alert_subject
+			);
+
+			$mime = new Mail_mime(array('eol' => "\n"));
+
+			$mime->setTXTBody($alert_data, false);
+
+			$mail_body = $mime->get();
+			$mail_header=$mime->headers($alert_headers);
+		
+			$mail =& Mail::factory('mail');
+
+			if ($mail->send($failed_check['notification_email'], $mail_header, $mail_body) != true) {
+				echo date("Y-m-d h:i:sa")." - ERROR: Mail::send() call failed sending to ".$failed_check['notification_email'];
+		
+			}else{
+				
+				echo date("Y-m-d h:i:sa")." - Successfully emailed ".$failed_check['notification_email']." - ".$alert_subject."\n";
+		
+			}
+
+
+		}
+
+	}
 	
 	
 	

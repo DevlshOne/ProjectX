@@ -266,6 +266,12 @@ function parseXMLData(area, tableFormat, xmldoc) {
             copy_area = area + "s";
             callback_func_name = "load" + tagname + "s()";
             break;
+        case 'schedule':
+            obj = getEl(area + '_table');
+            tagname = area.charAt(0).toUpperCase() + area.substr(1);
+            delete_area = "process_tracker_schedules";
+            callback_func_name = "load" + tagname + "s()";
+            break;                    
         default:
             obj = getEl(area + '_table');
             tagname = area.charAt(0).toUpperCase() + area.substr(1);
