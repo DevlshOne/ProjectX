@@ -79,8 +79,6 @@
             <script type="text/javascript" src="js/functions.js"></script>
             <script type="text/javascript" src="js/page_system.js"></script>
             <script type="text/javascript" src="js/modernizr.js"></script> <!-- Modernizr -->
-            <script type="text/javascript" src="js/jquery.menu-aim.js"></script>
-            <script type="text/javascript" src="js/main.js"></script> <!-- Resource jQuery -->
             <script>
                 $('nav.navbar').ready(function () {
                     $('nav.navbar a.dropdown-item').not('#change_password').each(function () {
