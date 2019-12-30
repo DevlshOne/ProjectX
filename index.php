@@ -186,6 +186,19 @@
         </head>
         <body>
         <header class="cd-main-header">
+        </header> <!-- .cd-main-header -->
+        <?
+    }
+
+    // USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
+    if (isset($_SESSION['user']) && $_SESSION['user']['id'] > 0) {
+
+        $_SESSION['dbapi']->users->updateLastActionTime();
+
+        // NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
+        if (!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])) {
+            $_SESSION['interface']->makeNewheader();
+            ?>
             <nav class="navbar fixed-top navbar-expand navbar-light" style="background-color: #7abaff">
                 <div class="collapse navbar-collapse" id="navbarNavDropdown">
                     <ul class="navbar-nav">
@@ -447,28 +460,14 @@
                     </ul>
                 </div>
             </nav>
-        </header> <!-- .cd-main-header -->
         <?
-    }
-
-    // USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
-    if (isset($_SESSION['user']) && $_SESSION['user']['id'] > 0) {
-
-        $_SESSION['dbapi']->users->updateLastActionTime();
-
-        // NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
-        if (!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])) {
-
-            //$_SESSION['interface']->makeHeader();
-            $_SESSION['interface']->makeNewHeader();
-
             if (isset($_REQUEST['area']) && $_REQUEST['area']) {
 
-                ?>
-                <script>
-                    loadSection('<?=stripurl('no_script')?>&no_script=1');
-                </script><?
-            }
+        ?>
+            <script>
+                loadSection('<?=stripurl('no_script')?>&no_script=1');
+            </script><?
+        }
 
         } else {
 

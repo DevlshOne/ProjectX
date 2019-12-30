@@ -39,7 +39,6 @@
                                         $('#change-password-expired-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                                         $('#change-password-expired-div').load("index.php?area=change_expired_password&printable=1&no_script=1");
                                     }
-
                                     loadChangeExpiredPassword();
                                 </script>
                                 <?
