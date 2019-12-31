@@ -48,7 +48,12 @@
 
         }
 
-        function generateData($cluster_id, $stime, $etime, $call_group = NULL, $use_archive_by_default = false, $ignore_arr = NULL, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $combine_users = false) {
+        function getTeamMembers($team_id) {
+            $team_id = intval($team_id);
+            return $_SESSION['dbapi']->ROfetchAllAssoc("SELECT UPPER(`username`) AS username FROM `user_teams` WHERE `team_id` = " . $team_id);
+        }
+
+        function generateData($cluster_id, $user_team_id, $stime, $etime, $call_group = NULL, $use_archive_by_default = false, $ignore_arr = NULL, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $combine_users = false) {
 
             $cluster_id = intval($cluster_id);
             $stime = intval($stime);
@@ -187,6 +192,12 @@
                 while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
                     $username = strtoupper($row['username']);
+                    $use_team = false;
+                    $sql_user_team_list = array();
+                    if($user_team_id) {
+                        $use_team = true;
+                        $sql_user_team_list = $this->getTeamMembers($user_team_id);
+                    }
 
                     if ($combine_users == true && $username[strlen($username) - 1] == '2') {
 
@@ -265,12 +276,7 @@
 //				$agent_array[$username]['daily_activity_time'] = intval($row['DailyActivityTime']);
 
                     // GET TOTAL SALES COUNTS FROM PX
-                    $sql = "SELECT COUNT(`id`) FROM `sales` " . " WHERE `sale_time` BETWEEN '$stime' AND '$etime' " . //	" AND `account_id`='".$_SESSION['account']['id']."' ".
-
-                        (($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . " AND (agent_cluster_id='$cluster_id') " .
-
-                        "";//" AND `call_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."'";
-
+                    $sql = "SELECT COUNT(`id`) FROM `sales` " . " WHERE `sale_time` BETWEEN '$stime' AND '$etime' " . (($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . " AND (agent_cluster_id='$cluster_id') ";
                     list($cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
                     list($paid_sales_cnt) = $_SESSION['dbapi']->ROqueryROW($sql . " AND `is_paid` IN('yes','roustedcc') ");
 
@@ -527,6 +533,12 @@
 
                     $t_time += $tmpttime;
 
+                    if($use_team) {
+                        if(!in_array($tmp, $sql_user_team_list)) {
+                            //                        echo "Skipping " . $tmp . " --> not in selected team." . PHP_EOL;
+                            continue;
+                        }
+                    }
                     if ($combine_users) {
 
                         // FIRST USER
@@ -589,9 +601,9 @@
             return $out;
         }
 
-        function makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $combine_users = false) {
+        function makeHTMLReport($stime, $etime, $cluster_id, $user_team_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $combine_users = false) {
 
-            $data = $this->generateData($cluster_id, $stime, $etime, $user_group, false, $ignore_users, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
+            $data = $this->generateData($cluster_id, $user_team_id, $stime, $etime, $user_group, false, $ignore_users, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
 
             if (count($data) <= 0) {
                 return NULL;
@@ -643,13 +655,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <th height="25" align="left" style="font-size:14px;font-weight:bold"><?
-
+                    <th height="25" align="left" style="font-size:14px;font-weight:bold">
+                        <?
                             echo $user_group_str . '<br />';
-
                             echo '<i>Generated on: ' . date("g:ia m/d/Y") . '</i>';
-
-                        ?></th>
+                        ?>
+                    </th>
                 </tr>
                 <tr>
                     <td>
@@ -1289,6 +1300,7 @@
             $source_cluster_id = intval($_REQUEST['s_source_cluster_id']);
 
             $ignore_source_cluster_id = intval($_REQUEST['s_ignore_source_cluster_id']);
+            $user_team_id = intval($_REQUEST['user_team_id']);
 
             ?>
             <table class="tightTable">
@@ -1431,7 +1443,7 @@
                         <?
                             $ignore_arr = preg_split("/,|;|:| /", $_REQUEST['ignore_users_list'], -1, PREG_SPLIT_NO_EMPTY);
                             $source_cluster_id = intval($_REQUEST['s_source_cluster_id']);
-                            $report = $this->makeHTMLReport($timestamp, $timestamp2, $cluster_id, $_REQUEST['s_user_group'], $ignore_arr, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, (($_REQUEST['combine_users']) ? true : false));
+                            $report = $this->makeHTMLReport($timestamp, $timestamp2, $cluster_id, $user_team_id, $_REQUEST['s_user_group'], $ignore_arr, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, (($_REQUEST['combine_users']) ? true : false));
                             if (!$report) {
                                 echo "No data";
                             } else {
