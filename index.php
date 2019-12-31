@@ -147,15 +147,11 @@
 
                 function loadSection(url) {
                     $('#main_content').empty();
-                    $('#main_content').load(url);
+                    $('#main_content').html('<table class="tightTable"><tr><td class="align-center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load(url);
                     $('body').css('background-color', '#FFFFFF');
                     $('body').css('color', '#000000');
                     $('#main_content').css('background-color', '#FFFFFF');
                     $('#main_content').css('color', '#000000');
-                    $('.cd-side-nav').find('.hover').removeClass('hover');
-                    $('.cd-side-nav').find('.selected').removeClass('selected');
-                    $('.cd-side-nav').removeClass('nav-is-visible');
-                    // $('.cd-main-header').find('.nav-is-visible').removeClass('nav-is-visible');
                     if (dispTimer) {
                         clearInterval(dispTimer);
                         dispTimer = false;
@@ -450,7 +446,7 @@
                                 Account
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="#0">My Account</a>
+                                <!--                                <a class="dropdown-item" href="#0">My Account</a>-->
                                 <a class="dropdown-item" id="change_password" href="#">Change Password</a>
                                 <a class="dropdown-item" href="?o">Logout</a>
                             </div>
