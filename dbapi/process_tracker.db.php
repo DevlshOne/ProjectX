@@ -451,7 +451,7 @@ class ProcessTrackerAPI{
 			$alert_subject 	= "Process Check Failed Alert - ".$failed_check['schedule_name']." - ".date("Y-m-d h:i:sa",$failed_check['last_failed']);
 			
 			$alert_headers 	= array(
-				"From"		=> "dbrummer <dbrummer@localhost.localdomain>",
+				"From"		=> "ATC Reporting <support@advancedtci.com>",
 				"Subject"	=> $alert_subject
 			);
 
