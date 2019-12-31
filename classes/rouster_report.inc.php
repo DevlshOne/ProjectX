@@ -1373,6 +1373,12 @@
                                 </td>
                             </tr>
                             <tr>
+                                <th>User Team:</th>
+                                <td>
+                                    <?= makeTeamsDD("user_team_id", (!isset($_REQUEST['user_team_id']) || intval($_REQUEST['user_team_id']) < 0) ? -1 : $_REQUEST['user_team_id'], '', ""); ?>
+                                </td>
+                            </tr>
+                            <tr>
                                 <th height="30">Ignore Users:<br/>(<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
 
                                 <td>
