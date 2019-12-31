@@ -939,12 +939,19 @@ class DBAPI {
 			
 			if($time_taken > $this->slow_query_time_limit){
 				
-				file_put_contents($this->slow_query_log_file, $_SESSION['user']['username'].'(#'.$_SESSION['user']['id'].") @ ".date("H:i:s m/d/Y")."\n".
+				if($_SESSION['user']){
+					file_put_contents($this->slow_query_log_file, $_SESSION['user']['username'].'(#'.$_SESSION['user']['id'].") @ ".date("H:i:s m/d/Y")."\n".
 						$cmd."\n".
 						(($this->slow_query_debugging_only && $this->explain_queries)?$this->explainSQL($cmd)."\n":'').
 						"Query Time: ".$time_taken."    # of rows:".mysqli_num_rows($res)."\n\n"
 						,FILE_APPEND);
-				
+				}else{
+					file_put_contents($this->slow_query_log_file, "Server side script @ ".date("H:i:s m/d/Y")."\n".
+							$cmd."\n".
+							(($this->slow_query_debugging_only && $this->explain_queries)?$this->explainSQL($cmd)."\n":'').
+							"Query Time: ".$time_taken."    # of rows:".mysqli_num_rows($res)."\n\n"
+							,FILE_APPEND);
+				}
 				
 				
 			}
