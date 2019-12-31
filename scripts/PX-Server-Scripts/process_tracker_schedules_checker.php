@@ -4,22 +4,23 @@
     /***
      * 
      * Process Tracker Schedules Checker
-     * 
+     * Written by: Daniel Brummer
      *  
      */
+	session_start();
 
     # DISABLE MOST ERROR REPORTING
     error_reporting(E_ERROR | E_PARSE);
 
     # MODULE INCLUDES & VARIABLE DECLARATIONS
-    #$base_dir = "/var/www/html/reports/";
-    $base_dir = "/var/www/html/ProjectX-ReportsAndAdmin/";
+    $base_dir = "/var/www/html/staging-git/";
+    //$base_dir = "/var/www/html/ProjectX-ReportsAndAdmin/";
 
     require_once($base_dir."db.inc.php");
 
 	include_once($base_dir."dbapi/dbapi.inc.php");
 
-    $logfile = $base_dir."scripts/PX-Server-Scripts/process_tracker_schedules_".date('d-M-Y').".log";
+    $logfile = "/var/log/px-process_tracker_schedules_".date('d-M-Y').".log";
 
     $schedule_base_sql = "SELECT * FROM `".$_SESSION['dbapi']->process_tracker->schedule_table."` WHERE 1";
     
