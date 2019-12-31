@@ -20,64 +20,64 @@
 
 		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
 	}
-	
+
 	if($uri != null){
 		header("Location: ".$uri);
 		exit;
 	}
-	
+
 	//print_r($_SERVER);
-	
-	
+
+
 	/**
 	 * Database connection made here
 	 */
 	include_once("site_config.php");
-	
+
 	// GENERIC DB FUNCTIONS
 	include_once("db.inc.php");
 	include_once("utils/microtime.php");
 	include_once("dbapi/dbapi.inc.php");
-		
+
 	/**
 	 * Additional includes/requires go here
 	 */
 	include_once("utils/jsfunc.php");
 	include_once("utils/stripurl.php");
-	
+
 	include_once("utils/format_phone.php");
 	include_once("utils/rendertime.php");
 	include_once("utils/DropDowns.php");
 	include_once("utils/functions.php");
 	include_once("utils/feature_functions.php");
 	include_once("utils/db_utils.php");
-	
-	
+
+
 	include_once("classes/genericDD.inc.php");
 	include_once("classes/interface.inc.php");
 	include_once("classes/languages.inc.php");
-	
-	
+
+
 	// DESTROY THE SESSION/LOGOUT ?o
 	if(isset($_REQUEST['o'])){
-		
+
 		if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
-			
+
 			$_SESSION['dbapi']->users->updateLogoutTime();
-			
+
 		}
-		
-		
+
+
 		session_unset();
-		
-		
+
+
 		jsRedirect("index.php");
 		exit;
-		
+
 	}
-	
-	
-	
+
+
+
 /*?><!DOCTYPE HTML>
 <html>
 <head>
@@ -210,7 +210,7 @@
 
             		$('#main_content').css('background-color', '#FFFFFF');
                     $('#main_content').css('color', '#000000');
-            		
+
 					$('.cd-side-nav').find('.hover').removeClass('hover');
 					$('.cd-side-nav').find('.selected').removeClass('selected');
 					$('.cd-side-nav').removeClass('nav-is-visible');
@@ -244,32 +244,14 @@
 
 					$('.priorityRender').each(function( index ) {
 
-						$(this).html( 
-								
+						$(this).html(
+
 							priorityProcessing( $(this).html() )
-							 
+
 						);
 						 // console.log( index + ": " + $( this ).text() );
 					});
 				}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			</script>
 		</head>
 		<body>
@@ -280,19 +262,19 @@
 	// USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
 	if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
 
-		
-		
+
+
 		// RELOAD THE USER/ACCOUNT/FEATURE SET, MAKE SURE USER STILL ENABLED, ACCOUNT STILL ACTIVE, ETC
 		$_SESSION['dbapi']->users->refreshFeaturesAndPrivs();
-		
-		
-		
+
+
+
 		$_SESSION['dbapi']->users->updateLastActionTime();
-		
-		
-		
-		
-		
+
+
+
+
+
 		// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
 		if(!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])){
 
@@ -390,8 +372,8 @@
 					accessDenied("Campaigns");
 				}
 				break;
-					
-					
+
+
 			case 'scripts':
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
@@ -407,19 +389,6 @@
 					accessDenied("Scripts");
 
 				}
-
-
-//				if($_SESSION['user']['priv'] == 4 && ($_SESSION['user']['feat_config'] != 'yes' && $_SESSION['feat_advanced'] != 'yes')){
-//
-//					echo "You lack the ability to access this section. Access to config is denied.";
-//
-//				}else{
-//
-//					include_once("classes/scripts.inc.php");
-//					$_SESSION['scripts']->handleFLOW();
-//				}
-
-
 				break;
 
 			case 'server_status':
@@ -439,49 +408,17 @@
 					accessDenied("Server Status");
 
 				}
-
-
-//				if($_SESSION['user']['priv'] < 5){
-//
-//					echo "You lack the ability to access this section. Access to server status is denied.";
-//
-//				}else{
-//
-//					include_once("classes/server_status.inc.php");
-//					$_SESSION['server_status']->handleFLOW();
-//
-//				}
-
 				break;
 
 			case 'users':
-
-
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
 					($_SESSION['user']['priv'] == 4 && $_SESSION['features']['users'] == 'yes') // MANAGERS WITH USERS ACCESS
 				){
-
 					include_once("classes/users.inc.php");
 					$_SESSION['users']->handleFLOW();
-
 				}else{
-
 					accessDenied("Users");
-
 				}
-
-
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to advanced config is denied.";
-//
-//				}else{
-//
-//					include_once("classes/users.inc.php");
-//					$_SESSION['users']->handleFLOW();
-//
-//				}
-
 				break;
 			case 'extensions':
 
@@ -498,31 +435,7 @@
 					accessDenied("Extensions");
 
 				}
-
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to advanced config is denied.";
-//
-//				}else{
-//					include_once("classes/extensions.inc.php");
-//					$_SESSION['extensions']->handleFLOW();
-//
-//				}
-
 				break;
-//			case 'reports':
-//
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_reports'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to reports is denied.";
-//
-//				}else{
-//
-//					echo "Reports coming as soon as someone tells me what kind of reports they want";
-//
-//				}
-//
-//				break;
 			case 'voices':
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
@@ -537,19 +450,6 @@
 					accessDenied("Voices");
 
 				}
-
-
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to advanced config is denied.";
-//
-//				}else{
-//
-//					include_once("classes/voices.inc.php");
-//					$_SESSION['voices']->handleFLOW();
-//				}
-
-
 				break;
 			case 'messages':
 
@@ -566,19 +466,6 @@
 					accessDenied("Messages");
 
 				}
-
-
-
-
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_messages'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to messages is denied.";
-//
-//				}else{
-//					include_once("classes/messages.inc.php");
-//					$_SESSION['messages']->handleFLOW();
-//				}
-
 				break;
 			case 'names':
 
@@ -614,7 +501,7 @@
 				}
 
 				break;
-				
+
 			case 'user_status_report':
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
@@ -629,18 +516,17 @@
 
 					accessDenied("UserStatusReport");
 
-				}				
-				
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to advanced config is denied.";
-//
-//				}else{
-//
-//					include_once("classes/names.inc.php");
-//					$_SESSION['names']->handleFLOW();
-//
-//				}
+				}
+				break;
+                case 'user_teams':
+                    if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['user_teams'] == 'yes') // MANAGERS WITH USER STATUS REPORT ACCESS
+                    ){
+                        include_once("classes/user_teams.inc.php");
+                        $_SESSION['user_teams']->handleFLOW();
+                    }else{
+                        accessDenied("UserTeams");
+                    }
 				break;
 
 			case 'problems':
@@ -719,27 +605,27 @@
 
 
 				break;
-			
+
 			case 'sales_management':
-				
+
 				if(	checkAccess('sales_management') // MANAGERS WITH LEAD MANAGEMENT ACCESS
 				){
-					
-					
+
+
 					include_once("classes/sales_management.inc.php");
-					
+
 					$_SESSION['sales_management']->handleFLOW();
-					
-					
-					
+
+
+
 				}else{
-					
+
 					accessDenied("Sales Management");
-					
+
 				}
-				
+
 				break;
-				
+
 			case 'lead_management':
 
 
@@ -992,7 +878,7 @@
 				}
 
 				break;
-				
+
 			case 'user_groups_master':
 				if (checkAccess('users')) {
 					include_once("classes/user_groups_master.inc.php");
@@ -1001,7 +887,7 @@
 					accessDenied("Users");
 				}
 				break;
-				
+
 
 			case 'report_emails':
 
@@ -1056,18 +942,18 @@
 				break;
 
 			case 'capacity_report':
-				
+
 				include_once("classes/capacity_report.inc.php");
 				$_SESSION['capacity_report']->handleFLOW();
-				
-				
+
+
 				break;
 			case 'callerid_stats_report':
-				
+
 				include_once("classes/callerid_stats_report.inc.php");
 				$_SESSION['callerid_stats_report']->handleFLOW();
-				
-				
+
+
 				break;
 //			case 'fec_filer':
 //
@@ -1091,7 +977,7 @@
 
 
 				break;
-			}			
+			}
 
 			if(isset($_REQUEST['no_nav'])){
 				?></div><?

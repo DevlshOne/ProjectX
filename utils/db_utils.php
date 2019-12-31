@@ -11,22 +11,22 @@
 	 * SKUNKWORKS CALLERID DATABASE CONNECTION
 	 */
 	function connectCallerIDDB(){
-		
+
 		$db = mysqli_connect(
 				$_SESSION['site_config']['callerid_db']['sqlhost'],
 				$_SESSION['site_config']['callerid_db']['sqllogin'],
 				$_SESSION['site_config']['callerid_db']['sqlpass'],
 				$_SESSION['site_config']['callerid_db']['sqldb']
 				);
-		
+
 		if(!$db){
-			
+
 			echo "CallerID DB: ".$_SESSION['site_config']['callerid_db']['sqlhost'].": Error connecting to ". $_SESSION['site_config']['callerid_db']['sqlhost']."\n";
 			return false;
-			
+
 		}
-		
-		
+
+
 		// DB CONNECTED AT THIS POINT
 		// SELECT THE DATABASE
 		//		if(!mysql_select_db($_SESSION['site_config']['ccidb']['sqldb'])){
@@ -35,17 +35,17 @@
 		//
 		//			return false;
 		//		}
-		
-		
-		
+
+
+
 		// SAVE DB TO SESSION, SO THE db.inc.php FUNCTIONS WORK
 		$_SESSION['db'] = $db;
-		
-		
+
+
 		return true;
 	}
-		
-		
+
+
 	function connectCCIDB(){
 
 		$db = mysqli_connect(
@@ -278,17 +278,17 @@
 		}
 		return null;
 	}
-	
+
 	function getPXServer($px_server_id){
 		connectPXDB();
-		
+
 		return querySQL("SELECT * FROM `servers` WHERE `id` = '" . intval($px_server_id) . "'");
 
 	}
-	
+
 	function getServerName($px_server_id){
 		connectPXDB();
-		
+
 		list($name) = queryROW("SELECT `name` FROM `servers` WHERE `id` = '" . intval($px_server_id) . "'");
 		return $name;
 	}
@@ -401,9 +401,13 @@
 
     function getUsername($id) {
         $id = intval($id);
-
         list($name) = $_SESSION['dbapi']->queryROW("SELECT name FROM `users` WHERE id='" . $id . "' ");
         return $name;
+    }
+
+    function getUserTeams() {
+        $teams = fetchAllAssoc("SELECT `id` AS `team_id`, `team_name` FROM `user_teams` WHERE `status` = 'enabled' ORDER BY `team_name`");
+        return $teams;
     }
 
     function makeTeamsDD($name, $selected, $css, $onchange, $blank_option = 1) {

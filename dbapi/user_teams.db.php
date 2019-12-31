@@ -1,4 +1,5 @@
-<?
+<? /** @noinspection PhpUnnecessaryLocalVariableInspection */
+
     /**
      * Users SQL Functions
      */
