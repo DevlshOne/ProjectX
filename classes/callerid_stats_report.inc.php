@@ -267,7 +267,7 @@ Query #2 is the old method. (has not been coverted over)
             
             connectPXDB();
             
-//             print_r($out);
+//            print_r($out);
             
             
             $code_arr = array();
@@ -360,7 +360,7 @@ Query #2 is the old method. (has not been coverted over)
             	$out[$phone]['cnt_contacts'] = $out[$phone]['cnt_total'] - $out[$phone]['cnt_no_contacts'];
             }*/
 
-
+//print_r($out);
             return $out;
         }
 
@@ -404,6 +404,7 @@ Query #2 is the old method. (has not been coverted over)
 
         
         	//generateData($cluster_id, $stime, $etime, $user_group);
+//print_r($data);
 
             if (count($data) <= 0) {
                 return NULL;
@@ -558,8 +559,13 @@ Query #2 is the old method. (has not been coverted over)
             connectPXDB();
 
             // RETURN HTML
-            if ($tcount > 0) return $data; else
+            if ($tcount > 0){
+            	
+            	return $data;
+            	
+            }else{
                 return NULL;
+            }
 
         }
         
