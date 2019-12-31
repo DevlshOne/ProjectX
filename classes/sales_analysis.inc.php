@@ -237,7 +237,7 @@
                 }
                 if($use_team) {
                     if(!in_array($tmp, $sql_user_team_list)) {
-                        echo "Skipping " . $tmp . " --> not in selected team." . PHP_EOL;
+//                        echo "Skipping " . $tmp . " --> not in selected team." . PHP_EOL;
                         continue;
                     }
                 }
