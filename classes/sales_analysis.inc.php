@@ -219,6 +219,9 @@ class SalesAnalysis{
 		}
 		
 		
+		$sql_user_group_for_activity_join = '';
+		$sql_user_group_lmt = '';
+		
 		if($user_group){
 			
 			//print_r($user_group);
@@ -230,33 +233,44 @@ class SalesAnalysis{
 				if(count($user_group) > 0 && trim($user_group[0]) != ''){
 					
 					$sql_user_group = " AND ( ";
-					
+					$sql_user_group_for_activity_join = " AND ( ";
+					$sql_user_group_lmt = " AND ( ";
 					
 					foreach($user_group as $group){
 						
-						if($x++ > 0)$sql_user_group .= " OR ";
+						if($x++ > 0){
+							$sql_user_group .= " OR ";
+							$sql_user_group_for_activity_join .= " OR ";
+							$sql_user_group_lmt .= " OR ";
+						}
 						
 						$sql_user_group .= " call_group='".mysqli_real_escape_string($_SESSION['db'],$group)."' ";
-						
+						$sql_user_group_for_activity_join	.= " transfers.call_group='".mysqli_real_escape_string($_SESSION['db'],$group)."' ";
+						$sql_user_group_lmt	.= " user_group='".mysqli_real_escape_string($_SESSION['db'],$group)."' ";
 					}
 					
 					$sql_user_group .= ")";
-					
+					$sql_user_group_for_activity_join .= ")";
+					$sql_user_group_lmt .= ")";
 					
 				}
 				
 				if($x == 0){
 					$sql_user_group = "";
+					$sql_user_group_for_activity_join = "";
+					$sql_user_group_lmt = "";
 				}
 				
 			}else{
 				
 				$sql_user_group = " AND call_group='".mysqli_real_escape_string($_SESSION['db'],$user_group)."' ";
+				$sql_user_group_for_activity_join = " AND transfers.call_group='".mysqli_real_escape_string($_SESSION['db'],$user_group)."' ";
+				$sql_user_group_lmt = " AND user_group='".mysqli_real_escape_string($_SESSION['db'],$user_group)."' ";
 				
 			}
 		}
 		
-		
+		$sql_ignore_group_lmt = '';
 		
 		if($ignore_group){
 			
@@ -267,28 +281,35 @@ class SalesAnalysis{
 				if(count($ignore_group) > 0 && trim($ignore_group[0]) != ''){
 					
 					$sql_ignore_group = " AND ( ";
+					$sql_ignore_group_lmt = " AND ( ";
 					
 					foreach($ignore_group as $group){
 						
-						if($x++ > 0)$sql_ignore_group .= " AND ";
+						if($x++ > 0){
+							$sql_ignore_group .= " AND ";
+							$sql_ignore_group_lmt .= " AND ";
+						}
 						
 						$sql_ignore_group .= " call_group != '".mysqli_real_escape_string($_SESSION['db'],$group)."' ";
+						$sql_ignore_group_lmt .= " user_group != '".mysqli_real_escape_string($_SESSION['db'],$group)."' ";
 						
 					}
 					
 					$sql_ignore_group .= ")";
-					
+					$sql_ignore_group_lmt .= ")";
 				}
 				
 				
 				
 				if($x == 0){
 					$sql_ignore_group = "";
+					$sql_ignore_group_lmt = "";
 				}
 				
 			}else{
 				
 				$sql_ignore_group = " AND call_group != '".mysqli_real_escape_string($_SESSION['db'],$ignore_group)."' ";
+				$sql_ignore_group_lmt = " AND user_group != '".mysqli_real_escape_string($_SESSION['db'],$ignore_group)."' ";
 				
 			}
 		}
@@ -328,32 +349,84 @@ class SalesAnalysis{
 		$cluster_array=array();
 		
 		
-		$sql = "SELECT DISTINCT(transfers.agent_username), transfers.agent_cluster_id FROM transfers ".
-				" LEFT JOIN `lead_tracking` ON `lead_tracking`.id = transfers.lead_tracking_id ".
-				" WHERE transfers.xfer_time BETWEEN '$stime' AND '$etime' ".
-				" AND transfers.agent_cluster_id > 0 ".
+// 		$sql = "SELECT DISTINCT(transfers.agent_username), transfers.agent_cluster_id FROM transfers ".
+// 				" LEFT JOIN `lead_tracking` ON `lead_tracking`.id = transfers.lead_tracking_id ".
+// 				" WHERE transfers.xfer_time BETWEEN '$stime' AND '$etime' ".
+// 				" AND transfers.agent_cluster_id > 0 ".
+				
+// 				$sql_vici_campaign.
+				
+// 				// EXCLUDE ANYTHING ROUSTING RELATED
+// 				" AND transfers.verifier_dispo != 'SALECC' ".
+		
+// 				//" AND `account_id`='".$_SESSION['account']['id']."' ".
+// 				$sql_cluster.
+// 				$sql_campaign.
+// 				$sql_user_group.
+// 				$sql_ignore_group.
+// 				$ofcsql.
+// 				" ORDER BY agent_username ASC";
+
+		
+// 		$sql = "SELECT DISTINCT(activity_log.username) AS agent_username, IF(transfers.agent_cluster_id=0, activity_log.vici_cluster_id, transfers.agent_cluster_id) as agent_cluster_id FROM activity_log ".
+// 				" LEFT JOIN `transfers` ON transfers.agent_username = activity_log.username ".
+// 				" LEFT JOIN `lead_tracking` ON `lead_tracking`.id = transfers.lead_tracking_id ".
+// 				" WHERE activity_log.time_started BETWEEN '$stime' AND '$etime'".
+// 				//" AND transfers.xfer_time BETWEEN '$stime' AND '$etime' ".
+// 				//" AND CLUSTERID > 0 ".
+				
+// 				$sql_vici_campaign.
+				
+// 				// EXCLUDE ANYTHING ROUSTING RELATED
+// 		" AND transfers.verifier_dispo != 'SALECC' ".
+		
+// 		//" AND `account_id`='".$_SESSION['account']['id']."' ".
+// 		$sql_cluster.
+// 		$sql_campaign.
+// 		//$sql_user_group.
+// 		$sql_user_group_for_activity_join.
+// 		$sql_ignore_group.
+// 		$ofcsql.
+// 		" ORDER BY agent_username ASC";
+				
+		
+		
+		$sql = "SELECT DISTINCT(agent_username), lead_tracking.vici_cluster_id FROM `lead_tracking` ".
+		
+				"WHERE lead_tracking.`time` BETWEEN '$stime' AND '$etime' ".
 				
 				$sql_vici_campaign.
 				
-				// EXCLUDE ANYTHING ROUSTING RELATED
-				" AND transfers.verifier_dispo != 'SALECC' ".
-		
-				//" AND `account_id`='".$_SESSION['account']['id']."' ".
-				$sql_cluster.
-				$sql_campaign.
-				$sql_user_group.
-				$sql_ignore_group.
-				$ofcsql.
-				" ORDER BY agent_username ASC";
-		
 				
-		//echo $sql;
+		//		$sql_cluster.
+				$sql_agent_cluster.
+		 		$sql_campaign.
+		 		
+		 		
+		// 		$sql_user_group.
+		// 		$sql_user_group_for_activity_join.
+				$sql_user_group_lmt.
+			
+				$sql_ignore_group_lmt.
+		// 		$sql_ignore_group.
+		
+		
+		 		$ofcsql.
+		 		" ORDER BY agent_username ASC";
+				"".
+				"".
+				"";
+		
+		
+ 		echo $sql."<br />\n";
 		$res = $_SESSION['dbapi']->ROquery($sql);
 		//$res = query("SELECT DISTINCT(agent_username),agent_cluster_id FROM sales ".$where." ORDER BY agent_username ASC");
 		while($row = mysqli_fetch_row($res)){
 			
-			$tmp =  strtoupper($row[0]);
+			$tmp =  strtoupper(trim($row[0]));
 			
+			// SKIP BLANK USERNAME
+			if(!$tmp)continue;
 			
 			// USER GROUP FILTER
 			// IGNORE GROUP FILTER

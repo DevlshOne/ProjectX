@@ -19,6 +19,11 @@ class FormBuilderAPI{
 		return $_SESSION['dbapi']->adelete($id,$this->table);
 	}
 
+	function createNewForm($campID) {
+	    return;
+//	    return $_SESSION['dbapi']->
+    }
+
 	/**
 	 * Get a Name by ID
 	 * @param 	$id		The database ID of the record
@@ -45,36 +50,119 @@ class FormBuilderAPI{
             $insVals = [];
             foreach($d as $k => $v) {
                 switch($k) {
-                    case 'isRequired':
-                    case 'lblWidth':
-                    case 'lblHeight':
-                    case 'toolTip':
-                    case 'placeHolder':
-                    case 'cssName':
-                    case 'campID':
-                    case 'screenNum':
-                    case 'dbID':
-                    case 'fldName':
-                    case 'txtLabel':
-                    case 'idx':
-                    case 'fldValue':
-                    case 'fldType':
-                    case 'fldMaxLength':
-                    case 'fldWidth':
-                    case 'fldHeight':
-                    case 'fldSpecial':
-                    case 'fldOptions':
-                    case 'dbTable':
-                    case 'dbField':
-                    case 'fldVariables':
-                    case 'callStep':
-                    case 'lblPosX':
-                    case 'lblPosY':
-                    case 'fldPosX':
-                    case 'fldPosY':
-                    case 'isHidden':
-                    case 'isLocked':
                     case 'id':
+                        break;
+                    case 'isRequired':
+                        $insKeys[] = 'is_required';
+                        $insVals[] = '0';
+                        break;
+                    case 'isHidden':
+                        $insKeys[] = 'is_hidden';
+                        $insVals[] = '0';
+                        break;
+                    case 'isLocked':
+                        $insKeys[] = 'is_locked';
+                        $insVals[] = '0';
+                        break;
+                    case 'lblWidth':
+                        $insKeys[] = 'label_width';
+                        $insVals[] = '150';
+                        break;
+                    case 'lblHeight':
+                        $insKeys[] = 'label_height';
+                        $insVals[] = '30';
+                        break;
+                    case 'toolTip':
+                        $insKeys[] = 'tool_tip';
+                        $insVals[] = 'Tool tip for new field';
+                        break;
+                    case 'placeHolder':
+                        $insKeys[] = 'place_holder';
+                        $insVals[] = 'Place holder for new field';
+                        break;
+                    case 'cssName':
+                        $insKeys[] = 'css_class';
+                        $insVals[] = '';
+                        break;
+                    case 'campID':
+                        $insKeys[] = 'campaign_id';
+                        $insVals[] = $v;
+                        break;
+                    case 'screenNum':
+                        $insKeys[] = 'screen_num';
+                        $insVals[] = $v;
+                        break;
+                    case 'dbID':
+                        break;
+                    case 'fldName':
+                        $insKeys[] = 'field_name';
+                        $insVals[] = 'New Field';
+                        break;
+                    case 'txtLabel':
+                        $insKeys[] = 'name';
+                        $insVals[] = 'New Field';
+                        break;
+                    case 'idx':
+                        break;
+                    case 'fldValue':
+                        $insKeys[] = 'value';
+                        $insVals[] = '';
+                        break;
+                    case 'fldType':
+                        $insKeys[] = 'field_type';
+                        $insVals[] = '0';
+                        break;
+                    case 'fldMaxLength':
+                        $insKeys[] = 'max_length';
+                        $insVals[] = '128';
+                        break;
+                    case 'fldWidth':
+                        $insKeys[] = 'field_width';
+                        $insVals[] = '150';
+                        break;
+                    case 'fldHeight':
+                        $insKeys[] = 'field_height';
+                        $insVals[] = '30';
+                        break;
+                    case 'fldSpecial':
+                        $insKeys[] = 'special_mode';
+                        $insVals[] = '';
+                        break;
+                    case 'fldOptions':
+                        $insKeys[] = 'options';
+                        $insVals[] = '';
+                        break;
+                    case 'dbTable':
+                        $insKeys[] = 'db_table';
+                        $insVals[] = '';
+                        break;
+                    case 'dbField':
+                        $insKeys[] = 'db_field';
+                        $insVals[] = '';
+                        break;
+                    case 'fldVariables':
+                        $insKeys[] = 'variables';
+                        $insVals[] = '';
+                        break;
+                    case 'callStep':
+                        $insKeys[] = 'field_step';
+                        $insVals[] = '0';
+                        break;
+                    case 'lblPosX':
+                        $insKeys[] = 'label_x';
+                        $insVals[] = '0';
+                        break;
+                    case 'lblPosY':
+                        $insKeys[] = 'label_y';
+                        $insVals[] = '0';
+                        break;
+                    case 'fldPosX':
+                        $insKeys[] = 'field_x';
+                        $insVals[] = '0';
+                        break;
+                    case 'fldPosY':
+                        $insKeys[] = 'field_y';
+                        $insVals[] = '0';
                         break;
                     default:
                         $insKeys[] = $k;

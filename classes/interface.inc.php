@@ -8,12 +8,10 @@
 
     class InterfaceClass
     {
-        public function InterfaceClass()
-        {
+        public function InterfaceClass(){
         }
 
-        public function makeNewHeader()
-        {
+        public function makeNewHeader(){
             ?>
             <header class="cd-main-header">
 
@@ -275,6 +273,15 @@
                                                     Dialer</a></li><?
                                         }
 
+                                        if (checkAccess('callerid_stats_report')) {
+                                        	?>
+                                            <li><a href="?area=callerid_stats_report&no_script=1"
+                                                   onclick="loadSection(this.href);return false">CallerID Stats Report</a>
+                                            </li><?
+                                        }
+                                        
+                                        
+                                        
                                         if (checkAccess('user_charts')) {
                                             ?>
                                             <li><a href="?area=user_charts&no_script=1"

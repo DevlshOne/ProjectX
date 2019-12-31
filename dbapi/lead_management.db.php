@@ -397,8 +397,26 @@ class LeadManagementAPI{
 
 		}
 
-
-
+		if(is_array($info['outbound_phone_num'])){
+			
+			$sql .= " AND (";
+			
+			$x=0;
+			foreach($info['outbound_phone_num'] as $idx=>$n){
+				if($x++ > 0)$sql .= " OR ";
+				
+				$sql .= "`outbound_phone_num` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
+			}
+			
+			$sql .= ") ";
+			
+			## SINGLE PHONE SEARCH
+		}else if($info['outbound_phone_num']){
+			
+			$sql .= " AND `outbound_phone_num` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['outbound_phone_num'])."%' ";
+			
+		}
+		
 
 
 	### Cluster SEARCH

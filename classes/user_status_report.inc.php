@@ -144,6 +144,9 @@ class UserStatusReport{
 			<th align="left" width="150">Server Name</th>
 			<th align="left" width="150">User Group</th>
 			<th align="left" width="150">Username</th>
+			<th align="left" width="150">Client Mode</th>
+			<th align="left" width="150">Live Mode</th>
+			<th align="left" width="150">Campaign ID</th>
 			<th align="left" width="150">Campaign</th>
 			<th align="left" width="150">Voice</th>
 			<th align="left" width="150">Login Duration</th>
@@ -156,12 +159,28 @@ class UserStatusReport{
 		foreach($data_array as $pxuser){
 
 			?><tr>			
-			<td><?=htmlentities($pxuser['server_name'])?></td>
-			<td><?=htmlentities($pxuser['user_group'])?></td>
-			<td><?=htmlentities($pxuser['username'])?></td>
-			<td><?=htmlentities($_SESSION['dbapi']->campaigns->getName($pxuser['campaign_id']))?></td>
-			<td><?=htmlentities($_SESSION['dbapi']->voices->getName($pxuser['voice_id']))?></td>
-			<td><?=htmlentities($pxuser['login_duration'])?></td>
+				<td><?=htmlentities($pxuser['server_name'])?></td>
+				<td><?=htmlentities($pxuser['user_group'])?></td>
+				<td><?=htmlentities($pxuser['username'])?></td>
+				<td><?
+				
+					echo htmlentities($pxuser['client_mode']);
+					
+					
+				?></td>
+				<td><?
+				
+					if($pxuser['live_agent_mode'] == "true"){
+						echo "LIVE";
+					}else{
+						echo "System";
+					}
+					
+				?></td>
+				<td><?=htmlentities($pxuser['campaign'])?></td>
+				<td><?=htmlentities($_SESSION['dbapi']->campaigns->getName($pxuser['campaign_id']))?></td>
+				<td><?=htmlentities($_SESSION['dbapi']->voices->getName($pxuser['voice_id']))?></td>
+				<td><?=htmlentities($pxuser['login_duration'])?></td>
 			</tr><?
 
 		}
@@ -268,13 +287,21 @@ class UserStatusReport{
 							# GRAB PXUSER ENTRY AND ADD IT TO THE DATA ARRAY
 							$px_user = $_SESSION['JXMLP']->parseOne($pxuser, 'PXUser', 1);
 
-							# WE NEED TO CHERRY PICK DATA BECAUSE WE NEED THE SERVER NAME
-							$user_data[$i]['username'] = $px_user['username'];
-							$user_data[$i]['campaign_id'] = $px_user['campaign_id'];
-							$user_data[$i]['voice_id'] = $px_user['voice_id'];
-							$user_data[$i]['user_group'] = $px_user['user_group'];
-							$user_data[$i]['login_duration'] = $px_user['login_duration'];
-							$user_data[$i]['server_name'] = $server['name'];
+							// ADD THE SERVER ID FIELD TO THE RAW/PARSED ARRAY
+							$px_user['server_name'] = $server['name'];
+							
+							// THEN PUSH WHOLE ARRAY TO THE STACK, SO ADDING NEW FIELDS DOESN'T NEED REMAPPING
+							$user_data[$i] = $px_user;
+							
+							
+							# DAN: WE NEED TO CHERRY PICK DATA BECAUSE WE NEED THE SERVER NAME
+// 							$user_data[$i]['username'] = $px_user['username'];
+// 							$user_data[$i]['campaign'] = $px_user['campaign'];
+// 							$user_data[$i]['campaign_id'] = $px_user['campaign_id'];
+// 							$user_data[$i]['voice_id'] = $px_user['voice_id'];
+// 							$user_data[$i]['user_group'] = $px_user['user_group'];
+// 							$user_data[$i]['login_duration'] = $px_user['login_duration'];
+// 							$user_data[$i]['server_name'] = $server['name'];
 
 							$i++;
 

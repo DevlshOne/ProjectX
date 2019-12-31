@@ -626,6 +626,7 @@ Sidebar
   display: none;
   background-color: #1c1f22;
 }
+
 .has-children > a::after {
   /* arrow icon */
   position: absolute;
@@ -641,6 +642,8 @@ Sidebar
   -o-transform: translateY(-50%);
   transform: translateY(-50%);
   background: url(../images/cd-arrow.svg);
+
+ 
 }
 .has-children.selected > ul {
   display: block;

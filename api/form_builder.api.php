@@ -22,6 +22,9 @@
                     $_SESSION['api']->outputCopySuccess();
                     break;
                 case 'new':
+                    $id = intval($_REQUEST['targetID']);
+                    $newID = $_SESSION['dbapi']->form_builder->createNewForm($id);
+                    logAction('create', 'form_builder', $newID, "New form created");
                     break;
                 case 'delete':
                     $id = intval($_REQUEST['id']);

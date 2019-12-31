@@ -1,3 +1,5 @@
+var formFields = [];
+
 function isEmpty(obj) {
     for(let key in obj) {
         if(obj.hasOwnProperty(key)) return false;
@@ -81,7 +83,7 @@ function frmField(index, o) {
 frmField.prototype = {
     constructor: frmField,
     saveToDB: function() {
-        $.post('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function() {
+        $.post('api/api.php?get=form_builder&mode=json&action=saveField&field=' + JSON.stringify(this), function(response) {
         })
             .done(function() {
                 return 1;
@@ -113,35 +115,35 @@ frmField.prototype = {
             '</tr>' +
             '<tr>' +
             	'<td class="pad_top">'+
-            	
+
             		'<table border="0" width="100%">'+
             		'<tr><td>'+
-            	
+
 		            	'<table border="0"><tr><td><label class="fafLabel" for="label_width">Label Size : </label></td><td>'+
 		            	 '<input id="label_width' + this.idx + '"  name="label_width" type="number" min="-100" max="2048"  value="' + this.lblWidth + '" /> x <input  id="label_height' + this.idx + '"  name="label_height" type="number" min="-100" max="2048" value="' + this.lblHeight + '" /> (in pixels)'+
 		            	 '</td></tr></table>'+
-		            	 
+
 		            '</td><td>'+
-		            
+
 			            '<table border="0"><tr><td><label class="fafLabel" for="field_width">Field Size : </label></td><td>'+
 	            		'<input  id="field_width' + this.idx + '" name="field_width" type="number" min="0" max="2048" value="' + this.fldWidth + '" /> x <input  id="field_height' + this.idx + '" name="field_height" type="number" min="0" max="2048" value="' + this.fldHeight + '" /> (in pixels)'+
 	            		'</td></tr></table>'+
-            			
+
 		            '</td></tr>'+
-	            	'<tr><td>'+	
-	            	
+	            	'<tr><td>'+
+
 		            	'<table border="0"><tr><td><label class="fafLabel" for="label_x">Label Position : </label></td><td>'+
 		    			'(<input id="label_x' + this.idx + '"  name="label_x" min="-100" max="2048" type="number" value="' + this.lblPosX + '" />,<input  id="label_y' + this.idx + '" min="-100" max="2048"  name="label_y" type="number" value="' + this.lblPosY + '" />) (x,y coords)'+
 		    			'</td></tr></table>'+
-		    			
+
 	            	'</td><td>'+
-	            	
+
 		            	'<table border="0"><tr><td><label class="fafLabel" for="field_x">Field Position : </label></td><td>'+
 	            		'(<input id="field_x' + this.idx + '" name="field_x" type="number" min="-100" max="2048" value="' + this.fldPosX + '" />,<input  id="field_y' + this.idx + '" name="field_y" type="number" min="0" max="2048" value="' + this.fldPosY + '" />) (x,y coords)'+
 	            		'</td></tr></table>'+
-	            	
+
 	            	'</td></tr></table>'+
-		            	
+
 	            '</td>' +
             '</tr>' +
             '<tr>' +
@@ -411,10 +413,10 @@ frmField.prototype = {
                 fldObj.wrap('<div title="Double-Click to Edit" data-fieldID="' + this.idx + '" ondblclick="editField(' + this.idx + '); return false;" class="dragMe dragF" id="img' + this.idx + '"></div>');
                 break;
             case '4' :
-            	
+
             	let tmplbl = this.txtLabel;
             	//tmplbl = tmplbl.replace("<html>","");
-            	
+
                 // This is a label field, so let's create it and then populate it
                 lblObj.text(tmplbl);
                 fldObj.text(tmplbl);
