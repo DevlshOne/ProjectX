@@ -418,7 +418,7 @@ class SalesAnalysis{
 				"";
 		
 		
- 		echo $sql."<br />\n";
+ 		//echo $sql."<br />\n";
 		$res = $_SESSION['dbapi']->ROquery($sql);
 		//$res = query("SELECT DISTINCT(agent_username),agent_cluster_id FROM sales ".$where." ORDER BY agent_username ASC");
 		while($row = mysqli_fetch_row($res)){
