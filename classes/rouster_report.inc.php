@@ -107,7 +107,6 @@
                 if ((php_sapi_name() != "cli") && is_array($_SESSION['assigned_groups']) && !in_array($call_group, $_SESSION['assigned_groups'], false)) {
                     $call_group = '';
                 }
-
                 $extra_sql = " AND `call_group`='" . mysqli_real_escape_string($_SESSION['db'], $call_group) . "' ";
                 $user_group_sql = " AND `user_group`='" . mysqli_real_escape_string($_SESSION['db'], $call_group) . "' ";
 
@@ -140,7 +139,7 @@
 
             connectPXDB();
 
-            $sql = "SELECT DISTINCT(username) FROM `logins` " . " WHERE result='success' AND section IN('rouster','roustersys') " . (($stime && $etime) ? " AND `time` BETWEEN '$stime' AND '$etime' " : '') . (($cluster_id > 0) ? " AND cluster_id='$cluster_id' " : "") . $user_group_sql . "";
+            $sql = "SELECT DISTINCT(username) FROM `logins` " . " WHERE result='success' AND section IN('rouster','roustersys') " . (($stime && $etime) ? " AND `time` BETWEEN '$stime' AND '$etime' " : '') . (($cluster_id > 0) ? " AND cluster_id='$cluster_id' " : "") . $user_group_sql;
 
 //		$sql = "SELECT DISTINCT(agent_username) FROM lead_tracking WHERE 1".
 //						(($stime && $etime)?" AND `time` BETWEEN '$stime' AND '$etime' ":'').

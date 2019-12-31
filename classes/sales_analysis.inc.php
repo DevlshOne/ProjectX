@@ -53,7 +53,12 @@
             return -1;
         }
 
-        function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
+        function getTeamMembers($team_id) {
+            $team_id = intval($team_id);
+            return $_SESSION['dbapi']->ROfetchAllAssoc("SELECT UPPER(`username`) AS username FROM `user_teams` WHERE `team_id` = " . $team_id);
+        }
+
+        function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
             $campaign_id = 0;
             //echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code, $ignore_arr, $vici_campaign_id)<br />\n";
             connectPXDB();
@@ -129,6 +134,12 @@
                     $sql_agent_cluster = " AND vici_cluster_id='" . $_SESSION['site_config']['db'][$agent_cluster_id]['cluster_id'] . "' ";
                 }
             }
+            $use_team = false;
+            $sql_user_team_list = array();
+            if($user_team_id) {
+                $use_team = true;
+                $sql_user_team_list = $this->getTeamMembers($user_team_id);
+            }
             $sql_user_group_for_activity_join = '';
             $sql_user_group_lmt = '';
             if ($user_group) {
@@ -196,6 +207,7 @@
                 $sql_campaign . $sql_vici_campaign . $sql_cluster . $sql_user_group . $sql_ignore_group . $ofcsql . //	(($verifier_cluster_id > -1)?" AND verifier_cluster_id='".$_SESSION['site_config']['db'][$verifier_cluster_id]['cluster_id']."' ":"").
                 "";
             //echo $where;
+            $user_team_array = array();
             $user_group_array = array();
             // DATA ARRAY TO RETURN!
             $output_array = array();
@@ -220,15 +232,13 @@
                     // JPW vs JPW2
                     // SKIPS THE "2" users (IF YOU CAN FIND THERE MAIN USER
                     if (endsWith($tmp, "2")) {
-                        //					if($this->findAgent($agent_array, substr($tmp,0,strlen($tmp)-1) ) > -1   ){
-                        //
-                        //						echo "SKIPPING $tmp : ".substr($tmp,0,strlen($tmp)-1)."<br />\n";
-                        //
-                        //						continue;
-                        //					}else{
                         $tmp = substr($tmp, 0, strlen($tmp) - 1);
-                        //						echo "TRIMMING $tmp<br />\n";
-                        //					}
+                    }
+                }
+                if($use_team) {
+                    if(!in_array($tmp, $sql_user_team_list)) {
+                        echo "Skipping " . $tmp . " --> not in selected team." . PHP_EOL;
+                        continue;
                     }
                 }
                 if ($ignore_arr != NULL && is_array($ignore_arr)) {
@@ -601,18 +611,6 @@
                 */
                 $stime = $timestamp;
                 $etime = $timestamp2;
-                ## TIMEFRAMESif($_REQUEST['timeFilter']){
-//             if (!$_REQUEST['timeFilter']){
-//                 $stime = mktime(0, 0, 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-//                 $etime = mktime(23, 59, 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
-//                 #echo "Human Start : " . date("r", $stime) . PHP_EOL;
-//                 #echo "Human End : " . date("r", $etime) . PHP_EOL;
-//             } else {
-//                 $stime = mktime(date("H", $timestamp), date("i", $timestamp), 0, date("m", $timestamp), date("d", $timestamp), date("Y", $timestamp));
-//                 $etime = mktime(date("H", $timestamp2), date("i", $timestamp2), 59, date("m", $timestamp2), date("d", $timestamp2), date("Y", $timestamp2));
-//                 #echo "Human Start : " . date("r", $stime) . PHP_EOL;
-//                 #echo "Human End : " . date("r", $etime) . PHP_EOL;
-//             }
                 ## AGENT CLUSTER
                 $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
                 ## CAMPAIGN
@@ -623,13 +621,10 @@
                 $vici_campaign_code = trim($_REQUEST['vici_campaign_code']);
                 $vici_campaign_id = trim($_REQUEST['vici_campaign_id']);
                 $ignore_arr = preg_split("/,|;|:| /", $_REQUEST['ignore_users_list'], -1, PREG_SPLIT_NO_EMPTY);
-//             if($_REQUEST['include_answer_machines']){
                 $this->skip_answeringmachines = false;
-//             }else{
-//                 $this->skip_answeringmachines = true;
-//             }
+                $user_team_id = intval($_REQUEST['user_team_id']);
                 ## GENERATE AND DISPLAY REPORT
-                $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code, $ignore_arr, $vici_campaign_id);
+                $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code, $ignore_arr, $vici_campaign_id);
                 /*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
                 if ($html == NULL) {
                     echo '<span style="font-size:14px;font-style:italic;">No results found, for the specified values.</span><br />';
@@ -660,15 +655,19 @@
             }
         }
 
-        function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
-            echo '<span style="font-size:9px">makeHTMLReport(' . "$stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code,$ignore_arr,$vici_campaign_id) called</span><br /><br />\n";
-            list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code, $ignore_arr, $vici_campaign_id);
+        function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
+//            print_r(func_get_args());
+            echo '<span style="font-size:9px">makeHTMLReport(' . "$stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code,$ignore_arr,$vici_campaign_id) called</span><br /><br />\n";
+            list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code, $ignore_arr, $vici_campaign_id);
             if (count($agent_data_arr) < 1) {
                 return NULL;
             }
             // ACTIVATE OUTPUT BUFFERING
             ob_start();
-            ob_clean(); ?><h1><?php
+            ob_clean();
+            ?>
+            <h1>
+                <?php
                     if ($campaign_code) {
                         echo $campaign_code . ' ';
                     }
@@ -676,27 +675,14 @@
                     if ($agent_cluster_id >= 0) {
                         echo $_SESSION['site_config']['db'][$agent_cluster_id]['name'] . ' - ';
                     }
-                    //			if($user_group){
-                    //
-                    //				if(is_array($user_group)){
-                    //
-                    //					if(trim($user_group[0]) != ''){
-                    //
-                    //						echo implode($user_group,' | ');
-                    //						echo " - ";
-                    //					}
-                    //
-                    //
-                    //				}else{
-                    //					echo $user_group.' - ';
-                    //				}
-                    //			}
                     if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
                         echo date("m-d-Y", $stime);
                     } else {
                         echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
-                    } ?></h1>
-            <h3><?php
+                    } ?>
+            </h1>
+            <h3>
+                <?php
                     if ($user_group) {
                         if (is_array($user_group)) {
                             if (trim($user_group[0]) != '') {
@@ -717,23 +703,16 @@
                             echo '<b>Ignoring Group:</b> ' . $ignore_group . '<br />';
                         }
                     }
-                ?></h3>
-
+                ?>
+            </h3>
             <script>
-
                 function addUserToIgnore(username) {
-
                     var str = $('#ignore_users_list').val();
-
                     if (str.length > 0 && !str.endsWith(",")) str += ",";
-
                     str += username;
-
                     $('#ignore_users_list').val(str);
                 }
-
             </script>
-
             <table id="sales_anal_table" style="width:100%" border="0" cellspacing="1">
                 <thead>
                 <tr><?
@@ -757,15 +736,12 @@
                         }
                     ?>
                     <th title="Contacts per Worked hour, and Calls per Worked hour">Con&amp;Calls/hr</th>
-
-
                     <th>TOTAL SALES</th>
                     <th>PAID SALES</th>
                     <th title="The percentage of deal counts that were paid, vs the total count sent">PAID %</th>
                     <th title="Percentage of paid deals, by the dollar amount, instead of count">$PAID %</th>
                     <th>UNPAID SALES</th>
                     <th>UNPAID %</th>
-
                     <th align="right" title="Closing Percentage">CLOSE %</th>
                     <th align="right" title="Conversion Percentage">CON%</th>
                     <th align="right">YES 2 ALL %</th>
@@ -821,12 +797,8 @@
                         </td>
                         <td align="right"><?= number_format($paid_sale_percent, 2) ?>%</td>
                         <td align="right"><?= number_format($paid_sale_amount_percent, 2) ?>%</td>
-
-
                         <td align="center"><?= number_format(($agent_data['sale_cnt'] - $agent_data['paid_sale_cnt'])) ?></td>
                         <td align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</td>
-
-
                         <td align="right"><?= number_format($agent_data['closing_percent'], 2) ?>%</td>
                         <td align="right"><?= number_format($agent_data['conversion_percent'], 2) ?>%</td>
                         <td align="right"><?= number_format($agent_data['yes2all_percent'], 2) ?>%</td>
@@ -948,34 +920,6 @@
 
         public function makeViciUserGroupDD($name, $selected, $css, $onchange) {
             return makeViciUserGroupDD($name, $selected, $css, $onchange);
-//
-//		$res = query("SELECT DISTINCT(user_group) AS user_group FROM users WHERE user_group IS NOT NULL");
-//
-//
-//
-//		$out = '<select name="'.$name.'" id="'.$name.'" ';
-//
-//		$out .= ($css)?' class="'.$css.'" ':'';
-//		$out .= ($onchange)?' onchange="'.$onchange.'" ':'';
-//		$out .= '>';
-//
-//
-//		$out .= '<option value="" '.(($selected == '')?' SELECTED ':'').'>[All]</option>';
-//
-//
-//
-//		while($row = mysqli_fetch_array($res)){
-//
-//			$out .= '<option value="'.$row['user_group'].'" ';
-//			$out .= ($selected == $row['user_group'])?' SELECTED ':'';
-//			$out .= '>'.htmlentities($row['user_group']).'</option>';
-//		}
-//
-//
-//
-//		$out .= '</select>';
-//
-//		return $out;
         }
 
         /**
@@ -1108,7 +1052,7 @@
                         }
                         // GENERATE REPORT HTML ( RETURNS NULL IF THERE ARE NO RECORDS TO REPORT ON!)
                         // NOTE: THE VARIABLES THAT APPEAR 'uninitialized' ARE LOADED FROM THE 'settings' DB FIELD
-                        $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $combine_users, $user_group, $ignore_group);
+                        $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $user_team, $combine_users, $user_group, $ignore_group);
                         if ($html == NULL) {
                             echo date("H:i:s m/d/Y") . " - NOTICE: Skipping sending report, no records found\n";
                             continue 2;
@@ -1116,7 +1060,7 @@
                         $textdata = ucfirst($row['interval']) . ' ' . $report_name . "\n\n" . "Time frame: " . date("m/d/Y", $stime) . " - " . date("m/d/Y", $etime) . "\n" . (($campaign_code) ? "Campaign Code: " . $campaign_code . "\n" : '') . (($agent_cluster_idx) ? "Cluster IDX: " . $agent_cluster_idx . "\n" : '') . (($combine_users) ? "Combine users: " . $combine_users . "\n" : '') . (($user_group) ? " User Group:" . $user_group . "\n" : '') . "\nReport is attached (or view email as HTML).";
                         break;
                     case 2: // VERIFIER CALL STATS
-                        $html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, NULL, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
+                        $html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_team, $user_group, NULL, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
                         if ($html == NULL) {
                             echo date("H:i:s m/d/Y") . " - NOTICE: Skipping sending report, no records found\n";
                             continue 2;
