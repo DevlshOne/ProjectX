@@ -171,23 +171,10 @@
                     " AND `username`='" . mysqli_real_escape_string($_SESSION['db'], $uname) . "' " .
 
                     (($stime && $etime) ? " AND `time_started` BETWEEN '$stime' AND '$etime' " : '') .
-
-//						(($cluster_id > 0)?" AND vici_cluster_id='$cluster_id' ":"").
-//						$extra_sql
-
                     " ORDER BY `time_started` ASC ";
-
-                //		$sql = "SELECT * FROM `activity_log` WHERE `account_id`='".$_SESSION['account']['id']."' ".
-                //						(($stime && $etime)?" AND `time_started` BETWEEN '$stime' AND '$etime' ":'').
-                //						(($cluster_id > 0)?" AND vici_cluster_id='$cluster_id' ":"").
-                //						$extra_sql;
-
                 // GET A LIST OF TEH AGENTS
                 // ACTIVITY LOG: THE AGENTS THAT ARE WORKING TODAY
-                $res = $_SESSION['dbapi']->ROquery($sql
-
-                    //(($call_group)?" AND call_group='".mysql_real_escape_string($call_group)."' ":"")
-                    , 1);
+                $res = $_SESSION['dbapi']->ROquery($sql, 1);
 
                 while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
@@ -243,19 +230,6 @@
                             $agent_array[$username]['total_activity_date_daily_array'][$curdate] = ($agent_array[$username]['total_activity_date_daily_array'][$curdate] > intval($row['DailyActivityTime'])) ? $agent_array[$username]['total_activity_date_daily_array'][$curdate] : intval($row['DailyActivityTime']); // max(intval($row['DailyActivityTime']), $agent_array[$username]['total_activity_date_daily_array'][date("m/d/Y", $row['time_started'])]); //
 
                         }
-
-//				$agent_array[$username]['total_activity_date_time_array'][date("m/d/Y", $row['time_started'])] = intval($row['TotalTime']);
-//				$agent_array[$username]['total_activity_date_daily_array'][date("m/d/Y", $row['time_started'])] = intval($row['DailyActivityTime']);
-
-//					if($curdate != $agent_array[$username]['total_activity_date']){
-//
-//						$agent_array[$username]['total_activity_time'] +=	$row['TotalTime'];//$row['seconds_INCALL'] + $row['seconds_READY'] + $row['seconds_QUEUE'] + $row['seconds_PAUSED'];
-//						$agent_array[$username]['daily_activity_time'] += $row['DailyActivityTime'];
-//
-//						$agent_array[$username]['total_activity_date'] = $curdate;
-//
-//					}
-
                         continue;
                     }
 
@@ -268,13 +242,6 @@
                     $agent_array[$username]['total_activity_date_daily_array'] = array();
                     $agent_array[$username]['total_activity_date_time_array'][$curdate] = intval($row['TotalTime']);
                     $agent_array[$username]['total_activity_date_daily_array'][$curdate] = intval($row['DailyActivityTime']);
-//				$agent_array[$username]['total_activity_time'] = intval($row['TotalTime']);//$row['seconds_INCALL'] + $row['seconds_READY'] + $row['seconds_QUEUE'] + $row['seconds_PAUSED'];
-//				$agent_array[$username]['daily_activity_time'] = intval($row['DailyActivityTime']);
-
-//				$agent_array[$username]['total_activity_date'] = date("m/d/Y", $row['time_started']);
-//				$agent_array[$username]['total_activity_time'] = intval($row['TotalTime']);//$row['seconds_INCALL'] + $row['seconds_READY'] + $row['seconds_QUEUE'] + $row['seconds_PAUSED'];
-//				$agent_array[$username]['daily_activity_time'] = intval($row['DailyActivityTime']);
-
                     // GET TOTAL SALES COUNTS FROM PX
                     $sql = "SELECT COUNT(`id`) FROM `sales` " . " WHERE `sale_time` BETWEEN '$stime' AND '$etime' " . (($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . " AND (agent_cluster_id='$cluster_id') ";
                     list($cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
@@ -321,11 +288,6 @@
                     ## HANGUPS - OUT OF ALL THE TRANSFERS, HOW MANY WHERE HANGUPS
                     $sql = "SELECT COUNT(`id`) FROM `lead_tracking` " . $lead_where . " AND dispo='hangup' ";
                     list($hangup_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
-                    //			$sql = "SELECT COUNT(`id`) FROM `transfers` ".
-                    //						$xfer_where.
-                    //						" AND verifier_dispo='hangup' ";
-                    //			list($hangup_cnt) = queryROW($sql);
-
                     ## GET TOTAL DISPO COUNT FOR USE IN CONTACT %
                     $sql = "SELECT COUNT(`id`) FROM `lead_tracking` " . $lead_where . " AND (dispo IN('NI', 'VOID', 'DNC', 'SALE', 'PAIDCC', 'SALECC')) ";
                     list($contact_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);

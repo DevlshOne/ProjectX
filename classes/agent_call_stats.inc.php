@@ -355,7 +355,6 @@
                                 <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right"># of Bumps</th>
                                 <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right" title="Positive Bump Amount">Pos.Bump $</th>
                                 <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right" title="Positive Bump Percent">Pos.Bump %</th>
-
                             </tr>
                             </thead>
                             <tbody>
