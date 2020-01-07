@@ -691,7 +691,7 @@ class DBAPI {
 	/**
 	 * Edits an existing record in the database (by $id), only editing the keys=>values provided in asso array
 	 * (Filters/escapes fields/values as well)
-	 * @param $extra_where 	Can be used to provide extra sql such as (" AND account_id='$accountid' ") to add security/restrictions/etc
+	 * param $extra_where 	Can be used to provide extra sql such as (" AND account_id='$accountid' ") to add security/restrictions/etc
 	 */
 	function aedit($id,$assoarray,$table,$extra_where=""){
 		$startsql	= "UPDATE `$table` SET ";
@@ -873,8 +873,6 @@ class DBAPI {
 	
 	/**
 	 * Runs READ ONLY queries against the read slaves, mostly for reports, to spread out the load
-	 * @param unknown $cmd
-	 * @return unknown
 	 */
 	function ROQuery($cmd, $mode = 0){
 		
