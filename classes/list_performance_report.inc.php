@@ -643,6 +643,8 @@ $(function() {
 			<th title="The name of the list, in the dialer.">LIST Name</th>
 			<th title="The campaign ID of the list, in the dialer.">Campaign ID</th>
 			<th title="Total number of calls taken for the specified date(s)">Total calls</th>
+			<th title="Number of calls Not Intereseted">Not Interested</th>			
+			
 
 			<th title="Number of Answering machines">Answering Machines</th>
 			<th title="Percentage of Answering machines to Total Calls">AnsMach %</th>
@@ -685,6 +687,7 @@ $(function() {
 				?><td><?=htmlentities($data['vici']['list_name'])?></td>
 				<td><?=htmlentities($data['vici']['campaign_id'])?></td>
 				<td align="center"><?=number_format($data['data']['total_cnt'])?></td>
+				<td align="center"><?=number_format($data['data']['not_interested_cnt'])?></td>				
 				
 				<td align="center"><?=number_format($data['data']['answer_cnt'])?></td>
 				<td align="center"><?=$ans_percent?></td>
