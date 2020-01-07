@@ -74,7 +74,10 @@ class SummaryReport{
 
 				
 				//generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null)
-				$output[$company_id]['user_groups'][$x]['data'] = $_SESSION['sales_analysis']->generateData($stime, $etime, null, -1, true, $group['user_group'], null);
+				// new args
+				// generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
+					
+				$output[$company_id]['user_groups'][$x]['data'] = $_SESSION['sales_analysis']->generateData($stime, $etime, null, -1, 0 ,true, $group['user_group'], null);
 
 
 				if($output[$company_id]['user_groups'][$x]['data'] == null){
@@ -109,8 +112,9 @@ class SummaryReport{
 			$cluster_idx = getClusterIndex($cluster_id);
 
 			//list($output_array, $totals) = $_SESSION['sales_analysis']->generateData($stime, $etime, null, $cluster_idx, 1);
-			//generateData($stime, $etime, $campaign_code, $agent_cluster_idx, $combine_users, $user_group, $ignore_group, $vici_campaign_code='',$ignore_arr = null, $vici_campaign_id='')
-			$cluster_out = $_SESSION['sales_analysis']->generateData($stime, $etime, null, $cluster_idx, 1); //
+			//generateData($stime, $etime, $campaign_code, $agent_cluster_idx, $user_team_id,$combine_users, $user_group, $ignore_group, $vici_campaign_code='',$ignore_arr = null, $vici_campaign_id='')
+			
+			$cluster_out = $_SESSION['sales_analysis']->generateData($stime, $etime, null, $cluster_idx, 0, 1); //
 
 			// returns array($output_array, $totals);
 
