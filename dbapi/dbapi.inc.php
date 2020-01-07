@@ -113,283 +113,287 @@ class DBAPI {
 	public $campaigns;
 	public $campaign_parents;
 	public $login_tracker;
-
-    public $extensions;
-    public $messages;
-    public $names;
-    public $problems;
-    public $scripts;
-    public $users;
-    public $user_groups;
-    public $user_groups_master;
-    public $voices;
-    public $report_emails;
-    // FEATURE CONTROL
-    public $features;
-    public $imports;
-    // MERGED FROM REPORT SYSTEM
-    public $ringing_calls;
-    public $lead_management;
-    public $employee_hours;
-    public $scriptstats;
-    public $dispo_log;
-    public $pac_reports;
-    public $quiz_results;
-    public $quiz_questions;
-    public $list_tool_tasks;
-    public $dialer_sales;
-    public $dialer_status;
-    public $form_builder;
-    public $user_prefs;
-
-    public $my_notes;
-
-    public $sales_management;
-  
-    public $process_tracker;
-    
-
-    
-    
-    /**
-     * DBAPI Constructor
-     * Initialize the class, connect, etc
-     */
-    public function __construct(){
-
-        ## INCLUDE ALL THE REQUIRED FILES
-        $this->initIncludes();
-
-        $this->page_start_time = microtime_float();
-
-        ## CONNECT TO THE DATABASE
-        ## MAIN DATABASE CONNECTION (now with load balancing support, for dual masters)
-        $this->connect();
-
-        
-        if($this->use_read_slaves == true){
-        	
-        	
-        	if(count($_SESSION['site_config']['pxdb_readonly']) > 0){
-        
-        		$this->connectReadSlave();
-        		
-        	// DISABLE IF NO READ SLAVES DETECTED
-        	}else{
-        		$this->use_read_slaves = false;
-        	}
-        }
-        
-        //$db_readslave
-        
-        
-        ## INIT THE SESSION SITE CONFIG DATA FROM PREFS TABLE
-        $this->initSiteConfig();
-    }
-
-
-    /**
-     * Destructor - Cleanup Time
-     */
-    public function __destruct(){
-    	
-        if ($this->query_debugging == true) {
-            $page_end_time = microtime_float();
-
-            $time_taken = $page_end_time - $this->page_start_time;
-
-
-            if (!$this->slow_page_debugging_only || ($this->slow_page_debugging_only == true && $time_taken > $this->slow_page_time_limit)) {
-                $this->logPageLoad($time_taken);
-            }
-            ## DISCONNECT ON DESTRUCTION
-            $this->disconnect();
-        }
-
-        ## DISCONNECT ON DESTRUCTION
-        $this->disconnect();
-    }
-
-    public function logPageLoad($time_taken){
-
-        // WRITE TO THE LOG FILE
-        $output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.intval($_SESSION['user']['id']).") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
-        file_put_contents($this->query_log_file, $output, FILE_APPEND);
-
-
-        // WRITE TO THE DATABASE
-        try {
-            $dat = array();
-            $dat['time'] = time();
-            $dat['user'] = $_SESSION['user']['username'];
-            $dat['user_id'] = intval($_SESSION['user']['id']);
-            $dat['total_queries'] = $this->page_query_count;
-            $dat['total_read_only_queries'] = $this->read_slave_query_count;
-            $dat['total_load_time'] = round($time_taken, 3);
-            $dat['ip_address'] = $_SERVER['REMOTE_ADDR'];
-            
-            if($this->db_ip != null)		$dat['db_ip'] = $this->db_ip;
-            if($this->db_ro_ip != null)		$dat['db_ro_ip'] = $this->db_ro_ip;
-            
-            $dat['url'] = $_SERVER['REQUEST_URI'];
-
-            $dat['post_values'] = print_r($_POST, 1);
-
-
-            $_SESSION['dbapi']->aadd($dat, 'analysis_page_loads');
-        } catch (Exception $e) {
-
-//echo "Caught Exception ".$e->getMessage()."\n";
-            
-        }
-    }
-
-
-    /**
-     * Include all the required files
-     */
-    public function initIncludes()
-    {
-
-        ## INCLUDE DATABASE CONNECTION INFO AND OTHER SITE DATA
-        //include_once($_SERVER["DOCUMENT_ROOT"]."/site_config.php");
-        //include_once("./site_config.php");
-
-    	include_once($_SESSION['site_config']['basedir']."utils/functions.php");
-
-        include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
-
-        
-        ## ACTIVITY LOG
-        include_once($_SESSION['site_config']['basedir']."dbapi/process_tracker.db.php");
-        $this->process_tracker = new ProcessTrackerAPI();
-        
-        ## ACTIVITY LOG
-        include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
-        $this->activitys = new ActivitysAPI();
-
-        ## ACTION LOG
-        include_once($_SESSION['site_config']['basedir']."dbapi/action_log.db.php");
-        $this->action_log = new ActionLogAPI();
-
-        ## CAMPAIGNS
-        include_once($_SESSION['site_config']['basedir']."dbapi/campaigns.db.php");
-        $this->campaigns = new CampaignsAPI();
-
-        ## CAMPAIGN PARENTS
-        include_once($_SESSION['site_config']['basedir']."dbapi/cmpgn_parents.db.php");
-        $this->campaign_parents = new CampaignParentsAPI();
-
-        ## DIALER STATUS
-        include_once($_SESSION['site_config']['basedir']."dbapi/dialer_status.db.php");
-        $this->dialer_status = new DialerStatusAPI();
-
+	
+	public $extensions;
+	public $messages;
+	public $names;
+	public $problems;
+	public $scripts;
+	public $users;
+	public $user_groups;
+	public $user_teams;
+	public $user_groups_master;
+	public $voices;
+	public $report_emails;
+	// FEATURE CONTROL
+	public $features;
+	public $imports;
+	// MERGED FROM REPORT SYSTEM
+	public $ringing_calls;
+	public $lead_management;
+	public $employee_hours;
+	public $scriptstats;
+	public $dispo_log;
+	public $pac_reports;
+	public $quiz_results;
+	public $quiz_questions;
+	public $list_tool_tasks;
+	public $dialer_sales;
+	public $dialer_status;
+	public $form_builder;
+	public $user_prefs;
+	
+	public $my_notes;
+	
+	public $sales_management;
+	
+	public $process_tracker;
+	
+	
+	
+	
+	/**
+	 * DBAPI Constructor
+	 * Initialize the class, connect, etc
+	 */
+	public function __construct(){
+		
+		## INCLUDE ALL THE REQUIRED FILES
+		$this->initIncludes();
+		
+		$this->page_start_time = microtime_float();
+		
+		## CONNECT TO THE DATABASE
+		## MAIN DATABASE CONNECTION (now with load balancing support, for dual masters)
+		$this->connect();
+		
+		
+		if($this->use_read_slaves == true){
+			
+			
+			if(count($_SESSION['site_config']['pxdb_readonly']) > 0){
+				
+				$this->connectReadSlave();
+				
+				// DISABLE IF NO READ SLAVES DETECTED
+			}else{
+				$this->use_read_slaves = false;
+			}
+		}
+		
+		//$db_readslave
+		
+		
+		## INIT THE SESSION SITE CONFIG DATA FROM PREFS TABLE
+		$this->initSiteConfig();
+	}
+	
+	
+	/**
+	 * Destructor - Cleanup Time
+	 */
+	public function __destruct(){
+		
+		if ($this->query_debugging == true) {
+			$page_end_time = microtime_float();
+			
+			$time_taken = $page_end_time - $this->page_start_time;
+			
+			
+			if (!$this->slow_page_debugging_only || ($this->slow_page_debugging_only == true && $time_taken > $this->slow_page_time_limit)) {
+				$this->logPageLoad($time_taken);
+			}
+			## DISCONNECT ON DESTRUCTION
+			$this->disconnect();
+		}
+		
+		## DISCONNECT ON DESTRUCTION
+		$this->disconnect();
+	}
+	
+	public function logPageLoad($time_taken){
+		
+		// WRITE TO THE LOG FILE
+		$output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.intval($_SESSION['user']['id']).") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
+		file_put_contents($this->query_log_file, $output, FILE_APPEND);
+		
+		
+		// WRITE TO THE DATABASE
+		try {
+			$dat = array();
+			$dat['time'] = time();
+			$dat['user'] = $_SESSION['user']['username'];
+			$dat['user_id'] = intval($_SESSION['user']['id']);
+			$dat['total_queries'] = $this->page_query_count;
+			$dat['total_read_only_queries'] = $this->read_slave_query_count;
+			$dat['total_load_time'] = round($time_taken, 3);
+			$dat['ip_address'] = $_SERVER['REMOTE_ADDR'];
+			
+			if($this->db_ip != null)		$dat['db_ip'] = $this->db_ip;
+			if($this->db_ro_ip != null)		$dat['db_ro_ip'] = $this->db_ro_ip;
+			
+			$dat['url'] = $_SERVER['REQUEST_URI'];
+			
+			$dat['post_values'] = print_r($_POST, 1);
+			
+			
+			$_SESSION['dbapi']->aadd($dat, 'analysis_page_loads');
+		} catch (Exception $e) {
+			
+			//echo "Caught Exception ".$e->getMessage()."\n";
+			
+		}
+	}
+	
+	
+	/**
+	 * Include all the required files
+	 */
+	public function initIncludes()
+	{
+		
+		## INCLUDE DATABASE CONNECTION INFO AND OTHER SITE DATA
+		//include_once($_SERVER["DOCUMENT_ROOT"]."/site_config.php");
+		//include_once("./site_config.php");
+		
+		include_once($_SESSION['site_config']['basedir']."utils/functions.php");
+		
+		include_once($_SESSION['site_config']['basedir']."utils/microtime.php");
+		
+		
+		## ACTIVITY LOG
+		include_once($_SESSION['site_config']['basedir']."dbapi/process_tracker.db.php");
+		$this->process_tracker = new ProcessTrackerAPI();
+		
+		## ACTIVITY LOG
+		include_once($_SESSION['site_config']['basedir']."dbapi/activity_log.db.php");
+		$this->activitys = new ActivitysAPI();
+		
+		## ACTION LOG
+		include_once($_SESSION['site_config']['basedir']."dbapi/action_log.db.php");
+		$this->action_log = new ActionLogAPI();
+		
+		## CAMPAIGNS
+		include_once($_SESSION['site_config']['basedir']."dbapi/campaigns.db.php");
+		$this->campaigns = new CampaignsAPI();
+		
+		## CAMPAIGN PARENTS
+		include_once($_SESSION['site_config']['basedir']."dbapi/cmpgn_parents.db.php");
+		$this->campaign_parents = new CampaignParentsAPI();
+		
+		## DIALER STATUS
+		include_once($_SESSION['site_config']['basedir']."dbapi/dialer_status.db.php");
+		$this->dialer_status = new DialerStatusAPI();
+		
 		## EXTENSIONS
 		include_once($_SESSION['site_config']['basedir']."dbapi/extensions.db.php");
 		$this->extensions = new ExtensionsAPI();
-
+		
 		## Messages
 		include_once($_SESSION['site_config']['basedir']."dbapi/messages.db.php");
 		$this->messages = new MessagesAPI();
-
+		
 		## NAMES
 		include_once($_SESSION['site_config']['basedir']."dbapi/names.db.php");
 		$this->names = new NamesAPI();
-
+		
 		## LOGIN TRACKER
 		include_once($_SESSION['site_config']['basedir']."dbapi/login_tracker.db.php");
 		$this->login_tracker = new LoginTrackerAPI();
-
+		
 		## Problems
 		include_once($_SESSION['site_config']['basedir']."dbapi/problems.db.php");
 		$this->problems = new ProblemsAPI();
-
+		
 		## Scripts
 		include_once($_SESSION['site_config']['basedir']."dbapi/scripts.db.php");
 		$this->scripts = new ScriptsAPI();
-
-
+		
+		
 		## USERS
 		include_once($_SESSION['site_config']['basedir']."dbapi/users.db.php");
 		$this->users = new UsersAPI();
-
-
+		
+		
 		## VOICES
 		include_once($_SESSION['site_config']['basedir']."dbapi/voices.db.php");
 		$this->voices = new VoicesAPI();
-
-
-
-
-
-
-	// MERGED FROM REPORT SYSTEM
+		
+		
+		
+		
+		
+		
+		// MERGED FROM REPORT SYSTEM
 		## RINGING CALLS
 		include_once($_SESSION['site_config']['basedir']."dbapi/ringing_calls.db.php");
 		$this->ringing_calls = new RingingCallsAPI();
-
-
+		
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/lead_management.db.php");
 		$this->lead_management = new LeadManagementAPI();
-
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/employee_hours.db.php");
 		$this->employee_hours = new EmployeeHoursAPI();
-
+		
 		## SCRIPT STATSTICS
 		include_once($_SESSION['site_config']['basedir']."dbapi/script_statistics.db.php");
 		$this->scriptstats = new ScriptStatisticsAPI();
-
-
+		
+		
 		## DISPO LOG
 		include_once($_SESSION['site_config']['basedir']."dbapi/dispo_log.db.php");
 		$this->dispo_log = new DispoLogAPI();
-
-
+		
+		
 		## FEATURE CONTROL
 		include_once($_SESSION['site_config']['basedir']."dbapi/feature_control.db.php");
 		$this->features = new FeaturesAPI();
-
-
-
+		
+		
+		
 		## User Groups
 		include_once($_SESSION['site_config']['basedir']."dbapi/user_groups.db.php");
 		$this->user_groups = new UserGroupsAPI();
-
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/user_groups_master.db.php");
 		$this->user_groups_master = new UserGroupsMasterAPI();
-
+		
+		include_once($_SESSION['site_config']['basedir'] . "dbapi/user_teams.db.php");
+		$this->user_teams = new UserTeamsAPI();
+		
 		## Report Emails
 		include_once($_SESSION['site_config']['basedir']."dbapi/report_emails.db.php");
 		$this->report_emails = new ReportEmailsAPI();
-
-
+		
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/list_tool_tasks.db.php");
 		$this->list_tool_tasks = new TasksAPI();
-
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/list_tool_imports.db.php");
 		$this->imports = new ImportsAPI();
-
-
+		
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/pac_reports.db.php");
 		$this->pac_reports = new PACReportsAPI();
-
-
-
+		
+		
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/quiz_results.db.php");
 		$this->quiz_results = new QuizResultsAPI();
-
-
+		
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/quiz_questions.db.php");
 		$this->quiz_questions = new QuizQuestionsAPI();
-
-
+		
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/accounts.db.php");
 		$this->accounts = new AccountsAPI();
 		
 		
 		include_once($_SESSION['site_config']['basedir']."dbapi/form_builder.db.php");
 		$this->form_builder = new FormBuilderAPI();
-
+		
 		include_once($_SESSION['site_config']['basedir']."dbapi/user_preferences.db.php");
 		$this->user_prefs = new UserPreferencesAPI();
 		
@@ -408,30 +412,30 @@ class DBAPI {
 		
 		
 	}
-
-
+	
+	
 	/**
 	 * Loads site config data from the "prefs" table
 	 */
-	 function initSiteConfig(){
-
-        $res = $this->query("SELECT * FROM prefs ORDER BY `key` ASC");
-        while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+	function initSiteConfig(){
+		
+		$res = $this->query("SELECT * FROM prefs ORDER BY `key` ASC");
+		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 			if (!isset($_SESSION['site_config'][$row['key']])){
 				$_SESSION['site_config'][$row['key']] = $row['value'];
 			}
-
-        }
-
-    }
-
-
+			
+		}
+		
+	}
+	
+	
 	/**
 	 * Use the info in site_config and connect to database
 	 */
 	function connect(){
-
-
+		
+		
 		if(!isset($_SESSION['db_load_balance_index'])){
 			$_SESSION['db_load_balance_index'] = 0;
 			$_SESSION['pxdb_lb_failcount'] = 0;
@@ -481,31 +485,31 @@ class DBAPI {
 				$_SESSION['site_config']['pxdb_lb'][$mod]['sqllogin'],
 				$_SESSION['site_config']['pxdb_lb'][$mod]['sqlpass'],
 				$_SESSION['site_config']['pxdb_lb'][$mod]['sqldb']
-		) or $failover=true;
-		
-		//
-		if($failover){
-			$_SESSION['db_load_balance_index']++;
-			
-			$_SESSION['pxdb_lb_failcount']++;
-			
-			// ATTEMPT TO CONNECT TO THE OTHER DB!
-			return $this->connect();
-		}
-		
-		$this->db_ip = gethostbyname( $_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']);
-		
-		
-		//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
-		
-		if($this->debug_db_connection)echo "<!-- Successfully connected to Load Balanced DB : ".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']." -->\n";
-		
-		$_SESSION['db_load_balance_index']++;
-		
-		$_SESSION['pxdb_lb_failcount'] = 0;
-		
-		//		mysql_select_db($_SESSION['site_config']['pxdb']['sqldb'],$this->db)
-		//			or die("Could not select database ".$_SESSION['site_config']['pxdb']['sqldb']);
+				) or $failover=true;
+				
+				//
+				if($failover){
+					$_SESSION['db_load_balance_index']++;
+					
+					$_SESSION['pxdb_lb_failcount']++;
+					
+					// ATTEMPT TO CONNECT TO THE OTHER DB!
+					return $this->connect();
+				}
+				
+				$this->db_ip = gethostbyname( $_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']);
+				
+				
+				//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
+				
+				if($this->debug_db_connection)echo "<!-- Successfully connected to Load Balanced DB : ".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost']." -->\n";
+				
+				$_SESSION['db_load_balance_index']++;
+				
+				$_SESSION['pxdb_lb_failcount'] = 0;
+				
+				//		mysql_select_db($_SESSION['site_config']['pxdb']['sqldb'],$this->db)
+				//			or die("Could not select database ".$_SESSION['site_config']['pxdb']['sqldb']);
 				
 	}
 	
@@ -556,41 +560,41 @@ class DBAPI {
 				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqllogin'],
 				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlpass'],
 				$_SESSION['site_config']['pxdb_readonly'][$mod]['sqldb']
-		) or $failover=true;
-		
-		
-		
-
-		if($failover || !$this->checkSlaveStatus() ){
-			
-			
-			if($this->debug_db_connection){
-				if($failover){
-					echo "<!-- READ SLAVE connection failed to ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
-				}else{
-					echo "<!-- READ SLAVE skipped - too far behind master (".$this->read_slave_behind_master_time." seconds is greater than limit of ".$this->max_slave_behind_time."): ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
+				) or $failover=true;
+				
+				
+				
+				
+				if($failover || !$this->checkSlaveStatus() ){
+					
+					
+					if($this->debug_db_connection){
+						if($failover){
+							echo "<!-- READ SLAVE connection failed to ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
+						}else{
+							echo "<!-- READ SLAVE skipped - too far behind master (".$this->read_slave_behind_master_time." seconds is greater than limit of ".$this->max_slave_behind_time."): ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
+						}
+					}
+					
+					
+					$_SESSION['db_ro_balance_index']++;
+					
+					$_SESSION['pxdb_ro_failcount']++;
+					
+					// ATTEMPT TO CONNECT TO THE OTHER DB!
+					return $this->connectReadSlave();
 				}
-			}
-			
-			
-			$_SESSION['db_ro_balance_index']++;
-			
-			$_SESSION['pxdb_ro_failcount']++;
-			
-			// ATTEMPT TO CONNECT TO THE OTHER DB!
-			return $this->connectReadSlave();
-		}
-		
-		
-		$this->db_ro_ip = gethostbyname( $_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']);
-		
-		if($this->debug_db_connection)echo "<!-- Successfully connected to READ SLAVE (".$this->read_slave_behind_master_time." sec. behind master): ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
-		
-		//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
-		
-		
-		$_SESSION['db_ro_balance_index']++;
-		$_SESSION['pxdb_ro_failcount'] = 0;
+				
+				
+				$this->db_ro_ip = gethostbyname( $_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']);
+				
+				if($this->debug_db_connection)echo "<!-- Successfully connected to READ SLAVE (".$this->read_slave_behind_master_time." sec. behind master): ".$_SESSION['site_config']['pxdb_readonly'][$mod]['sqlhost']." -->\n";
+				
+				//or die(mysqli_error($this->db)."Connection to MySQL Failed (".$_SESSION['site_config']['pxdb_lb'][$mod]['sqlhost'].").");
+				
+				
+				$_SESSION['db_ro_balance_index']++;
+				$_SESSION['pxdb_ro_failcount'] = 0;
 				
 	}
 	
@@ -599,7 +603,7 @@ class DBAPI {
 		
 		$status = $this->ROquerySQL("SHOW SLAVE STATUS");
 		
-// 		print_r($status);
+		// 		print_r($status);
 		
 		$secbehind = intval($status['Seconds_Behind_Master']);
 		
@@ -855,7 +859,7 @@ class DBAPI {
 		return $this->ROquery($cmd, 8);
 		# Returns all results as an associative array
 	}
-
+	
 	
 	/**
 	 * Runs READ ONLY queries against the read slaves, mostly for reports, to spread out the load
@@ -941,10 +945,10 @@ class DBAPI {
 				
 				if($_SESSION['user']){
 					file_put_contents($this->slow_query_log_file, $_SESSION['user']['username'].'(#'.$_SESSION['user']['id'].") @ ".date("H:i:s m/d/Y")."\n".
-						$cmd."\n".
-						(($this->slow_query_debugging_only && $this->explain_queries)?$this->explainSQL($cmd)."\n":'').
-						"Query Time: ".$time_taken."    # of rows:".mysqli_num_rows($res)."\n\n"
-						,FILE_APPEND);
+							$cmd."\n".
+							(($this->slow_query_debugging_only && $this->explain_queries)?$this->explainSQL($cmd)."\n":'').
+							"Query Time: ".$time_taken."    # of rows:".mysqli_num_rows($res)."\n\n"
+							,FILE_APPEND);
 				}else{
 					file_put_contents($this->slow_query_log_file, "Server side script @ ".date("H:i:s m/d/Y")."\n".
 							$cmd."\n".

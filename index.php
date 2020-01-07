@@ -6,96 +6,96 @@
  */
 
 
-	// ENSURE SESSION IS RUNNING, CAUSE WE NEED THAT SHIT
-	session_start();
+// ENSURE SESSION IS RUNNING, CAUSE WE NEED THAT SHIT
+session_start();
 
-	$uri = null;
-	// IF /dev2 HIT, KICK TO STAGING
-	if(preg_match('/\/dev2\//', $_SERVER['REQUEST_URI'])){
-
-		$uri = preg_replace("/\/dev2\//", "/staging/", $_SERVER['REQUEST_URI']);
-
+$uri = null;
+// IF /dev2 HIT, KICK TO STAGING
+if(preg_match('/\/dev2\//', $_SERVER['REQUEST_URI'])){
+	
+	$uri = preg_replace("/\/dev2\//", "/staging/", $_SERVER['REQUEST_URI']);
+	
 	// IF /dev HIT, KICK TO "reports" AKA PRODUCTION
-	}else if(preg_match('/\/dev\//', $_SERVER['REQUEST_URI'])){
+}else if(preg_match('/\/dev\//', $_SERVER['REQUEST_URI'])){
+	
+	$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
+}
 
-		$uri = preg_replace("/\/dev\//", "/reports/", $_SERVER['REQUEST_URI']);
-	}
+if($uri != null){
+	header("Location: ".$uri);
+	exit;
+}
+
+//print_r($_SERVER);
+
+
+/**
+ * Database connection made here
+ */
+include_once("site_config.php");
+
+// GENERIC DB FUNCTIONS
+include_once("db.inc.php");
+include_once("utils/microtime.php");
+include_once("dbapi/dbapi.inc.php");
+
+/**
+ * Additional includes/requires go here
+ */
+include_once("utils/jsfunc.php");
+include_once("utils/stripurl.php");
+
+include_once("utils/format_phone.php");
+include_once("utils/rendertime.php");
+include_once("utils/DropDowns.php");
+include_once("utils/functions.php");
+include_once("utils/feature_functions.php");
+include_once("utils/db_utils.php");
+
+
+include_once("classes/genericDD.inc.php");
+include_once("classes/interface.inc.php");
+include_once("classes/languages.inc.php");
+
+
+// DESTROY THE SESSION/LOGOUT ?o
+if(isset($_REQUEST['o'])){
 	
-	if($uri != null){
-		header("Location: ".$uri);
-		exit;
-	}
-	
-	//print_r($_SERVER);
-	
-	
-	/**
-	 * Database connection made here
-	 */
-	include_once("site_config.php");
-	
-	// GENERIC DB FUNCTIONS
-	include_once("db.inc.php");
-	include_once("utils/microtime.php");
-	include_once("dbapi/dbapi.inc.php");
+	if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
 		
-	/**
-	 * Additional includes/requires go here
-	 */
-	include_once("utils/jsfunc.php");
-	include_once("utils/stripurl.php");
-	
-	include_once("utils/format_phone.php");
-	include_once("utils/rendertime.php");
-	include_once("utils/DropDowns.php");
-	include_once("utils/functions.php");
-	include_once("utils/feature_functions.php");
-	include_once("utils/db_utils.php");
-	
-	
-	include_once("classes/genericDD.inc.php");
-	include_once("classes/interface.inc.php");
-	include_once("classes/languages.inc.php");
-	
-	
-	// DESTROY THE SESSION/LOGOUT ?o
-	if(isset($_REQUEST['o'])){
-		
-		if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
-			
-			$_SESSION['dbapi']->users->updateLogoutTime();
-			
-		}
-		
-		
-		session_unset();
-		
-		
-		jsRedirect("index.php");
-		exit;
+		$_SESSION['dbapi']->users->updateLogoutTime();
 		
 	}
 	
 	
+	session_unset();
 	
+	
+	jsRedirect("index.php");
+	exit;
+	
+}
+
+
+
 /*?><!DOCTYPE HTML>
-<html>
-<head>
-    <title>Project X - Management Tools and Reports</title>
-
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="css/style.css"/>
-    <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
-    <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/><?**/
-
-
+ <html>
+ <head>
+ <title>Project X - Management Tools and Reports</title>
+ 
+ <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+ <link rel="stylesheet" type="text/css" href="css/style.css"/>
+ <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
+ <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/><?**/
 
 
 
-	// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
-	if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
 
-		?><!DOCTYPE HTML>
+
+// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
+if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
+	
+	?><!DOCTYPE HTML>
 		<html>
 		<head>
 			<title>Project X - Management Tools and Reports</title>
@@ -409,15 +409,6 @@
 				}
 
 
-//				if($_SESSION['user']['priv'] == 4 && ($_SESSION['user']['feat_config'] != 'yes' && $_SESSION['feat_advanced'] != 'yes')){
-//
-//					echo "You lack the ability to access this section. Access to config is denied.";
-//
-//				}else{
-//
-//					include_once("classes/scripts.inc.php");
-//					$_SESSION['scripts']->handleFLOW();
-//				}
 
 
 				break;
@@ -441,16 +432,6 @@
 				}
 
 
-//				if($_SESSION['user']['priv'] < 5){
-//
-//					echo "You lack the ability to access this section. Access to server status is denied.";
-//
-//				}else{
-//
-//					include_once("classes/server_status.inc.php");
-//					$_SESSION['server_status']->handleFLOW();
-//
-//				}
 
 				break;
 
@@ -471,16 +452,7 @@
 				}
 
 
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to advanced config is denied.";
-//
-//				}else{
-//
-//					include_once("classes/users.inc.php");
-//					$_SESSION['users']->handleFLOW();
-//
-//				}
+
 
 				break;
 			case 'extensions':
@@ -499,30 +471,10 @@
 
 				}
 
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to advanced config is denied.";
-//
-//				}else{
-//					include_once("classes/extensions.inc.php");
-//					$_SESSION['extensions']->handleFLOW();
-//
-//				}
+
 
 				break;
-//			case 'reports':
-//
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_reports'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to reports is denied.";
-//
-//				}else{
-//
-//					echo "Reports coming as soon as someone tells me what kind of reports they want";
-//
-//				}
-//
-//				break;
+
 			case 'voices':
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
@@ -539,15 +491,6 @@
 				}
 
 
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_advanced'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to advanced config is denied.";
-//
-//				}else{
-//
-//					include_once("classes/voices.inc.php");
-//					$_SESSION['voices']->handleFLOW();
-//				}
 
 
 				break;
@@ -570,14 +513,6 @@
 
 
 
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_messages'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to messages is denied.";
-//
-//				}else{
-//					include_once("classes/messages.inc.php");
-//					$_SESSION['messages']->handleFLOW();
-//				}
 
 				break;
 			case 'names':
@@ -631,7 +566,16 @@
 
 				}	
 				break;
-				
+			case 'user_teams':
+				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
+				($_SESSION['user']['priv'] == 4 && $_SESSION['features']['user_teams'] == 'yes') // MANAGERS WITH USER STATUS REPORT ACCESS
+				){
+					include_once("classes/user_teams.inc.php");
+					$_SESSION['user_teams']->handleFLOW();
+				}else{
+					accessDenied("UserTeams");
+				}
+				break;
 			case 'process_tracker_schedules':
 
 				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
@@ -647,17 +591,7 @@
 					accessDenied("ProcessTrackerSchedules");
 
 				}				
-				
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['feat_advanced'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to advanced config is denied.";
-//
-//				}else{
-//
-//					include_once("classes/names.inc.php");
-//					$_SESSION['names']->handleFLOW();
-//
-//				}
+
 				break;
 
 			case 'problems':
@@ -676,16 +610,6 @@
 
 				}
 
-
-//				if($_SESSION['user']['priv'] == 4 && $_SESSION['user']['feat_problems'] != 'yes'){
-//
-//					echo "You lack the ability to access this section. Access to problems is denied.";
-//
-//				}else{
-//
-//					include_once("classes/problems.inc.php");
-//					$_SESSION['problems']->handleFLOW();
-//				}
 
 				break;
 

@@ -262,11 +262,16 @@ a:hover {
     display: inline-block;
 }
 .tightTable {
-    padding: 4px;
+	padding: 4px;
 	border: none;
 	border-spacing: 0;
 	border-collapse: collapse;
 }
+
+.tightTable th {
+	font-weight: 800;
+}
+
 .fieldPreview {
 	position: absolute;
 	display: block;
@@ -470,13 +475,32 @@ td.countsRow {
 	background-color: yellow;
 	color: black;
 }
+
 .redThresh {
 	background-color: red;
 	color: white;
 }
 
-
 .no-close .ui-dialog-titlebar-close {
 	display: none;
-  }
+}
+
+.userList {
+	border: 1px solid #777;
+	width: 325px;
+	min-height: 120px;
+	list-style-type: none;
+	padding: 5px 0 0 0;
+	float: left;
+	margin: 0 8px 0 0;
+	max-height: 400px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.userList li {
+	margin: 2px 4px 2px 4px;
+	padding: 5px;
+	width: 300px;
+}
 

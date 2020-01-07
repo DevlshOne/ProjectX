@@ -1,18 +1,18 @@
 <?php
- /***************************************************************
+/***************************************************************
  *    Interface class - handles generic interface stuff, like menus, navigation, etc
  *    Written By: Jonathan Will
  ***************************************************************/
 
-    $_SESSION['interface'] = new InterfaceClass;
+$_SESSION['interface'] = new InterfaceClass;
 
-    class InterfaceClass
-    {
-        public function InterfaceClass(){
-        }
-
-        public function makeNewHeader(){
-            ?>
+class InterfaceClass
+{
+	public function InterfaceClass(){
+	}
+	
+	public function makeNewHeader(){
+		?>
             <header class="cd-main-header">
 
 
@@ -366,6 +366,8 @@
                                             Users</a></li>
                                     <li><a href="?area=user_groups&no_script=1"
                                            onclick="loadSection(this.href);return false">Group Manager</a></li>
+                                    <li><a href="?area=user_teams&no_script=1"
+                                           onclick="loadSection(this.href);return false">Team Manager</a></li>
 									<li><a href="?area=user_groups_master&no_script=1"
                                            onclick="loadSection(this.href);return false">Master User Groups</a></li>
 
