@@ -190,6 +190,15 @@
 
 			break;
 
+		case 'userteam':
+		case 'user_team':
+			
+			include_once($basedir."api/user_teams.api.php");
+			$obj = new API_UserTeams();
+			$obj->handleSecondaryAjax();
+			
+			break;
+			
 		case 'usergroup':
 
 			include_once($basedir."api/user_groups.api.php");
@@ -454,7 +463,16 @@
 		$feat->handleAPI();
 
 		break;
-
+	case 'userteams':
+	case 'user_teams':
+		
+		include_once($basedir."api/user_teams.api.php");
+		$obj = new API_UserTeams();
+		$obj->handleAPI();
+		
+		
+		
+		break;
 	case 'usergroups':
 	case 'user_groups':
 
