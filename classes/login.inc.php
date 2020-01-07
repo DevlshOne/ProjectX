@@ -56,7 +56,7 @@ class LoginClass{
 //									)
 //								);
 
-			$row = $_SESSION['dbapi']->users->checkLogin($user,$pass);
+			$row = $_SESSION['dbapi']->users->checkLogin($user,$pass,$_SESSION['login_salt']);
 
 
 
@@ -69,6 +69,9 @@ class LoginClass{
 
 
 				jsAlert("ERROR: YOUR USER/PASS ARE INCORRECT",0);
+
+				# GENERATE NEW LOGIN SALT
+				$_SESSION['login_salt'] = $_SESSION['dbapi']->users->generateSalt();
 
 
 				jsRedirect(stripurl(array('area','no_script')));
@@ -158,6 +161,9 @@ class LoginClass{
 
 				## STORE USER RECORD IN SESSION!
 				$_SESSION['user'] = $row;
+
+				# GENERATE NEW LOGIN SALT
+				$_SESSION['login_salt'] = $_SESSION['dbapi']->users->generateSalt();
 				
 				$_SESSION['logins'] = $_SESSION['dbapi']->querySQL("SELECT * FROM `logins` WHERE id='".$login_id."' ");
 
@@ -341,7 +347,7 @@ class LoginClass{
 
 				var obj=getEl('md5pass');
 
-				obj.value = hex_md5(frm.password.value);
+				obj.value = hex_md5(hex_md5(frm.password.value)+'<?=$_SESSION['login_salt']?>');
 
 				frm.password.value='';
 
