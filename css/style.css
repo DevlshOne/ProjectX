@@ -484,6 +484,9 @@ td.countsRow {
 .no-close .ui-dialog-titlebar-close {
 	display: none;
 }
+.dropdown-menu {
+    left: auto !important;
+}
 
 .userList {
 	border: 1px solid #777;

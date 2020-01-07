@@ -95,87 +95,73 @@ if(isset($_REQUEST['o'])){
 // NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
 if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])){
 	
-	?><!DOCTYPE HTML>
-		<html>
-		<head>
-			<title>Project X - Management Tools and Reports</title>
+	?>
+        <!DOCTYPE HTML>
+        <html>
+        <head>
+            <title>Project X - Management Tools and Reports</title>
+            <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
+            <link rel="icon" type="image/x-icon" href="favicon.ico">
+            <script type="text/javascript" src="js/functions.js"></script>
+            <link rel="stylesheet" type="text/css" href="css/reset.css"> <!-- CSS reset -->
+            <META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
+            <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
+            <link rel="stylesheet" type="text/css" href="css/style.css"/>
+            <link rel="stylesheet" type="text/css" href="css/navstyle.css"> <!-- Resource style -->
+            <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/>
+            <link rel="stylesheet" type="text/css" href="themes/default/css/uniform.default.css" media="screen"/>
+            <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>
+            <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css"/>
+            <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+            <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
+            <script type="text/javascript" src="js/popper.min.js"></script>
+            <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+            <script type="text/javascript" src="js/jquery.uniform.min.js"></script>
+            <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+            <script type="text/javascript" src="js/ajax_functions.js"></script>
+            <script type="text/javascript" src="js/functions.js"></script>
+            <script type="text/javascript" src="js/page_system.js"></script>
+            <script type="text/javascript" src="js/modernizr.js"></script> <!-- Modernizr -->
+            <script>
+                $('nav.navbar').ready(function () {
+                    $('nav.navbar a.dropdown-item').not('#change_password').each(function () {
+                        $(this).on('click', function (e) {
+                            loadSection($(this).attr('href'));
+                            e.preventDefault();
+                        });
+                    });
+                    $('#change_password').on('click', function () {
+                        loadChangePassword();
+                    });
+                });
+                var dispTimer = false;
 
-
-			<script src="js/functions.js"></script>
-
-			<link rel="stylesheet" href="css/reset.css"> <!-- CSS reset -->
-
-			<META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
-
-
-			<link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
-
-			<link rel="stylesheet" type="text/css" href="css/style.css" />
-			<link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
-			<link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css" />
-
-			<link rel="stylesheet" href="themes/default/css/uniform.default.css" media="screen" />
-
-			<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
-			<link rel="icon" type="image/x-icon"  href="favicon.ico">
-
-			<link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />
-
-<?/*			<script src="js/jquery-1.9.1.js"></script>**/?>
-
-			<script src="js/jquery-1.10.2.min.js"></script>
-
-			<?/*<script src="//code.jquery.com/jquery-2.2.4.min.js"></script>*/?>
-
-			<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
-			<script src="js/jquery.uniform.min.js"></script>
-
-
-			<?/*<script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>*/?>
-
-			<script src="js/jquery.dataTables.min.js"></script>
-
-			<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-
-			<script src="js/ajax_functions.js"></script>
-			<script src="js/functions.js"></script>
-			<script src="js/page_system.js"></script>
-			<?/** NEW NAVIGATION STUFF
-
-			*
-			***/?>
-			<script src="js/modernizr.js"></script> <!-- Modernizr -->
-			<script src="js/jquery.menu-aim.js"></script>
-			<script src="js/main.js"></script> <!-- Resource jQuery -->
-			<script>
-        		var dispTimer = false;
-				function genReport(frm, area, printable){
-					if(area){
-						$('#'+area+'_submit_report_button').hide();
-						$('#'+area+'_loading_plx_wait_span').show();
-					}
-					var url = frm.action;
-					if(printable){
-						url += "&no_nav=1";
-					}
-					$.post(url, $('#'+frm.id).serialize()).done(function(data){
-						if(printable){
-							//$('#main_content').html(data);
-							var win = window.open("about:blank");
-							$(win.document.body).html(data);
-							win.focus();
-							//alert("open window here");
-						}else{
-							$('#main_content').html(data);
-						}
-						if(area){
-							$('#'+area+'_submit_report_button').show();
-							$('#'+area+'_loading_plx_wait_span').hide();
-						}
-					});
-					return false;
-				}
+                function genReport(frm, area, printable) {
+                    if (area) {
+                        $('#' + area + '_submit_report_button').hide();
+                        $('#' + area + '_loading_plx_wait_span').show();
+                    }
+                    var url = frm.action;
+                    if (printable) {
+                        url += "&no_nav=1";
+                    }
+                    $.post(url, $('#' + frm.id).serialize()).done(function (data) {
+                        if (printable) {
+                            //$('#main_content').html(data);
+                            var win = window.open("about:blank");
+                            $(win.document.body).html(data);
+                            win.focus();
+                            //alert("open window here");
+                        } else {
+                            $('#main_content').html(data);
+                        }
+                        if (area) {
+                            $('#' + area + '_submit_report_button').show();
+                            $('#' + area + '_loading_plx_wait_span').hide();
+                        }
+                    });
+                    return false;
+                }
 
                 function download(type, filename, text) {
                     let element = document.createElement('a');
@@ -202,78 +188,43 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
                     });
                 }
 
-				function loadSection(url){
-
-					$('#main_content').load(url);
-            		$('body').css('background-color', '#FFFFFF');
-            		$('body').css('color', '#000000');
-
-            		$('#main_content').css('background-color', '#FFFFFF');
+                function loadSection(url) {
+                    $('#main_content').empty();
+                    $('#main_content').html('<table class="tightTable"><tr><td class="align-center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load(url);
+                    $('body').css('background-color', '#FFFFFF');
+                    $('body').css('color', '#000000');
+                    $('#main_content').css('background-color', '#FFFFFF');
                     $('#main_content').css('color', '#000000');
-            		
-					$('.cd-side-nav').find('.hover').removeClass('hover');
-					$('.cd-side-nav').find('.selected').removeClass('selected');
-					$('.cd-side-nav').removeClass('nav-is-visible');
-					$('.cd-main-header').find('.nav-is-visible').removeClass('nav-is-visible');
-            		if(dispTimer) {
-                		clearInterval(dispTimer);
-						dispTimer = false;
-            		}
-				}
+                    if (dispTimer) {
+                        clearInterval(dispTimer);
+                        dispTimer = false;
+                    }
+                }
 
+                function viewChangeHistory(area, areaid) {
+                    var objname = 'dialog-modal-view_change_history';
+                    $('#' + objname).dialog("open");
+                    $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    $('#' + objname).load("index.php?area=action_log&view_change_history=1&view_area=" + encodeURI(area) + "&view_area_id=" + areaid + "&printable=1&no_script=1");
+                    $('#' + objname).dialog('option', 'position', 'center');
+                }
 
-				function viewChangeHistory(area, areaid){
-					var objname = 'dialog-modal-view_change_history';
-
-
-
-					$('#'+objname).dialog("open");
-
-					$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
-					$('#'+objname).load("index.php?area=action_log&view_change_history=1&view_area="+encodeURI(area)+"&view_area_id="+areaid+"&printable=1&no_script=1");
-
-					$('#'+objname).dialog('option', 'position', 'center');
-
-				}
-
-				function applyUniformity(){
-					$("input:submit, button, input:button").button();
-					$("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
-
-
-					$('.priorityRender').each(function( index ) {
-
-						$(this).html( 
-								
-							priorityProcessing( $(this).html() )
-							 
-						);
-						 // console.log( index + ": " + $( this ).text() );
-					});
-				}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-			</script>
-		</head>
-		<body>
-		<?
+                function applyUniformity() {
+                    $("input:submit, button, input:button").button();
+                    $("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
+                    $('.priorityRender').each(function (index) {
+                        $(this).html(
+                            priorityProcessing($(this).html())
+                        );
+                        // console.log( index + ": " + $( this ).text() );
+                    });
+                }
+            </script>
+        </head>
+        <body>
+        <header class="cd-main-header">
+        </header> <!-- .cd-main-header -->
+        <?
 	}
 
 
@@ -294,17 +245,277 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 		
 		
 		// NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
-		if(!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])){
+		if (!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])) {
+			$_SESSION['interface']->makeNewheader();
+			?>
+            <nav class="navbar fixed-top navbar-expand navbar-light" style="background-color: #7abaff">
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        <li class="nav-item active">
+                            <a class="navbar-brand" href="index.php"><img src="images/cci-logo-200-2.png" height="30" border="0"></a>
+                        </li>
+                        <?
+                            if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
+                                ?>
+                                <li class="nav-item">
+                                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Campaigns
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <?
+                                            if (checkAccess('campaigns')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=campaigns&no_script=1">Campaign Setup</a>
+                                                <a class="dropdown-item" href="?area=campaign_parents&no_script=1">Campaign Parents</a>
+                                                <a class="dropdown-item" href="?area=form_builder&no_script=1">Form Builder</a>
+                                                <?
+                                            }
+                                            if (checkAccess('voices')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=voices&no_script=1">Voices</a>
+                                                <?
+                                            }
+                                            if (checkAccess('names')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=names&no_script=1">Names</a>
+                                                <?
+                                            }
+                                            if (checkAccess('scripts')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=scripts&no_script=1">Quiz Questions</a>
+                                                <?
+                                            }
+                                        ?>
+                                    </div>
+                                </li>
+                                <?
+                            }
+                            if (checkAccess('sales_management') || checkAccess('lead_management') || checkAccess('employee_hours') || checkAccess('ringing_calls') || checkAccess('messages') || checkAccess('server_status') || checkAccess('extensions')) {
+                                ?>
+                                <li class="nav-item">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Management Tools
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <?
+                                            if (checkAccess('lead_management')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=lead_management&no_script=1">Lead Management</a>
+                                                <?
+                                            }
+                                            if (checkAccess('sales_management')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=sales_management&no_script=1">Sales Management</a>
+                                                <?
+                                            }
+                                            if (checkAccess('employee_hours')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=employee_hours&no_script=1">Employee Hours</a>
+                                                <?
+                                            }
+                                            if (checkAccess('phone_lookup')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=phone_lookup&no_script=1">DRIPP Lookup</a>
+                                                <?
+                                            }
+                                            if (checkAccess('quiz_results')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=quiz_results&no_script=1">Quiz Results</a>
+                                                <?
+                                            }
+                                            if (checkAccess('ringing_calls')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=ringing_calls&no_script=1">Ring Report</a>
+                                                <?
+                                            }
+                                            if (checkAccess('messages')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=messages&no_script=1">Agent Messages</a>
+                                                <?
+                                            }
+                                            if (checkAccess('dialer_status')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=dialer_status&no_script=1">Dialer Status</a>
+                                                <?
+                                            }
+                                            if (checkAccess('server_status')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=server_status&no_script=1">Server Status</a>
+                                                <?
+                                            }
+                                            if (checkAccess('extensions')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=extensions&no_script=1">Extensons</a>
+                                                <?
+                                            }
+                                        ?>
+                                    </div>
+                                </li>
+                                <?
+                            }
+                            if (checkAccess('list_tools')) {
+                                ?>
+                                <li class="nav-item">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        List Tools
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <a class="dropdown-item" href="?area=list_tools&tool=build_list&no_script=1">List Builder</a>
+                                        <a class="dropdown-item" href="?area=list_tools&tool=dnc_tools&no_script=1">DNC Management</a>
+                                        <a class="dropdown-item" href="?area=list_tools&tool=manage_lists&no_script=1">Vici List Management</a>
+                                        <a class="dropdown-item" href="?area=list_tools&tool=tasks&no_script=1">Task / Status Management</a>
+                                        <a class="dropdown-item" href="?area=list_tools&tool=load_list&no_script=1">Import Leads</a>
+                                        <a class="dropdown-item" href="?area=list_tools&tool=view_importss&no_script=1">List Imports / Counts</a>
+                                        <a class="dropdown-item" href="?area=list_tools&tool=performance_reports&no_script=1">List Performance Report</a>
+                                        <a class="dropdown-item" href="?area=list_tools&tool=vici_report&no_script=1">Vicidial List Count</a>
+                                    </div>
+                                </li>
+                                <?
+                            }
+                            if (checkAccess('fronter_closer') || checkAccess('sales_analysis') || checkAccess('agent_call_stats') || checkAccess('user_charts') || checkAccess('recent_hangups') || checkAccess('script_statistics') || checkAccess('dispo_log') || checkAccess('capacity_report') || checkAccess('report_emails') || checkAccess('user_status_report')) {
+                                ?>
+                                <li class="nav-item">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Reports
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <?
+                                            if (checkAccess('fronter_closer')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=fronter_closer&no_script=1">Fronter / Closer</a>
+                                                <?
+                                            }
+                                            if (checkAccess('sales_analysis')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=sales_analysis&no_script=1">Sales Analysis</a>
+                                                <?
+                                            }
+                                            if (checkAccess('agent_call_stats')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=agent_call_stats&no_script=1">Verifier Call Stats</a>
+                                                <?
+                                            }
+                                            if (checkAccess('rouster_report')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=rouster_report&no_script=1">Rouster Call Stats</a>
+                                                <?
+                                            }
+                                            if (checkAccess('summary_report')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=summary_report&no_script=1">Summary Report</a>
+                                                <?
+                                            }
+                                            if (checkAccess('dialer_sales')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=dialer_sales&no_script=1">Area Code Sales By Dialer</a>
+                                                <?
+                                            }
+                                            if (checkAccess('user_charts')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=user_charts&no_script=1">User Charts</a>
+                                                <?
+                                            }
+                                            if (checkAccess('recent_hangups')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=recent_hangups&no_script=1">Recent Hangups</a>
+                                                <?
+                                            }
+                                            if (checkAccess('dispo_log')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=dispo_log&no_script=1">Disposition Logs</a>
+                                                <?
+                                            }
+                                            if (checkAccess('capacity_report')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=capacity_report&no_script=1">Capacity Reports</a>
+                                                <?
+                                            }
+                                            if (checkAccess('report_emails')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=report_emails&no_script=1">Report Email Setup</a>
+                                                <?
+                                            }
+                                            if (checkAccess('user_status_report')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=user_status_report&no_script=1">User Status Report</a>
+                                                <?
+                                            }
+                                        ?>
+                                    </div>
+                                </li>
+                                <?
+                            }
+                            if (checkAccess('pac_web_donations')) {
+                                ?>
+                                <li class="nav-item">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        PACs Maintenance
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <?
+                                            if (checkAccess('pac_reports')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=pac_reports&no_script=1">Web Donations</a>
+                                                <?
+                                            }
+                                        ?>
+                                    </div>
+                                </li>
+                                <?
+                            }
+                            if (checkAccess('users')) {
+                                ?>
+                                <li class="nav-item">
+                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        Users
+                                    </a>
+                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                        <a class="dropdown-item" href="?area=users&no_script=1">Search / List Users</a>
+                                        <a class="dropdown-item" href="?area=user_groups&no_script=1">Group Manager</a>
+                                        <a class="dropdown-item" href="?area=user_teams&no_script=1">Team Manager</a>
+                                        <a class="dropdown-item" href="?area=user_groups_master&no_script=1">Master Groups Manager</a>
+                                        <?
+                                            if (checkAccess('feature_control')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=feature_control&no_script=1">Feature Control</a>
+                                                <?
+                                            }
+                                            if (checkAccess('login_tracker')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=login_tracker&no_script=1">Login tracker</a>
+                                                <?
+                                            }
+                                            if (checkAccess('action_log')) {
+                                                ?>
+                                                <a class="dropdown-item" href="?area=action_log&no_script=1">Action Logs!</a>
+                                                <?
+                                            }
+                                        ?>
+                                    </div>
+                                </li>
+                                <?
+                            }
+                        ?>
+                        <li class="nav-item">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Account
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <!--                                <a class="dropdown-item" href="#0">My Account</a>-->
+                                <a class="dropdown-item" id="change_password" href="#">Change Password</a>
+                                <a class="dropdown-item" href="?o">Logout</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav><?
+            
+            if (isset($_REQUEST['area']) && $_REQUEST['area']) {
 
-			//$_SESSION['interface']->makeHeader();
-			$_SESSION['interface']->makeNewHeader();
-
-			if(isset($_REQUEST['area']) && $_REQUEST['area']){
-
-				?><script>
-					loadSection('<?=stripurl('no_script')?>&no_script=1');
-				</script><?
-			}
+        		?><script>
+                	loadSection('<?=stripurl('no_script')?>&no_script=1');
+	            </script><?
+    	    }
 
 
 		}else{

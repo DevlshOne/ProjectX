@@ -1,4 +1,4 @@
-/* -------------------------------- 
+/* --------------------------------
 
 Primary style
 
@@ -28,13 +28,13 @@ input[type="search"]::-webkit-search-results-decoration {
   display: none;
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
 Main Page Content
 
 -------------------------------- */
 .cd-main-content .content-wrapper {
-  padding: 55px 5% 3em;
+  padding: 20px 5% 3em;
 }
 
 .cd-main-content .content-wrapper h1 {
@@ -53,7 +53,7 @@ Main Page Content
 @media only screen and (min-width: 768px) {
   .cd-main-content .content-wrapper {
     margin-left: 80px;
-    padding-top: 65px;
+    padding-top: 55px;
   }
   .cd-main-content .content-wrapper h1 {
     padding: 10px 0;
@@ -66,27 +66,25 @@ Main Page Content
 }
 @media only screen and (min-width: 1170px) {
   .cd-main-content .content-wrapper {
-    margin-left: 150px;
+    margin-left: 10px;
   }
   .cd-main-content::before {
     content: 'desktop';
   }
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
 Header
 
 -------------------------------- */
 .cd-main-header {
   position: absolute;
+  display: inline-block;
   z-index: 2;
   top: 0;
   left: 0;
-  height: 45px;
   width: 100%;
-  background: #3e454c;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -106,8 +104,8 @@ Header
   float: left;
   display: block;
 /* margin: 11px 0 0 5%;*/
-  
- 
+
+
 }
 .cd-logo img {
   display: block;
@@ -115,7 +113,7 @@ Header
 @media only screen and (min-width: 768px) {
   .cd-logo {
    /* margin: 16px 0 0 36px;*/
-    
+
   }
 }
 
@@ -287,7 +285,7 @@ Header
   }
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
 Top Navigation
 
@@ -311,8 +309,9 @@ Top Navigation
 .cd-top-nav > li a {
   padding: 1em 5% !important;
 }
+
 /*.cd-top-nav img {
-  // avatar image 
+  // avatar image
   position: absolute;
   left: 1.8em;
   top: 50%;
@@ -326,7 +325,7 @@ Top Navigation
   width: 20px;
   border-radius: 50%;
   display: none;
-  
+
 }*/
 
 
@@ -360,7 +359,7 @@ Top Navigation
   }
 }
 
-/* -------------------------------- 
+/* --------------------------------
 
 Sidebar
 
@@ -371,7 +370,7 @@ Sidebar
   left: 0;
   top: 0;
   width: 100%;
-  
+
   padding: 45px 0 0;
   background-color: #2c3136;
   visibility: hidden;
