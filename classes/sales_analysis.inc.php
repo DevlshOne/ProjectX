@@ -84,7 +84,15 @@ class SalesAnalysis{
 	
 	function getTeamMembers($team_id) {
 		$team_id = intval($team_id);
-		return $_SESSION['dbapi']->ROfetchAllAssoc("SELECT UPPER(`username`) AS username FROM `user_teams` WHERE `team_id` = " . $team_id);
+		$arr = $_SESSION['dbapi']->ROfetchAllRows("SELECT UPPER(`username`) FROM `user_teams_members` WHERE `team_id` = " . $team_id);
+		$out = array();
+		
+		foreach($arr as $user){
+			$out[] = $user[0];
+		}
+		
+		return $out;
+		
 	}
 	
 	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
@@ -218,15 +226,20 @@ class SalesAnalysis{
 				
 			}
 			
-			$use_team = false;
-			$sql_user_team_list = array();
-			if($user_team_id) {
-				$use_team = true;
-				$sql_user_team_list = $this->getTeamMembers($user_team_id);
-			}
+
 			
 		}
 		
+		
+		$use_team = false;
+		$sql_user_team_list = array();
+		if($user_team_id) {
+			$use_team = true;
+			$sql_user_team_list = $this->getTeamMembers($user_team_id);
+		}
+		
+		
+		//print_r($sql_user_team_list);
 		
 		$sql_user_group_for_activity_join = '';
 		$sql_user_group_lmt = '';
@@ -426,6 +439,8 @@ class SalesAnalysis{
 		"".
 		"";
 		
+		print_r($sql_user_team_list);
+		
 		
 		//echo $sql."<br />\n";
 		$res = $_SESSION['dbapi']->ROquery($sql);
@@ -462,8 +477,11 @@ class SalesAnalysis{
 			}
 			
 			if($use_team) {
-				if(!in_array($tmp, $sql_user_team_list)) {
-					//                        echo "Skipping " . $tmp . " --> not in selected team." . PHP_EOL;
+
+				if(!in_array($tmp, $sql_user_team_list, false)) {
+					
+					//echo "Skipping " . $tmp . " --> not in selected team.<br />";
+					
 					continue;
 				}
 			}

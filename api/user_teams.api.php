@@ -83,24 +83,37 @@
                     $teamid = intval($_REQUEST['team']);
                     $userid = intval($_REQUEST['userid']);
                     $q = "INSERT INTO user_teams_members (team_id, user_id, username) SELECT $teamid, $userid, users.username AS username FROM users WHERE users.id = $userid";
-                    $res = query($q, 3);
+                    
+                    execSQL($q);
+                    
+                    $_SESSION['api']->outputEditSuccess($teamid);
+                    
                     break;
                 case 'addNewTeam':
                     $teamname = trim($_REQUEST['name']);
-                    $q = "INSERT INTO user_teams (status, team_name) VALUES ('enabled', '" . $teamname . "')";
-                    $res = query($q, 3);
+                    $q = "INSERT INTO user_teams (`status`, `team_name`) VALUES ('enabled', '" . $teamname . "')";
+                    
+					execSQL($q);
+					$teamid = mysqli_insert_id($_SESSION['db']);
+					
+					$_SESSION['api']->outputEditSuccess($teamid);
+					
                     break;
                 case 'removeTeamMember':
                     $teamid = intval($_REQUEST['team']);
                     $userid = intval($_REQUEST['userid']);
                     $q = "DELETE FROM user_teams_members WHERE team_id = $teamid AND user_id = $userid";
-                    $res = query($q, 3);
+                    execSQL($q);
+                    
+                    $_SESSION['api']->outputEditSuccess($teamid);
                     break;
                 case 'changeTeamName':
                     $teamid = intval($_REQUEST['team']);
                     $teamname = trim($_REQUEST['name']);
                     $q = "UPDATE user_teams SET team_name = '" . $teamname . "' WHERE id = $teamid";
-                    $res = query($q, 3);
+                    execSQL($q);
+                    
+                    $_SESSION['api']->outputEditSuccess($teamid);
                     break;
                 default:
                 case 'list':

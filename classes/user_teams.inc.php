@@ -196,10 +196,20 @@
                                     done: function () {
                                         if (frontEnd_debug) {
                                         }
+                                        
+                                        // NO NEED TO RELOAD THE PAGE, JUST REFRESH TEAM LIST
+                                        loadUserteams();
                                     }
                                 });
+                                
                                 $(this).dialog('close');
-                                location.href = 'index.php?area=user_teams';
+                                //location.href = 'index.php?area=user_teams';
+                                
+                                $('#new_team_name').val("");
+                                
+
+
+                                
                             } else {
                                 alert('Team name may not be empty!');
                             }
@@ -412,9 +422,12 @@
                                 if (frontEnd_debug) {
                                     console.log('Team name has been changed to :: ', team_name);
                                 }
-                                location.href = 'index.php?area=user_teams';
+                                //location.href = 'index.php?area=user_teams';
+                                
                             }
                         });
+
+                        loadUserteams();
                     } else {
                         alert('Team name may not be empty');
                     }
@@ -434,17 +447,22 @@
                             crossOrigin: false,
                             url: 'api/api.php?get=user_teams&mode=json&action=addTeamMember&team=' + team_id + '&userid=' + current_id,
                             done: function () {
-                                alert('Member has been added to ' + team_name);
+                                //alert('Member has been added to ' + team_name);
                                 if (frontEnd_debug) {
                                     console.log('Prefs have just been loaded :: ', tileDefs);
                                     console.log('User Preferences loaded');
                                 }
+
+                                //loadUserteams();
                             }
                         });
+
+                        loadUserteams();
                     },
                     remove: function (e, ui) {
                         let current_id = ui.item[0].id.split('_')[1];
                         console.log('Removing :: ' + current_id);
+                        
                         ui.item.removeClass('ui-state-default').addClass('ui-state-highlight');
                         $(ui.item).attr('id', 'userid_' + current_id);
                         $.ajax({
@@ -456,17 +474,21 @@
                             crossOrigin: false,
                             url: 'api/api.php?get=user_teams&mode=json&action=removeTeamMember&team=' + team_id + '&userid=' + current_id,
                             success: function () {
-                                alert('Member has been removed from ' + team_name);
+                                //alert('Member has been removed from ' + team_name);
                                 if (frontEnd_debug) {
                                     console.log('Prefs have just been loaded :: ', tileDefs);
                                     console.log('User Preferences loaded');
                                 }
+
+                                loadUserteams();
                             },
                             fail: function () {
 
                             }
 
                         });
+
+                        //loadUserteams();
                     }
                 });
                 loadUserGroups();
