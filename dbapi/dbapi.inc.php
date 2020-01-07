@@ -848,6 +848,12 @@ class DBAPI {
 		return $this->query($cmd, 8);
 		# Returns all results as an associative array
 	}
+	public function fetchAllRows($cmd) {
+		return $this->query($cmd, 9);
+		# Returns all results as a numerical array
+	}
+
+	
 	
 	function ROqueryROW($cmd)	{	return $this->ROQuery($cmd,2);}	# Returns an array of 1 result
 	function ROqueryOBJ($cmd)	{	return $this->ROQuery($cmd,3);}	# Returns an object of first result
@@ -860,6 +866,10 @@ class DBAPI {
 		# Returns all results as an associative array
 	}
 	
+	public function ROfetchAllRows($cmd) {
+		return $this->ROquery($cmd, 9);
+		# Returns all results as a numerical array
+	}
 	
 	/**
 	 * Runs READ ONLY queries against the read slaves, mostly for reports, to spread out the load
@@ -976,6 +986,8 @@ class DBAPI {
 			return mysqli_fetch_assoc($res);
 		}else if ($mode == 8) {
 			return mysqli_fetch_all($res, MYSQLI_ASSOC);
+		}else if ($mode == 9) {
+			return mysqli_fetch_all($res, MYSQLI_NUM );
 		}
 	}
 }
