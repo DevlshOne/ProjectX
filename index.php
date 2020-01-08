@@ -258,7 +258,7 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
                             if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
                                 ?>
                                 <li class="nav-item">
-                                    <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <a href="#" class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                         Campaigns
                                     </a>
                                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
