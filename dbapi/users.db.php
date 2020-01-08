@@ -20,15 +20,15 @@ class UsersAPI{
 	 *
 	 * @return	The users table row on success, or null on failure to login
 	 */
-	function checkLogin($user,$pass){
-
+	function checkLogin($user,$pass,$salt=''){
 
 		$row = $_SESSION['dbapi']->querySQL(
 				"SELECT `".$this->table."`.* FROM `".$this->table."` ".
 
 				" WHERE `".$this->table."`.enabled='yes' ". // AND accounts.enabled='yes' // MOVING THIS TO PHP, SO WE CAN ALERT ACCORDINGLY
 				" AND `".$this->table."`.username='".mysqli_real_escape_string($_SESSION['dbapi']->db,$user)."' ".
-				" AND `".$this->table."`.password='".mysqli_real_escape_string($_SESSION['dbapi']->db,$pass)."' ".
+				" AND  MD5(CONCAT(password,'".mysqli_real_escape_string($_SESSION['dbapi']->db,$salt)."'))='".mysqli_real_escape_string($_SESSION['dbapi']->db,$pass)."'".
+				//" AND `".$this->table."`.password='".mysqli_real_escape_string($_SESSION['dbapi']->db,$pass)."' ".
 				" LIMIT 1 "
 				);
 
@@ -507,6 +507,15 @@ class UsersAPI{
 						" AND enabled='yes' ");
 
 		return ($id)?true:false;
+	}
+
+
+	function generateSalt($len=10){
+
+		# CREATE A UNIQUE SALT TO BE USED DURING LOGIN
+		# DEFAULT RANDOM BYTE LENGTH 10
+		return bin2hex(random_bytes($len));
+
 	}
 
 }
