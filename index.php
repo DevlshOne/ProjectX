@@ -282,8 +282,11 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
                                             }
                                             if (checkAccess('scripts')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=scripts&no_script=1">Quiz Questions</a>
+                                                <a class="dropdown-item" href="?area=scripts&no_script=1">Scripts</a>
                                                 <?
+                                            }
+                                            if(checkAccess('quiz_questions')){
+                                            	?><a class="dropdown-item" href="?area=quiz_questions&no_script=1">Quiz Questions</a><?
                                             }
                                         ?>
                                     </div>
