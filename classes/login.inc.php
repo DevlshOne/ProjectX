@@ -233,88 +233,88 @@ class LoginClass{
 	}
 
 
-	function handleDirectLogin(){
+	// function handleDirectLogin(){
 
 
-		if(isset($_REQUEST['login_link']) && isset($_REQUEST['user']) && isset($_REQUEST['login_code'])){
+	// 	if(isset($_REQUEST['login_link']) && isset($_REQUEST['user']) && isset($_REQUEST['login_code'])){
 
-			$user 			= trim($_REQUEST['user']);
-			$login_code 	= trim($_REQUEST['login_code']);
+	// 		$user 			= trim($_REQUEST['user']);
+	// 		$login_code 	= trim($_REQUEST['login_code']);
 
-			$row = $_SESSION['dbapi']->querySQL("SELECT users.*  FROM users ".
-					" WHERE users.enabled='yes' ". // AND accounts.enabled='yes' // MOVING THIS TO PHP, SO WE CAN ALERT ACCORDINGLY
-					" AND users.username='".mysqli_real_escape_string($_SESSION['dbapi']->db,$user)."' ".
-					" AND users.login_code='".mysqli_real_escape_string($_SESSION['dbapi']->db,$login_code)."' ".
-					" LIMIT 1 "
-					);
-
-
-			## USER/PASS INVALID, OR ACCOUNT DISABLED
-			if(!$row){
-
-				$_SESSION['dbapi']->users->tracklogin(0,0,$user,$login_code,'failure-code');
+	// 		$row = $_SESSION['dbapi']->querySQL("SELECT users.*  FROM users ".
+	// 				" WHERE users.enabled='yes' ". // AND accounts.enabled='yes' // MOVING THIS TO PHP, SO WE CAN ALERT ACCORDINGLY
+	// 				" AND users.username='".mysqli_real_escape_string($_SESSION['dbapi']->db,$user)."' ".
+	// 				" AND users.login_code='".mysqli_real_escape_string($_SESSION['dbapi']->db,$login_code)."' ".
+	// 				" LIMIT 1 "
+	// 				);
 
 
+	// 		## USER/PASS INVALID, OR ACCOUNT DISABLED
+	// 		if(!$row){
 
-
-				jsAlert("ERROR: YOUR USER AND LOGIN CODE ARE INCORRECT",0);
+	// 			$_SESSION['dbapi']->users->tracklogin(0,0,$user,$login_code,'failure-code');
 
 
 
-				jsRedirect(stripurl(array('login_link','user','login_code')));
-				exit;
 
-			}else{
-
-
-				$_SESSION['dbapi']->users->tracklogin($row['account_id'],$row['id'],$user,$login_code,'success-code');
+	// 			jsAlert("ERROR: YOUR USER AND LOGIN CODE ARE INCORRECT",0);
 
 
 
-				## STORE USER RECORD IN SESSION!
-				$_SESSION['user'] = $row;
+	// 			jsRedirect(stripurl(array('login_link','user','login_code')));
+	// 			exit;
 
-				// LOAD ASSIGNED OFFICES
-				// INIT THE ARRAY
-				$_SESSION['assigned_offices'] = array();
-
-				// POPULATE THE ALLOWED/ASSIGNED OFFICES ARRAY
-				$re2 = $_SESSION['dbapi']->query("SELECT * FROM `users_offices` WHERE user_id='".mysqli_real_escape_string($_SESSION['dbapi']->db,$row['id'])."'");
+	// 		}else{
 
 
-				$_SESSION['assigned_office_groups'] = array();
-
-				while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
-
-					$_SESSION['assigned_offices'][] = $r2['office_id'];
-
-					// POPULATE THE GROUP ARRAY FOR THE SELECTED OFFICE(S)
-					if(!is_array($_SESSION['assigned_office_groups'][$r2['office_id']])){
-						$_SESSION['assigned_office_groups'][$r2['office_id']] = array();
-					}
-
-					$re3 = $_SESSION['dbapi']->query("SELECT * FROM `user_groups` WHERE `office`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$r2['office_id'])."'");
-
-					while($r3 = mysqli_fetch_array($re3, MYSQLI_ASSOC)){
-
-						$_SESSION['assigned_office_groups'][$r2['office_id']][] = $r3['user_group'];
-
-					}
-				}
+	// 			$_SESSION['dbapi']->users->tracklogin($row['account_id'],$row['id'],$user,$login_code,'success-code');
 
 
-				## UPDATE THE TIME OF LAST LOGIN
-				$_SESSION['dbapi']->users->updateLastLoginTime();
+
+	// 			## STORE USER RECORD IN SESSION!
+	// 			$_SESSION['user'] = $row;
+
+	// 			// LOAD ASSIGNED OFFICES
+	// 			// INIT THE ARRAY
+	// 			$_SESSION['assigned_offices'] = array();
+
+	// 			// POPULATE THE ALLOWED/ASSIGNED OFFICES ARRAY
+	// 			$re2 = $_SESSION['dbapi']->query("SELECT * FROM `users_offices` WHERE user_id='".mysqli_real_escape_string($_SESSION['dbapi']->db,$row['id'])."'");
 
 
-				jsRedirect('index.php');
-				exit;
+	// 			$_SESSION['assigned_office_groups'] = array();
 
-			}
+	// 			while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
 
-		}
+	// 				$_SESSION['assigned_offices'][] = $r2['office_id'];
 
-	}
+	// 				// POPULATE THE GROUP ARRAY FOR THE SELECTED OFFICE(S)
+	// 				if(!is_array($_SESSION['assigned_office_groups'][$r2['office_id']])){
+	// 					$_SESSION['assigned_office_groups'][$r2['office_id']] = array();
+	// 				}
+
+	// 				$re3 = $_SESSION['dbapi']->query("SELECT * FROM `user_groups` WHERE `office`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$r2['office_id'])."'");
+
+	// 				while($r3 = mysqli_fetch_array($re3, MYSQLI_ASSOC)){
+
+	// 					$_SESSION['assigned_office_groups'][$r2['office_id']][] = $r3['user_group'];
+
+	// 				}
+	// 			}
+
+
+	// 			## UPDATE THE TIME OF LAST LOGIN
+	// 			$_SESSION['dbapi']->users->updateLastLoginTime();
+
+
+	// 			jsRedirect('index.php');
+	// 			exit;
+
+	// 		}
+
+	// 	}
+
+	// }
 
 
 

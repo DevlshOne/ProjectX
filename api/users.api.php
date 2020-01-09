@@ -561,11 +561,11 @@ class API_Users{
 
 					$user_id_stack[] = $id;
 
-					## GENERATE UNIQUE LOGIN CODE
-					unset($edit);
-					$unique_string = $id.$dat['username'].$dat['password'].uniqid('CCI',true);
-					$edit['login_code'] = md5($unique_string);
-					$_SESSION['dbapi']->aedit($id,$edit,$_SESSION['dbapi']->users->table);
+					// ## GENERATE UNIQUE LOGIN CODE
+					// unset($edit);
+					// $unique_string = $id.$dat['username'].$dat['password'].uniqid('CCI',true);
+					// $edit['login_code'] = md5($unique_string);
+					// $_SESSION['dbapi']->aedit($id,$edit,$_SESSION['dbapi']->users->table);
 
 				}
 
@@ -1148,11 +1148,11 @@ class API_Users{
 					$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->users->table);
 					$id = mysqli_insert_id($_SESSION['dbapi']->db);
 
-					## GENERATE UNIQUE LOGIN CODE
-					unset($edit);
-					$unique_string = $id.$dat['username'].$dat['password'].uniqid('CCI',true);
-					$edit['login_code'] = md5($unique_string);
-					$_SESSION['dbapi']->aedit($id,$edit,$_SESSION['dbapi']->users->table);
+					// ## GENERATE UNIQUE LOGIN CODE
+					// unset($edit);
+					// $unique_string = $id.$dat['username'].$dat['password'].uniqid('CCI',true);
+					// $edit['login_code'] = md5($unique_string);
+					// $_SESSION['dbapi']->aedit($id,$edit,$_SESSION['dbapi']->users->table);
 
 					$newrow = $_SESSION['dbapi']->users->getByID($id);
 

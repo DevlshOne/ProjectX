@@ -21,19 +21,18 @@
 	include_once($basedir.'utils/functions.php');
 	include_once($basedir.'utils/feature_functions.php');
 
-		// NEEDED FOR TEMPLATE APPLY FUNCTION
-		include_once($basedir."classes/vici_templates.inc.php");
+	// NEEDED FOR TEMPLATE APPLY FUNCTION
+	include_once($basedir."classes/vici_templates.inc.php");
 
 	## INIT SESSION CLASS $api
 	$_SESSION['api'] = new API_Functions();
 
-
-## FILE HEADER
-
-	$_SESSION['api']->outputFileHeader();
+## API KEY AUTHENTICATION
 
 
-## AUTHENTICATION
+
+
+## AUTHENTICATION CHECK
 
 	## SESSION AUTH
 	if(!$_SESSION['user']['id']){
@@ -43,7 +42,15 @@
 		$_SESSION['api']->errorOut('Not logged in.', true, -101);
 
 
-	}
+	}	
+
+
+## FILE HEADER
+
+	$_SESSION['api']->outputFileHeader();
+
+
+
 
 
 ## START MAIN FLOW
