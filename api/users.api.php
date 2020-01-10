@@ -1115,6 +1115,8 @@ class API_Users{
 				$dat['modifiedby_time'] = time();
 				$dat['modifiedby_userid'] = $_SESSION['user']['id'];
 
+				$dat['login_code'] = ($_POST['login_api_key'])?trim($_POST['login_api_key']):null;
+
 
 				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->users->table);
 
@@ -1168,6 +1170,13 @@ class API_Users{
 
 
 
+			break;
+
+		case 'create_api_key':
+
+			# GENERATE A UNIQUE API KEY USING THE SALT FUNCTION WITH LENGTH OF 16 TO RECEIVE 32CHARS
+			echo $_SESSION['dbapi']->users->generateSalt(16);
+			exit;
 			break;
 
 		default:
