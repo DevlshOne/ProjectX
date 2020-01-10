@@ -781,9 +781,7 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
 				}	
 				break;
 			case 'user_teams':
-				if(	($_SESSION['user']['priv'] >= 5) || 	// ADMINS ALLOWED, OR
-				($_SESSION['user']['priv'] == 4 && $_SESSION['features']['user_teams'] == 'yes') // MANAGERS WITH USER STATUS REPORT ACCESS
-				){
+				if(checkAccess('user_teams') ){
 					include_once("classes/user_teams.inc.php");
 					$_SESSION['user_teams']->handleFLOW();
 				}else{
