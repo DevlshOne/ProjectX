@@ -159,8 +159,8 @@
 //						(($cluster_id > 0)?" AND vici_cluster_id='$cluster_id' ":"").
 //						$user_group_sql.
 //						"";
-//		echo $sql;
-//		exit;
+ 		echo $sql;
+// 		exit;
 //
             $res = $_SESSION['dbapi']->ROquery($sql);
             $userzstack = array();
@@ -184,13 +184,21 @@
             $stmicro = $stime * 1000;
             $etmicro = $etime * 1000;
 
+            
+            $startofday = mktime(0,0,0, date("m", $stime), date("d", $stime), date("Y", $stime));
+            $endofday = mktime(23,59,59, date("m", $etime), date("d", $etime), date("Y", $etime));
+            
             foreach ($userzstack as $uname) {
 
                 $sql = "SELECT *, seconds_INCALL+seconds_READY+seconds_QUEUE+seconds_PAUSED as TotalTime,seconds_INCALL+seconds_READY+seconds_QUEUE as DailyActivityTime  FROM `activity_log` WHERE 1 " .
 
                     " AND `username`='" . mysqli_real_escape_string($_SESSION['db'], $uname) . "' " .
 
-                    (($stime && $etime) ? " AND `time_started` BETWEEN '$stime' AND '$etime' " : '') .
+                    //(($stime && $etime) ? " AND `time_started` BETWEEN '$stime' AND '$etime' " : '') .
+                    
+              		  (($stime && $etime) ? " AND `time_started` BETWEEN '$startofday' AND '$endofday' " : '') .
+                
+                
                     " ORDER BY `time_started` ASC ";
                 // GET A LIST OF TEH AGENTS
                 // ACTIVITY LOG: THE AGENTS THAT ARE WORKING TODAY
@@ -623,6 +631,7 @@
                 }
 
             </script>
+            <a name="anc_rouster_report">
             <table border="0" width="100%">
                 <tr>
                     <td style="border-bottom:1px solid #000;font-size:18px;font-weight:bold">
@@ -1237,7 +1246,8 @@
                 </tr>
 
 
-            </table><?
+            </table>
+            </a><?
 
             // GRAB DATA FROM BUFFER
             $data = ob_get_contents();
@@ -1269,6 +1279,9 @@
                 $timestamp2 = mktime(23, 59, 59);
             }
 
+            
+            //echo "Timeframe: ".date("m/d/Y g:ia", $timestamp).' to '.date("m/d/Y g:ia", $timestamp2).'<br />';
+            
             $cluster_id = intval($_REQUEST['s_cluster_id']);
             $cluster_id = ($cluster_id) ? $cluster_id : 3; // DEFAULT TO VERIFIER CLUSTER
 
@@ -1448,6 +1461,7 @@
 
                             });
 
+                            go('#anc_rouster_report');
 
                         });
                     </script><?

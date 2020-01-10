@@ -1239,6 +1239,7 @@ $(function() {
 					    });
 
 
+					    go('#anc_sales_report');
 
 					} );
 
@@ -1260,7 +1261,10 @@ $(function() {
 
         // ACTIVATE OUTPUT BUFFERING
         ob_start();
-        ob_clean(); ?><h1><?php
+        ob_clean(); ?>
+        
+        <a name="anc_sales_report">
+        <h1><?php
 
 			if($campaign_code){
 				echo $campaign_code.' ';
@@ -1524,7 +1528,8 @@ $(function() {
 
 		</tr>
 		</tfoot>
-		</table><?php
+		</table>
+		</a><?php
 
 		// GRAB DATA FROM BUFFER
 		$data = ob_get_contents();
