@@ -1175,7 +1175,9 @@ class API_Users{
 		case 'create_api_key':
 
 			# GENERATE A UNIQUE API KEY USING THE SALT FUNCTION WITH LENGTH OF 16 TO RECEIVE 32CHARS
-			echo $_SESSION['dbapi']->users->generateSalt(16);
+			
+			## CHANGED TO A-Za-z0-9 RANDOM STRING, INSTEAD OF HEX
+			echo $_SESSION['dbapi']->users->generateSalt(32);
 			exit;
 			break;
 
