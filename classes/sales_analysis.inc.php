@@ -82,19 +82,7 @@ class SalesAnalysis{
 		return -1;
 	}
 	
-	function getTeamMembers($team_id) {
-		$team_id = intval($team_id);
-		$arr = $_SESSION['dbapi']->ROfetchAllRows("SELECT UPPER(`username`) FROM `user_teams_members` WHERE `team_id` = " . $team_id);
-		$out = array();
-		
-		foreach($arr as $user){
-			$out[] = $user[0];
-		}
-		
-		return $out;
-		
-	}
-	
+
 	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
 		$campaign_id = 0;
 		//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code, $ignore_arr, $vici_campaign_id)<br />\n";
@@ -235,7 +223,7 @@ class SalesAnalysis{
 		$sql_user_team_list = array();
 		if($user_team_id) {
 			$use_team = true;
-			$sql_user_team_list = $this->getTeamMembers($user_team_id);
+			$sql_user_team_list = $_SESSION['dbapi']->user_teams->getTeamMembers($user_team_id);
 		}
 		
 		
@@ -439,7 +427,7 @@ class SalesAnalysis{
 		"".
 		"";
 		
-		print_r($sql_user_team_list);
+		//print_r($sql_user_team_list);
 		
 		
 		//echo $sql."<br />\n";
