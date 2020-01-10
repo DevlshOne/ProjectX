@@ -709,7 +709,7 @@
                                 ## USE $report_order_field FOR DEFAULT SORT FIELD AND $report_order_dir FOR DIRECTION (ASC/DESC)
 
                                 ## CREATE NEW ARRAY TO USE FOR REPORT DATA
-                                $report_data = [];
+                                $report_data = array();
 
                                 ## LOOP THROUGH GENERATED REPORT DATA AS USUAL BUT PUT DATATABLE VALUES INTO AN ARRAY
                                 foreach ($data as $row) {
