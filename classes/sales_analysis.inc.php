@@ -1830,7 +1830,9 @@ $(function() {
             $source_user_group = null;
 
             $report_type = 'cold';
-
+          
+            $user_team_id=0;
+            
             // EXECUTE THE REPORT SETTINGS, TO POPULATE OR OVERWRITE REPORT VARIABLES/SETTINGS
             echo date("H:i:s m/d/Y")." - Loading PHP Variables/SETTINGS for report:\n".$row['settings']."\n";
 
@@ -1855,7 +1857,7 @@ $(function() {
 
                 // GENERATE REPORT HTML ( RETURNS NULL IF THERE ARE NO RECORDS TO REPORT ON!)
                 // NOTE: THE VARIABLES THAT APPEAR 'uninitialized' ARE LOADED FROM THE 'settings' DB FIELD
-                $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $combine_users, $user_group, $ignore_group);
+                $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $user_team_id, $combine_users, $user_group, $ignore_group);
 
                 if ($html == null) {
                     echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
@@ -1868,6 +1870,7 @@ $(function() {
                         "Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
                         (($campaign_code)?"Campaign Code: ".$campaign_code."\n":'').
                         (($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+                        (($user_team_id)?"Team ID: ".$user_team_id."\n":''). 
                         (($combine_users)?"Combine users: ".$combine_users."\n":'').
                         (($user_group)?" User Group:".$user_group."\n":'').
                         "\nReport is attached (or view email as HTML).";
@@ -1878,7 +1881,7 @@ $(function() {
 
             case 2: // VERIFIER CALL STATS
 
-                $html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
+            	$html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group,$user_team_id);
 
                 if ($html == null) {
                     echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
@@ -1889,6 +1892,7 @@ $(function() {
 
                         "Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
                         (($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+                        (($user_team_id)?"Team ID: ".$user_team_id."\n":''). 
                         (($user_group)?" User Group:".$user_group."\n":'');
 
                 if (count($source_user_group) > 0) {
@@ -1932,9 +1936,10 @@ $(function() {
             	
             	include_once($_SESSION['site_config']['basedir'].'classes/rouster_report.inc.php');
             	
-            	
-            	
-            	$html = $_SESSION['rouster_report']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
+
+            						//makeHTMLReport($stime, $etime, $cluster_id, $user_team_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $combine_users = false) {
+            		
+            	$html = $_SESSION['rouster_report']->makeHTMLReport($stime, $etime, $cluster_id, $user_team_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
             	//									            	makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = null, $combine_users = false){
             	
             	
@@ -1947,7 +1952,9 @@ $(function() {
               	
               	"Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
               	(($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+              	(($user_team_id)?"Team ID: ".$user_team_id."\n":''). 
               	(($user_group)?" User Group:".$user_group."\n":'');
+            	
               	
               	if (count($source_user_group) > 0) {
               		$textdata .= "Source group(s): ";
