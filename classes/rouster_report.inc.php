@@ -48,10 +48,7 @@
 
         }
 
-        function getTeamMembers($team_id) {
-            $team_id = intval($team_id);
-            return $_SESSION['dbapi']->ROfetchAllAssoc("SELECT UPPER(`username`) AS username FROM `user_teams` WHERE `team_id` = " . $team_id);
-        }
+
 
         function generateData($cluster_id, $user_team_id, $stime, $etime, $call_group = NULL, $use_archive_by_default = false, $ignore_arr = NULL, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $combine_users = false) {
 
@@ -144,6 +141,17 @@
 
             connectPXDB();
 
+            $use_team = false;
+            $sql_user_team_list = array();
+            
+            
+            if($user_team_id) {
+            	$use_team = true;
+            	$sql_user_team_list = $_SESSION['dbapi']->user_teams->getTeamMembers($user_team_id);
+            }
+            
+            
+            
             $sql = "SELECT DISTINCT(username) FROM `logins` " . " WHERE result='success' AND section IN('rouster','roustersys') " . (($stime && $etime) ? " AND `time` BETWEEN '$stime' AND '$etime' " : '') . (($cluster_id > 0) ? " AND cluster_id='$cluster_id' " : "") . $user_group_sql;
 
 //		$sql = "SELECT DISTINCT(agent_username) FROM lead_tracking WHERE 1".
@@ -157,6 +165,18 @@
             $res = $_SESSION['dbapi']->ROquery($sql);
             $userzstack = array();
             while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
+            	
+            	
+            	if($use_team) {
+            		
+            		if(!in_array($row['username'], $sql_user_team_list, false)) {
+            			
+            			//echo "Skipping " . $tmp . " --> not in selected team.<br />";
+            			
+            			continue;
+            		}
+            	}
+            	
                 $userzstack[] = strtoupper($row['username']);
             }
 
@@ -179,12 +199,9 @@
                 while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
                     $username = strtoupper($row['username']);
-                    $use_team = false;
-                    $sql_user_team_list = array();
-                    if($user_team_id) {
-                        $use_team = true;
-                        $sql_user_team_list = $this->getTeamMembers($user_team_id);
-                    }
+
+                    
+
 
                     if ($combine_users == true && $username[strlen($username) - 1] == '2') {
 
