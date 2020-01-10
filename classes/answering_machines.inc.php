@@ -270,7 +270,7 @@ class AnsweringMachines{
 					}
 
 					// UPDATE THE LIST ID IN VICIDIAL
-					execSQL("UPDATE `vicidial_list` SET list_id='".mysqli_real_escape_string($_SESSION['db'],$list_id)."',status='NEW',called_count=0  WHERE lead_id='".intval($row['lead_id'])."'");
+					execSQL("UPDATE `vicidial_list` SET list_id='".mysqli_real_escape_string($_SESSION['db'],$list_id)."',status='NEW',called_count=0,called_since_last_reset='N'  WHERE lead_id='".intval($row['lead_id'])."'");
 
 					
 					execSQL("INSERT INTO `custom_".mysqli_real_escape_string($_SESSION['db'],$list_id)."` SELECT * FROM `custom_".mysqli_real_escape_string($_SESSION['db'],$row['list_id'])."` WHERE lead_id='".intval($row['lead_id'])."' ", true);
