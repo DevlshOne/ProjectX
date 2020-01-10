@@ -561,11 +561,11 @@ class API_Users{
 
 					$user_id_stack[] = $id;
 
-					## GENERATE UNIQUE LOGIN CODE
-					unset($edit);
-					$unique_string = $id.$dat['username'].$dat['password'].uniqid('CCI',true);
-					$edit['login_code'] = md5($unique_string);
-					$_SESSION['dbapi']->aedit($id,$edit,$_SESSION['dbapi']->users->table);
+					// ## GENERATE UNIQUE LOGIN CODE
+					// unset($edit);
+					// $unique_string = $id.$dat['username'].$dat['password'].uniqid('CCI',true);
+					// $edit['login_code'] = md5($unique_string);
+					// $_SESSION['dbapi']->aedit($id,$edit,$_SESSION['dbapi']->users->table);
 
 				}
 
@@ -1115,6 +1115,8 @@ class API_Users{
 				$dat['modifiedby_time'] = time();
 				$dat['modifiedby_userid'] = $_SESSION['user']['id'];
 
+				$dat['login_code'] = ($_POST['login_api_key'])?trim($_POST['login_api_key']):null;
+
 
 				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->users->table);
 
@@ -1148,11 +1150,11 @@ class API_Users{
 					$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->users->table);
 					$id = mysqli_insert_id($_SESSION['dbapi']->db);
 
-					## GENERATE UNIQUE LOGIN CODE
-					unset($edit);
-					$unique_string = $id.$dat['username'].$dat['password'].uniqid('CCI',true);
-					$edit['login_code'] = md5($unique_string);
-					$_SESSION['dbapi']->aedit($id,$edit,$_SESSION['dbapi']->users->table);
+					// ## GENERATE UNIQUE LOGIN CODE
+					// unset($edit);
+					// $unique_string = $id.$dat['username'].$dat['password'].uniqid('CCI',true);
+					// $edit['login_code'] = md5($unique_string);
+					// $_SESSION['dbapi']->aedit($id,$edit,$_SESSION['dbapi']->users->table);
 
 					$newrow = $_SESSION['dbapi']->users->getByID($id);
 
@@ -1168,6 +1170,13 @@ class API_Users{
 
 
 
+			break;
+
+		case 'create_api_key':
+
+			# GENERATE A UNIQUE API KEY USING THE SALT FUNCTION WITH LENGTH OF 16 TO RECEIVE 32CHARS
+			echo $_SESSION['dbapi']->users->generateSalt(16);
+			exit;
 			break;
 
 		default:

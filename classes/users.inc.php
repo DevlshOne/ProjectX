@@ -746,7 +746,7 @@ class UserClass{
 				}
 
 				// RESET HEIGHT
-				$('#'+objname).dialog('option', 'height', 400);
+				$('#'+objname).dialog('option', 'height', 450);
 
 				$('#'+objname).dialog("open");
 
@@ -756,7 +756,7 @@ class UserClass{
 				if(mode == 1){
 
 					// RESET WIDTH
-					$('#'+objname).dialog('option', 'height', 420);
+					$('#'+objname).dialog('option', 'height', 450);
 					$('#'+objname).dialog('option', 'width', 500);
 
 					$('#'+objname).load("index.php?area=users&bulk_add="+userid+"&printable=1&no_script=1");
@@ -1027,7 +1027,7 @@ class UserClass{
 				$( "#dialog-modal-add-user" ).dialog({
 					autoOpen: false,
 					width:750,
-					height: 440,
+					height: 450,
 					modal: false,
 					draggable:true,
 					resizable: true
@@ -2426,6 +2426,63 @@ class UserClass{
 
 			}
 
+			function getAPIkey(){
+
+				var result="";
+
+				// AJAX POST TO API, GETTING API KEY
+				$.ajax({
+
+					type: "POST",
+					cache: false,
+					async: false,
+					url: 'api/api.php?get=users&mode=raw&action=create_api_key',
+					//data: params,
+					error: function(){
+						alert("Error generating API key. Please contact an admin.");
+					},
+					success: function(msg){
+
+						result = msg;
+
+					}
+
+				});
+
+				return result;
+
+			}
+
+
+			function toggleApiKey(way){
+
+				if(way == 'enable'){
+
+					var apikey = getAPIkey();
+					$('#api_key_text').text(apikey);
+					$('#login_api_key').val(apikey);
+
+				} else if(way == 'generate'){
+
+					var apikey = getAPIkey();
+					$('#api_key_text').text(apikey);
+					$('#login_api_key').val(apikey);
+
+
+				} else if(way == 'disable'){
+
+					$('#api_key_text').text("Disabled, please Save Changes.");
+					$('#login_api_key').val('');
+
+				} else {
+
+
+
+
+				}
+
+			}			
+
 
 		</script>
 		<?
@@ -2615,6 +2672,36 @@ class UserClass{
 				<th align="left">Primary User Group:</th>
 				<td><?=$row['user_group']?></td>
 			</tr>
+			<? 
+
+				if($id && $_SESSION['user']['priv']>=5){
+					
+					# DISPLAY API KEY INFO IF EDITING AND LOGGED IN USER PRIV >= 5
+
+					?><tr>
+						<th align="left">API Key:</th>
+						<td><div id="api_key_text">
+						<?
+						
+							if($row['login_code']){
+
+								?><?=$row['login_code']?>&nbsp;&nbsp;<a href="#" onclick="toggleApiKey('generate'); return true;">[ Generate ]</a> <a href="#" onclick="toggleApiKey('disable'); return true;">[ Disable ]</a><? 
+							
+							} else { 
+								
+								?><a href="#" onclick="toggleApiKey('enable'); return true;">[ Enable ]</a><? 
+
+							} 
+
+						?></div>
+						<input type="hidden" name="login_api_key" id="login_api_key">
+						</td>
+					</tr><?
+
+
+				}
+
+			?>
 			<tr>
 				<th colspan="2" ><input type="submit" value="Save Changes"></th>
 			</tr>
