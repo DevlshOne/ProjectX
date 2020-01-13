@@ -22,10 +22,18 @@
         }
 
         function getTeamMembers($team_id) {
-            $team_id = intval($team_id);
-            list($team_members) = $_SESSION['dbapi']->queryROW("SELECT `user_id`, `username` FROM `" . $this->table . "` " . " WHERE `team_id` = " . $team_id);
-            return $team_members;
+        	$team_id = intval($team_id);
+        	$arr = $_SESSION['dbapi']->ROfetchAllRows("SELECT UPPER(`username`) FROM `user_teams_members` WHERE `team_id` = " . $team_id);
+        	$out = array();
+        	
+        	foreach($arr as $user){
+        		$out[] = $user[0];
+        	}
+        	
+        	return $out;
+        	
         }
+        
 
         /**
          * getResults($asso_array)

@@ -581,7 +581,9 @@ class FeatureControl{
 						</tr><?
 
 							$this->renderFeatureRow('users', 'Central User Management', ($row['users'] == 'yes')?true:false );
-
+							$this->renderFeatureRow('user_teams', 'Team Management', ($row['user_teams'] == 'yes')?true:false );
+							
+							
 							$this->renderFeatureRow('feature_control', 'Feature Control', ($row['feature_control'] == 'yes')?true:false );
 							$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
 							$this->renderFeatureRow('login_tracker_kick_user', '|--&gt;Kick User', ($row['login_tracker_kick_user'] == 'yes')?true:false );

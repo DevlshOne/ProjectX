@@ -48,10 +48,7 @@
 
         }
 
-        function getTeamMembers($team_id) {
-            $team_id = intval($team_id);
-            return $_SESSION['dbapi']->ROfetchAllAssoc("SELECT UPPER(`username`) AS username FROM `user_teams` WHERE `team_id` = " . $team_id);
-        }
+
 
         function generateData($cluster_id, $user_team_id, $stime, $etime, $call_group = NULL, $use_archive_by_default = false, $ignore_arr = NULL, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $combine_users = false) {
 
@@ -144,6 +141,17 @@
 
             connectPXDB();
 
+            $use_team = false;
+            $sql_user_team_list = array();
+            
+            
+            if($user_team_id) {
+            	$use_team = true;
+            	$sql_user_team_list = $_SESSION['dbapi']->user_teams->getTeamMembers($user_team_id);
+            }
+            
+            
+            
             $sql = "SELECT DISTINCT(username) FROM `logins` " . " WHERE result='success' AND section IN('rouster','roustersys') " . (($stime && $etime) ? " AND `time` BETWEEN '$stime' AND '$etime' " : '') . (($cluster_id > 0) ? " AND cluster_id='$cluster_id' " : "") . $user_group_sql;
 
 //		$sql = "SELECT DISTINCT(agent_username) FROM lead_tracking WHERE 1".
@@ -151,12 +159,24 @@
 //						(($cluster_id > 0)?" AND vici_cluster_id='$cluster_id' ":"").
 //						$user_group_sql.
 //						"";
-//		echo $sql;
-//		exit;
+ 		echo $sql;
+// 		exit;
 //
             $res = $_SESSION['dbapi']->ROquery($sql);
             $userzstack = array();
             while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
+            	
+            	
+            	if($use_team) {
+            		
+            		if(!in_array($row['username'], $sql_user_team_list, false)) {
+            			
+            			//echo "Skipping " . $tmp . " --> not in selected team.<br />";
+            			
+            			continue;
+            		}
+            	}
+            	
                 $userzstack[] = strtoupper($row['username']);
             }
 
@@ -164,13 +184,21 @@
             $stmicro = $stime * 1000;
             $etmicro = $etime * 1000;
 
+            
+            $startofday = mktime(0,0,0, date("m", $stime), date("d", $stime), date("Y", $stime));
+            $endofday = mktime(23,59,59, date("m", $etime), date("d", $etime), date("Y", $etime));
+            
             foreach ($userzstack as $uname) {
 
                 $sql = "SELECT *, seconds_INCALL+seconds_READY+seconds_QUEUE+seconds_PAUSED as TotalTime,seconds_INCALL+seconds_READY+seconds_QUEUE as DailyActivityTime  FROM `activity_log` WHERE 1 " .
 
                     " AND `username`='" . mysqli_real_escape_string($_SESSION['db'], $uname) . "' " .
 
-                    (($stime && $etime) ? " AND `time_started` BETWEEN '$stime' AND '$etime' " : '') .
+                    //(($stime && $etime) ? " AND `time_started` BETWEEN '$stime' AND '$etime' " : '') .
+                    
+              		  (($stime && $etime) ? " AND `time_started` BETWEEN '$startofday' AND '$endofday' " : '') .
+                
+                
                     " ORDER BY `time_started` ASC ";
                 // GET A LIST OF TEH AGENTS
                 // ACTIVITY LOG: THE AGENTS THAT ARE WORKING TODAY
@@ -179,12 +207,9 @@
                 while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
                     $username = strtoupper($row['username']);
-                    $use_team = false;
-                    $sql_user_team_list = array();
-                    if($user_team_id) {
-                        $use_team = true;
-                        $sql_user_team_list = $this->getTeamMembers($user_team_id);
-                    }
+
+                    
+
 
                     if ($combine_users == true && $username[strlen($username) - 1] == '2') {
 
@@ -606,6 +631,7 @@
                 }
 
             </script>
+            <a name="anc_rouster_report">
             <table border="0" width="100%">
                 <tr>
                     <td style="border-bottom:1px solid #000;font-size:18px;font-weight:bold">
@@ -709,7 +735,7 @@
                                 ## USE $report_order_field FOR DEFAULT SORT FIELD AND $report_order_dir FOR DIRECTION (ASC/DESC)
 
                                 ## CREATE NEW ARRAY TO USE FOR REPORT DATA
-                                $report_data = [];
+                                $report_data = array();
 
                                 ## LOOP THROUGH GENERATED REPORT DATA AS USUAL BUT PUT DATATABLE VALUES INTO AN ARRAY
                                 foreach ($data as $row) {
@@ -1220,7 +1246,8 @@
                 </tr>
 
 
-            </table><?
+            </table>
+            </a><?
 
             // GRAB DATA FROM BUFFER
             $data = ob_get_contents();
@@ -1252,6 +1279,9 @@
                 $timestamp2 = mktime(23, 59, 59);
             }
 
+            
+            //echo "Timeframe: ".date("m/d/Y g:ia", $timestamp).' to '.date("m/d/Y g:ia", $timestamp2).'<br />';
+            
             $cluster_id = intval($_REQUEST['s_cluster_id']);
             $cluster_id = ($cluster_id) ? $cluster_id : 3; // DEFAULT TO VERIFIER CLUSTER
 
@@ -1431,6 +1461,7 @@
 
                             });
 
+                            go('#anc_rouster_report');
 
                         });
                     </script><?

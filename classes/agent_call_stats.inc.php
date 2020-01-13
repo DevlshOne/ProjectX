@@ -33,10 +33,12 @@
             }
         }
 
-        function generateData($cluster_id, $stime, $etime, $call_group = NULL, $use_archive_by_default = false, $ignore_arr = NULL, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL) {
+        function generateData($cluster_id, $stime, $etime, $call_group = NULL, $use_archive_by_default = false, $ignore_arr = NULL, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL,$user_team_id=0){
+        	
             $cluster_id = intval($cluster_id);
             $stime = intval($stime);
             $etime = intval($etime);
+            $user_team_id = intval($user_team_id);
             $source_cluster_id = intval($source_cluster_id);
             $ignore_source_cluster_id = intval($ignore_source_cluster_id);
             if (!$cluster_id) { //|| !$call_group
@@ -127,6 +129,19 @@
                 }
             }
             connectPXDB();
+            
+            $use_team = false;
+            $sql_user_team_list = array();
+            
+            
+            if($user_team_id) {
+            	$use_team = true;
+            	$sql_user_team_list = $_SESSION['dbapi']->user_teams->getTeamMembers($user_team_id);
+            }
+            
+            
+            
+            
             $sql = "SELECT * FROM `activity_log` WHERE 1 " . (($stime && $etime) ? " AND `time_started` BETWEEN '$stime' AND '$etime' " : '') . (($cluster_id > 0) ? " AND vici_cluster_id='$cluster_id' " : "") . $extra_sql;
             //		$sql = "SELECT * FROM `activity_log` WHERE `account_id`='".$_SESSION['account']['id']."' ".
             //						(($stime && $etime)?" AND `time_started` BETWEEN '$stime' AND '$etime' ":'').
@@ -150,6 +165,18 @@
                         continue;
                     }
                 }
+                
+                if($use_team) {
+                	
+                	if(!in_array($username, $sql_user_team_list, false)) {
+                		
+                		//echo "Skipping " . $tmp . " --> not in selected team.<br />";
+                		
+                		continue;
+                	}
+                }
+                
+                
                 // USER ON THE STACK ALREADY
                 if (isset($agent_array[$username]) && $agent_array[$username]) {
                     //echo "Agent $username found in stack.<br />\n";
@@ -263,8 +290,8 @@
             return $out;
         }
 
-        function makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL) {
-            $data = $this->generateData($cluster_id, $stime, $etime, $user_group, false, $ignore_users, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
+        function makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $user_team_id=0) {
+        	$data = $this->generateData($cluster_id, $stime, $etime, $user_group, false, $ignore_users, $source_cluster_id, $ignore_source_cluster_id, $source_user_group,$user_team_id);
             if (count($data) <= 0) {
                 return NULL;
             }
@@ -820,9 +847,16 @@
                 ?>
                 <tr>
                     <td><?
+                    
+                    
                             $ignore_arr = preg_split("/,|;|:| /", $_REQUEST['ignore_users_list'], -1, PREG_SPLIT_NO_EMPTY);
+                            
                             $source_cluster_id = intval($_REQUEST['s_source_cluster_id']);
-                            $report = $this->makeHTMLReport($timestamp, $timestamp2, $cluster_id, $_REQUEST['s_user_group'], $ignore_arr, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
+                            
+                            $user_team_id = intval($_REQUEST['user_team_id']);
+                            
+                            
+                            $report = $this->makeHTMLReport($timestamp, $timestamp2, $cluster_id, $_REQUEST['s_user_group'], $ignore_arr, $source_cluster_id, $ignore_source_cluster_id, $source_user_group,$user_team_id);
                             if (!$report) {
                                 echo "No data";
                             } else {

@@ -82,19 +82,7 @@ class SalesAnalysis{
 		return -1;
 	}
 	
-	function getTeamMembers($team_id) {
-		$team_id = intval($team_id);
-		$arr = $_SESSION['dbapi']->ROfetchAllRows("SELECT UPPER(`username`) FROM `user_teams_members` WHERE `team_id` = " . $team_id);
-		$out = array();
-		
-		foreach($arr as $user){
-			$out[] = $user[0];
-		}
-		
-		return $out;
-		
-	}
-	
+
 	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
 		$campaign_id = 0;
 		//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code, $ignore_arr, $vici_campaign_id)<br />\n";
@@ -235,7 +223,7 @@ class SalesAnalysis{
 		$sql_user_team_list = array();
 		if($user_team_id) {
 			$use_team = true;
-			$sql_user_team_list = $this->getTeamMembers($user_team_id);
+			$sql_user_team_list = $_SESSION['dbapi']->user_teams->getTeamMembers($user_team_id);
 		}
 		
 		
@@ -439,7 +427,7 @@ class SalesAnalysis{
 		"".
 		"";
 		
-		print_r($sql_user_team_list);
+		//print_r($sql_user_team_list);
 		
 		
 		//echo $sql."<br />\n";
@@ -1251,6 +1239,7 @@ $(function() {
 					    });
 
 
+					    go('#anc_sales_report');
 
 					} );
 
@@ -1272,7 +1261,10 @@ $(function() {
 
         // ACTIVATE OUTPUT BUFFERING
         ob_start();
-        ob_clean(); ?><h1><?php
+        ob_clean(); ?>
+        
+        <a name="anc_sales_report">
+        <h1><?php
 
 			if($campaign_code){
 				echo $campaign_code.' ';
@@ -1536,7 +1528,8 @@ $(function() {
 
 		</tr>
 		</tfoot>
-		</table><?php
+		</table>
+		</a><?php
 
 		// GRAB DATA FROM BUFFER
 		$data = ob_get_contents();
@@ -1842,7 +1835,9 @@ $(function() {
             $source_user_group = null;
 
             $report_type = 'cold';
-
+          
+            $user_team_id=0;
+            
             // EXECUTE THE REPORT SETTINGS, TO POPULATE OR OVERWRITE REPORT VARIABLES/SETTINGS
             echo date("H:i:s m/d/Y")." - Loading PHP Variables/SETTINGS for report:\n".$row['settings']."\n";
 
@@ -1867,7 +1862,7 @@ $(function() {
 
                 // GENERATE REPORT HTML ( RETURNS NULL IF THERE ARE NO RECORDS TO REPORT ON!)
                 // NOTE: THE VARIABLES THAT APPEAR 'uninitialized' ARE LOADED FROM THE 'settings' DB FIELD
-                $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $combine_users, $user_group, $ignore_group);
+                $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $user_team_id, $combine_users, $user_group, $ignore_group);
 
                 if ($html == null) {
                     echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
@@ -1880,6 +1875,7 @@ $(function() {
                         "Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
                         (($campaign_code)?"Campaign Code: ".$campaign_code."\n":'').
                         (($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+                        (($user_team_id)?"Team ID: ".$user_team_id."\n":''). 
                         (($combine_users)?"Combine users: ".$combine_users."\n":'').
                         (($user_group)?" User Group:".$user_group."\n":'').
                         "\nReport is attached (or view email as HTML).";
@@ -1890,7 +1886,7 @@ $(function() {
 
             case 2: // VERIFIER CALL STATS
 
-                $html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group);
+            	$html = $_SESSION['agent_call_stats']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group,$user_team_id);
 
                 if ($html == null) {
                     echo date("H:i:s m/d/Y")." - NOTICE: Skipping sending report, no records found\n";
@@ -1901,6 +1897,7 @@ $(function() {
 
                         "Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
                         (($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+                        (($user_team_id)?"Team ID: ".$user_team_id."\n":''). 
                         (($user_group)?" User Group:".$user_group."\n":'');
 
                 if (count($source_user_group) > 0) {
@@ -1944,9 +1941,10 @@ $(function() {
             	
             	include_once($_SESSION['site_config']['basedir'].'classes/rouster_report.inc.php');
             	
-            	
-            	
-            	$html = $_SESSION['rouster_report']->makeHTMLReport($stime, $etime, $cluster_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
+
+            						//makeHTMLReport($stime, $etime, $cluster_id, $user_team_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = NULL, $combine_users = false) {
+            		
+            	$html = $_SESSION['rouster_report']->makeHTMLReport($stime, $etime, $cluster_id, $user_team_id, $user_group, null, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
             	//									            	makeHTMLReport($stime, $etime, $cluster_id, $user_group, $ignore_users, $source_cluster_id = 0, $ignore_source_cluster_id = 0, $source_user_group = null, $combine_users = false){
             	
             	
@@ -1959,7 +1957,9 @@ $(function() {
               	
               	"Time frame: ".date("m/d/Y", $stime)." - ".date("m/d/Y", $etime)."\n".
               	(($agent_cluster_idx)?"Cluster IDX: ".$agent_cluster_idx."\n":'').
+              	(($user_team_id)?"Team ID: ".$user_team_id."\n":''). 
               	(($user_group)?" User Group:".$user_group."\n":'');
+            	
               	
               	if (count($source_user_group) > 0) {
               		$textdata .= "Source group(s): ";

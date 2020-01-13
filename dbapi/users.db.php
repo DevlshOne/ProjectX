@@ -514,7 +514,7 @@ class UsersAPI{
 
 		# CREATE A UNIQUE SALT TO BE USED DURING LOGIN
 		# DEFAULT RANDOM BYTE LENGTH 10
-		return bin2hex(random_bytes($len));
+		return generateRandomString($len);//bin2hex(random_bytes($len));
 
 	}
 

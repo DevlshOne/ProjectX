@@ -318,7 +318,7 @@
                         success: function (teamMembers) {
                             $('#team_member_adder').empty();
                             $(teamMembers).each(function (i, v) {
-                                $('#team_member_adder').append('<li id="memberid_' + v.user_id + '" class="ui-state-default" title="' + v.fullname + '">' + v.username + '</li>');
+                                $('#team_member_adder').append('<li id="memberid_' + v.user_id + '" class="ui-state-default hand" onclick="removeUserFromTeam(' + v.user_id + ')" title="' + v.fullname + '">' + v.username + '</li>');
                                 $('#userid_' + v.user_id).remove();
                             });
                             if (frontEnd_debug) {
@@ -363,7 +363,7 @@
                         success: function (userList) {
                             $('#team_members').empty();
                             $(userList).each(function (i, v) {
-                                $('#team_members').append('<li id="userid_' + v.user_id + '" class="ui-state-highlight" title="' + v.fullname + '">' + v.username + '</li>');
+                                $('#team_members').append('<li id="userid_' + v.user_id + '" class="ui-state-highlight hand" title="' + v.fullname + '" onclick="addUserToTeam(' + v.user_id + ');">' + v.username + '</li>');
                             });
                             loadTeamMembers(team_id);
                             if (frontEnd_debug) {
@@ -386,7 +386,7 @@
                         success: function (userList) {
                             $('#team_members').empty();
                             $(userList).each(function (i, v) {
-                                $('#team_members').append('<li id="userid_' + v.user_id + '" class="ui-state-highlight" title="' + v.fullname + '">' + v.username + '</li>');
+                                $('#team_members').append('<li id="userid_' + v.user_id + '" class="ui-state-highlight hand" title="' + v.fullname + '" onclick="addUserToTeam(' + v.user_id + ');">' + v.username + '</li>');
                             });
                             loadTeamMembers(team_id);
                             if (frontEnd_debug) {
@@ -432,32 +432,76 @@
                         alert('Team name may not be empty');
                     }
                 });
-                $('#team_member_adder').sortable({
-                    receive: function (e, ui) {
-                        let current_id = ui.item[0].id.split('_')[1];
-                        console.log('Adding :: ' + current_id);
-                        ui.item.removeClass('ui-state-highlight').addClass('ui-state-default');
-                        $(ui.item).attr('id', 'memberid_' + current_id);
-                        $.ajax({
-                            type: "POST",
-                            cache: false,
-                            async: false,
-                            dataType: 'json',
-                            crossDomain: false,
-                            crossOrigin: false,
-                            url: 'api/api.php?get=user_teams&mode=json&action=addTeamMember&team=' + team_id + '&userid=' + current_id,
-                            done: function () {
-                                //alert('Member has been added to ' + team_name);
-                                if (frontEnd_debug) {
-                                    console.log('Prefs have just been loaded :: ', tileDefs);
-                                    console.log('User Preferences loaded');
-                                }
 
-                                //loadUserteams();
+                function addUserToTeam(user_id){
+
+	                console.log('Adding :: ' + user_id);
+
+
+	               
+	                $.ajax({
+	                    type: "POST",
+	                    cache: false,
+	                    async: false,
+	                    dataType: 'json',
+	                    crossDomain: false,
+	                    crossOrigin: false,
+	                    url: 'api/api.php?get=user_teams&mode=json&action=addTeamMember&team=' + team_id + '&userid=' + user_id,
+	                    done: function () {
+
+
+	                    	loadTeamMembers(team_id);
+	                    	
+	                    }
+	                });
+	                
+	                loadUserteams();
+
+	                loadTeamMembers(team_id);
+                }
+
+				function removeUserFromTeam(user_id){
+
+					$.ajax({
+                        type: "POST",
+                        cache: false,
+                        async: false,
+                        dataType: 'json',
+                        crossDomain: false,
+                        crossOrigin: false,
+                        url: 'api/api.php?get=user_teams&mode=json&action=removeTeamMember&team=' + team_id + '&userid=' + user_id,
+                        success: function () {
+                            //alert('Member has been removed from ' + team_name);
+                            if (frontEnd_debug) {
+                                console.log('Prefs have just been loaded :: ', tileDefs);
+                                console.log('User Preferences loaded');
                             }
-                        });
 
-                        loadUserteams();
+        	                loadUserteams();
+
+        	                loadTeamMembers(team_id);
+                        },
+                        fail: function () {
+
+                        }
+
+                    });
+
+                    //loadUserteams();
+				}
+                
+                $('#team_member_adder').sortable({
+
+
+                    receive: function (e, ui) {
+                        
+                        let user_id = ui.item[0].id.split('_')[1];
+
+    	                ui.item.removeClass('ui-state-highlight').addClass('ui-state-default');
+    	                
+     	                $(ui.item).attr('id', 'memberid_' + user_id);
+                        
+                        addUserToTeam(user_id);
                     },
                     remove: function (e, ui) {
                         let current_id = ui.item[0].id.split('_')[1];
@@ -465,30 +509,9 @@
                         
                         ui.item.removeClass('ui-state-default').addClass('ui-state-highlight');
                         $(ui.item).attr('id', 'userid_' + current_id);
-                        $.ajax({
-                            type: "POST",
-                            cache: false,
-                            async: false,
-                            dataType: 'json',
-                            crossDomain: false,
-                            crossOrigin: false,
-                            url: 'api/api.php?get=user_teams&mode=json&action=removeTeamMember&team=' + team_id + '&userid=' + current_id,
-                            success: function () {
-                                //alert('Member has been removed from ' + team_name);
-                                if (frontEnd_debug) {
-                                    console.log('Prefs have just been loaded :: ', tileDefs);
-                                    console.log('User Preferences loaded');
-                                }
 
-                                loadUserteams();
-                            },
-                            fail: function () {
-
-                            }
-
-                        });
-
-                        //loadUserteams();
+                        removeUserFromTeam(current_id);
+                        
                     }
                 });
                 loadUserGroups();

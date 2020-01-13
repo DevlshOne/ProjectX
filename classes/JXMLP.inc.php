@@ -475,7 +475,7 @@ class JXMLP{
 			// SCROLL BACKWARDS UNTIL YOU FIND WHERE THE NAME PIECE OF THE ATTRIBUTE ENDS
 			for($y = $x;$y > $cur_idx;$y--){
 
-				if($tmp[$y] == "\t" || $tmp[$y] == ' '){
+				if($tmp[$y] == "\t" || $tmp[$y] == ' ' || $tmp[$y] == '\n' || $tmp[$y] == '\r'){
 
 					// move ahead of the space
 					$y++;
