@@ -27,30 +27,10 @@
 	## INIT SESSION CLASS $api
 	$_SESSION['api'] = new API_Functions();
 
-## API KEY AUTHENTICATION
-
-
-
-
-## AUTHENTICATION CHECK
-
-	## SESSION AUTH
-	if(!$_SESSION['user']['id']){
-
-
-
-		$_SESSION['api']->errorOut('Not logged in.', true, -101);
-
-
-	}	
-
 
 ## FILE HEADER
 
-	$_SESSION['api']->outputFileHeader();
-
-
-
+	$_SESSION['api']->outputFileHeader();	
 
 
 ## START MAIN FLOW
@@ -64,8 +44,83 @@
 	include_once($basedir.'utils/db_utils.php');
 
 
-	
-	
+## API KEY AND AUTHENTICATION CHECK
+
+	if($_REQUEST['login_code'] && !$_SESSION['user']['id']){
+
+		$login_code = trim($_REQUEST['login_code']);
+
+		## VERIFY LOGIN CODE AGAINST DB
+		$user_check = $_SESSION['dbapi']->querySQL("SELECT users.*  FROM users ".
+					" WHERE users.enabled='yes' ".
+					" AND users.login_code='".mysqli_real_escape_string($_SESSION['dbapi']->db,$login_code)."' ".
+					" LIMIT 1 "
+					);
+
+		## LOGIN CODE INVALID
+		if(!$user_check){
+
+			$_SESSION['api']->errorOut('Invalid login code.', true, -101);
+			exit;
+
+		}else{
+
+			## LOAD AND CHECK ACCOUNT STATUS
+			$_SESSION['account'] = $_SESSION['dbapi']->accounts->getByID($user_check['account_id']);
+
+			if(!$_SESSION['account']['id']){
+
+				$_SESSION['dbapi']->users->tracklogin(0,$user_check['username'],$login_code,'failure-api','Account '.intval($user_check['account_id']).' not found.');
+
+				$_SESSION['api']->errorOut("ERROR: Account ID#".intval($user_check['account_id'])." was not found.", true, -101);
+				exit;
+
+			}
+
+
+			## CHECK ACCOUNT STATUS
+			if($_SESSION['account']['status'] != 'active'){
+
+				$_SESSION['dbapi']->users->tracklogin(0,$user_check['username'],$login_code,'failure','Account '.intval($user_check['account_id']).' status is '.$_SESSION['account']['status']);
+
+				$_SESSION['api']->errorOut("ERROR: Account ID#".intval($user_check['account_id'])." is listed as '".$_SESSION['account']['status']."'", true, -101);
+				exit;
+
+			}
+
+
+			## TRACK API LOGIN
+			$login_id = $_SESSION['dbapi']->users->tracklogin($user_check['id'],$user_check['username'],$login_code,'success-api');
+
+			## STORE USER RECORD IN SESSION!
+			$_SESSION['user'] = $user_check;
+
+			## LOAD FEATURES FOR THE USER, IF THEY ARE SET
+			if($user_check['feature_id'] > 0){
+
+				$_SESSION['features'] = $_SESSION['dbapi']->querySQL("SELECT * FROM features WHERE id='".intval($user_check['feature_id'])."' ");
+
+			}
+
+
+			## UPDATE THE TIME OF LAST LOGIN
+			$_SESSION['dbapi']->users->updateLastLoginTime();
+
+			## SET DESTROY SESSION FLAG
+			$destroy_session = 1;
+			
+
+		}
+
+
+	}elseif(!$_SESSION['user']['id']){
+
+		$_SESSION['api']->errorOut('Not logged in.', true, -101);
+		exit;
+
+	}	
+
+
 	// RELOAD THE USER/ACCOUNT/FEATURE SET, MAKE SURE USER STILL ENABLED, ACCOUNT STILL ACTIVE, ETC
 	$_SESSION['dbapi']->users->refreshFeaturesAndPrivs(1);
 	
@@ -74,13 +129,21 @@
 	$_SESSION['dbapi']->users->updateLastActionTime();
 	
 	
-	
 ## SELECT THE DATA TYPES TO RETRIEVE
 	switch($_REQUEST['get']){
 	default:
 
-		$_SESSION['api']->errorOut("Data type not specified.");
+		## DESTROY SESSION CHECK
+		if($destroy_session){
 
+			unset($_SESSION['account']);
+			unset($_SESSION['user']);
+			unset($_SESSION['features']);
+
+		}
+
+		$_SESSION['api']->errorOut("Data type not specified.");
+		
 		break;
 
 
@@ -89,6 +152,15 @@
 
 		switch($_REQUEST['area']){
 		default:
+
+			## DESTROY SESSION CHECK
+			if($destroy_session){
+
+				unset($_SESSION['account']);
+				unset($_SESSION['user']);
+				unset($_SESSION['features']);
+
+			}
 
 			$_SESSION['api']->errorOut("Area not specified.");
 
@@ -603,4 +675,14 @@
 		$obj->handleAPI();
 		
 		break;
+	}
+
+
+	## DESTROY SESSION CHECK
+	if($destroy_session){
+
+		unset($_SESSION['account']);
+		unset($_SESSION['user']);
+		unset($_SESSION['features']);
+
 	}
