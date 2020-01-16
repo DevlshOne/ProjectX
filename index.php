@@ -93,7 +93,7 @@
         $('nav').ready(function () {
             $('span.nav-main-link-name').not('#change_password').each(function () {
                 $(this).on('click', function (e) {
-                    loadSection($(this).closest('a.nav-main-link').attr('href'));
+                    loadSection($(this).parent('a.nav-main-link').attr('href'));
                     e.preventDefault();
                 });
             });
@@ -276,8 +276,9 @@
                     if (checkAccess('sales_management') || checkAccess('lead_management') || checkAccess('employee_hours') || checkAccess('ringing_calls') || checkAccess('messages') || checkAccess('server_status') || checkAccess('extensions')) {
                         ?>
                         <li class="nav-main-item">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Management Tools
+                            <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
+                                <i class="nav-main-link-icon si si-target"></i>
+                                <span class="nav-main-heading">Management Tools</span>
                             </a>
                             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                                 <?
