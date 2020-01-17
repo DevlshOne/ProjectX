@@ -153,6 +153,12 @@ table {
 .nav-main-heading {
     padding: 0.15em !important;
 }
+#main-container {
+    padding-left: 2em;
+}
+#sidebar {
+    padding-left: 1em;
+}
 
 #progress-wrp {
     border: 1px solid #0099CC;

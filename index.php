@@ -80,7 +80,6 @@
     <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css"/>
     <link rel="stylesheet" id="css-main" href="src/assets/css/oneui.min.css">
     <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
     <!--    <script type="text/javascript" src="js/popper.min.js"></script>-->
     <!--    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>-->
     <!--    <script type="text/javascript" src="js/jquery.uniform.min.js"></script>-->
@@ -89,6 +88,7 @@
     <script type="text/javascript" src="js/functions.js"></script>
     <script type="text/javascript" src="js/page_system.js"></script>
     <!--    <script type="text/javascript" src="js/modernizr.js"></script> -->
+    <script type="text/javascript" src="js/jquery-ui-1.10.3.custom.min.js"></script>
     <script>
         $('nav').ready(function () {
             $('span.nav-main-link-name').not('#change_password').each(function () {
@@ -185,7 +185,7 @@
     </script>
 </head>
 <body>
-<ul id="page-container" class="sidebar-o sidebar-dark enable-page-overlay side-scroll page-header-fixed enable-cookies">
+<div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay page-header-fixed">
     <aside id="side-overlay"></aside>
     <?
         }
@@ -208,7 +208,7 @@
                                 ?>
                                 <li class="nav-main-item">
                                     <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
-                                        <i class="nav-main-link-icon si si-energy"></i>
+                                        <i class="nav-main-link-icon fa fa-donate"></i>
                                         <span class="nav-main-heading">Campaigns</span>
                                     </a>
                                     <ul class="nav-main-submenu">
@@ -277,7 +277,7 @@
                                 ?>
                                 <li class="nav-main-item">
                                     <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
-                                        <i class="nav-main-link-icon si si-target"></i>
+                                        <i class="nav-main-link-icon fa fa-tools"></i>
                                         <span class="nav-main-heading">Management Tools</span>
                                     </a>
                                     <ul class="nav-main-submenu">
@@ -302,42 +302,74 @@
                                             }
                                             if (checkAccess('employee_hours')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=employee_hours&no_script=1">Employee Hours</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=employee_hours&no_script=1">
+                                                        <span class="nav-main-link-name">Employee Hours</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('phone_lookup')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=phone_lookup&no_script=1">DRIPP Lookup</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=phone_lookup&no_script=1">
+                                                        <span class="nav-main-link-name">DRIPP Lookup</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('quiz_results')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=quiz_results&no_script=1">Quiz Results</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=quiz_results&no_script=1">
+                                                        <span class="nav-main-link-name">Quiz Results</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('ringing_calls')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=ringing_calls&no_script=1">Ring Report</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=ringing_calls&no_script=1">
+                                                        <span class="nav-main-link-name">Ring Report</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('messages')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=messages&no_script=1">Agent Messages</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=messages&no_script=1">
+                                                        <span class="nav-main-link-name">Agent Messages</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('dialer_status')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=dialer_status&no_script=1">Dialer Status</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=dialer_status&no_script=1">
+                                                        <span class="nav-main-link-name">Dialer Status</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('server_status')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=server_status&no_script=1">Server Status</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=server_status&no_script=1">
+                                                        <span class="nav-main-link-name">Server Status</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('extensions')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=extensions&no_script=1">Extensons</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=extensions&no_script=1">
+                                                        <span class="nav-main-link-name">Extensions</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                         ?>
@@ -348,43 +380,89 @@
                             if (checkAccess('list_tools')) {
                                 ?>
                                 <li class="nav-main-item">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        List Tools
+                                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
+                                        <i class="nav-main-link-icon fa fa-list"></i>
+                                        <span class="nav-main-heading">List Tools</span>
                                     </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                        <a class="dropdown-item" href="?area=list_tools&tool=build_list&no_script=1">List Builder</a>
-                                        <a class="dropdown-item" href="?area=list_tools&tool=dnc_tools&no_script=1">DNC Management</a>
-                                        <a class="dropdown-item" href="?area=list_tools&tool=manage_lists&no_script=1">Vici List Management</a>
-                                        <a class="dropdown-item" href="?area=list_tools&tool=tasks&no_script=1">Task / Status Management</a>
-                                        <a class="dropdown-item" href="?area=list_tools&tool=load_list&no_script=1">Import Leads</a>
-                                        <a class="dropdown-item" href="?area=list_tools&tool=view_importss&no_script=1">List Imports / Counts</a>
-                                        <a class="dropdown-item" href="?area=list_tools&tool=performance_reports&no_script=1">List Performance Report</a>
-                                        <a class="dropdown-item" href="?area=list_tools&tool=vici_report&no_script=1">Vicidial List Count</a>
-                                    </div>
+                                    <ul class="nav-main-submenu">
+                                        <li class="nav-main-item">
+                                            <a class="nav-main-link" href="?area=list_tools&tool=build_list&no_script=1">
+                                                <span class="nav-main-link-name">List Builder</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-main-item">
+                                            <a class="nav-main-link" href="?area=list_tools&tool=dnc_tools&no_script=1">
+                                                <span class="nav-main-link-name">DNC Management</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-main-item">
+                                            <a class="nav-main-link" href="?area=list_tools&tool=manage_lists&no_script=1">
+                                                <span class="nav-main-link-name">VICI List Management</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-main-item">
+                                            <a class="nav-main-link" href="?area=list_tools&tool=tasks&no_script=1">
+                                                <span class="nav-main-link-name">Task / Status Management</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-main-item">
+                                            <a class="nav-main-link" href="?area=list_tools&tool=load_list&no_script=1">
+                                                <span class="nav-main-link-name">Import Leads</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-main-item">
+                                            <a class="nav-main-link" href="?area=list_tools&tool=view_imports&no_script=1">
+                                                <span class="nav-main-link-name">List Imports / Counts</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-main-item">
+                                            <a class="nav-main-link" href="?area=list_tools&tool=performance_reports&no_script=1">
+                                                <span class="nav-main-link-name">List Performance Report</span>
+                                            </a>
+                                        </li>
+                                        <li class="nav-main-item">
+                                            <a class="nav-main-link" href="?area=list_tools&tool=vici_report&no_script=1">
+                                                <span class="nav-main-link-name">VICIDial List Count</span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <?
                             }
                             if (checkAccess('fronter_closer') || checkAccess('sales_analysis') || checkAccess('agent_call_stats') || checkAccess('user_charts') || checkAccess('recent_hangups') || checkAccess('script_statistics') || checkAccess('dispo_log') || checkAccess('capacity_report') || checkAccess('report_emails') || checkAccess('user_status_report')) {
                                 ?>
                                 <li class="nav-main-item">
-                                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        Reports
+                                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
+                                        <i class="nav-main-link-icon fa fa-database"></i>
+                                        <span class="nav-main-heading">Reports</span>
                                     </a>
-                                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                    <ul class="nav-main-submenu">
                                         <?
                                             if (checkAccess('fronter_closer')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=fronter_closer&no_script=1">Fronter / Closer</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=fronter_closer&no_script=1">
+                                                        <span class="nav-main-link-name">Fronter / Closer</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('sales_analysis')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=sales_analysis&no_script=1">Sales Analysis</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=sales_analysis&no_script=1">
+                                                        <span class="nav-main-link-name">Sales Analysis</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('agent_call_stats')) {
                                                 ?>
-                                                <a class="dropdown-item" href="?area=agent_call_stats&no_script=1">Verifier Call Stats</a>
+                                                <li class="nav-main-item">
+                                                    <a class="nav-main-link" href="?area=agent_call_stats&no_script=1">
+                                                        <span class="nav-main-link-name">Verifier Call Stats</span>
+                                                    </a>
+                                                </li>
                                                 <?
                                             }
                                             if (checkAccess('rouster_report')) {
@@ -433,7 +511,7 @@
                                                 <?
                                             }
                                         ?>
-                                    </div>
+                                    </ul>
                                 </li>
                                 <?
                             }
