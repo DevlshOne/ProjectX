@@ -150,6 +150,10 @@ table {
 /*    color: black;*/
 /*}*/
 
+.nav-main-heading {
+    padding: 0.15em !important;
+}
+
 #progress-wrp {
     border: 1px solid #0099CC;
     padding: 1px;
