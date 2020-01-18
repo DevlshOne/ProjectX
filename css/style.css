@@ -152,6 +152,7 @@ table {
 
 .nav-main-heading {
     padding: 0.15em !important;
+    padding-right: 0px !important;
 }
 #main-container {
     padding-left: 2em;

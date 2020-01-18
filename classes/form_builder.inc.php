@@ -160,7 +160,7 @@
                 }
 
                 function displayAddFormBuilderDialog(id) {
-                    let objname = 'main_content';
+                    let objname = 'main-container';
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=form_builder&add=" + id + "&printable=1&no_script=1");
                 }
