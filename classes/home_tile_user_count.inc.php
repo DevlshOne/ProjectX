@@ -113,16 +113,16 @@ class HomeTileUserCountClass
         </script>
         <div id="dialog-modal-edit_config" title="Editing Configuration" class="nod"></div>
         <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
-            <div class="block block-themed block-fx-shadow">
+            <div class="block block-rounded block-bordered">
                 <div class="block-header bg-primary text-left">
                     <h4 class="block-title">Users Online</h4>
                     <div class="block-options">
+                        <button type="button" class="btn-block-option btn-sm" onclick="editConfig();return false">
+                            <i class="fa fa-tools" title="Configure Chart"></i>
+                        </button>
                         <button type="button" class="btn-block-option btn-sm"
                                 onclick="deleteHomeTile(<?= $tidx ?>);return false">
-                            <i class="fa fa-minus-circle" title="Delete"></i>
-                        </button>
-                        <button type="button" class="btn-block-option btn-sm" onclick="editConfig();return false">
-                            <i class="fa fa-tools" title="Configure"></i>
+                            <i class="fa fa-minus-circle" title="Delete Tile"></i>
                         </button>
                     </div>
                 </div>

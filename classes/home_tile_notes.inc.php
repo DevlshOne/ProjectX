@@ -211,20 +211,20 @@ class HomeTileNotesClass
         </script>
         <div id="dialog-modal-view_notes" title="Editing Note" class="nod"></div>
         <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
-            <div class="block block-themed block-fx-shadow">
+            <div class="block block-rounded block-bordered">
                 <div class="block-header bg-primary text-left">
                     <h4 class="block-title">Notes</h4>
                     <div class="block-options">
                         <button type="button" class="btn-block-option btn-sm">
-                            <i class="fa fa-plus-circle" title="New"
+                            <i class="fa fa-plus-circle" title="New Note"
                                onclick="viewNotesRecord(0);return false;"></i>
+                        </button>
+                        <button type="button" class="btn-block-option btn-sm">
+                            <i class="fa fa-tools" title="Configure Notes"></i>
                         </button>
                         <button type="button" class="btn-block-option btn-sm"
                                 onclick="deleteHomeTile(<?= $tidx ?>);return false">
-                            <i class="fa fa-minus-circle" title="Delete"></i>
-                        </button>
-                        <button type="button" class="btn-block-option btn-sm">
-                            <i class="fa fa-tools" title="Configure"></i>
+                            <i class="fa fa-minus-circle" title="Delete Tile"></i>
                         </button>
                     </div>
                 </div>
@@ -236,8 +236,7 @@ class HomeTileNotesClass
                             <thead>
                             <tr>
                                 <th class="row2 text-left pct66"><?= $this->getOrderLink('notes') ?>Note</a></th>
-                                <th class="row2 text-center pct20"><?= $this->getOrderLink('time') ?>Last
-                                    Updated</a></th>
+                                <th class="row2 text-center pct20"><?= $this->getOrderLink('time') ?>Updated</a></th>
                                 <th class="row2 text-center">&nbsp</th>
                             </tr>
                             </thead>

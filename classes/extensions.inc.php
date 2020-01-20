@@ -15,8 +15,8 @@ class Extensions{
 
 
 	var $max_bulk_add_size = 200;
-	
-	
+
+
 	## Page  Configuration
 	var $pagesize	= 20;	## Adjusts how many items will appear on each page
 	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
@@ -57,12 +57,12 @@ class Extensions{
 				$this->makeAdd($_REQUEST['add_extension']);
 
 			}else if(isset($_REQUEST['bulk_tools'])){
-				
+
 				//echo "BULK TOOLZZZ EXT";
-				
+
 				//print_r($_REQUEST);
 				$this->makeBulkTools();
-				
+
 			}else{
 				$this->listEntrys();
 			}
@@ -72,25 +72,25 @@ class Extensions{
 	}
 
 	function makeBulkAdd(){
-		
 
-		
+
+
 		?><script>
 			var current_ext_count = 0;
-			
+
 			function countExtensions(){
-	
+
 				let frm = getEl('blkextfrm');
 				let start = parseInt(frm.start_number.value);
 				let end = parseInt(frm.end_number.value);
-	
+
 				current_ext_count = 1 + ((start > end)?start - end:end - start);
-				
+
 				$('#exten_cnt_spn').html(""+current_ext_count);
 
 				//alert(current_ext_count);
 			}
-		
+
 			function validateBulkExtensionField(name,value,frm){
 
 				//alert(name+","+value);
@@ -107,7 +107,7 @@ class Extensions{
 				case 'end_number':
 
 					value = parseInt(value);
-					
+
 					if(!value || value < 1000 || value > 999999)return false;
 
 					return true;
@@ -116,14 +116,14 @@ class Extensions{
 					break;
 				case 'iax_password':
 				case 'sip_password':
-				
+
 					if(!value || (value.length < 8))return false;
 
 					return true;
 
 
 				case 'iax_host':
-					
+
 					// 1.1.1.1 is LENGTH=7
 					if(!value || (value.length < 7))return false;
 
@@ -133,7 +133,7 @@ class Extensions{
 					if(!value)return false;
 
 					return true;
-					
+
 //				case 'port_num':
 //
 //					if(value%2 != 0)return false;
@@ -156,15 +156,15 @@ class Extensions{
 				// FINAL RECOUNT
 				countExtensions();
 
-				
+
 				if(current_ext_count > <?=$this->max_bulk_add_size?>){
 
-					
+
 					alert("ERROR: Attempting to add too many extensions at once. Maximum is <?=$this->max_bulk_add_size?> per run.");
 					eval('try{frm.start_number.select();}catch(e){}');
 					return false;
 				}
-				
+
 				var params = getFormValues(frm,'validateBulkExtensionField');
 
 
@@ -194,7 +194,7 @@ class Extensions{
 
 						alert("Please enter a valid IP address for the IAX Registry.");
 						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;		
+						break;
 
 
 					case 'phone_password':
@@ -202,7 +202,7 @@ class Extensions{
 						alert("Please enter the password for agent to login to the phone in Vicidial.");
 						eval('try{frm.'+params[0]+'.select();}catch(e){}');
 						break;
-										
+
 					case 'start_number':
 
 						alert("Please enter a valid starting number for this extension range");
@@ -266,7 +266,7 @@ class Extensions{
 			}
 
 
-			
+
 
 			// SET TITLEBAR
 			///$('#dialog-modal-add-bulk-extension').dialog( "option", "title", 'Adding Bulk Extensions');
@@ -291,9 +291,9 @@ class Extensions{
 			<th align="left" height="30">Extension Start/End:</th>
 			<td>
 				<input name="start_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()" />
-				 to 
+				 to
 				<input name="end_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()" />
-			
+
 			</td>
 		</tr>
 		<tr>
@@ -339,8 +339,8 @@ class Extensions{
 			<th align="left" height="30">VICI Phone Password</th>
 			<td><input name="phone_password" type="text" size="10" value="drlv"></td>
 		</tr>
-		
-		
+
+
 		<tr>
 			<th align="left" height="30">PX Register as User</th>
 			<td><input name="register_as" type="text" size="30" value=""><br />(Blank means use default)</td>
@@ -354,13 +354,13 @@ class Extensions{
 		</tr>
 		</form>
 		</table><?
-		
-		
+
+
 	}
 
 
 	function makeBulkTools(){
-		
+
 		?><script>
 
 
@@ -369,7 +369,7 @@ class Extensions{
 		*/
 		function applyTheChanges(frm){
 
-				
+
 			if(frm.bulk_sip.checked){
 
 				//if(!frm.cluster_id.value)return recheck('Please select a cluster then a group for that cluster.', frm.cluster_id);
@@ -437,11 +437,11 @@ class Extensions{
 			// CANCEL SENDING ACTUAL FORM SUBMIT
 			return false;
 		}
-		
+
 		</script>
-		
-		
-		
+
+
+
 		<form method="POST" action="<?=stripurl('')?>" onsubmit="return applyTheChanges(this);">
 
 			<input type="hidden" name="bulk_operations">
@@ -450,7 +450,7 @@ class Extensions{
 		<table border="0" width="100%">
 		<tr>
 			<td colspan="2" align="center">
-			
+
 			<div style="height:150px;overflow:scroll">
 				<table border="0" align="center" width="100%">
 				<tr>
@@ -460,11 +460,11 @@ class Extensions{
 				$x=0;
 				$cols=4;
 				foreach($_REQUEST['extchk'] as $ext_id){
-					
-					
+
+
 					$extrow = $_SESSION['dbapi']->extensions->getByID($ext_id);
 					list($servername) = $_SESSION['dbapi']->queryROW("SELECT name FROM servers WHERE id='".intval($extrow['server_id'])."' ");
-					
+
 					?><input type="hidden" name="editing_extensions[]" value="<?=$ext_id?>"><?
 
 					if($x%$cols == 0)echo "<tr>\n";
@@ -485,9 +485,9 @@ class Extensions{
 				<br />
 			</td>
 		</tr>
-		
-		
-		
+
+
+
 		<tr>
 			<td width="<?=$align_offset?>" align="right"><input type="checkbox" name="bulk_sip" value="1" onclick="if(this.checked){$('#change_sippw_row').show();}else{$('#change_sippw_row').hide();}"></td>
 			<th align="left">Change SIP Password</th>
@@ -655,7 +655,7 @@ class Extensions{
 				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
 
 				$('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
-				
+
 
 				loadAjaxData(getExtensionsURL(),'parseExtensions');
 
@@ -722,7 +722,7 @@ class Extensions{
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
-			
+
 			function displayBulkAddExtensionDialog(){
 
 				var objname = 'dialog-modal-add-bulk-extension';
@@ -737,7 +737,7 @@ class Extensions{
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
-			
+
 			function resetExtensionForm(frm){
 
 				frm.s_id.value='';
@@ -752,37 +752,37 @@ class Extensions{
 //			name="extchk0"
 
 	function displayBulkToolsDialog(frm){
-	
+
 		var objname = 'dialog-modal-bulk-tools';
-	
-	
-	
+
+
+
 		var ext_urlstr="";
-	
+
 		// GRAB ARRAY OF CHECKED USERS
 		var obj=null;
 		for(var x=0, y=0;(obj=getEl('extchk'+x)) != null;x++){
-	
+
 			if(!obj.checked)continue;
-	
+
 			ext_urlstr += (y++ > 0)?'&':'';
 			ext_urlstr += 'extchk['+x+']='+obj.value;
-	
+
 		}
-	
+
 		//alert(user_urlstr);
-	
+
 		$('#'+objname).dialog("open");
 		$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-	
-	
+
+
 		// BULK THE QUERY STRING AND LOAD
 		//$('#'+objname).post("index.php?area=users&bulk_tools&printable=1&no_script=1",user_urlstr);
-	
+
 		$.post("index.php?area=extensions&bulk_tools&printable=1&no_script=1",ext_urlstr, function( data){
 			$('#'+objname).html(data);
 		});
-	
+
 	}
 
 
@@ -816,36 +816,28 @@ class Extensions{
 
 		?>
 		</div>
-		
+
 		<div id="dialog-modal-bulk-tools" title="Bulk Tools" class="nod"></div>
-		
-		
-		
+
+
+
 		<div id="dialog-modal-add-bulk-extension" title="Adding Bulk Extensions" class="nod">
 		<?
 			$this->makeBulkAdd();
 		?>
-		</div><?
-		
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadExtensions();return false">
+		</div>
+        <form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadExtensions();return false">
 			<input type="hidden" name="searching_extensions">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
 			<td height="40" class="pad_left ui-widget-header">
 
-				<table border="0" width="100%" >
+				<table class="tightTable">
 				<tr>
 					<td width="500">
-						Extensions
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddExtensionDialog(0)">
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Bulk Add" onclick="displayBulkAddExtensionDialog()">
-
+                        <h4>Extensions</h4>
+                        <button type="button" value="Add" onclick="displayAddExtensionDialog(0)">Add</button>
+                        <button type="button" value="Bulk Add" onclick="displayBulkAddExtensionDialog()">Bulk Add</button>
 					</td>
 					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadExtensions();return false">
 						<option value="20">20</option>
@@ -862,30 +854,23 @@ class Extensions{
 							<td id="extensions_next_td" class="page_system_next"></td>
 						</tr>
 						</table>
-
 					</td>
 				</tr>
 				</table>
-
 			</td>
-
 		</tr>
-
 		<tr>
 			<td colspan="2"><table border="0" width="100%">
 			<tr>
 				<td rowspan="2" width="70" align="center" style="border-right:1px solid #000">
-
-
 					<div id="total_count_div"></div>
-
 				</td>
 				<th class="row2">Extension</th>
 				<th class="row2">Server</th>
 				<th class="row2">In Use</th>
 				<th class="row2">Status</th>
 				<th class="row2">ID</th>
-				<td><input type="submit" value="Search" onclick="<?=$this->index_name?> = 0;" name="the_Search_button"></td>
+                <td><button type="submit" value="Search" onclick="<?=$this->index_name?> = 0;" name="the_Search_button">Search</button></td>
 			</tr>
 			<tr>
 
@@ -897,22 +882,19 @@ class Extensions{
 					<option value="">[All]</option>
 					<option value="yes">Yes</option>
 					<option value="no">No</option>
-
-				</select></td>
-
+				</select>
+                </td>
 				<td align="center"><select name="s_status">
 					<option value="enabled">Enabled</option>
 					<option value="suspended">Suspended</option>
 					<option value="deleted">Deleted</option>
 				</select></td>
 				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-
-
-				<td><input type="button" value="Reset" onclick="resetExtensionForm(this.form);resetPageSystem('<?=$this->index_name?>');loadExtensions();"></td>
+                <td><button type="button" value="Reset" onclick="resetExtensionForm(this.form);resetPageSystem('<?=$this->index_name?>');loadExtensions();">Reset</button></td>
 			</tr>
-			</table></td>
+			</table>
+            </td>
 		</tr>
-
 		</form>
 		<tr>
 			<td colspan="2"><table border="0" width="100%" id="extension_table">
@@ -929,8 +911,8 @@ class Extensions{
 
 			?></table></td>
 		</tr>
-		
-		
+
+
 		<tr>
 			<td colspan="2">
 
@@ -945,22 +927,20 @@ class Extensions{
 					</td>
 				</tr>
 				<tr>
-					<td><input type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)"></td>
-
+                    <td><button type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button></td>
 				</tr>
 				</table>
-
 			</td>
 		</tr>
-		
-		
-		
+
+
+
 		</table>
 
 		<script>
 
 		$(document).ready(function(){
-			
+
 			$("#dialog-modal-add-extension").dialog({
 				autoOpen: false,
 				width: 430,
@@ -969,7 +949,7 @@ class Extensions{
 				draggable:true,
 				resizable: false
 			});
-			
+
 			$("#dialog-modal-add-bulk-extension").dialog({
 				autoOpen: false,
 				width: 430,
@@ -978,7 +958,7 @@ class Extensions{
 				draggable:true,
 				resizable: false
 			});
-			
+
 			$( "#dialog-modal-bulk-tools" ).dialog({
 				autoOpen: false,
 				width:600,
@@ -1172,7 +1152,7 @@ class Extensions{
 			<th align="left" height="30">IAX Password</th>
 			<td><input name="iax_password" type="text" size="30" value="<?=htmlentities($row['iax_password'])?>"></td>
 		</tr>
-		
+
 		<tr>
 			<th align="left" height="30">SIP Password</th>
 			<td><input name="sip_password" type="text" size="30" value="<?=htmlentities($row['sip_password'])?>"></td>

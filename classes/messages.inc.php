@@ -237,11 +237,9 @@ class Messages{
 				<table border="0" width="100%" >
 				<tr>
 					<td>
-						Messages
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddMessageDialog(0)">
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Search" onclick="toggleMessageSearch()">
+                        <h4>Messages</h4>
+                        <button type="button" value="Add" onclick="displayAddMessageDialog(0)">Add</button>
+                        <button type="button" value="Search" onclick="toggleMessageSearch()">Search</button>
 					</td>
 					<td align="right"><?
 						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>

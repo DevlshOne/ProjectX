@@ -68,8 +68,9 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <!--    <link rel="stylesheet" type="text/css" href="css/navstyle.css"> -->
     <!--    <link rel="stylesheet" type="text/css" href="themes/default/css/uniform.default.css" media="screen"/>-->
     <!--    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>-->
-    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css"/>
-    <link rel="stylesheet" id="css-main" href="src/assets/css/oneui.min.css">
+    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />
+    <link rel="stylesheet" href="css/cupertino/jquery-ui-1.10.3.custom.min.css" />
+    <link rel="stylesheet" id="css-main" href="src/assets/css/oneui.min.css" />
     <script type="text/javascript" src="js/jquery.js"></script>
     <!--    <script type="text/javascript" src="js/popper.min.js"></script>-->
     <!--    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>-->
@@ -1139,6 +1140,12 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <script src="src/assets/js/oneui.app.min.js"></script>
     <script src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script>
+        $('input').addClass('form-control');
+        $('button, :button, :submit, input[type="button"], input[type="submit"]').addClass('btn btn-primary btn-sm');
+        $('select').addClass('custom-select-sm');
+        $('.ui-widget-header').removeClass('ui-widget-header').addClass('bg-modern-light');
+    </script>
 </div>
 </body>
 </html>

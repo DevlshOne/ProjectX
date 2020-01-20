@@ -97,7 +97,7 @@ class HomeClass
             default:
                 ?>
                 <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
-                    <div class="block block-themed block-fx-shadow">
+                    <div class="block block-rounded block-bordered">
                         <div class="block-header bg-primary text-left">
                             <h4 class="block-title">Unknown/Unsupported Tile Type
                                 <small><?= htmlentities($tile['type']) ?></small>
@@ -105,10 +105,9 @@ class HomeClass
                             <div class="block-options">
                                 <button type="button" class="btn-block-option btn-sm"
                                         onclick="deleteHomeTile(<?= $tidx ?>);return false">
-                                    <i class="fa fa-minus-circle" title="Delete"></i>
+                                    <i class="fa fa-minus-circle" title="Delete Tile"></i>
                                 </button>
                             </div>
-
                         </div>
                     </div>
                 </li>
@@ -195,15 +194,15 @@ class HomeClass
                     $this->renderTile($tidx, $tile);
                 }
                 ?>
-                <li id="tile_add" class="homeScreenTile" style="width:50px">
-                    <table border="0" width="100%" height="100%" class="hand"
-                           onclick="alert('Add new mini report here')">
-                        <tr>
-                            <td align="center">
-                                <img src="images/add_icon.png" width="40" border="0"/>
-                            </td>
-                        </tr>
-                    </table>
+                <li id="tile_add" class="col-sm-4 col-md-2">
+                    <div class="block block-rounded block-bordered">
+                        <div class="block-header bg-primary text-left">
+                            <h4 class="block-title">Add Tile</h4>
+                        </div>
+                    </div>
+                    <div class="block-content text-center">
+                        <button  onclick="alert('Add new mini report here');"><i class="fas fa-plus-square fa-5x"></i></button>
+                    </div>
                 </li>
             </ul>
             <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>

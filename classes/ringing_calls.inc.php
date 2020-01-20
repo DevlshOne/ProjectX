@@ -767,38 +767,27 @@ class RingingCalls{
 			}
 
 		</script>
-		<div id="media_player" title="Playing Call Recording">
-
-
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadRings();return false">
+		<div id="media_player" title="Playing Call Recording"></div>
+        <form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadRings();return false">
 			<input type="hidden" name="searching_ring">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
 		<table border="0" width="100%" class="lb" cellspacing="0">
 		<tr>
 			<td height="40" class="pad_left ui-widget-header">
 
-				<table border="0" width="100%" >
+				<table class="tightTable">
 				<tr>
-					<td width="500">
-						Ringing Calls
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddNameDialog(0)">
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Search" onclick="toggleNameSearch()">
+					<td class="pct75">
+                        <h4>Ringing Calls</h4>
+                        <button type="button" title="Add" value="Add" onclick="displayAddNameDialog(0)">Add</button>
+                        <button type="button" title="Search" value="Search" onclick="toggleNameSearch()">Search</button>
 					</td>
-
 					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadRings();return false">
 						<option value="20">20</option>
 						<option value="50">50</option>
 						<option value="100">100</option>
 						<option value="500">500</option>
-					</select></td>
-
+					</select>
+                    </td>
 					<td align="right"><?
 						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
 						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
