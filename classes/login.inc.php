@@ -220,172 +220,94 @@ class LoginClass
         }
 
     }
-
-
-    // function handleDirectLogin(){
-
-
-    // 	if(isset($_REQUEST['login_link']) && isset($_REQUEST['user']) && isset($_REQUEST['login_code'])){
-
-    // 		$user 			= trim($_REQUEST['user']);
-    // 		$login_code 	= trim($_REQUEST['login_code']);
-
-    // 		$row = $_SESSION['dbapi']->querySQL("SELECT users.*  FROM users ".
-    // 				" WHERE users.enabled='yes' ". // AND accounts.enabled='yes' // MOVING THIS TO PHP, SO WE CAN ALERT ACCORDINGLY
-    // 				" AND users.username='".mysqli_real_escape_string($_SESSION['dbapi']->db,$user)."' ".
-    // 				" AND users.login_code='".mysqli_real_escape_string($_SESSION['dbapi']->db,$login_code)."' ".
-    // 				" LIMIT 1 "
-    // 				);
-
-
-    // 		## USER/PASS INVALID, OR ACCOUNT DISABLED
-    // 		if(!$row){
-
-    // 			$_SESSION['dbapi']->users->tracklogin(0,0,$user,$login_code,'failure-code');
-
-
-    // 			jsAlert("ERROR: YOUR USER AND LOGIN CODE ARE INCORRECT",0);
-
-
-    // 			jsRedirect(stripurl(array('login_link','user','login_code')));
-    // 			exit;
-
-    // 		}else{
-
-
-    // 			$_SESSION['dbapi']->users->tracklogin($row['account_id'],$row['id'],$user,$login_code,'success-code');
-
-
-    // 			## STORE USER RECORD IN SESSION!
-    // 			$_SESSION['user'] = $row;
-
-    // 			// LOAD ASSIGNED OFFICES
-    // 			// INIT THE ARRAY
-    // 			$_SESSION['assigned_offices'] = array();
-
-    // 			// POPULATE THE ALLOWED/ASSIGNED OFFICES ARRAY
-    // 			$re2 = $_SESSION['dbapi']->query("SELECT * FROM `users_offices` WHERE user_id='".mysqli_real_escape_string($_SESSION['dbapi']->db,$row['id'])."'");
-
-
-    // 			$_SESSION['assigned_office_groups'] = array();
-
-    // 			while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
-
-    // 				$_SESSION['assigned_offices'][] = $r2['office_id'];
-
-    // 				// POPULATE THE GROUP ARRAY FOR THE SELECTED OFFICE(S)
-    // 				if(!is_array($_SESSION['assigned_office_groups'][$r2['office_id']])){
-    // 					$_SESSION['assigned_office_groups'][$r2['office_id']] = array();
-    // 				}
-
-    // 				$re3 = $_SESSION['dbapi']->query("SELECT * FROM `user_groups` WHERE `office`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$r2['office_id'])."'");
-
-    // 				while($r3 = mysqli_fetch_array($re3, MYSQLI_ASSOC)){
-
-    // 					$_SESSION['assigned_office_groups'][$r2['office_id']][] = $r3['user_group'];
-
-    // 				}
-    // 			}
-
-
-    // 			## UPDATE THE TIME OF LAST LOGIN
-    // 			$_SESSION['dbapi']->users->updateLastLoginTime();
-
-
-    // 			jsRedirect('index.php');
-    // 			exit;
-
-    // 		}
-
-    // 	}
-
-    // }
-
-
     function makeLoginForm()
     {
 
 
         ?>
-        <script src="js/md5.js"></script>
-        <style>
-            .red {
-                color: red;
-            }
-        </style>
-        <script>
-            $('#page-container').removeClass('sidebar-dark sidebar-o')
+        <main id="main-container">
+            <script src="js/md5.js"></script>
+            <style>
+                .red {
+                    color: red;
+                }
+            </style>
+            <script>
+                $('#page-container').remove('sidebar aside');
+                $('#page-container').removeClass('sidebar-o sidebar-dark');
 
-            function checkLoginForm(frm) {
+                function checkLoginForm(frm) {
 
-                if (!frm.username.value) {
-                    alert("Error: Please enter a username");
+                    if (!frm.username.value) {
+                        alert("Error: Please enter a username");
 
-                    frm.username.select();
-                    return false;
+                        frm.username.select();
+                        return false;
+                    }
+
+                    if (!frm.password.value) {
+                        alert("Error: Please enter your password");
+
+                        frm.password.select();
+                        return false;
+                    }
+
+                    var obj = getEl('md5pass');
+
+                    obj.value = hex_md5(hex_md5(frm.password.value) + '<?=$_SESSION['login_salt']?>');
+
+                    frm.password.value = '';
+
+
+                    return true;
                 }
 
-                if (!frm.password.value) {
-                    alert("Error: Please enter your password");
 
-                    frm.password.select();
-                    return false;
-                }
-
-                var obj = getEl('md5pass');
-
-                obj.value = hex_md5(hex_md5(frm.password.value) + '<?=$_SESSION['login_salt']?>');
-
-                frm.password.value = '';
-
-
-                return true;
-            }
-
-
-        </script>
-        <div class="row">
-            <div class="col-md-3 text-center"></div>
-            <div class="col-md-6 text-center">
-                <form method="POST" class="form-signin" action="<?= stripurl('') ?>" target="_top"
-                      onsubmit="return checkLoginForm(this)">
-                    <div class="block block-themed block-fx-shadow">
-                        <div class="block-header bg-info">
-                            <img src="images/cci-logo-200-2.png" style="padding-right:8px;" height="30" border="0"/>
-                            <h3 class="block-title">Project X - Administration</h3>
-                            <div class="block-options">
-                                <button type="submit" value="Login" class="btn btm-sm btn-primary" name="loginbutton">
-                                    Login
-                                </button>
-                                <button type="reset" class="btn btn-sm btn-secondary">Reset</button>
+            </script>
+            <div class="row">
+                <div class="col-md-3 text-center"></div>
+                <div class="col-md-6 text-center">
+                    <form method="POST" class="form-signin" action="<?= stripurl('') ?>" target="_top"
+                          onsubmit="return checkLoginForm(this)">
+                        <div class="block block-themed block-fx-shadow">
+                            <div class="block-header bg-info text-center">
+                                <img src="images/cci-logo-200-2.png" style="padding-right:8px;" height="30" border="0"/>
+                                <h3 class="block-title">Project X - Administration</h3>
+                                <div class="block-options">
+                                    <button type="submit" value="Login" class="btn btm-sm btn-primary"
+                                            name="loginbutton">
+                                        Login
+                                    </button>
+                                    <button type="reset" class="btn btn-sm btn-secondary">Reset</button>
+                                </div>
                             </div>
-                        </div>
-                        <div class="block-content text-center">
-                            <div class="row justify-content-center py-sm-3 py-md-5">
-                                <div class="col-sm-10 col-md-8">
-                                    <div class="form-group">
-                                        <label for="username">Username</label>
-                                        <input type="text" placeholder="Enter your username.."
-                                               class="form-control form-control-alt" id="username" name="username"
-                                               value="<?= (isset($_REQUEST['uname'])) ? $_REQUEST['uname'] : "" ?>"
-                                        >
-                                        <input type="hidden" name="kick_to"
-                                               value="<?= htmlentities($_REQUEST['kick_to']) ?>">
-                                        <input type="hidden" id="md5pass" name="md5pass" value="">
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="password">Password</label>
-                                        <input type="password" placeholder="Enter your password.." name="password"
-                                               class="form-control form-control-alt" id="password"
-                                               value="">
+                            <div class="block-content">
+                                <div class="row justify-content-center py-sm-3 py-md-5">
+                                    <div class="col-sm-10 col-md-8">
+                                        <div class="form-group">
+                                            <label for="username" class="text-left">Username</label>
+                                            <input type="text" placeholder="Enter your username.."
+                                                   class="form-control form-control-alt" id="username" name="username"
+                                                   value="<?= (isset($_REQUEST['uname'])) ? $_REQUEST['uname'] : "" ?>"
+                                            >
+                                            <input type="hidden" name="kick_to"
+                                                   value="<?= htmlentities($_REQUEST['kick_to']) ?>">
+                                            <input type="hidden" id="md5pass" name="md5pass" value="">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password" class="text-left">Password</label>
+                                            <input type="password" placeholder="Enter your password.." name="password"
+                                                   class="form-control form-control-alt" id="password"
+                                                   value="">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+        </main>
         <?
     }
 }

@@ -148,17 +148,13 @@ class HomeTileNotesClass
              * Build the URL for AJAX to hit, to build the list
              */
             function getNotesURL() {
-
                 var frm = getEl('<?=$this->frm_name?>');
-
                 return 'api/api.php' +
                     "?get=notes&" +
                     "mode=xml&" +
                     "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
             }
-
             var notes_loading_flag = false;
-
             /**
              * Load the name data - make the ajax call, callback to the parse function
              */
@@ -209,28 +205,22 @@ class HomeTileNotesClass
                 eval('notes_loading_flag = false');
             }
 
-
             function handleNoteListClick(id) {
-
                 viewNotesRecord(id);
-
             }
         </script>
-
         <div id="dialog-modal-view_notes" title="Editing Note" class="nod"></div>
-        <li id="tile_<?= $tidx ?>" class="homeScreenTile" style="width:350px;">
-            <div class="block">
-                <div class="block-header">
-                    <h3 class="block-title">Notes
-                        <small><?= htmlentities($tile['type']) ?></small>
-                    </h3>
+        <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
+            <div class="block block-themed block-fx-shadow">
+                <div class="block-header bg-primary text-left">
+                    <h3 class="block-title">Notes</h3>
                     <div class="block-options">
-                        <button type="button" class="btn-sm btn-block-option">
-                            <i class="fa fa-plus-circle" title="Add new.."
+                        <button type="button" class="btn-block-option btn-sm">
+                            <i class="fa fa-plus-circle" title="New"
                                onclick="viewNotesRecord(0);return false;"></i>
                         </button>
-                        <button type="button" class="btn-sm btn-block-option">
-                            <i class="fa fa-edit" title="Configure"></i>
+                        <button type="button" class="btn-block-option btn-sm">
+                            <i class="fa fa-tools" title="Configure"></i>
                         </button>
                     </div>
                 </div>
@@ -239,11 +229,12 @@ class HomeTileNotesClass
                           action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadNotes();return false">
                         <input type="hidden" name="searching_note">
                         <div class="table-responsive">
-                            <table class="tightTable">
+                            <table class="tightTable table table-striped table-vcenter">
                                 <thead>
                                 <tr>
-                                    <th class="row2 text-left"><?= $this->getOrderLink('notes') ?>Note</a></th>
-                                    <th class="row2 text-center"><?= $this->getOrderLink('time') ?>Last Updated</a></th>
+                                    <th class="row2 text-left pct66"><?= $this->getOrderLink('notes') ?>Note</a></th>
+                                    <th class="row2 text-center pct20"><?= $this->getOrderLink('time') ?>Last
+                                        Updated</a></th>
                                     <th class="row2 text-center">&nbsp</th>
                                 </tr>
                                 </thead>
@@ -262,14 +253,10 @@ class HomeTileNotesClass
                             </table>
                         </div>
                     </form>
-                </
-            </div>
+                </div>
             </div>
         </li>
-
         <script>
-
-
             $("#dialog-modal-view_notes").dialog({
                 autoOpen: false,
                 width: 500,
@@ -278,12 +265,9 @@ class HomeTileNotesClass
                 draggable: true,
                 resizable: true
             });
-
             loadNotes();
-
-
-        </script><?
-
+        </script>
+        <?
     }
 
 

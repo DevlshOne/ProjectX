@@ -50,15 +50,6 @@ if (isset($_REQUEST['o'])) {
     jsRedirect("index.php");
     exit;
 }
-/*?><!DOCTYPE HTML>
- <html>
- <head>
- <title>Project X - Management Tools and Reports</title>
-
- <link href='https://fonts.googleapis.com/css?family=Open+Sans:300,400,700' rel='stylesheet' type='text/css'>
- <link rel="stylesheet" type="text/css" href="css/style.css"/>
- <link rel="stylesheet" href="css/navstyle.css"> <!-- Resource style -->
- <link rel="stylesheet" type="text/css" href="css/cupertino/jquery-ui-1.10.3.custom.min.css"/><?**/
 // NO_SCRIPT - shuts off extra interface stuff, because page being loaded via AJAX
 if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQUEST['force_scripts'])) {
 ?>
@@ -87,8 +78,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <script type="text/javascript" src="js/ajax_functions.js"></script>
     <script type="text/javascript" src="js/functions.js"></script>
     <script type="text/javascript" src="js/page_system.js"></script>
-    <!--    <script type="text/javascript" src="js/modernizr.js"></script> -->
     <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <!--    <script type="text/javascript" src="js/modernizr.js"></script> -->
     <script>
         $('nav').ready(function () {
             $('span.nav-main-link-name').not('#change_password').each(function () {
@@ -184,9 +175,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
     </script>
 </head>
-<body>
 <div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay page-header-fixed">
-    <aside id="side-overlay"></aside>
+    <!--    <aside id="side-overlay"></aside>-->
     <?
     }
     // USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
@@ -564,15 +554,19 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         <i class="nav-main-link-icon fa fa-toolbox"></i>
                         <span class="nav-main-heading">PACs Maintenance</span>
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                    <ul class="nav-main-submenu">
                         <?
                         if (checkAccess('pac_reports')) {
                             ?>
-                            <a class="dropdown-item" href="?area=pac_reports&no_script=1">Web Donations</a>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link" href="?area=pac_reports&no_script=1">
+                                    <span class="nav-main-link-name">Web Donations</span>
+                                </a>
+                            </li>
                             <?
                         }
                         ?>
-                    </div>
+                    </ul>
                 </li>
                 <?
             }
@@ -584,36 +578,62 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         <i class="nav-main-link-icon fa fa-user"></i>
                         <span class="nav-main-heading">Users</span>
                     </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="?area=users&no_script=1">Search / List Users</a>
-                        <a class="dropdown-item" href="?area=user_groups&no_script=1">Group Manager</a>
-                        <a class="dropdown-item" href="?area=user_teams&no_script=1">Team Manager</a>
-                        <a class="dropdown-item" href="?area=user_groups_master&no_script=1">Master Groups
-                            Manager</a>
+                    <ul class="nav-main-submenu">
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="?area=users&no_script=1">
+                                <span class="nav-main-link-name">Search / List Users</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="?area=user_groups&no_script=1">
+                                <span class="nav-main-link-name">Group Manager</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="?area=user_teams&no_script=1">
+                                <span class="nav-main-link-name">Team Manager</span>
+                            </a>
+                        </li>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" href="?area=user_groups_master&no_script=1">
+                                <span class="nav-main-link-name">Master Groups Manager</span>
+                            </a>
+                        </li>
                         <?
                         if (checkAccess('feature_control')) {
                             ?>
-                            <a class="dropdown-item" href="?area=feature_control&no_script=1">Feature Control</a>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link" href="?area=feature_control&no_script=1">
+                                    <span class="nav-main-link-name">Feature Control</span>
+                                </a>
+                            </li>
                             <?
                         }
                         if (checkAccess('login_tracker')) {
                             ?>
-                            <a class="dropdown-item" href="?area=login_tracker&no_script=1">Login tracker</a>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link" href="?area=login_tracker&no_script=1">
+                                    <span class="nav-main-link-name">Login Tracker</span>
+                                </a>
+                            </li>
                             <?
                         }
                         if (checkAccess('action_log')) {
                             ?>
-                            <a class="dropdown-item" href="?area=action_log&no_script=1">Action Logs!</a>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link" href="?area=action_log&no_script=1">
+                                    <span class="nav-main-link-name">Action Logs</span>
+                                </a>
+                            </li>
                             <?
                         }
                         ?>
-                    </div>
+                    </ul>
                 </li>
                 <?
             }
             ?>
         </ul>
-
     </nav>
     <header id="page-header">
         <!-- Header Content -->
@@ -1120,5 +1140,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
 <script src="src/assets/js/oneui.core.min.js"></script>
 <!-- OneUI JS Custom -->
 <script src="src/assets/js/oneui.app.min.js"></script>
+<script src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
+<script src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
 </body>
 </html>

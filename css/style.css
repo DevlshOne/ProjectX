@@ -465,7 +465,6 @@ table {
     text-align: center;
     font-weight: 800;
     color: red;
-    padding: auto;
 }
 
 .clusterDataTable {
@@ -536,11 +535,11 @@ table {
 
 
 .homeScreenTile {
-    border-radius: 15px;
+    /*border-radius: 15px;*/
     background-color: #e6F2f9;
     padding: 4px;
     min-height: 170px;
-    border: 2px solid grey;
+    /*border: 2px solid grey;*/
     margin: 2px;
     float: left;
 }
@@ -564,15 +563,15 @@ table {
     padding: 0;
 }
 
-#home_sortable li {
-    margin: 3px 3px 3px 0;
-    padding: 1px;
-    float: left;
-    width: 100px;
-    height: 90px;
-    font-size: 4em;
-    text-align: center;
-}
+/*#home_sortable li {*/
+/*    margin: 3px 3px 3px 0;*/
+/*    padding: 1px;*/
+/*    float: left;*/
+/*    width: 100px;*/
+/*    height: 90px;*/
+/*    font-size: 4em;*/
+/*    text-align: center;*/
+/*}*/
 
 th.secondsRow {
     border: 1px solid;
@@ -624,5 +623,9 @@ td.countsRow {
     margin: 2px 4px 2px 4px;
     padding: 5px;
     width: 300px;
+}
+
+.nav-main {
+    margin-right: 0 !important;
 }
 
