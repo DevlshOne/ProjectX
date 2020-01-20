@@ -675,6 +675,17 @@
 		$obj->handleAPI();
 		
 		break;
+
+	case 'sales_analysis_report':
+
+		## USE API FILE WITH REPORT GENERATE DATA FUNCTION
+		include_once($basedir."api/sales_analysis_report.api.php");
+		$obj = new API_Sales_Analysis_Report();
+		
+		## OUTPUT REPORT DATA BASED ON API MODE
+		echo $obj->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '',$_SESSION['api']->mode);
+
+		break;
 	}
 
 
