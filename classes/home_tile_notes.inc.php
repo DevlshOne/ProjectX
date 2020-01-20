@@ -213,11 +213,15 @@ class HomeTileNotesClass
         <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
             <div class="block block-themed block-fx-shadow">
                 <div class="block-header bg-primary text-left">
-                    <h3 class="block-title">Notes</h3>
+                    <h4 class="block-title">Notes</h4>
                     <div class="block-options">
                         <button type="button" class="btn-block-option btn-sm">
                             <i class="fa fa-plus-circle" title="New"
                                onclick="viewNotesRecord(0);return false;"></i>
+                        </button>
+                        <button type="button" class="btn-block-option btn-sm"
+                                onclick="deleteHomeTile(<?= $tidx ?>);return false">
+                            <i class="fa fa-minus-circle" title="Delete"></i>
                         </button>
                         <button type="button" class="btn-block-option btn-sm">
                             <i class="fa fa-tools" title="Configure"></i>
@@ -228,30 +232,26 @@ class HomeTileNotesClass
                     <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
                           action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadNotes();return false">
                         <input type="hidden" name="searching_note">
-                        <div class="table-responsive">
-                            <table class="tightTable table table-striped table-vcenter">
-                                <thead>
-                                <tr>
-                                    <th class="row2 text-left pct66"><?= $this->getOrderLink('notes') ?>Note</a></th>
-                                    <th class="row2 text-center pct20"><?= $this->getOrderLink('time') ?>Last
-                                        Updated</a></th>
-                                    <th class="row2 text-center">&nbsp</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <div style="overflow-y:auto;height:<?= ($this->tile_height - 30) ?>px;">
-                                            <table border="0" width="100%" id="note_table">
-                                                <tr>
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
+                        <table class="tightTable table table-sm table-striped table-vcenter">
+                            <thead>
+                            <tr>
+                                <th class="row2 text-left pct66"><?= $this->getOrderLink('notes') ?>Note</a></th>
+                                <th class="row2 text-center pct20"><?= $this->getOrderLink('time') ?>Last
+                                    Updated</a></th>
+                                <th class="row2 text-center">&nbsp</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>
+                                    <table class="table table-sm" id="note_table">
+                                        <tr>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </form>
                 </div>
             </div>

@@ -99,9 +99,16 @@ class HomeClass
                 <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
                     <div class="block block-themed block-fx-shadow">
                         <div class="block-header bg-primary text-left">
-                            <h3 class="block-title">Unknown/Unsupported Tile Type
+                            <h4 class="block-title">Unknown/Unsupported Tile Type
                                 <small><?= htmlentities($tile['type']) ?></small>
-                            </h3>
+                            </h4>
+                            <div class="block-options">
+                                <button type="button" class="btn-block-option btn-sm"
+                                        onclick="deleteHomeTile(<?= $tidx ?>);return false">
+                                    <i class="fa fa-minus-circle" title="Delete"></i>
+                                </button>
+                            </div>
+
                         </div>
                     </div>
                 </li>
@@ -121,6 +128,66 @@ class HomeClass
     function makeHome()
     {
         ?>
+        <script>
+            var homeTiles = JSON.parse('<?=json_encode($this->prefs['tiles']);?>');
+            var newTilePreSave = {};
+
+            function deleteHomeTile(t) {
+                $('#tile_' + t).remove();
+                let sortedTileIDs = $("#home_sortable").sortable('toArray');
+                let newTileArray = new Array();
+                newTileArray['tiles'] = new Array();
+                if (feDebug) console.log('Before sort ===> ' + JSON.stringify(homeTiles));
+                $(sortedTileIDs).each(function (i, v) {
+                    if (v.split('_')[1] != 'add' && v != '') {
+                        newTileArray.push(homeTiles[v.split('_')[1]]);
+                    }
+                });
+                newTilePreSave.tiles = newTileArray;
+                if (feDebug) console.log('After sort [newTilePreSave] ===> ' + JSON.stringify(newTilePreSave));
+                if (feDebug) console.log('After sort [newTileArray] ===> ' + JSON.stringify(newTileArray));
+                saveUserPrefs(newTilePreSave);
+            }
+
+            function saveUserPrefs(prefData) {
+                let tmpPrefs = JSON.stringify(prefData);
+                let tmpPrefsData = 'prefs=' + tmpPrefs;
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    async: false,
+                    data: tmpPrefsData,
+                    url: 'api/api.php?get=home&mode=json&action=saveUserPrefs',
+                    success: function () {
+                        if (feDebug) console.log('User Preferences saved');
+                    }
+                });
+            }
+
+            $(function () {
+                $("#home_sortable").sortable({
+                    items: 'li:not(#tile_add)',
+                    refreshPositions: true,
+                    forcePlaceholderSize: true,
+                    stop: function (e, ui) {
+                        let sortedTileIDs = $("#home_sortable").sortable('toArray');
+                        let newTileArray = new Array();
+                        newTileArray['tiles'] = new Array();
+                        if (feDebug) console.log('Before sort ===> ' + JSON.stringify(homeTiles));
+                        $(sortedTileIDs).each(function (i, v) {
+                            if (v.split('_')[1] != 'add' && v != '') {
+                                newTileArray.push(homeTiles[v.split('_')[1]]);
+                            }
+                        });
+                        newTilePreSave.tiles = newTileArray;
+                        if (feDebug) console.log('After sort [newTilePreSave] ===> ' + JSON.stringify(newTilePreSave));
+                        if (feDebug) console.log('After sort [newTileArray] ===> ' + JSON.stringify(newTileArray));
+                        saveUserPrefs(newTilePreSave);
+                    }
+                });
+                $("#home_sortable").disableSelection();
+            });
+        </script>
         <div class="content">
             <ul class="row" id="home_sortable">
                 <?
@@ -140,49 +207,6 @@ class HomeClass
                 </li>
             </ul>
             <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-            <script>
-                $(function () {
-                    var feDebug = false;
-                    var homeTiles = JSON.parse('<?=json_encode($this->prefs['tiles']);?>');
-                    var newTilePreSave = {};
-                    $("#home_sortable").sortable({
-                        items: 'li:not(#tile_add)',
-                        refreshPositions: true,
-                        forcePlaceholderSize: true,
-                        stop: function (e, ui) {
-                            let sortedTileIDs = $("#home_sortable").sortable('toArray');
-                            let newTileArray = new Array();
-                            newTileArray['tiles'] = new Array();
-                            if (feDebug) console.log('Before sort ===> ' + JSON.stringify(homeTiles));
-                            $(sortedTileIDs).each(function (i, v) {
-                                if (v.split('_')[1] != 'add' && v != '') {
-                                    newTileArray.push(homeTiles[v.split('_')[1]]);
-                                }
-                            });
-                            newTilePreSave.tiles = newTileArray;
-                            if (feDebug) console.log('After sort [newTilePreSave] ===> ' + JSON.stringify(newTilePreSave));
-                            if (feDebug) console.log('After sort [newTileArray] ===> ' + JSON.stringify(newTileArray));
-                            saveUserPrefs(newTilePreSave);
-                        }
-                    });
-                    $("#home_sortable").disableSelection();
-
-                    function saveUserPrefs(prefData) {
-                        let tmpPrefs = JSON.stringify(prefData);
-                        let tmpPrefsData = 'prefs=' + tmpPrefs;
-                        $.ajax({
-                            type: "POST",
-                            cache: false,
-                            async: false,
-                            data: tmpPrefsData,
-                            url: 'api/api.php?get=home&mode=json&action=saveUserPrefs',
-                            success: function () {
-                                if (feDebug) console.log('User Preferences saved');
-                            }
-                        });
-                    }
-                });
-            </script>
         </div>
         <?
     }

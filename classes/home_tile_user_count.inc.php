@@ -115,8 +115,12 @@ class HomeTileUserCountClass
         <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
             <div class="block block-themed block-fx-shadow">
                 <div class="block-header bg-primary text-left">
-                    <h3 class="block-title">Users Online</h3>
+                    <h4 class="block-title">Users Online</h4>
                     <div class="block-options">
+                        <button type="button" class="btn-block-option btn-sm"
+                                onclick="deleteHomeTile(<?= $tidx ?>);return false">
+                            <i class="fa fa-minus-circle" title="Delete"></i>
+                        </button>
                         <button type="button" class="btn-block-option btn-sm" onclick="editConfig();return false">
                             <i class="fa fa-tools" title="Configure"></i>
                         </button>

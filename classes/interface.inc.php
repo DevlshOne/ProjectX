@@ -76,7 +76,7 @@ class InterfaceClass
     public function makeHeader()
     {
         ?>
-        <table style="border:0;width:100%">
+        <table class="tightTable">
             <tr>
                 <td><a href="index.php"><img src="images/cci-logo-300.png" width="200" border="0"/></a></td>
                 <th align="left"><h1>Project X - Administration</h1></th>
