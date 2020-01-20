@@ -603,4 +603,15 @@
 		$obj->handleAPI();
 		
 		break;
+
+    case 'rousting_report':
+        include_once($basedir."api/rousting_report.api.php");
+        include_once($basedir."classes/rouster_report.inc.php");
+        $obj = new API_Rousting_Report();
+        $obj->handleAPI();
+
+        break;
+
 	}
+
+
