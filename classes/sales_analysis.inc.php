@@ -182,20 +182,25 @@ class SalesAnalysis{
 		}
 		
 		
-		if($agent_cluster_id > -1){
+		if($agent_cluster_id > -1 || (is_array($agent_cluster_id) && $agent_cluster_id[0] != -1) ){
 			
 			
 			if(is_array($agent_cluster_id)){
 				
-				$sql_cluster = " AND ( ";
-				$sql_agent_cluster = " AND ( ";
+				$sql_cluster = " AND agent_cluster_id IN( ";
+				$sql_agent_cluster = " AND vici_cluster_id IN( ";
 				$x=0;
 				foreach($agent_cluster_id as $cidx){
 					
-					if($x++ > 0)$sql_cluster .= " OR ";
+					if($cidx == "-1")break;
 					
-					$sql_cluster .= " agent_cluster_id='".$_SESSION['site_config']['db'][$cidx]['cluster_id']."' ";
-					$sql_agent_cluster .= " vici_cluster_id='".$_SESSION['site_config']['db'][$cidx]['cluster_id']."' ";
+					if($x++ > 0){
+						$sql_cluster .= ",";
+						$sql_agent_cluster .= ",";
+					}
+					
+					$sql_cluster .= $_SESSION['site_config']['db'][$cidx]['cluster_id'];
+					$sql_agent_cluster .= $_SESSION['site_config']['db'][$cidx]['cluster_id'];
 					
 				}
 				
@@ -203,8 +208,8 @@ class SalesAnalysis{
 				$sql_agent_cluster .= ") ";
 				
 				if($x == 0){
-					$sql_cluster .= "";
-					$sql_agent_cluster .= "";
+					$sql_cluster = "";
+					$sql_agent_cluster = "";
 				}
 				
 			}else{
@@ -431,6 +436,10 @@ class SalesAnalysis{
 		
 		
 		//echo $sql."<br />\n";
+		
+		
+		
+		
 		$res = $_SESSION['dbapi']->ROquery($sql);
 		//$res = query("SELECT DISTINCT(agent_username),agent_cluster_id FROM sales ".$where." ORDER BY agent_username ASC");
 		while($row = mysqli_fetch_row($res)){
@@ -1035,7 +1044,7 @@ $(function() {
 						<th>Agent Cluster:</th>
 						<td><?php
 
-                            echo $this->makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0)?-1:$_REQUEST['agent_cluster_id'], '', ""); ?></td>
+                            echo $this->makeClusterDD("agent_cluster_id[]", (!isset($_REQUEST['agent_cluster_id']) || count($_REQUEST['agent_cluster_id']) <= 0)?-1:$_REQUEST['agent_cluster_id'], '', "", 7); ?></td>
 					</tr>
 					<?/*<tr>
 						<th>Verifier Cluster:</th>
@@ -1179,7 +1188,7 @@ $(function() {
 //             }
 
             ## AGENT CLUSTER
-            $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
+            //$agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
 
 
             ## CAMPAIGN
@@ -1207,7 +1216,7 @@ $(function() {
             
             $user_team_id = intval($_REQUEST['user_team_id']);
             ## GENERATE AND DISPLAY REPORT
-            $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code, $ignore_arr, $vici_campaign_id);
+            $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $_REQUEST['agent_cluster_id'], $user_team_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code, $ignore_arr, $vici_campaign_id);
 
             /*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
 
@@ -1546,21 +1555,33 @@ $(function() {
 
 
 
-    public function makeClusterDD($name, $selected, $css, $onchange)
+    public function makeClusterDD($name, $selected, $css, $onchange, $size = 0)
     {
 		$out = '<select name="'.$name.'" id="'.$name.'" ';
 
 		$out .= ($css)?' class="'.$css.'" ':'';
 		$out .= ($onchange)?' onchange="'.$onchange.'" ':'';
+		
+		if($size > 0){
+			$out .= " MULTIPLE size=\"".$size."\" ";
+		}
+		
 		$out .= '>';
 
-		$out .= '<option value="-1" '.(($selected == '-1')?' SELECTED ':'').'>[All]</option>';
+		$out .= '<option value="-1" '.(is_array($selected)?((in_array(-1, $selected))?' SELECTED ':''):(($selected == '-1')?' SELECTED ':'')).'>[All]</option>';
 
 
 		foreach($_SESSION['site_config']['db'] as $dbidx=>$db){
 
 			$out .= '<option value="'.$dbidx.'" ';
-			$out .= ($selected == $dbidx)?' SELECTED ':'';
+			
+			if(is_array($selected)){
+				
+				$out .= (in_array($dbidx, $selected))?' SELECTED ':'';
+				
+			}else{
+				$out .= ($selected == $dbidx)?' SELECTED ':'';
+			}
 			$out .= '>'.htmlentities($db['name']).'</option>';
 		}
 
