@@ -177,8 +177,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
     </script>
 </head>
-<div id="page-container" class="sidebar-o sidebar-dark enable-page-overlay page-header-fixed">
-    <!--    <aside id="side-overlay"></aside>-->
+<div id="page-container" class="sidebar-o sidebar-dark page-header-fixed">
+    <aside id="side-overlay"></aside>
     <?
     }
     // USER IS ALREADY LOGGED IN, PRESENT THE ADMIN INTERFACE
@@ -731,7 +731,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         </div>
         <!-- END Header Loader -->
     </header>
-    <main id="main-container"><?
+    <main id="main-container">
+        <?
         if (isset($_REQUEST['area']) && $_REQUEST['area']) {
             ?>
             <script>
@@ -1142,7 +1143,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <script src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
     <script>
         $('input').addClass('form-control');
-        $('button, :button, :submit, input[type="button"], input[type="submit"]').addClass('btn btn-primary btn-sm');
+        $('button, :button, :submit, input[type="button"], input[type="submit"]').addClass('btn btn-sm btn-primary');
         $('select').addClass('custom-select-sm');
         $('.ui-widget-header').removeClass('ui-widget-header').addClass('bg-modern-light');
     </script>

@@ -222,8 +222,6 @@ class LoginClass
     }
     function makeLoginForm()
     {
-
-
         ?>
         <main id="main-container">
             <script src="js/md5.js"></script>
