@@ -211,7 +211,7 @@ class Campaigns
                         <div id="campaigns_next_td" class="page_system_next"></div>
                 </div>
                 <div class="block-content">
-                    <table class="table table-sm" id="campaign_table">
+                    <table class="table table-sm table-striped" id="campaign_table">
                         <tr>
                             <th class="row2 text-center"><?= $this->getOrderLink('id') ?>ID</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>

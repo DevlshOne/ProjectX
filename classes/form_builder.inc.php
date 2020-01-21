@@ -270,7 +270,7 @@
                                                 <td id="form_builder_next_td" class="page_system_next"></td>
                                             </tr>
                                         </table>
-                                        <input class="righty" title="Create new form" type="button" value="New Form" onclick="displayNewFormBuilderDialog(); return false;">
+                                        <button class="btn btn-sm btn-primary" title="Create new form" type="button" value="New Form" onclick="displayNewFormBuilderDialog(); return false;">New</button>
                                     </td>
                                 </tr>
                             </table>
@@ -334,7 +334,7 @@
                     </tr>
                     <tr>
                         <th colspan="2" class="centery">
-                            <input id="btnMakeCopy" type="button" value="Make Copy">
+                            <button id="btnMakeCopy" class="btn btn-small btn-primary" type="button" value="Make Copy">Copy</button>
                         </th>
                     </tr>
                 </table>
@@ -585,32 +585,30 @@
                     changeScreen(formID, 0);
                 });
             </script>
-            <div class="pct100">
-                <div class="ht40 pd10 ui-widget-header">
-                    <div style="float:left;">Editing Form for Campaign : <?= $sourceName; ?></div>
-                    <div style="float:right;"><input type="button" value="Back" onclick="loadSection('?area=form_builder&no_script=1');"/></div>
+            <div class="block block-themed">
+                <div class="block-header bg-primary-light">
+                    <div class="block-title ">Editing Form for Campaign : <?= $sourceName; ?></div>
+                    <div class="block-options">
+                        <button type="button" title="Back" class="btn-block-option" onclick="loadSection('?area=form_builder&no_script=1');">
+                            <i class="fa fa-backward"></i>
+                        </button>
+                    </div>
                 </div>
-                <div id="screenTabs">
-                    <ul>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 0); return false;">All Screens</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 1); return false;">Screen 1</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 2); return false;">Screen 2</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 3); return false;">Screen 3</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 4); return false;">Screen 4</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
+                <div class="block-content">
+                    <ul class="nav nav-tabs nav-tabs-alt" data-toggle="tabs" role="tablist">
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 0); return false;">All Screens</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 1); return false;">Screen 1</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 2); return false;">Screen 2</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 3); return false;">Screen 3</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 4); return false;">Screen 4</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
                     </ul>
                     <div id="mainPanel" class="pct100">
-                        <div class="ht40" style="margin-bottom:10px;">
-                            <input type="button" value="Add Field" onclick="addField(formID, currentScreen); return false;" style="float:left;" class="frmActionButton"/>
-                            <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
-                            <input type="button" value="Refresh Form" onclick="changeScreen(formID, currentScreen); return false;" class="frmActionButton"/>
-                            <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
-                            <!--                        <ul id="dragZone" class="lefty pct100">-->
-                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>-->
-                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">SELECT Field</li>-->
-                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="2">TEXTAREA Field</li>-->
-                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="99">EMPTY Filler</li>-->
-                            <!--                        </ul>-->
+                        <div class="ht40 block-options" style="margin-bottom:10px;">
+                            <button type="button" class="btn btn-sm btn-primary" title="Add" value="Add Field" onclick="addField(formID, currentScreen); return false;" style="float:left;" class="frmActionButton">Add</button>
+                            <button type="button" class="btn btn-sm btn-primary" title="Preview" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton">Preview</button>
+                            <button type="button" class="btn btn-sm btn-primary" title="Refresh" value="Refresh Form" onclick="changeScreen(formID, currentScreen); return false;" class="frmActionButton">Refresh</button>
+                            <button type="button" class="btn btn-sm btn-primary" title="Save" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton">Save</button>
                         </div>
                         <div id="dropZone" class="lefty pct100">
                             <div class="ui-state-default fldHolder"></div>

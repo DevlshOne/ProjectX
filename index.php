@@ -1135,12 +1135,10 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         ?>
     </main>
     <footer id="page-footer"></footer>
-    <!-- OneUI JS Core -->
     <script src="src/assets/js/oneui.core.min.js"></script>
-    <!-- OneUI JS Custom -->
     <script src="src/assets/js/oneui.app.min.js"></script>
-    <script src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script>
         $('input').addClass('form-control');
         $('button, :button, :submit, input[type="button"], input[type="submit"]').addClass('btn btn-sm btn-primary');
