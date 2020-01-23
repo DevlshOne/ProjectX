@@ -157,7 +157,15 @@
 		$out = $startsql;
 		$x=0;
 		foreach($assoarray as $key=>$val){
-			$out.= "`$key`='".mysqli_real_escape_string($_SESSION['db'],$val)."'";
+			//$out.= "`$key`='".mysqli_real_escape_string($_SESSION['db'],$val)."'";
+			
+			if(!is_numeric($val) && $val === null){
+				$out.= "`$key`=NULL";
+			}else{
+				$out.= "`$key`='".mysqli_real_escape_string($_SESSION['db'],$val)."'";
+			}
+			
+			
 			$out.=($x+1<count($assoarray))?',':'';
 			$x++;
 		}
@@ -168,14 +176,23 @@
 	}
 	/***************************************/
 	/* Associative array database edit NEED this one cause of StreetID, Wifid... etc*/
-	function aeditByField($field,$id,$assoarray,$table){
+	function aeditByField($field,$id,$assoarray,$table,$extra_where=""){
+		$extra_where = trim($extra_where);
+		
 		$startsql	= "UPDATE `$table` SET ";
-		$endsql		= " WHERE $field='$id'";
-
+		$endsql		= " WHERE $field='$id'".((strlen($extra_where) > 0)?' '.$extra_where:'');
+		
 		$out = $startsql;
 		$x=0;
 		foreach($assoarray as $key=>$val){
-			$out.= "`$key`='".mysqli_real_escape_string($_SESSION['db'],$val)."'";
+			//$out.= "`$key`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$val)."'";
+			
+			if(!is_numeric($val) && $val === null){
+				$out.= "`$key`=NULL";
+			}else{
+				$out.= "`$key`='".mysqli_real_escape_string($_SESSION['db'],$val)."'";
+			}
+			
 			$out.=($x+1<count($assoarray))?',':'';
 			$x++;
 		}
