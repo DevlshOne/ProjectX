@@ -65,22 +65,15 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
-    <!--    <link rel="stylesheet" type="text/css" href="css/navstyle.css"> -->
-    <!--    <link rel="stylesheet" type="text/css" href="themes/default/css/uniform.default.css" media="screen"/>-->
-    <!--    <link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.min.css"/>-->
     <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />
     <link rel="stylesheet" href="css/cupertino/jquery-ui-1.10.3.custom.min.css" />
     <link rel="stylesheet" id="css-main" href="src/assets/css/oneui.min.css" />
-    <script type="text/javascript" src="js/jquery.js"></script>
-    <!--    <script type="text/javascript" src="js/popper.min.js"></script>-->
-    <!--    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>-->
-    <!--    <script type="text/javascript" src="js/jquery.uniform.min.js"></script>-->
+    <script type="text/javascript" src="src/assets/js/core/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="js/ajax_functions.js"></script>
     <script type="text/javascript" src="js/functions.js"></script>
     <script type="text/javascript" src="js/page_system.js"></script>
-    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-    <!--    <script type="text/javascript" src="js/modernizr.js"></script> -->
+    <script type="text/javascript" src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
     <script>
         var feDebug = false;
         $('nav').ready(function () {
@@ -148,8 +141,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
 
         function loadSection(url) {
-            // $('#main-container').empty();
-            $('#main-container').html('<table class="tightTable"><tr><td class="align-center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load(url);
+            $('#main-container').empty().html('<table class="tightTable"><tr><td class="align-center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load(url);
             if (dispTimer) {
                 clearInterval(dispTimer);
                 dispTimer = false;
@@ -1135,10 +1127,10 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         ?>
     </main>
     <footer id="page-footer"></footer>
-    <script src="src/assets/js/oneui.core.min.js"></script>
-    <script src="src/assets/js/oneui.app.min.js"></script>
-    <script src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
-    <script src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="src/assets/js/oneui.core.min.js"></script>
+    <script type="text/javascript" src="src/assets/js/oneui.app.min.js"></script>
+    <script type="text/javascript" src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
     <script>
         $('input').addClass('form-control');
         $('button, :button, :submit, input[type="button"], input[type="submit"]').addClass('btn btn-sm btn-primary');

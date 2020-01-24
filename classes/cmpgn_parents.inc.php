@@ -116,6 +116,17 @@
         public function listEntrys() {
             ?>
             <script>
+                $('#main-container').ready( function() {
+                    $("#dialog-modal-add-campaign-parent").dialog({
+                        autoOpen: false,
+                        width: 480,
+                        height: 145,
+                        modal: false,
+                        draggable: true,
+                        resizable: false,
+                        position: {my: 'center', at: 'center', of: '#main-container'}
+                    });
+                });
                 var campaign_parent_delmsg = 'Are you sure you want to delete this campaign parent?';
                 var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
@@ -214,7 +225,7 @@
                                     <td>
                                         Campaign Parents
                                         &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="button" value="Add" onclick="displayAddCampaignParentDialog(0)">
+                                        <button type="button" title="Add Campaign Parent" class="btn btn-sm btn-primary" onclick="displayAddCampaignParentDialog(0)">Add</button>
                                     </td>
                                     <td align="right">
                                         <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
@@ -241,16 +252,9 @@
                         </tr>
                     </table>
                 </td>
-            </tr></table>
+            </tr>
+            </table>
             <script>
-                $("#dialog-modal-add-campaign-parent").dialog({
-                    autoOpen: false,
-                    width: 480,
-                    height: 145,
-                    modal: false,
-                    draggable: true,
-                    resizable: false
-                });
                 loadCampaign_parents();
             </script>
             <?

@@ -104,6 +104,18 @@ class Campaigns
 
         ?>
         <script>
+            $('#main-container').ready(function () {
+                console.log('Initializing campaign add dialog');
+                $("#dialog-modal-add-campaign").dialog({
+                    autoOpen: false,
+                    width: 480,
+                    height: 320,
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    position: {my: 'center', at: 'center', of: '#main-container'}
+                });
+            });
             var campaign_delmsg = 'Are you sure you want to delete this campaign?';
             var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
             var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
@@ -174,7 +186,7 @@ class Campaigns
             }
 
             function displayAddCampaignDialog(campaignid) {
-                var objname = 'dialog-modal-add-campaign';
+                let objname = 'dialog-modal-add-campaign';
                 if (campaignid > 0) {
                     $('#' + objname).dialog("option", "title", 'Editing Campaign');
                 } else {
@@ -190,15 +202,7 @@ class Campaigns
                 frm.s_name.value = '';
                 frm.s_status.value = 'active';
             }
-            $("#dialog-modal-add-campaign").dialog({
-                autoOpen: false,
-                width: 480,
-                height: 320,
-                modal: false,
-                draggable: true,
-                resizable: false,
-                position: 'center'
-            });
+
         </script>
         <div id="dialog-modal-add-campaign" title="Adding new Campaign" class="nod"></div>
         <div class="block">
@@ -206,9 +210,9 @@ class Campaigns
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Campaigns</h4>
                     <button type="button" value="Add" title="Add Campaign" class="btn btn-sm btn-primary" onclick="displayAddCampaignDialog(0)">Add</button>
-                        <div id="campaigns_prev_td" class="page_system_prev"></div>
-                        <div id="campaigns_page_td" class="page_system_page"></div>
-                        <div id="campaigns_next_td" class="page_system_next"></div>
+                    <div id="campaigns_prev_td" class="page_system_prev"></div>
+                    <div id="campaigns_page_td" class="page_system_page"></div>
+                    <div id="campaigns_next_td" class="page_system_next"></div>
                 </div>
                 <div class="block-content">
                     <table class="table table-sm table-striped" id="campaign_table">
