@@ -89,7 +89,7 @@ class SalesAnalysis{
 		## VALIDATE PASSED DATA JUST INCASE
 		$stime = intval($stime);
 		$etime = intval($etime);
-		$campaign_code = intval($campaign_code);
+		//$campaign_code = intval($campaign_code);
 		$agent_cluster_id = intval($agent_cluster_id);
 		$user_team_id = intval($user_team_id);
 		$combine_users = intval($combine_users);
