@@ -90,7 +90,7 @@ class SalesAnalysis{
 		$stime = intval($stime);
 		$etime = intval($etime);
 		//$campaign_code = intval($campaign_code);
-		$agent_cluster_id = intval($agent_cluster_id);
+		//$agent_cluster_id = intval($agent_cluster_id);
 		$user_team_id = intval($user_team_id);
 		$combine_users = intval($combine_users);
 		//$user_group = intval($user_group);
@@ -919,7 +919,10 @@ class SalesAnalysis{
 					$xml = new SimpleXMLElement();
 					$this->to_xml($xml, $output_array);
 
-					return $xml->asXML();
+					$xml_totals = new SimpleXMLElement();
+					$this->to_xml($xml_totals, $totals);
+
+					return $xml->asXML()."\n".$xml_totals->asXML();
 				}
 				break;
 
@@ -928,7 +931,7 @@ class SalesAnalysis{
 				if($output_array){
 
 					## OUTPUT REPORT DATA IN JSON FORMAT
-					return json_encode($output_array)."\n";
+					return json_encode($output_array)."\n".json_encode($totals)."\n";
 					
 				}
 				break;
