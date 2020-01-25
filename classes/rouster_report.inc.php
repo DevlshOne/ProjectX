@@ -159,7 +159,7 @@
 //						(($cluster_id > 0)?" AND vici_cluster_id='$cluster_id' ":"").
 //						$user_group_sql.
 //						"";
- 		echo $sql;
+// 		echo $sql;
 // 		exit;
 //
             $res = $_SESSION['dbapi']->ROquery($sql);
