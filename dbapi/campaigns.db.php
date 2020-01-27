@@ -30,13 +30,8 @@ class CampaignsAPI{
 	 */
 	function getByID($campaign_id){
 		$campaign_id = intval($campaign_id);
-
-		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->table."` ".
-						" WHERE id='".$campaign_id."' "
-
-					);
+		return $_SESSION['dbapi']->querySQL("SELECT * FROM `" . $this->table . "`  WHERE `id`= " . $campaign_id);
 	}
-
 
 	function getName($campaign_id){
 		$campaign_id=intval($campaign_id);

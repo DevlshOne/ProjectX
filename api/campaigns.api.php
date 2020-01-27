@@ -77,7 +77,13 @@ class API_Campaigns{
 
 
 			break;
-		case 'edit':
+            case 'getRowByID':
+                $id = intval($_REQUEST['campaign_id']);
+                $row = $_SESSION['dbapi']->campaigns->getByID($id);
+                $out = json_encode($row);
+                echo $out;
+                break;
+            case 'edit':
 
 			$id = intval($_POST['adding_campaign']);
 
@@ -107,10 +113,10 @@ class API_Campaigns{
 			}
 
 			$dat['type'] = trim($_POST['type']);
-			
-			
+
+
 			$dat['variables'] = trim($_REQUEST['variables']);
-			
+
 
 			if($id){
 
