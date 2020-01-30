@@ -323,6 +323,7 @@ class Campaigns
                         $('#wrm_trf').val(data.warm_transfers);
                         $('#cmp_vars').val(data.variables);
                         $('#prt_cmp_dd').html(data.parent_dd);
+                        applyUniformity();
                     },
                     error: function () {
                         swReportErrorMessage('Unable to get data for campaign id :: ' + id);

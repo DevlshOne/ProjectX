@@ -79,7 +79,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         $('nav').ready(function () {
             $('span.nav-main-link-name').not('#change_password').each(function () {
                 $(this).on('click', function (e) {
-                    $(this).parent('a.nav-main-link').addClass('active');
+                    $(this).addClass('active');
                     loadSection($(this).parent('a.nav-main-link').attr('href'));
                     e.preventDefault();
                 });
@@ -158,6 +158,13 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
 
         function applyUniformity() {
+            $('input').addClass('form-control');
+            $('label').addClass('col-form-label');
+            $(':checkbox').addClass('form-check-input');
+            $('button, :button, :submit, input[type="button"], input[type="submit"]').addClass('btn btn-sm btn-primary');
+            $('select').addClass('custom-select-sm');
+            $('.ui-dialog-content').css('height','');
+            $('.ui-widget-header').removeClass('ui-widget-header').addClass('bg-modern-light');
             return;
             $("input:submit, button, input:button").button();
             $("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
@@ -1130,15 +1137,20 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         ?>
     </main>
     <footer id="page-footer"></footer>
-    <script type="text/javascript" src="src/assets/js/oneui.core.min.js"></script>
-    <script type="text/javascript" src="src/assets/js/oneui.app.min.js"></script>
-    <script type="text/javascript" src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
-    <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+    <?
+    if (!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])) {
+        ?>
+        <script type="text/javascript" src="src/assets/js/oneui.core.min.js"></script>
+        <script type="text/javascript" src="src/assets/js/oneui.app.min.js"></script>
+        <script type="text/javascript" src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+        <?
+    }
+    ?>
     <script>
-        $('input').addClass('form-control');
-        $('button, :button, :submit, input[type="button"], input[type="submit"]').addClass('btn btn-sm btn-primary');
-        $('select').addClass('custom-select-sm');
-        $('.ui-widget-header').removeClass('ui-widget-header').addClass('bg-modern-light');
+        $(function() {
+            applyUniformity();
+        });
     </script>
 </div>
 </body>
