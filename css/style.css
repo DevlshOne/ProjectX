@@ -628,4 +628,7 @@ td.countsRow {
 .nav-main {
     margin-right: 0 !important;
 }
+.ui-dialog {
+    font-size: 0.80em;
+}
 

@@ -80,6 +80,20 @@ class API_Campaigns{
             case 'getRowByID':
                 $id = intval($_REQUEST['campaign_id']);
                 $row = $_SESSION['dbapi']->campaigns->getByID($id);
+                $sql = "SELECT `id`, `code` FROM `campaign_parents` WHERE `deleted` = 0";
+                $res = $_SESSION['dbapi']->query($sql, 1);
+                $row['parent_dd'] = "<select class='form-control' name='parent_campaign_id' id='dd-parent_campaign_id'>";
+                $row['parent_dd'] .= "<option value='0'>[None]</option>";
+                if ($res) {
+                    for ($x = 0; $rrow = mysqli_fetch_array($res); $x++) {
+                        $row['parent_dd'] .= "<option value='" . $rrow['id'] . "'";
+                        if ($rrow['id'] == $row['parent_campaign_id']) {
+                            $row['parent_dd'] .= " selected";
+                        }
+                        $row['parent_dd'] .= ">" . $rrow['code'] . "</option>";
+                    }
+                }
+                $row['parent_dd'] .= "</select>";
                 $out = json_encode($row);
                 echo $out;
                 break;

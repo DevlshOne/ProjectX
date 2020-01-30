@@ -322,6 +322,7 @@ class Campaigns
                         $('#mgr_trf').val(data.manager_transfer);
                         $('#wrm_trf').val(data.warm_transfers);
                         $('#cmp_vars').val(data.variables);
+                        $('#prt_cmp_dd').html(data.parent_dd);
                     },
                     error: function () {
                         swReportErrorMessage('Unable to get data for campaign id :: ' + id);
@@ -354,24 +355,30 @@ class Campaigns
         </div>
         <div id="dialog-modal-add-campaign" title="Adding new Campaign" class="nod"></div>
         <div id="dialog-modal-edit-campaign" title="Editing Campaign" class="nod">
-            <div class="block-content block-content-full">
+            <div class="block-content block-content-full text-left">
                 <form method="POST" action="#" autocomplete="off">
-                    <div class="row">
-                        <input type="hidden" id="adding_campaign" name="adding_campaign" value="">
-                            <div class="form-group">
-                                <label for="name">Campaign Name</label>
-                                <input id="cmp_name" class="form-control" name="name" type="text" size="50" placeholder="Campaign name..." value="">
-                            </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="name">Parent Campaign</label>
-                            <? echo $_SESSION['cmpgn_parents']->makeDDvalIDtxtCODE($row['parent_campaign_id']); ?>
+                    <input type="hidden" id="adding_campaign" name="adding_campaign" value="">
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="name">Campaign Name</label>
+                        </div>
+                        <div class="col">
+                            <input id="cmp_name" class="form-control" name="name" type="text" size="50" placeholder="Campaign name..." value="">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="name">Entity Type</label>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="name">Parent Campaign</label>
+                        </div>
+                        <div class="col">
+                            <div id="prt_cmp_dd"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="name">Entity Type</label>
+                        </div>
+                        <div class="col">
                             <select class="form-control" id="ent_type" name="type">
                                 <option value="charity">Charity</option>
                                 <option value="pac">PAC</option>
@@ -380,9 +387,11 @@ class Campaigns
                             </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="status">Status</label>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="status">Status</label>
+                        </div>
+                        <div class="col">
                             <select id="cmp_status" name="status">
                                 <option value="active">Active</option>
                                 <option value="suspended">Suspended</option>
@@ -390,42 +399,52 @@ class Campaigns
                             </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="px_hidden" tooltip="PX Hidden will remove the campaign from the PX login screen dropdown, but still appear in other places of the PX GUI.">PX Hidden</label>
-                            <select id="px_hidden" name="px_hidden">
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="px_hidden">PX Hidden</label>
+                        </div>
+                        <div class="col">
+                            <select id="px_hidden" name="px_hidden" tooltip="PX Hidden will remove the campaign from the PX login screen dropdown, but still appear in other places of the PX GUI.">
                                 <option value="no">No</option>
                                 <option value="yes">Yes</option>
                             </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="vici_campaign_id">VICI Campaign ID</label>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="vici_campaign_id">VICI Campaign ID</label>
+                        </div>
+                        <div class="col">
                             <input id="vcmp_id" name="vici_campaign_id" type="text" class="form-control" size="50" value="" placeholder="VICI Campaign ID...">
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="manager_transfer">Manager Transfer</label>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="manager_transfer">Manager Transfer</label>
+                        </div>
+                        <div class="col">
                             <select id="mgr_trf" name="manager_transfer">
                                 <option value="no">Disabled</option>
                                 <option value="yes">Enabled</option>
                             </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
-                            <label for="warm_transfers">Warm Transfers</label>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="warm_transfers">Warm Transfers</label>
+                        </div>
+                        <div class="col">
                             <select id="wrm_trf" name="warm_transfers">
                                 <option value="no">Disabled</option>
                                 <option value="yes">Enabled</option>
                             </select>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="form-group">
+                    <div class="form-row">
+                        <div class="col">
                             <label for="variables">Variables</label>
+                        </div>
+                        <div class="col">
                             <input id="cmp_vars" name="variables" type="text" class="form-control" size="50" value="" placeholder="Variables...">
                         </div>
                     </div>

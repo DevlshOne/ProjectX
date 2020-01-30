@@ -64,10 +64,10 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
-    <link rel="stylesheet" type="text/css" href="css/style.css"/>
     <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />
     <link rel="stylesheet" id="css-main" href="src/assets/css/oneui.min.css" />
     <link rel="stylesheet" href="css/jquery-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
     <script type="text/javascript" src="src/assets/js/core/jquery.min.js"></script>
     <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="js/ajax_functions.js"></script>
@@ -79,6 +79,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         $('nav').ready(function () {
             $('span.nav-main-link-name').not('#change_password').each(function () {
                 $(this).on('click', function (e) {
+                    $(this).parent('a.nav-main-link').addClass('active');
                     loadSection($(this).parent('a.nav-main-link').attr('href'));
                     e.preventDefault();
                 });
@@ -169,6 +170,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
     </script>
 </head>
+<body>
 <div id="page-container" class="sidebar-o sidebar-dark page-header-fixed">
     <aside id="side-overlay"></aside>
     <script id="ext_js_holder"></script>
