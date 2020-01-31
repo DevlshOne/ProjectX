@@ -916,10 +916,10 @@ class SalesAnalysis{
 
 				if($output_array){
 					## OUTPUT REPORT DATA IN XML FORMAT
-					$xml = new SimpleXMLElement();
+					$xml = new SimpleXMLElement('<Results/>');
 					$this->to_xml($xml, $output_array);
 
-					$xml_totals = new SimpleXMLElement();
+					$xml_totals = new SimpleXMLElement('<Totals/>');
 					$this->to_xml($xml_totals, $totals);
 
 					return $xml->asXML()."\n".$xml_totals->asXML();
@@ -948,7 +948,7 @@ class SalesAnalysis{
 		foreach ($data as $key => $value) {
 			if (is_array($value)) {
 				$new_object = $object->addChild($key);
-				to_xml($new_object, $value);
+				$this->to_xml($new_object, $value);
 			} else {
 				// if the key is an integer, it needs text with it to actually work.
 				if ($key == (int) $key) {
