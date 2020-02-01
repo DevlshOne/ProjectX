@@ -916,23 +916,14 @@ class SalesAnalysis{
 
 				if($output_array){
 					## OUTPUT REPORT DATA IN XML FORMAT
-					// $xml = new SimpleXMLElement('<Results/>');
-					// $this->to_xml($xml, $output_array);
+					$xml = new SimpleXMLElement('<Results/>');
+					$this->to_xml($xml, $output_array);
 
-					// $xml_totals = new SimpleXMLElement('<Totals/>');
-					// $this->to_xml($xml_totals, $totals);
+					$xml_totals = new SimpleXMLElement('<Totals/>');
+					$this->to_xml($xml_totals, $totals);
 
-					// return $xml->asXML()."\n".$xml_totals->asXML();
+					return $xml->asXML()."\n".$xml_totals->asXML();
 
-					$xml = new SimpleXMLElement(''); 
-					$this->array_to_xml($output_array, $xml);
-
-					$domxml = new DOMDocument('1.0');
-					$domxml->preserveWhiteSpace = false;
-					$domxml->formatOutput = true;
-					$domxml->loadXML($xml->asXML());
-
-					echo $domxml->saveXML();
 				}
 				break;
 
@@ -961,7 +952,7 @@ class SalesAnalysis{
 				$this->to_xml($new_object, $value);
 			} else {
 				// if the key is an integer, it needs text with it to actually work.
-				if ($key == (int) $key) {
+				if (is_numeric($key)) {
 					$key = "key_$key";
 				}
 
@@ -969,22 +960,6 @@ class SalesAnalysis{
 			}   
 		}   
 	}
-
-
-	function array_to_xml($array, &$xml) {        
-		foreach($array as $key => $value) {               
-			if(is_array($value)) {            
-				if(!is_numeric($key)){
-					$subnode = $xml->addChild($key);
-					$this->array_to_xml($value, $subnode);
-				} else {
-					$this->array_to_xml($value, $subnode);
-				}
-			} else {
-				$xml->addChild($key, $value);
-			}
-		}        
-	}	
 	
 	
 	function makeReport(){
