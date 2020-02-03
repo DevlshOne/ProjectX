@@ -90,7 +90,7 @@ class SalesAnalysis{
 		$stime = intval($stime);
 		$etime = intval($etime);
 		//$campaign_code = intval($campaign_code);
-		$agent_cluster_id = intval($agent_cluster_id);
+		//$agent_cluster_id = intval($agent_cluster_id);
 		$user_team_id = intval($user_team_id);
 		$combine_users = intval($combine_users);
 		//$user_group = intval($user_group);
@@ -914,12 +914,18 @@ class SalesAnalysis{
 
 			case 'xml':
 
-				if($output_array){
+				if($output_array && $totals){
 					## OUTPUT REPORT DATA IN XML FORMAT
-					$xml = new SimpleXMLElement();
-					$this->to_xml($xml, $output_array);
+					// $xml = new SimpleXMLElement('<Results/>');
+					// $this->to_xml($xml, $output_array);
 
-					return $xml->asXML();
+					// $xml_totals = new SimpleXMLElement('<Totals/>');
+					// $this->to_xml($xml_totals, $totals);
+
+					// return $xml->asXML()."\n".$xml_totals->asXML();
+
+					return $this->renderGenerateDataXML($output_array, $totals);
+
 				}
 				break;
 
@@ -928,7 +934,7 @@ class SalesAnalysis{
 				if($output_array){
 
 					## OUTPUT REPORT DATA IN JSON FORMAT
-					return json_encode($output_array)."\n";
+					return json_encode($output_array, JSON_PRETTY_PRINT)."\n".json_encode($totals, JSON_PRETTY_PRINT)."\n";
 					
 				}
 				break;
@@ -939,24 +945,67 @@ class SalesAnalysis{
 	}
 
 
-	function to_xml(SimpleXMLElement $object, array $data) {   
+	function renderGenerateDataXML($results_array = [], $totals_array = []){
+		
+		# OUTPUT THE GENERATE DATA RESULTS AS FORMATTED XML
+		# ADD CALCULATIONS LIKE WE DO WITH THE HTML REPORT
+		# ADD TOTALS AT THE END
+		$outxml = '';
 
-		## ARRAY TO XML
-		foreach ($data as $key => $value) {
-			if (is_array($value)) {
-				$new_object = $object->addChild($key);
-				to_xml($new_object, $value);
-			} else {
-				// if the key is an integer, it needs text with it to actually work.
-				if ($key == (int) $key) {
-					$key = "key_$key";
+		$outxml_head = '<SalesAnalysisReport>';
+		$outxml_foot = '</SalesAnalysisReport>';
+
+		$outxml_result_head = '<Result>';
+		$outxml_result_foot = '</Result>';
+
+		$outxml.=$outxml_head;
+		
+		foreach($results_array as $result_value){
+
+			if(is_array($result_value)){
+
+				foreach($result_value as $key => $val){
+				
+					$outxml.=$outxml_result_head;
+					if($key == 'cluster_id'){continue;}
+
+					$outxml.=$key.' '.$val;
+
+					$outxml.=$outxml_result_foot;
+
 				}
 
-				$object->addChild($key, $value);
-			}   
-		}   
-	}  	
-	
+			}
+
+		}
+
+		$outxml.=$outxml_foot;
+
+
+		return $outxml;
+
+
+
+
+
+	}
+	// function to_xml(SimpleXMLElement $object, array $data) {   
+
+	// 	## ARRAY TO XML
+	// 	foreach ($data as $key => $value) {
+	// 		if (is_array($value)) {
+	// 			$new_object = $object->addChild($key);
+	// 			$this->to_xml($new_object, $value);
+	// 		} else {
+	// 			// if the key is an integer, it needs text with it to actually work.
+	// 			if (is_numeric($key)) {
+	// 				$key = "key_$key";
+	// 			}
+
+	// 			$object->addChild($key, $value);
+	// 		}   
+	// 	}   
+	// }
 	
 	
 	function makeReport(){
@@ -2090,3 +2139,4 @@ $(function() {
 
 
 } // END OF CLASS
+

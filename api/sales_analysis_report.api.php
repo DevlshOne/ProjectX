@@ -29,7 +29,7 @@ class API_Sales_Analysis_Report{
 			include_once("../classes/sales_analysis.inc.php");
 
 			## OUTPUT REPORT DATA BASED ON API MODE AND QUERY STRINGS
-			echo $_SESSION['sales_analysis']->generateData(trim($_REQUEST['stime']),trim($_REQUEST['etime']),trim($_REQUEST['campaign_code']),trim($_REQUEST['agent_cluster_id']),trim($_REQUEST['user_team_id']),trim($_REQUEST['combine_users']),trim($_REQUEST['user_group']),trim($_REQUEST['ignore_group']),trim($_REQUEST['vici_campaign_code']),NULL,trim($_REQUEST['vici_campaign_id']),$_SESSION['api']->mode);
+			echo $_SESSION['sales_analysis']->generateData($_REQUEST['stime'],$_REQUEST['etime'],$_REQUEST['campaign_code'],$_REQUEST['agent_cluster_id'],$_REQUEST['user_team_id'],$_REQUEST['combine_users'],$_REQUEST['user_group'],$_REQUEST['ignore_group'],$_REQUEST['vici_campaign_code'],NULL,$_REQUEST['vici_campaign_id'],$_SESSION['api']->mode);
 
 		} else {
 
