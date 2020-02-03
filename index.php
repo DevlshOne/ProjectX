@@ -79,9 +79,9 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         $('nav').ready(function () {
             $('span.nav-main-link-name').not('#change_password').each(function () {
                 $(this).on('click', function (e) {
+                    e.preventDefault();
                     $(this).addClass('active');
                     loadSection($(this).parent('a.nav-main-link').attr('href'));
-                    e.preventDefault();
                 });
             });
             $('#change_password').on('click', function () {
@@ -160,20 +160,12 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         function applyUniformity() {
             $('input').addClass('form-control');
             $('label').addClass('col-form-label');
-            $(':checkbox').addClass('form-check-input');
-            $('button, :button, :submit, input[type="button"], input[type="submit"]').addClass('btn btn-sm btn-primary');
+            $('input[type="checkbox"], :checkbox').addClass('form-check-input-sm');
+            $('button, :button, :submit, input[type="button"], input[type="submit"]').removeClass('form-control').addClass('btn btn-sm btn-primary');
             $('select').addClass('custom-select-sm');
             $('.ui-dialog-content').css('height','');
             $('.ui-widget-header').removeClass('ui-widget-header').addClass('bg-modern-light');
             return;
-            $("input:submit, button, input:button").button();
-            $("input:text, input:password, input:reset, input:checkbox, input:radio, input:file").uniform();
-            $('.priorityRender').each(function (index) {
-                $(this).html(
-                    priorityProcessing($(this).html())
-                );
-                // console.log( index + ": " + $( this ).text() );
-            });
         }
     </script>
 </head>
@@ -1147,11 +1139,6 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         <?
     }
     ?>
-    <script>
-        $(function() {
-            applyUniformity();
-        });
-    </script>
 </div>
 </body>
 </html>
