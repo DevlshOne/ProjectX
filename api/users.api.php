@@ -192,6 +192,7 @@ class API_Users{
 			"stage"	=>"log_agent_out"
 		);
 
+//echo $url."\n";
 
 
 
@@ -233,7 +234,7 @@ class API_Users{
 		}
 
 
-		return "0:Error - Unknown problem occurred.";
+		return "0:Error - Unknown problem occurred - ".trim($data);
 
 
 
