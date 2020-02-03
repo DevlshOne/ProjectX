@@ -952,22 +952,30 @@ class SalesAnalysis{
 		# ADD TOTALS AT THE END
 		$outxml = '';
 
-		$outxml_head = '<SalesAnalysisReport>\n';
-		$outxml_foot = '</SalesAnalysisReport>\n';
+		$outxml_head = '<SalesAnalysisReport>';
+		$outxml_foot = '</SalesAnalysisReport>';
 
-		$outxml_result_head = '<Result>\n';
-		$outxml_result_foot = '</Result>\n';
+		$outxml_result_head = '<Result>';
+		$outxml_result_foot = '</Result>';
 
 		$outxml.=$outxml_head;
 		
-		foreach($results_array as $result_key => $result_value){
+		foreach($results_array as $result_value){
 
-			$outxml.=$outxml_result_head;
-			if($key == 'cluster_id'){continue;}
+			if(is_array($result_value)){
 
-			$outxml.=$result_key.' '.result_value;
+				foreach($result_value as $key => $val){
+				
+					$outxml.=$outxml_result_head;
+					if($key == 'cluster_id'){continue;}
 
-			$outxml.=$outxml_result_foot;
+					$outxml.=$key.' '.$val;
+
+					$outxml.=$outxml_result_foot;
+
+				}
+
+			}
 
 		}
 
