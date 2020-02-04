@@ -955,8 +955,8 @@ class SalesAnalysis{
 		$outxml_head = '<SalesAnalysisReport>'."\n";
 		$outxml_foot = '</SalesAnalysisReport>';
 
-		$outxml_result_head = "\t".'<Result>';
-		$outxml_result_foot = '</Result>."\n"';
+		$outxml_result_head = "\t".'<Result>'."\n";
+		$outxml_result_foot = '</Result>'."\n";
 
 		$outxml.=$outxml_head;
 		
@@ -966,27 +966,27 @@ class SalesAnalysis{
 
 				$outxml.=$outxml_result_head;
 
-				$outxml.='<Agent>'.$result_value['agent_username'].'</Agent>'."\n";
-				$outxml.='<PaidHrs></PaidHrs>'."\n";
-				$outxml.='<WorkedHrs></WorkedHrs>'."\n";
-				$outxml.='<NotInterested></NotInterested>'."\n";
-				$outxml.='<Transfers></Transfers>'."\n";
-				$outxml.='<AnsweringMachineCalls></AnsweringMachineCalls>'."\n";
-				$outxml.='<AnsweringMachinePercent></AnsweringMachinePercent>'."\n";
-				$outxml.='<ConversionAndCallsHr></ConversionAndCallsHr>'."\n";
-				$outxml.='<TotalSales></TotalSales>'."\n";
-				$outxml.='<PaidSales></PaidSales>'."\n";
-				$outxml.='<PaidPercent></PaidPercent>'."\n";
-				$outxml.='<DollarsPaidPercent></DollarsPaidPercent>'."\n";
-				$outxml.='<UnpaidSales></UnpaidSales>'."\n";
-				$outxml.='<UnpaidPercent></UnpaidPercent>'."\n";
-				$outxml.='<ClosingPercent></ClosingPercent>'."\n";
-				$outxml.='<ConversionPercent></ConversionPercent>'."\n";
-				$outxml.='<Yes2AllPercent></Yes2AllPercent>'."\n";
-				$outxml.='<TotalSales></TotalSales>'."\n";
-				$outxml.='<AvgSale></AvgSale>'."\n";
-				$outxml.='<PDDollarHr></PDDollarHr>'."\n";
-				$outxml.='<WorkedDollarHr></WorkedDollarHr>'."\n";
+				$outxml.="\t\t".'<Agent>'.$result_value['agent_username'].'</Agent>'."\n";
+				$outxml.="\t\t".'<PaidHrs></PaidHrs>'."\n";
+				$outxml.="\t\t".'<WorkedHrs></WorkedHrs>'."\n";
+				$outxml.="\t\t".'<NotInterested></NotInterested>'."\n";
+				$outxml.="\t\t".'<Transfers></Transfers>'."\n";
+				$outxml.="\t\t".'<AnsweringMachineCalls></AnsweringMachineCalls>'."\n";
+				$outxml.="\t\t".'<AnsweringMachinePercent></AnsweringMachinePercent>'."\n";
+				$outxml.="\t\t".'<ConversionAndCallsHr></ConversionAndCallsHr>'."\n";
+				$outxml.="\t\t".'<TotalSales></TotalSales>'."\n";
+				$outxml.="\t\t".'<PaidSales></PaidSales>'."\n";
+				$outxml.="\t\t".'<PaidPercent></PaidPercent>'."\n";
+				$outxml.="\t\t".'<DollarsPaidPercent></DollarsPaidPercent>'."\n";
+				$outxml.="\t\t".'<UnpaidSales></UnpaidSales>'."\n";
+				$outxml.="\t\t".'<UnpaidPercent></UnpaidPercent>'."\n";
+				$outxml.="\t\t".'<ClosingPercent></ClosingPercent>'."\n";
+				$outxml.="\t\t".'<ConversionPercent></ConversionPercent>'."\n";
+				$outxml.="\t\t".'<Yes2AllPercent></Yes2AllPercent>'."\n";
+				$outxml.="\t\t".'<TotalSales></TotalSales>'."\n";
+				$outxml.="\t\t".'<AvgSale></AvgSale>'."\n";
+				$outxml.="\t\t".'<PDDollarHr></PDDollarHr>'."\n";
+				$outxml.="\t\t".'<WorkedDollarHr></WorkedDollarHr>'."\n";
 
 				$outxml.=$outxml_result_foot;
 
