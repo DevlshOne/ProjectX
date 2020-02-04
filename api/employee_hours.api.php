@@ -83,29 +83,45 @@ class API_Employee_Hours{
 			//print_r($_POST);
 
 
-			$dat = array();
-			$dat['time_started'] = mktime(0,0,0, $_POST['date_month'], $_POST['date_day'], $_POST['date_year']);
 
-			$dat['vici_cluster_id'] = intval($_POST['cluster_id']);
-			$dat['username'] = trim(strtolower($_POST['agent_id']));
-
-			$dat['campaign'] = trim($_POST['campaign_id']);
-
-			$dat['call_group'] = trim($_POST['user_group']);
-
-			$dat['office'] = $_POST['office_id'];
-
-			$dat['paid_time'] = floatval($_POST['hours']) * 60;
-
-			$dat['notes'] = trim($_POST['notes']);
-
-
-			aadd($dat, 'activity_log');
-
-			$id = mysqli_insert_id($_SESSION['db']);
-
-			logAction('add', 'employee_hours', $id, "");
-
+			
+			
+			//agent_id[]
+			//$dat['username'] = trim(strtolower($_POST['agent_id']));
+			
+			foreach($_POST['agent_id'] as $username){
+			
+				$username = trim($username);
+				
+				// SKIP BLANKS
+				if(!$username)continue;
+				
+				
+				$dat = array();
+				
+				$dat['username'] = $username;
+				
+				$dat['time_started'] = mktime(0,0,0, $_POST['date_month'], $_POST['date_day'], $_POST['date_year']);
+				
+				$dat['vici_cluster_id'] = intval($_POST['cluster_id']);
+				$dat['campaign'] = trim($_POST['campaign_id']);
+	
+				$dat['call_group'] = trim($_POST['user_group']);
+	
+				$dat['office'] = $_POST['office_id'];
+	
+				$dat['paid_time'] = floatval($_POST['hours']) * 60;
+	
+				$dat['notes'] = trim($_POST['notes']);
+	
+	
+				aadd($dat, 'activity_log');
+	
+				$id = mysqli_insert_id($_SESSION['db']);
+	
+				logAction('add', 'employee_hours', $id, "");
+			}
+			
 			$_SESSION['api']->outputEditSuccess(1);
 
 			///print_r($dat);
