@@ -274,9 +274,8 @@
                     <table border="0" width="100%" id="campaign_table">
                         <tr>
                             <th class="row2 align_left"><?= $this->getOrderLink('id') ?>ID</a></th>
-                            <th class="row2 align_left><?= $this->getOrderLink('name') ?>Name</a></th>
-				<th class=" row2 align_center
-                            "><?= $this->getOrderLink('status') ?>Status</a></th>
+                            <th class="row2 align_left"><?= $this->getOrderLink('name') ?>Name</a></th>
+							<th class="row2 align_center"><?= $this->getOrderLink('status') ?>Status</a></th>
                             <th class="row2">&nbsp;</th>
                         </tr>
                     </table>
@@ -286,7 +285,7 @@
                 $("#dialog-modal-add-campaign").dialog({
                     autoOpen: false,
                     width: 480,
-                    height: 320,
+                    height: 340,
                     modal: false,
                     draggable: true,
                     resizable: false
@@ -475,13 +474,20 @@
                         <td><select name="manager_transfer">
                                 <option value="no">Disabled</option>
                                 <option value="yes" <?= ($row['manager_transfer'] == 'yes') ? ' SELECTED ' : '' ?>>Enabled</option>
-                            </select></td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Warm Transfers:</th>
-                        <td><select name="warm_transfers">
+                            </select>
+                            
+                            &nbsp;&nbsp;Warm Transfers: &nbsp;&nbsp;
+                            <select name="warm_transfers">
                                 <option value="no">Disabled</option>
                                 <option value="yes" <?= ($row['warm_transfers'] == 'yes') ? ' SELECTED ' : '' ?>>Enabled</option>
+                            </select>
+                            </td>
+                    </tr>
+                    <tr>
+                        <th align="left" height="30">Verifier Mode</th>
+                        <td><select name="verifier_mode">
+                                <option value="no">No</option>
+                                <option value="yes" <?= ($row['verifier_mode'] == 'yes') ? ' SELECTED ' : '' ?>>Yes</option>
                             </select></td>
                     </tr>
                     <tr>
