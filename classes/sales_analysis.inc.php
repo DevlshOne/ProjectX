@@ -981,7 +981,7 @@ class SalesAnalysis{
 				$outxml.=$outxml_result_head;
 
 				# OUTPUT RESULT DATA
-				$outxml.="\t\t".'<Agent>'.$result_value['agent_username'].'</Agent>'."\n";
+				$outxml.="\t\t".'<Agent>'.strtoupper($result_value['agent_username']).'</Agent>'."\n";
 				$outxml.="\t\t".'<PaidHrs>'.number_format($result_value['activity_paid'],2).'</PaidHrs>'."\n";
 				$outxml.="\t\t".'<WorkedHrs>'.number_format($result_value['activity_wrkd'],2).'</WorkedHrs>'."\n";
 				$outxml.="\t\t".'<TotalCalls>'.number_format($result_value['calls_today']).'</TotalCalls>'."\n";
@@ -991,7 +991,7 @@ class SalesAnalysis{
 				$outxml.="\t\t".'<AnsweringMachinePercent>'.$ans_percent.'%</AnsweringMachinePercent>'."\n";
 				$outxml.="\t\t".'<ConversionAndCallsHr>'.number_format($result_value['contacts_per_worked_hour'],2).' / '.number_format($result_value['calls_per_worked_hour'],2).'</ConversionAndCallsHr>'."\n";
 				$outxml.="\t\t".'<TotalSales>'.number_format($result_value['sale_cnt']).'</TotalSales>'."\n";
-				$outxml.="\t\t".'<PaidSales>'.number_format($result_value['paid_sale_cnt']).' ('.number_format($result_value['paid_sales_total']).')</PaidSales>'."\n";
+				$outxml.="\t\t".'<PaidSales>'.number_format($result_value['paid_sale_cnt']).' ($'.number_format($result_value['paid_sales_total']).')</PaidSales>'."\n";
 				$outxml.="\t\t".'<PaidPercent>'.number_format($paid_sale_percent,2).'%</PaidPercent>'."\n";
 				$outxml.="\t\t".'<DollarsPaidPercent>'.number_format($paid_sale_amount_percent,2).'%</DollarsPaidPercent>'."\n";
 				$outxml.="\t\t".'<UnpaidSales>'.number_format(($result_value['sale_cnt']-$result_value['paid_sale_cnt'])).'</UnpaidSales>'."\n";
@@ -999,10 +999,10 @@ class SalesAnalysis{
 				$outxml.="\t\t".'<ClosingPercent>'.number_format($result_value['closing_percent'],2).'%</ClosingPercent>'."\n";
 				$outxml.="\t\t".'<ConversionPercent>'.number_format($result_value['conversion_percent'],2).'%</ConversionPercent>'."\n";
 				$outxml.="\t\t".'<Yes2AllPercent>'.number_format($result_value['yes2all_percent'],2).'%</Yes2AllPercent>'."\n";
-				$outxml.="\t\t".'<TotalSales>'.number_format($result_value['sales_total']).'</TotalSales>'."\n";
-				$outxml.="\t\t".'<AvgSale>'.number_format($result_value['avg_sale'],2).'</AvgSale>'."\n";
-				$outxml.="\t\t".'<PDDollarHr>'.number_format($result_value['paid_hr'],2).'</PDDollarHr>'."\n";
-				$outxml.="\t\t".'<WorkedDollarHr>'.number_format($result_value['wrkd_hr'],2).'</WorkedDollarHr>'."\n";
+				$outxml.="\t\t".'<TotalSales>$'.number_format($result_value['sales_total']).'</TotalSales>'."\n";
+				$outxml.="\t\t".'<AvgSale>$'.number_format($result_value['avg_sale'],2).'</AvgSale>'."\n";
+				$outxml.="\t\t".'<PDDollarHr>$'.number_format($result_value['paid_hr'],2).'</PDDollarHr>'."\n";
+				$outxml.="\t\t".'<WorkedDollarHr>$'.number_format($result_value['wrkd_hr'],2).'</WorkedDollarHr>'."\n";
 
 				# CLOSE RESULT OUTPUT WITH FOOTER
 				$outxml.=$outxml_result_foot;
