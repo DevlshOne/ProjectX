@@ -85,15 +85,14 @@ table {
 
 
 .row0 {
-    background-color: #e6F2f9;
+    background-color: #FFFFFF;
     /**border-bottom:1px dotted #ccc;**/
     padding: 2px;
     color: #000000;
 }
 
 .row1 {
-    background-color: #fff;
-
+    background-color: #f9f9f9;
     /**border-bottom:1px dotted #ccc;**/
     padding: 2px;
     color: #000000;

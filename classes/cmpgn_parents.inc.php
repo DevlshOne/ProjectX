@@ -116,7 +116,6 @@
         public function listEntrys() {
             ?>
             <script>
-                $('#main-container').ready( function() {
                     $("#dialog-modal-add-campaign-parent").dialog({
                         autoOpen: false,
                         width: 480,
@@ -126,7 +125,6 @@
                         resizable: false,
                         position: {my: 'center', at: 'center', of: '#main-container'}
                     });
-                });
                 var campaign_parent_delmsg = 'Are you sure you want to delete this campaign parent?';
                 var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
@@ -206,7 +204,6 @@
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=campaign_parents&add_campaign_parent=" + campaignparentid + "&printable=1&no_script=1");
-                    $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 function resetCampaignParentForm(frm) {
@@ -215,45 +212,28 @@
                 }
             </script>
             <div id="dialog-modal-add-campaign-parent" title="Adding new Campaign Parent" class="nod"></div>
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCampaign_parents();return false">
-                <input type="hidden" name="searching_campaign_parents">
-                <table border="0" width="100%" class="lb" cellspacing="0">
-                    <tr>
-                        <td height="40" class="pad_left ui-widget-header">
-                            <table border="0" width="100%">
-                                <tr>
-                                    <td>
-                                        Campaign Parents
-                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <button type="button" title="Add Campaign Parent" class="btn btn-sm btn-primary" onclick="displayAddCampaignParentDialog(0)">Add</button>
-                                    </td>
-                                    <td align="right">
-                                        <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-                                            <tr>
-                                                <td id="campaign_parents_prev_td" class="page_system_prev"></td>
-                                                <td id="campaign_parents_page_td" class="page_system_page"></td>
-                                                <td id="campaign_parents_next_td" class="page_system_next"></td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-            </form>
-            <tr>
-                <td colspan="2">
-                    <table border="0" width="100%" id="campaign_parent_table">
-                        <tr>
-                            <th class="row2 align_left"><?= $this->getOrderLink('id') ?>ID</a></th>
-                            <th class="row2 align_left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                            <th class="row2 align_center"><?= $this->getOrderLink('code') ?>Code</a></th>
-                            <th class="row2 align_center">&nbsp;</th>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            </table>
+            <div class="block">
+                <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCampaign_parents();return false">
+                    <input type="hidden" name="searching_campaign_parents">
+                    <div class="block-header bg-primary-light">
+                        <h4 class="block-title">Campaign Parents</h4>
+                        <button type="button" value="Add" title="Add Campaign Parent" class="btn btn-sm btn-primary" onclick="displayAddCampaignParentDialog(0);">Add</button>
+                        <div id="campaign_parents_prev_td" class="page_system_prev"></div>
+                        <div id="campaign_parents_page_td" class="page_system_page"></div>
+                        <div id="campaign_parents_next_td" class="page_system_next"></div>
+                    </div>
+                    <div class="block-content">
+                        <table class="table table-sm table-striped" id="campaign_parent_table">
+                            <tr>
+                                <th class="row2 text-center"><?= $this->getOrderLink('id') ?>ID</a></th>
+                                <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('code') ?>Code</a></th>
+                                <th class="row2 text-center">&nbsp;</th>
+                            </tr>
+                        </table>
+                    </div>
+                </form>
+            </div>
             <script>
                 loadCampaign_parents();
             </script>

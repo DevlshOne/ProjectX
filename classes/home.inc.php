@@ -201,7 +201,7 @@ class HomeClass
                         </div>
                     </div>
                     <div class="block-content text-center">
-                        <button  onclick="alert('Add new mini report here');"><i class="fas fa-plus-square fa-5x"></i></button>
+                        <button onclick="alert('Add new mini report here');"><i class="fas fa-plus-square fa-5x"></i></button>
                     </div>
                 </li>
             </ul>

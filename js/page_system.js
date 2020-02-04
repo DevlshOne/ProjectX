@@ -78,7 +78,7 @@ function makePageSystem(area_name, index_name, totalcount, index, pagesize, call
     /****/
 
     // GENERATE/POPULATE PAGE DROPDOWN
-    html = '<select id="' + index_name + '_dropdown" name="' + index_name + '_dropdown" onchange="' + index_name + '=this.value;eval(\'' + callback_func_name + '\');">';
+    html = '<select class="custom-select-sm" id="' + index_name + '_dropdown" name="' + index_name + '_dropdown" onchange="' + index_name + '=this.value;eval(\'' + callback_func_name + '\');">';
 
     // LESS THAN 1000 = SIMPLE PAGE DROPDOWN
     if (pages < 1000) {

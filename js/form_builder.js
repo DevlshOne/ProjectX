@@ -7,21 +7,21 @@ function isEmpty(obj) {
     return true;
 }
 
+// let _formBuilder = {
+//     doInit: function() {
+//
+//     },
+//     renderTitle: function() {
+//
+//     },
+//     renderTopNav: function() {
+//
+//     },
+//     fbForm: function() {
+//
+//     },
+// };
 
-let _formBuilder = {
-    doInit: function() {
-
-    },
-    renderTitle: function() {
-
-    },
-    renderTopNav: function() {
-
-    },
-    fbForm: function() {
-
-    },
-};
 const fieldWrapperDragOptions = {
     refreshPositions: true,
     containment: '#dropZone',
