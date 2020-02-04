@@ -952,42 +952,59 @@ class SalesAnalysis{
 		# ADD TOTALS AT THE END
 		$outxml = '';
 
+		# SET HEADERS AND FOOTERS
 		$outxml_head = '<SalesAnalysisReport>'."\n";
-		$outxml_foot = '</SalesAnalysisReport>';
+		$outxml_foot = '</SalesAnalysisReport>'."\n";
 
 		$outxml_result_head = "\t".'<Result>'."\n";
-		$outxml_result_foot = '</Result>'."\n";
+		$outxml_result_foot = "\t".'</Result>'."\n";
 
+		# BEGIN XML OUTPUT GENERATION
 		$outxml.=$outxml_head;
 		
+		# LOOP THROUGH EACH DATA RESULT
 		foreach($results_array as $result_value){
 
+			# MAKE SURE THE RESULT IS AN ARRAY
 			if(is_array($result_value)){
 
+				# RESULTS DATA CALCULATIONS PULLED FROM THE FRONT END DISPLAY
+				$paid_sale_percent = ($result_value['sale_cnt'] <= 0)?0:round( ((float)$result_value['paid_sale_cnt'] / $result_value['sale_cnt']) * 100, 2);
+				
+				$unpaid_sale_percent = 100 - $paid_sale_percent;
+
+				$paid_sale_amount_percent = ($result_value['sales_total'] <= 0)?0:round( ((float)$result_value['paid_sales_total'] / $result_value['sales_total']) * 100, 2);
+
+				$ans_percent = round(  (($result_value['num_AnswerMachines'] / $result_value['calls_today']) * 100), 2);
+
+				# BEGIN RESULT XML OUTPUT WITH HEADER
 				$outxml.=$outxml_result_head;
 
+				# OUTPUT RESULT DATA
 				$outxml.="\t\t".'<Agent>'.$result_value['agent_username'].'</Agent>'."\n";
-				$outxml.="\t\t".'<PaidHrs></PaidHrs>'."\n";
-				$outxml.="\t\t".'<WorkedHrs></WorkedHrs>'."\n";
-				$outxml.="\t\t".'<NotInterested></NotInterested>'."\n";
-				$outxml.="\t\t".'<Transfers></Transfers>'."\n";
-				$outxml.="\t\t".'<AnsweringMachineCalls></AnsweringMachineCalls>'."\n";
-				$outxml.="\t\t".'<AnsweringMachinePercent></AnsweringMachinePercent>'."\n";
-				$outxml.="\t\t".'<ConversionAndCallsHr></ConversionAndCallsHr>'."\n";
-				$outxml.="\t\t".'<TotalSales></TotalSales>'."\n";
-				$outxml.="\t\t".'<PaidSales></PaidSales>'."\n";
-				$outxml.="\t\t".'<PaidPercent></PaidPercent>'."\n";
-				$outxml.="\t\t".'<DollarsPaidPercent></DollarsPaidPercent>'."\n";
-				$outxml.="\t\t".'<UnpaidSales></UnpaidSales>'."\n";
-				$outxml.="\t\t".'<UnpaidPercent></UnpaidPercent>'."\n";
-				$outxml.="\t\t".'<ClosingPercent></ClosingPercent>'."\n";
-				$outxml.="\t\t".'<ConversionPercent></ConversionPercent>'."\n";
-				$outxml.="\t\t".'<Yes2AllPercent></Yes2AllPercent>'."\n";
-				$outxml.="\t\t".'<TotalSales></TotalSales>'."\n";
-				$outxml.="\t\t".'<AvgSale></AvgSale>'."\n";
-				$outxml.="\t\t".'<PDDollarHr></PDDollarHr>'."\n";
-				$outxml.="\t\t".'<WorkedDollarHr></WorkedDollarHr>'."\n";
+				$outxml.="\t\t".'<PaidHrs>'.number_format($result_value['activity_paid'],2).'</PaidHrs>'."\n";
+				$outxml.="\t\t".'<WorkedHrs>'.number_format($result_value['activity_wrkd'],2).'</WorkedHrs>'."\n";
+				$outxml.="\t\t".'<TotalCalls>'.number_format($result_value['calls_today']).'</TotalCalls>'."\n";
+				$outxml.="\t\t".'<NotInterested>'.number_format($result_value['num_NI']).'</NotInterested>'."\n";
+				$outxml.="\t\t".'<Transfers>'.number_format($result_value['num_XFER']).'</Transfers>'."\n";
+				$outxml.="\t\t".'<AnsweringMachineCalls>'.number_format($result_value['num_AnswerMachines']).'</AnsweringMachineCalls>'."\n";
+				$outxml.="\t\t".'<AnsweringMachinePercent>'.$ans_percent.'%</AnsweringMachinePercent>'."\n";
+				$outxml.="\t\t".'<ConversionAndCallsHr>'.number_format($result_value['contacts_per_worked_hour'],2).' / '.number_format($result_value['calls_per_worked_hour'],2).'</ConversionAndCallsHr>'."\n";
+				$outxml.="\t\t".'<TotalSales>'.number_format($result_value['sale_cnt']).'</TotalSales>'."\n";
+				$outxml.="\t\t".'<PaidSales>'.number_format($result_value['paid_sale_cnt']).' ('.number_format($result_value['paid_sales_total']).')</PaidSales>'."\n";
+				$outxml.="\t\t".'<PaidPercent>'.number_format($paid_sale_percent,2).'%</PaidPercent>'."\n";
+				$outxml.="\t\t".'<DollarsPaidPercent>'.number_format($paid_sale_amount_percent,2).'%</DollarsPaidPercent>'."\n";
+				$outxml.="\t\t".'<UnpaidSales>'.number_format(($result_value['sale_cnt']-$result_value['paid_sale_cnt'])).'</UnpaidSales>'."\n";
+				$outxml.="\t\t".'<UnpaidPercent>'.number_format($unpaid_sale_percent,2).'%</UnpaidPercent>'."\n";
+				$outxml.="\t\t".'<ClosingPercent>'.number_format($result_value['closing_percent'],2).'%</ClosingPercent>'."\n";
+				$outxml.="\t\t".'<ConversionPercent>'.number_format($result_value['conversion_percent'],2).'%</ConversionPercent>'."\n";
+				$outxml.="\t\t".'<Yes2AllPercent>'.number_format($result_value['yes2all_percent'],2).'%</Yes2AllPercent>'."\n";
+				$outxml.="\t\t".'<TotalSales>'.number_format($result_value['sales_total']).'</TotalSales>'."\n";
+				$outxml.="\t\t".'<AvgSale>'.number_format($result_value['avg_sale'],2).'</AvgSale>'."\n";
+				$outxml.="\t\t".'<PDDollarHr>'.number_format($result_value['paid_hr'],2).'</PDDollarHr>'."\n";
+				$outxml.="\t\t".'<WorkedDollarHr>'.number_format($result_value['wrkd_hr'],2).'</WorkedDollarHr>'."\n";
 
+				# CLOSE RESULT OUTPUT WITH FOOTER
 				$outxml.=$outxml_result_foot;
 
 			}
