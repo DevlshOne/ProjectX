@@ -952,11 +952,11 @@ class SalesAnalysis{
 		# ADD TOTALS AT THE END
 		$outxml = '';
 
-		$outxml_head = '<SalesAnalysisReport>';
+		$outxml_head = '<SalesAnalysisReport>'."\n";
 		$outxml_foot = '</SalesAnalysisReport>';
 
-		$outxml_result_head = '<Result>';
-		$outxml_result_foot = '</Result>';
+		$outxml_result_head = "\t".'<Result>';
+		$outxml_result_foot = '</Result>."\n"';
 
 		$outxml.=$outxml_head;
 		
@@ -964,16 +964,31 @@ class SalesAnalysis{
 
 			if(is_array($result_value)){
 
-				foreach($result_value as $key => $val){
-				
-					$outxml.=$outxml_result_head;
-					if($key == 'cluster_id'){continue;}
+				$outxml.=$outxml_result_head;
 
-					$outxml.=$key.' '.$val;
+				$outxml.='<Agent>'.$result_value['agent_username'].'</Agent>'."\n";
+				$outxml.='<PaidHrs></PaidHrs>'."\n";
+				$outxml.='<WorkedHrs></WorkedHrs>'."\n";
+				$outxml.='<NotInterested></NotInterested>'."\n";
+				$outxml.='<Transfers></Transfers>'."\n";
+				$outxml.='<AnsweringMachineCalls></AnsweringMachineCalls>'."\n";
+				$outxml.='<AnsweringMachinePercent></AnsweringMachinePercent>'."\n";
+				$outxml.='<ConversionAndCallsHr></ConversionAndCallsHr>'."\n";
+				$outxml.='<TotalSales></TotalSales>'."\n";
+				$outxml.='<PaidSales></PaidSales>'."\n";
+				$outxml.='<PaidPercent></PaidPercent>'."\n";
+				$outxml.='<DollarsPaidPercent></DollarsPaidPercent>'."\n";
+				$outxml.='<UnpaidSales></UnpaidSales>'."\n";
+				$outxml.='<UnpaidPercent></UnpaidPercent>'."\n";
+				$outxml.='<ClosingPercent></ClosingPercent>'."\n";
+				$outxml.='<ConversionPercent></ConversionPercent>'."\n";
+				$outxml.='<Yes2AllPercent></Yes2AllPercent>'."\n";
+				$outxml.='<TotalSales></TotalSales>'."\n";
+				$outxml.='<AvgSale></AvgSale>'."\n";
+				$outxml.='<PDDollarHr></PDDollarHr>'."\n";
+				$outxml.='<WorkedDollarHr></WorkedDollarHr>'."\n";
 
-					$outxml.=$outxml_result_foot;
-
-				}
+				$outxml.=$outxml_result_foot;
 
 			}
 
