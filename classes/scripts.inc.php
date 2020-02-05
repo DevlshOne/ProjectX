@@ -160,21 +160,12 @@ class Scripts{
 				}
 				eval('scripts_loading_flag = false');
 			}
-
-
 			function handleScriptListClick(id){
-
 				displayAddScriptDialog(id);
 
 			}
-
-
-
 			function displayAddScriptDialog(scriptid){
-
 				var objname = 'dialog-modal-add-script';
-
-
 				if(scriptid > 0){
 					$('#'+objname).dialog( "option", "title", 'Editing Script' );
 					$('#'+objname).dialog( "option", "height", '600' );
@@ -182,19 +173,10 @@ class Scripts{
 					$('#'+objname).dialog( "option", "title", 'Adding new Script' );
 					$('#'+objname).dialog( "option", "height", '380' );
 				}
-
-
-
 				$('#'+objname).dialog("open");
-
-				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
-				$('#'+objname).load("index.php?area=scripts&add_script="+scriptid+"&printable=1&no_script=1");
-
+				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load("index.php?area=scripts&add_script="+scriptid+"&printable=1&no_script=1");
 			}
-
 			function resetScriptForm(frm){
-
 				frm.s_keys.value='';
 				frm.s_name.value = '';
 				frm.s_filename.value = '';
@@ -202,75 +184,47 @@ class Scripts{
 				frm.s_voice_id.value = 0;
 				frm.s_screen_num.value=-1;
 				frm.s_variables.value = '';
-
 			}
-
-
 			var scriptsrchtog = true;
 			function toggleScriptSearch(){
 				scriptsrchtog = !scriptsrchtog;
 				ieDisplay('script_search_table', scriptsrchtog);
 			}
-
-
-
 			function buildVoicesDD(selid){
-
 				var obj=getEl('s_voice_id');
 				var opt = obj.options;
 				var catid=getEl('s_campaign_id').value;
-
 				// Empty DD
 				for(var x=0;x<opt.length;x++){obj.remove(x);}
 				obj.options.length=0;
-
 				var newopts = new Array();
 				newopts[0] = document.createElement("OPTION");
-
 				if(ie)	obj.add(newopts[0]);
 				else	obj.add(newopts[0],null);
-
 				newopts[0].innerText	= '';
 				newopts[0].value	= 0;
 				var curid=0;
 				for(x=0;x < item_id.length;x++){
 					//curid=item_id[x];
 					curid=x;
-
 					//alert(which+' '+item_name[curid]);
-
 					if(catid && item_cpgnid[curid] != catid){
 						continue;
 					}
-
 					newopts[x] = document.createElement("OPTION");
-
 					if(ie)	obj.add(newopts[x]);
 					else	obj.add(newopts[x],null);
-
 					newopts[x].value	= item_id[curid];
-
-
 					if(ie)	newopts[x].innerText	= item_name[curid];
 					else	newopts[x].innerHTML	= item_name[curid];
-
 					if(selid == item_id[curid])obj.value=item_id[curid];
-
-
-
 				}
-
-
 			}
-
-
 			var itemp = 0;
 			var item_id	= new Array();
 			var item_name	= new Array();
 			var item_cpgnid	= new Array();
 			var item_langid	= new Array();
-
-
 			var lang_names = new Array();
 			<?
 
@@ -303,14 +257,10 @@ class Scripts{
 				}
 				return 0;
 			}
-
 			function togVoiceDD(frm){
-
 				buildVoicesDD(frm.s_voice_id.value);
-
 				updateLanguage(frm);
 			}
-
 			function updateLanguage(frm){
 				$('#lang_td_row').html( lang_names[getLangID(frm.s_voice_id.value)]  );
 			}

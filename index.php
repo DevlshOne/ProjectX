@@ -189,7 +189,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             <div class="content-header bg-white-5">
                 <!-- Logo -->
                 <a class="navbar-brand" href="index.php"><img src="images/cci-logo-200-2.png" height="30"
-                                                              border="0"></a>
+                                                              border="0" title="Home"></a>
             </div>
             <?
             if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
@@ -423,8 +423,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             if (checkAccess('fronter_closer') || checkAccess('sales_analysis') || checkAccess('agent_call_stats') || checkAccess('user_charts') || checkAccess('recent_hangups') || checkAccess('script_statistics') || checkAccess('dispo_log') || checkAccess('capacity_report') || checkAccess('report_emails') || checkAccess('user_status_report')) {
                 ?>
                 <li class="nav-main-item">
-                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu"
-                       aria-haspopup="true" aria-expanded="false">
+                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
                         <i class="nav-main-link-icon fa fa-database"></i>
                         <span class="nav-main-heading">Reports</span>
                     </a>
