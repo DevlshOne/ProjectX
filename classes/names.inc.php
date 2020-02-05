@@ -194,7 +194,7 @@ class Names
                         <input type="text" class="form-control" placeholder="Search by Name.." name="s_name" value="<?= htmlentities($_REQUEST['s_name']) ?>"/>
                         <input type="text" class="form-control" placeholder="Search by Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
                         <button type="button" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadNames();return false;">Search</button>
-                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetNameForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadNames();">Reset</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetNameForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadNames();return false;">Reset</button>
                     </div>
                 </div>
                 <div class="block-content">

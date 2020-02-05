@@ -333,6 +333,7 @@ class Campaigns
 
             loadCampaigns();
         </script>
+        <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOSTSTRAP -->
         <div class="block">
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCampaigns();return false">
                 <div class="block-header bg-primary-light">
@@ -345,28 +346,6 @@ class Campaigns
                 <div class="block-content block-content-full">
                     <div id="DataTables_Campaign_Table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
                         <div class="row">
-                            <div class="col-6">
-                                <div class="dataTables_length" id="DataTables_Campaign_Table_length">
-                                    <label for="DataTables_Campaign_Table_length">
-                                        <select name="DataTables_Campaign_Table_length" aria-controls="DataTables_Campaign_Table" class="form-control from-control-sm">
-                                            <option value="20">20</option>
-                                            <option value="50">50</option>
-                                            <option value="100">100</option>
-                                            <option value="250">250</option>
-                                            <option value="500">500</option>
-                                        </select>
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="dataTables_length" id="DataTables_Campaign_Table_length">
-                                    <label>
-                                        <input type="search" class="form-control from-control-sm" placeholder="Search.." aria-controls="DataTables_Campaign_Table"/>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
                             <div class="col-12">
                                 <table class="table table-sm table-striped" id="campaign_table">
                                     <tr>
@@ -378,34 +357,11 @@ class Campaigns
                                 </table>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="dataTables_info" id="DataTables_Campaign_Table_info" role="status" aria-live="polite"></div>
-                            </div>
-                            <div class="col-4">
-                                <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Campaign_Table_paginate">
-                                    <ul class="pagination">
-                                        <li class="paginate_button page-item previous disabled" id="DataTables_Campaign_Table_previous">
-                                            <a href="#" aria-controls="DataTables_Campaign_Table" data-dt-idx="0" tabindex="0" class="page-link">
-                                                <i class="fa fa-angle-left"></i>
-                                            </a>
-                                        </li>
-                                        <li class="paginate_button page-item active" id="DataTables_Campaign_Table_previous">
-                                            <a href="#" aria-controls="DataTables_Campaign_Table" data-dt-idx="1" tabindex="0" class="page-link">1</a>
-                                        </li>
-                                        <li class="paginate_button page-item next" id="DataTables_Campaign_Table_next">
-                                            <a href="#" aria-controls="DataTables_Campaign_Table" data-dt-idx="5" tabindex="0" class="page-link">
-                                                <i class="fa fa-angle-right"></i>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </form>
         </div>
+        <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOSTSTRAP -->
         <div id="dialog-modal-add-campaign" title="Adding new Campaign" class="nod"></div>
         <div id="dialog-modal-edit-campaign" title="Editing Campaign" class="nod">
             <div class="block-content block-content-full text-left">
