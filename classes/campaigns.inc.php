@@ -342,15 +342,67 @@ class Campaigns
                     <div id="campaigns_page_td" class="page_system_page"></div>
                     <div id="campaigns_next_td" class="page_system_next"></div>
                 </div>
-                <div class="block-content">
-                    <table class="table table-sm table-striped" id="campaign_table">
-                        <tr>
-                            <th class="row2 text-center"><?= $this->getOrderLink('id') ?>ID</a></th>
-                            <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                            <th class="row2 text-center"><?= $this->getOrderLink('status') ?>Status</a></th>
-                            <th class="row2">&nbsp;</th>
-                        </tr>
-                    </table>
+                <div class="block-content block-content-full">
+                    <div id="DataTables_Campaign_Table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="dataTables_length" id="DataTables_Campaign_Table_length">
+                                    <label for="DataTables_Campaign_Table_length">
+                                        <select name="DataTables_Campaign_Table_length" aria-controls="DataTables_Campaign_Table" class="form-control from-control-sm">
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                            <option value="250">250</option>
+                                            <option value="500">500</option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="dataTables_length" id="DataTables_Campaign_Table_length">
+                                    <label>
+                                        <input type="search" class="form-control from-control-sm" placeholder="Search.." aria-controls="DataTables_Campaign_Table"/>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-sm table-striped" id="campaign_table">
+                                    <tr>
+                                        <th class="row2 text-center"><?= $this->getOrderLink('id') ?>ID</a></th>
+                                        <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                                        <th class="row2 text-center"><?= $this->getOrderLink('status') ?>Status</a></th>
+                                        <th class="row2">&nbsp;</th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-8">
+                                <div class="dataTables_info" id="DataTables_Campaign_Table_info" role="status" aria-live="polite"></div>
+                            </div>
+                            <div class="col-4">
+                                <div class="dataTables_paginate paging_simple_numbers" id="DataTables_Campaign_Table_paginate">
+                                    <ul class="pagination">
+                                        <li class="paginate_button page-item previous disabled" id="DataTables_Campaign_Table_previous">
+                                            <a href="#" aria-controls="DataTables_Campaign_Table" data-dt-idx="0" tabindex="0" class="page-link">
+                                                <i class="fa fa-angle-left"></i>
+                                            </a>
+                                        </li>
+                                        <li class="paginate_button page-item active" id="DataTables_Campaign_Table_previous">
+                                            <a href="#" aria-controls="DataTables_Campaign_Table" data-dt-idx="1" tabindex="0" class="page-link">1</a>
+                                        </li>
+                                        <li class="paginate_button page-item next" id="DataTables_Campaign_Table_next">
+                                            <a href="#" aria-controls="DataTables_Campaign_Table" data-dt-idx="5" tabindex="0" class="page-link">
+                                                <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

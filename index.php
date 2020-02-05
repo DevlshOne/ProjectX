@@ -532,7 +532,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('user_status_report')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=user_status_report&no_script=1" onclick="rloadSection(this.href);eturn false">
+                                <a class="nav-main-link" href="?area=user_status_report&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">User Status Report</span>
                                 </a>
                             </li>

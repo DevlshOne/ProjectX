@@ -19,6 +19,7 @@ class Names
     var $index_name = 'name_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
     var $frm_name = 'namenextfrm';
     var $order_prepend = 'name_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+
     function Names()
     {
         ## REQURES DB CONNECTION!
@@ -69,15 +70,13 @@ class Names
             function getNamesURL() {
 
                 var frm = getEl('<?=$this->frm_name?>');
-
+                var name_pagesize = 20;
                 return 'api/api.php' +
                     "?get=names&" +
                     "mode=xml&" +
-
                     's_id=' + escape(frm.s_id.value) + "&" +
                     's_name=' + escape(frm.s_name.value) + "&" +
                     's_filename=' + escape(frm.s_filename.value) + "&" +
-
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
@@ -179,21 +178,23 @@ class Names
             }
         </script>
         <div class="block">
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadNames();return false">
-                <input type="hidden" name="searching_name"/>
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadNames();return false;">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Names</h4>
                     <button type="button" value="Add" title="Add Names" class="btn btn-sm btn-primary" onclick="displayAddNameDialog(0)">Add</button>
+                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleNameSearch();">Toggle Search</button>
                     <div id="names_prev_td" class="page_system_prev"></div>
                     <div id="names_page_td" class="page_system_page"></div>
                     <div id="names_next_td" class="page_system_next"></div>
                 </div>
-                <div class="block-header bg-info-light">
+                <div class="bg-info-light nod" id="name_search_table">
                     <div class="input-group input-group-sm">
+                        <input type="hidden" name="searching_name"/>
                         <input type="text" class="form-control" placeholder="Search by ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
                         <input type="text" class="form-control" placeholder="Search by Name.." name="s_name" value="<?= htmlentities($_REQUEST['s_name']) ?>"/>
                         <input type="text" class="form-control" placeholder="Search by Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
-                        <button type="button" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button">Search</button>
+                        <button type="button" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadNames();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetNameForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadNames();">Reset</button>
                     </div>
                 </div>
                 <div class="block-content">

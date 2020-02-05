@@ -630,4 +630,7 @@ td.countsRow {
 .ui-dialog {
     font-size: 0.80em;
 }
+.dataTables_wrapper {
+    position: relative !important;
+}
 
