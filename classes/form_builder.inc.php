@@ -77,7 +77,7 @@
                  */
                 function getFormsURL() {
                     var frm = getEl('<?=$this->frm_name?>');
-                    var form_pagesize = 20;
+                    var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
                     return 'api/api.php' +
                         "?get=form_builder&" +
                         "mode=xml&" +
@@ -252,6 +252,12 @@
                         <div id="form_builder_prev_td" class="page_system_prev"></div>
                         <div id="form_builder_page_td" class="page_system_page"></div>
                         <div id="form_builder_next_td" class="page_system_next"></div>
+                        <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadForm_builders()s(); return false;">
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
                     </div>
                     <div class="block-content">
                         <table class="table table-sm table-striped" id="form_builder_table">

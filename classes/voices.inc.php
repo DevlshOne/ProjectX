@@ -71,34 +71,19 @@ class Voices{
 		}
 
 	}
-
-
-
-
-
-
 	function listEntrys(){
-
-
 		?><script>
-
 			var voice_delmsg = 'Are you sure you want to delete this voice?';
-
 			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
-
-
 			var <?=$this->index_name?> = 0;
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-
 			var VoicesTableFormat = [
-
 				['name','align_left'],
 				['actor_name','align_left'],
 				['[get:language_name:language_id]','align_center'],
 				['[get:campaign_name:campaign_id]','align_center'],
 				['status','align_center'],
-
 				['[delete]','align_center']
 			];
 
@@ -108,15 +93,10 @@ class Voices{
 			function getVoicesURL(){
 
 				var frm = getEl('<?=$this->frm_name?>');
-
+                var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
 				return 'api/api.php'+
 								"?get=voices&"+
 								"mode=xml&"+
-
-								//'s_id='+escape(frm.s_id.value)+"&"+
-								//'s_name='+escape(frm.s_name.value)+"&"+
-								//'s_status='+escape(frm.s_status.value)+"&"+
-
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
@@ -208,14 +188,20 @@ class Voices{
 			}
 		</script>
         <div class="block">
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCampaigns();return false">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadVoices();return false">
                 <input type="hidden" name="searching_voices">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Voices</h4>
-                    <button type="button" value="Add" title="Add Campaign" class="btn btn-sm btn-primary" onclick="displayAddVoiceDialog(0);">Add</button>
+                    <button type="button" value="Add" title="Add Voice" class="btn btn-sm btn-primary" onclick="displayAddVoiceDialog(0);">Add</button>
                     <div id="voices_prev_td" class="page_system_prev"></div>
                     <div id="voices_page_td" class="page_system_page"></div>
                     <div id="voices_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadVoices(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
                 </div>
                 <div class="block-content">
                     <table class="table table-sm table-striped" id="voice_table">

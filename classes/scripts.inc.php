@@ -109,6 +109,7 @@ class Scripts{
 			*/
 			function getScriptsURL(){
 				var frm = getEl('<?=$this->frm_name?>');
+                var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
 				return 'api/api.php'+
 								"?get=scripts&"+
 								"mode=xml&"+
@@ -274,6 +275,12 @@ class Scripts{
                     <div id="scripts_prev_td" class="page_system_prev"></div>
                     <div id="scripts_page_td" class="page_system_page"></div>
                     <div id="scripts_next_td" class="page_system_next"></div>
+                        <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadScripts(); return false;">
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
                 </div>
                 <div class="bg-info-light nod" id="script_search_table">
                     <div class="input-group input-group-sm">

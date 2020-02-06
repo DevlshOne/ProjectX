@@ -142,6 +142,7 @@
                  */
                 function getCampaignParentsURL() {
                     var frm = getEl('<?=$this->frm_name?>');
+                    var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
                     return 'api/api.php' +
                         "?get=campaign_parents&" +
                         "mode=xml&" +
@@ -220,7 +221,7 @@
                         <div id="campaign_parents_prev_td" class="page_system_prev"></div>
                         <div id="campaign_parents_page_td" class="page_system_page"></div>
                         <div id="campaign_parents_next_td" class="page_system_next"></div>
-                        <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>_pagesizeDD" id="<?=$this->order_prepend?>_pagesizeDD" onchange="<?$this->index_name=0?>;loadCampaign_parents(); return false;">' +
+                        <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadCampaign_parents(); return false;">
                             <option value="20">20</option>
                             <option value="50">50</option>
                             <option value="100">100</option>

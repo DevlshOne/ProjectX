@@ -254,6 +254,7 @@ class Campaigns
              */
             function getCampaignsURL() {
                 var frm = getEl('<?=$this->frm_name?>');
+                var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
                 return 'api/api.php' +
                     "?get=campaigns&" +
                     "mode=xml&" +
@@ -330,7 +331,6 @@ class Campaigns
                 });
             }
             loadCampaigns();
-            $('#<?=$this->order_prepend?>_pagesizeDD').val(<?=$this->order_prepend?>pagesize);
         </script>
         <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <div class="block">
@@ -341,7 +341,7 @@ class Campaigns
                     <div id="campaigns_prev_td" class="page_system_prev"></div>
                     <div id="campaigns_page_td" class="page_system_page"></div>
                     <div id="campaigns_next_td" class="page_system_next"></div>
-                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>_pagesizeDD" id="<?=$this->order_prepend?>_pagesizeDD" onchange="<?$this->index_name=0?>;loadCampaigns(); return false;">' +
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadCampaigns(); return false;">
                         <option value="20">20</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
