@@ -194,6 +194,7 @@
                     </div>
                     <div class="block-content">
                         <table class="table table-sm table-striped" id="question_table">
+                            <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                             <tr>
                                 <th class="row2 text-left"><?=$this->getOrderLink('quiz_id')?>Quiz</a></th>
                                 <th class="row2 text-left"><?=$this->getOrderLink('question')?>Question</a></th>

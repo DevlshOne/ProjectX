@@ -372,11 +372,11 @@ class EmployeeHours{
 			if(!checkAccess('employee_hours_edit')){
 				?>['[render:hours_from_min:paid_time]','align_center'],
 				['note_data','align_left'],<?
-				
+
 			}else{
 				?>['[render:editable_hours_from_min:paid_time]','align_center'],
 				['[textfield:notes:note_data:30]','align_left'],<?
-				
+
 			}
 			?>
 			];
@@ -863,13 +863,13 @@ class EmployeeHours{
 
 			</td>
 			<td align="left"><?
-			
+
 			if(!checkAccess('employee_hours_edit')){
 				?>&nbsp;<?
 			}else{
 				?><input type="button" value="Add Hours" onclick="displayEditEmpDialog(0)" /><?
 			}
-			
+
 			?></td>
 			<td align="right"><?
 				/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
@@ -1023,45 +1023,45 @@ class EmployeeHours{
 					<input type="button" value="Export Clean TOTALS to CSV" name="export_clean_totals" onclick="exportResultsCSV(2)">
 
 				</td><?
-				
-				
-				
+
+
+
 				if(!checkAccess('employee_hours_edit')){
 					?><td colspan="2">&nbsp;</td><?
 				}else{
 					?><td>
-	
+
 						<table border="0">
 						<tr>
 							<td nowrap>
 								<span id="setallspan"></span>
 								<script>
-	
+
 									$('#setallspan').html(
-	
+
 											makeNumberDD('paid_hour_setall',0,	0,24,1,	false,'',false)+"h&nbsp;"+
 											makeNumberDD('paid_min_setall',0,	0,59,1,	true,'',false)+'m'
-	
+
 									);
-	
+
 								</script>
 								<?/**<input type="text" size="4" name="set_all_to_value" id="set_all_to_value">**/?>
-	
-	
-	
+
+
+
 							</td>
 							<td><input type="button" value="Set all (on screen)" onclick="setAllToValue()"></td>
 						</tr>
-	
+
 						</table>
-	
+
 					</td>
 					<td width="33%"><input type="submit" name="save_button" value="Save Changes" /></td>
 					<?
-				
+
 				}
-				
-				
+
+
 			?>
 			</tr>
 
@@ -1069,20 +1069,6 @@ class EmployeeHours{
 
 
 			<table border="0" width="950" id="emp_table">
-			<?/**
-
-				['[date:time_started]','align_center'],
-				['username','align_left'],
-				['office','align_center'],
-				['call_group','align_left'],
-
-				['calls_today','align_center'],
-
-				['activity_time','align_center'],
-				['paid_time','align_center'],
-
-			];
-			**/?>
 			<tr>
 				<th class="row2"><?=$this->getOrderLink('time_started')?>Date</a></th>
 				<th class="row2" align="left"><?=$this->getOrderLink('username')?>Agent</a></th>
@@ -1090,42 +1076,36 @@ class EmployeeHours{
 				<th class="row2"><?=$this->getOrderLink('call_group')?>Group</a></th>
 				<th class="row2"><?=$this->getOrderLink('seconds_INCALL')?>Detected (old)</a></th>
 				<th class="row2"><?=$this->getOrderLink('seconds_INCALL')?>Detected</a> <a href="#" onclick="alert('The hours that the system detected activity for. (not perfect/accurate)\n\nNote: 6.5 hrs means 6 hours and 30 minutes.');return false">(?)</a></th>
-				<th class="row2"><?=$this->getOrderLink('seconds_READY')?>Breakdown</a>
+                <th class="row2"><?=$this->getOrderLink('seconds_READY')?>Breakdown</a></th>
 				<th class="row2"><?=$this->getOrderLink('paid_time')?>Paid</a> <a href="#" onclick="alert('Note: 6.5 hrs means 6 hours and 30 minutes.');return false">(?)</a></th>
 				<th class="row2" align="left"><?=$this->getOrderLink('notes')?>Notes</a></th>
-			</tr><?
-
-			// MAGICAL FUCKING AJAX FAIRIES WILL POPULATE THIS SECTION
-
-			?></table>
-			
-			
-
+			</tr>
+            </table>
 				<table border="0" width="950">
 				<tr>
 					<td width="33%"></td>
 					<td width="33%" align="right">
-	
+
 						<span id="spn_total_activity"></span><br />
-	
+
 						<span id="spn_total_paid"></span>
-	
-	
+
+
 					</td>
 					<td width="33%"><?
-					
+
 					if(!checkAccess('employee_hours_edit')){
 						?>&nbsp;<?
 					}else{
-					
+
 						?><input type="submit" name="save_button" value="Save Changes" /><?
-						
+
 					}
-						
+
 					?></td>
-	
+
 				</tr>
-	
+
 				</table>
 
 

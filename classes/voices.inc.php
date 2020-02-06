@@ -205,6 +205,7 @@ class Voices{
                 </div>
                 <div class="block-content">
                     <table class="table table-sm table-striped" id="voice_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                         <tr>
                             <th class="row2 text-left"><?=$this->getOrderLink('name')?>Name</a></th>
                             <th class="row2 text-left"><?=$this->getOrderLink('actor_name')?>Voice Actor</a></th>
