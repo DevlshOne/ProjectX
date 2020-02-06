@@ -185,9 +185,9 @@
                         <div class="input-group input-group-sm">
                             <input type="hidden" name="searching_question"/>
                             <?=$this->makeDD('s_quiz_id',$_REQUEST['s_quiz_id'],'',"",0, "[All]");?>
-                            <input type="text" class="form-control" placeholder="Search by Question.." name="s_question" value="<?=htmlentities($_REQUEST['s_question'])?>" />
-                            <input type="text" class="form-control" placeholder="Search by Answer.." name="s_answer" value="<?= htmlentities($_REQUEST['s_answer']) ?>"/>
-                            <input type="text" class="form-control" placeholder="Search by Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
+                            <input type="text" class="form-control" placeholder="Question.." name="s_question" value="<?=htmlentities($_REQUEST['s_question'])?>" />
+                            <input type="text" class="form-control" placeholder="Answer.." name="s_answer" value="<?= htmlentities($_REQUEST['s_answer']) ?>"/>
+                            <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
                             <button type="button" value="Search" title="Search Quiz Questions" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadQuestions();return false;">Search</button>
                             <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetQuestionForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadQuestions();return false;">Reset</button>
                         </div>
@@ -220,7 +220,7 @@
                     position: {my: 'center', at: 'center', of: '#main-container'},
                 });
                 loadQuestions();
-                $('#s_quiz_id').addProp('title', 'Select Quiz ID');
+                $('#s_quiz_id').attr('title', 'Select Quiz ID');
             </script>
             <?
 

@@ -371,65 +371,46 @@ class LeadManagement
             }
 
             function toggleDateMode(way) {
-
                 if (way == 'daterange') {
                     $('#nodate_span').hide();
                     $('#date1_span').show();
-
                     // SHOW EXTRA DATE FIELD
                     $('#date2_span').show();
-
                     // HIDE TIME FIELDS
                     $('#time1_span').hide();
                     $('#time2_span').hide();
-
                 } else if (way == 'any') {
-
                     $('#nodate_span').show();
                     $('#date1_span').hide();
                     $('#date2_span').hide();
-
                     // HIDE TIME FIELDS
                     $('#time1_span').hide();
                     $('#time2_span').hide();
-
                 } else if (way == 'datetimerange') {
-
                     $('#nodate_span').hide();
                     $('#date1_span').show();
-
                     // SHOW EXTRA DATE FIELD
                     $('#date2_span').show();
-
                     // SHOW TIME FIELDS AS WELL
                     $('#time1_span').show();
                     $('#time2_span').show();
-
                 } else {
                     $('#nodate_span').hide();
-
                     $('#date1_span').show();
-
                     // HIDE SECOND DATE FIELD
                     $('#date2_span').hide();
-
                     // HIDE TIME FIELDS
                     $('#time1_span').hide();
                     $('#time2_span').hide();
                 }
-
             }
 
         </script>
-        <div id="dialog-modal-edit_lead" title="Editing Lead">
-
-
-        </div>
         <div class="block">
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadLeads();return false;">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Lead Management</h4>
-                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleLeadSearch();">Toggle Search</button>
+<!--                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleLeadSearch();">Toggle Search</button>-->
                     <div id="leads_prev_td" class="page_system_prev"></div>
                     <div id="leads_page_td" class="page_system_page"></div>
                     <div id="leads_next_td" class="page_system_next"></div>
@@ -440,34 +421,34 @@ class LeadManagement
                         <option value="500">500</option>
                     </select>
                 </div>
-                <div class="bg-info-light nod" id="lead_search_table">
+                <div class="bg-info-light" id="lead_search_table">
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_lead"/>
-                        <input type="text" class="form-control" placeholder="Search by PX ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
-                        <input type="text" class="form-control" placeholder="Search by Outbound Phone #.." name="s_outbound_phone_num" value="<?= htmlentities($_REQUEST['s_outbound_phone_num']) ?>"/>
-                        <?= makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', ""); ?>
-                        <?= makeCampaignIDDD('s_campaign_id', $_REQUEST['s_campaign_id'], '', ""); ?>
-                        <?= $this->makeDispoDD('s_status', $_REQUEST['s_status'], "", true); ?>
-                        <input type="text" class="form_control" placeholder="Search by Agent.." name="s_agent_username" size="5" value="<?= htmlentities($_REQUEST['s_agent_username']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Search by Verifier.." name="s_verifier_username" size="5" value="<?= htmlentities($_REQUEST['s_verifier_username']) ?>"/>
+                        <input type="text" class="form-control" placeholder="PX ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Outbound Phone #.." name="s_outbound_phone_num" value="<?= htmlentities($_REQUEST['s_outbound_phone_num']) ?>"/>
+                        <?= makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", "[Select Cluster]"); ?>
+                        <?= makeCampaignIDDD('s_campaign_id', $_REQUEST['s_campaign_id'], '', "", "[Select Campaign]"); ?>
+                        <?= $this->makeDispoDD('s_status', $_REQUEST['s_status'], "", "[Select Dispo]"); ?>
+                        <input type="text" class="form_control" placeholder="Agent.." name="s_agent_username" size="5" value="<?= htmlentities($_REQUEST['s_agent_username']) ?>"/>
+                        <input type="text" class="form_control" placeholder="Verifier.." name="s_verifier_username" size="5" value="<?= htmlentities($_REQUEST['s_verifier_username']) ?>"/>
                     </div>
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form_control" placeholder="Search by First Name.." name="s_firstname" size="5" value="<?= htmlentities($_REQUEST['s_firstname']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Search by Last Name.." name="s_lastname" size="5" value="<?= htmlentities($_REQUEST['s_lastname']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Search by Lead ID.." name="s_lead_id" size="5" value="<?= htmlentities($_REQUEST['s_lead_id']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Search by Phone #.." name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
-                        <input type="text" class="form_control" placeholder="Search by City.." name="s_city" size="10" value="<?= htmlentities($_REQUEST['s_city']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Search by State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Search by Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
-                        <?= makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", 1); ?>
-                        <button type="button" value="Search" title="Search Scripts" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadLeads();return false;">Search</button>
+                        <input type="text" class="form_control" placeholder="First Name.." name="s_firstname" size="5" value="<?= htmlentities($_REQUEST['s_firstname']) ?>"/>
+                        <input type="text" class="form_control" placeholder="Last Name.." name="s_lastname" size="5" value="<?= htmlentities($_REQUEST['s_lastname']) ?>"/>
+                        <input type="text" class="form_control" placeholder="Lead ID.." name="s_lead_id" size="5" value="<?= htmlentities($_REQUEST['s_lead_id']) ?>"/>
+                        <input type="text" class="form_control" placeholder="Phone #.." name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
+                        <input type="text" class="form_control" placeholder="City.." name="s_city" size="10" value="<?= htmlentities($_REQUEST['s_city']) ?>"/>
+                        <input type="text" class="form_control" placeholder="State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
+                        <input type="text" class="form_control" placeholder="Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
+                        <?= makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", "[Select Office]"); ?>
+                        <button type="button" value="Search" title="Search Leads" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadLeads();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetLeadForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadLeads();return false;">Reset</button>
                     </div>
                     <div class="input-group input-group-sm">
-                        <select name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
-                            <option value="date">Date</option>
-                            <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range</option>
-                            <option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range</option>
+                        <select title="Select Date Mode" name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
+                            <option value="date">Date Mode</option>
+                            <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
+                            <option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range Mode</option>
                             <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
                         </select>
                         <span id="date1_span">
@@ -507,38 +488,35 @@ class LeadManagement
                 </div>
             </form>
         </div>
-        <script>
+        <div id="dialog-modal-edit_lead" title="Editing Lead"></div>
+       <script>
             $(function () {
                 $("#dialog-modal-edit_lead").dialog({
                     autoOpen: false,
-                    width: 780,
+                    width: 'auto',
                     height: 420,
                     modal: false,
                     draggable: true,
                     resizable: false,
+                    position: {my: 'center', at: 'center', of: '#main-container'},
                     close: function (event, ui) {
-
                         hideAudio();
-
                     }
                 });
-
                 <?
                 if(($leadid = intval($_REQUEST['auto_open_lead'])) > 0){
-
-                ?>displayEditLeadDialog(<?=$leadid?>, 'general');<?
-                }
-
                 ?>
-
-
+                displayEditLeadDialog(<?=$leadid?>, 'general');<?
+                }
+                ?>
             });
-
-
+            $('#s_cluster_id').attr('title', 'Select Cluster');
+            $('#s_campaign_id').attr('title', 'Select Campaign');
+            $('#s_status').attr('title', 'Select Status');
+            $('#s_office_id').attr('title', 'Select Office');
             loadLeads();
-
-
-        </script><?
+        </script>
+        <?
 
     }
 

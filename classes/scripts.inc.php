@@ -285,9 +285,9 @@ class Scripts{
                 <div class="bg-info-light nod" id="script_search_table">
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_scripts"/>
-                        <input type="text" class="form-control" placeholder="Search by Name.." name="s_name" value="<?=htmlentities($_REQUEST['s_name'])?>" />
-                        <input type="text" class="form-control" placeholder="Search by Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
-                        <input type="text" class="form-control" placeholder="Search by Keys.." name="s_keys" value="<?= htmlentities($_REQUEST['s_keys']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?=htmlentities($_REQUEST['s_name'])?>" />
+                        <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Keys.." name="s_keys" value="<?= htmlentities($_REQUEST['s_keys']) ?>"/>
                         <?=$_SESSION['campaigns']->makeDD('s_campaign_id',$_REQUEST['s_campaign_id'],'',"togVoiceDD(this.form)",0, 1);?>
                         <select class="custom-select-sm" id="s_voice_id" name="s_voice_id" onchange="updateLanguage(this.form)">
 					        <option value="">[Loading...]</option>

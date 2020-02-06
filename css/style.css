@@ -633,4 +633,8 @@ td.countsRow {
 .dataTables_wrapper {
     position: relative !important;
 }
+.btn {
+    margin-left: 1em;
+    margin-right: 1em;
+}
 
