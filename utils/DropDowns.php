@@ -213,11 +213,10 @@
         return $out;
     }
 
-    function makeOfficeDD($name, $selected, $css, $onchange, $blank_option = 1, $size = 0)
-    {
+    function makeOfficeDD($name, $selected, $css, $onchange, $blank_option = 1, $size = 0){
         $size = intval($size);
 
-        if (!$_SESSION['offices_data']) {
+        //if (!$_SESSION['offices_data']) {
             connectPXDB();
 
             $res = query("SELECT name, id FROM offices WHERE `enabled`='yes'");
@@ -227,7 +226,7 @@
             }
 
             $_SESSION['offices_data'] = $rowarr;
-        }
+        //}
 
         $out = '<select name="' . $name . '" id="' . $name . '" ';
 

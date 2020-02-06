@@ -517,6 +517,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     if (tmphrs >= 12) {
                         datestring = ((tmphrs == 12) ? tmphrs : (tmphrs - 12)) + ":" + tmpmin + "pm";
                     } else {
+                    	tmphrs = (tmphrs == 0)?12:tmphrs;
                         datestring = (tmphrs) + ":" + tmpmin + "am";
                     }
                     datestring += " " + (newDate.getMonth() + 1) + "/" + newDate.getDate() + "/" + newDate.getFullYear();

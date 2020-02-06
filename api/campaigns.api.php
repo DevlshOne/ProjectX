@@ -126,6 +126,10 @@ class API_Campaigns{
 				$dat['warm_transfers'] = ($_POST['warm_transfers'] == 'yes')?'yes':'no';
 			}
 
+			if(isset($_POST['verifier_mode'])){
+				$dat['verifier_mode'] = ($_POST['verifier_mode'] == 'yes')?'yes':'no';
+			}
+
 			$dat['type'] = trim($_POST['type']);
 
 

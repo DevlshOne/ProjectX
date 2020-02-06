@@ -131,6 +131,8 @@ class SalesManagement{
 								"?get=sales_management&"+
 								"mode=xml&"+
 
+								's_id='+escape(frm.s_id.value)+"&"+
+								's_lead_tracking_id='+escape(frm.s_lead_tracking_id.value)+"&"+
 								's_lead_id='+escape(frm.s_lead_id.value)+"&"+
 								's_campaign_id='+escape(frm.s_campaign_id.value)+"&"+
 
@@ -284,7 +286,9 @@ class SalesManagement{
 				frm.s_cluster_id.selectedIndex = 0;
 				frm.s_campaign_id.selectedIndex = 0;
 				frm.s_lead_id.value = '';
-
+				frm.s_id.value = '';
+				frm.s_lead_tracking_id.value = '';
+				
 				frm.s_agent_username.value = '';
 				frm.s_verifier_username.value = '';
 
@@ -426,6 +430,8 @@ class SalesManagement{
 					<div id="total_count_div"></div>
 
 				</td>
+				<th class="row2">SALE ID</th>
+				<th class="row2">PX ID</th>
 				<th class="row2">Cluster</th>
 				<th class="row2">Campaign</th>
 				<th class="row2">Is Paid?</th>
@@ -443,6 +449,8 @@ class SalesManagement{
 				</td>
 			</tr>
 			<tr>
+				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
+				<td align="center"><input type="text" name="s_lead_tracking_id" size="5" value="<?=htmlentities($_REQUEST['s_lead_tracking_id'])?>"></td>
 				<td align="center">
 					<?
 						echo makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', ""); //loadLeads();

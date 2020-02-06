@@ -148,7 +148,8 @@ class DBAPI {
 	public $sales_management;
 	
 	public $process_tracker;
-	
+
+	public $rousting_report;
 	
 	
 	
@@ -407,8 +408,9 @@ class DBAPI {
 		
 		include_once($_SESSION['site_config']['basedir']."dbapi/process_tracker.db.php");
 		$this->process_tracker = new ProcessTrackerAPI();
-		
-		
+
+        include_once($_SESSION['site_config']['basedir']."dbapi/rousting_report.db.php");
+        $this->rousting_report = new RoustingReportAPI();
 		
 		
 	}
@@ -704,7 +706,7 @@ class DBAPI {
 			if(!is_numeric($val) && $val === null){
 				$out.= "`$key`=NULL";
 			}else{
-				$out.= "`$key`='".addslashes($val)."'";
+				$out.= "`$key`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$val)."'";
 			}
 			
 			//if($val != 'NULL')
@@ -716,6 +718,31 @@ class DBAPI {
 		$out .= $endsql.$extra_where;
 		
 		#jsAlert('OUT to Database from db.inc ' . $out);
+		return $this->execSQL($out);
+	}
+	
+	function aeditByField($field,$id,$assoarray,$table,$extra_where=""){
+		$extra_where = trim($extra_where);
+		
+		$startsql	= "UPDATE `$table` SET ";
+		$endsql		= " WHERE $field='$id'".((strlen($extra_where) > 0)?' '.$extra_where:'');
+		
+		$out = $startsql;
+		$x=0;
+		foreach($assoarray as $key=>$val){
+			//$out.= "`$key`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$val)."'";
+			
+			if(!is_numeric($val) && $val === null){
+				$out.= "`$key`=NULL";
+			}else{
+				$out.= "`$key`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$val)."'";
+			}
+			
+			$out.=($x+1<count($assoarray))?',':'';
+			$x++;
+		}
+		$out .= $endsql;
+		#print $out;
 		return $this->execSQL($out);
 	}
 	

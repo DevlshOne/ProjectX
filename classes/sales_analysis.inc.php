@@ -12,6 +12,7 @@ class AgentInfo{
 	
 	var $username;
 	var $cluster_array;
+	var $basedir = "../";
 	
 	
 	function AgentInfo($user, $cluster_id){
@@ -82,10 +83,21 @@ class SalesAnalysis{
 		return -1;
 	}
 	
-
-	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
+	
+	function generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '', $output_method = 'report') {
+		
+		## VALIDATE PASSED DATA JUST INCASE
+		$stime = intval($stime);
+		$etime = intval($etime);
+		//$campaign_code = intval($campaign_code);
+		//$agent_cluster_id = intval($agent_cluster_id);
+		$user_team_id = intval($user_team_id);
+		$combine_users = intval($combine_users);
+		//$user_group = intval($user_group);
+		//$ignore_group = intval($ignore_group);
+		
+		
 		$campaign_id = 0;
-		//echo "Calling Sales Analysis->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group,$vici_campaign_code, $ignore_arr, $vici_campaign_id)<br />\n";
 		
 		connectPXDB();
 		
@@ -182,20 +194,25 @@ class SalesAnalysis{
 		}
 		
 		
-		if($agent_cluster_id > -1){
+		if($agent_cluster_id > -1 || (is_array($agent_cluster_id) && $agent_cluster_id[0] != -1) ){
 			
 			
 			if(is_array($agent_cluster_id)){
 				
-				$sql_cluster = " AND ( ";
-				$sql_agent_cluster = " AND ( ";
+				$sql_cluster = " AND agent_cluster_id IN( ";
+				$sql_agent_cluster = " AND vici_cluster_id IN( ";
 				$x=0;
 				foreach($agent_cluster_id as $cidx){
 					
-					if($x++ > 0)$sql_cluster .= " OR ";
+					if($cidx == "-1")break;
 					
-					$sql_cluster .= " agent_cluster_id='".$_SESSION['site_config']['db'][$cidx]['cluster_id']."' ";
-					$sql_agent_cluster .= " vici_cluster_id='".$_SESSION['site_config']['db'][$cidx]['cluster_id']."' ";
+					if($x++ > 0){
+						$sql_cluster .= ",";
+						$sql_agent_cluster .= ",";
+					}
+					
+					$sql_cluster .= $_SESSION['site_config']['db'][$cidx]['cluster_id'];
+					$sql_agent_cluster .= $_SESSION['site_config']['db'][$cidx]['cluster_id'];
 					
 				}
 				
@@ -203,8 +220,8 @@ class SalesAnalysis{
 				$sql_agent_cluster .= ") ";
 				
 				if($x == 0){
-					$sql_cluster .= "";
-					$sql_agent_cluster .= "";
+					$sql_cluster = "";
+					$sql_agent_cluster = "";
 				}
 				
 			}else{
@@ -227,14 +244,12 @@ class SalesAnalysis{
 		}
 		
 		
-		//print_r($sql_user_team_list);
 		
 		$sql_user_group_for_activity_join = '';
 		$sql_user_group_lmt = '';
 		
 		if($user_group){
 			
-			//print_r($user_group);
 			
 			if(is_array($user_group)){
 				
@@ -338,10 +353,7 @@ class SalesAnalysis{
 		$ofcsql.
 		//	(($verifier_cluster_id > -1)?" AND verifier_cluster_id='".$_SESSION['site_config']['db'][$verifier_cluster_id]['cluster_id']."' ":"").
 		"";
-		
-		//echo $where;
-		
-		
+			
 		
 		
 		
@@ -358,46 +370,6 @@ class SalesAnalysis{
 		$agent_array = array();
 		$cluster_array=array();
 		
-		
-		// 		$sql = "SELECT DISTINCT(transfers.agent_username), transfers.agent_cluster_id FROM transfers ".
-		// 				" LEFT JOIN `lead_tracking` ON `lead_tracking`.id = transfers.lead_tracking_id ".
-		// 				" WHERE transfers.xfer_time BETWEEN '$stime' AND '$etime' ".
-		// 				" AND transfers.agent_cluster_id > 0 ".
-		
-		// 				$sql_vici_campaign.
-		
-		// 				// EXCLUDE ANYTHING ROUSTING RELATED
-		// 				" AND transfers.verifier_dispo != 'SALECC' ".
-		
-		// 				//" AND `account_id`='".$_SESSION['account']['id']."' ".
-		// 				$sql_cluster.
-		// 				$sql_campaign.
-		// 				$sql_user_group.
-		// 				$sql_ignore_group.
-		// 				$ofcsql.
-		// 				" ORDER BY agent_username ASC";
-		
-		
-		// 		$sql = "SELECT DISTINCT(activity_log.username) AS agent_username, IF(transfers.agent_cluster_id=0, activity_log.vici_cluster_id, transfers.agent_cluster_id) as agent_cluster_id FROM activity_log ".
-		// 				" LEFT JOIN `transfers` ON transfers.agent_username = activity_log.username ".
-		// 				" LEFT JOIN `lead_tracking` ON `lead_tracking`.id = transfers.lead_tracking_id ".
-		// 				" WHERE activity_log.time_started BETWEEN '$stime' AND '$etime'".
-		// 				//" AND transfers.xfer_time BETWEEN '$stime' AND '$etime' ".
-		// 				//" AND CLUSTERID > 0 ".
-		
-		// 				$sql_vici_campaign.
-		
-		// 				// EXCLUDE ANYTHING ROUSTING RELATED
-		// 		" AND transfers.verifier_dispo != 'SALECC' ".
-		
-		// 		//" AND `account_id`='".$_SESSION['account']['id']."' ".
-		// 		$sql_cluster.
-		// 		$sql_campaign.
-		// 		//$sql_user_group.
-		// 		$sql_user_group_for_activity_join.
-		// 		$sql_ignore_group.
-		// 		$ofcsql.
-		// 		" ORDER BY agent_username ASC";
 		
 		
 		
@@ -427,10 +399,8 @@ class SalesAnalysis{
 		"".
 		"";
 		
-		//print_r($sql_user_team_list);
 		
 		
-		//echo $sql."<br />\n";
 		$res = $_SESSION['dbapi']->ROquery($sql);
 		//$res = query("SELECT DISTINCT(agent_username),agent_cluster_id FROM sales ".$where." ORDER BY agent_username ASC");
 		while($row = mysqli_fetch_row($res)){
@@ -927,19 +897,115 @@ class SalesAnalysis{
 				'total_paid_hr' => $total_paid_hr,
 				'total_wrkd_hr' => $total_wrkd_hr,
 		);
-		
-		//print_r($totals);
-		
+			
 		
 		// SORTING MOTHERFUCKER
 		uasort($output_array, 'paidSorter');//($a, $b)
 		
-		
-		return array($output_array, $totals);
+		## RETURN THE CORRECTLY FORMATTED DATA BASED ON OUTPUT METHOD
+		switch ($output_method){
+
+			default:
+			case 'report':
+
+				## DEFAULT OUTPUT METHOD
+				return array($output_array, $totals);
+				break;
+
+			case 'xml':
+
+				if($output_array && $totals){
+					## OUTPUT REPORT DATA IN XML FORMAT
+					// $xml = new SimpleXMLElement('<Results/>');
+					// $this->to_xml($xml, $output_array);
+
+					// $xml_totals = new SimpleXMLElement('<Totals/>');
+					// $this->to_xml($xml_totals, $totals);
+
+					// return $xml->asXML()."\n".$xml_totals->asXML();
+
+					return $this->renderGenerateDataXML($output_array, $totals);
+
+				}
+				break;
+
+			case 'json':
+
+				if($output_array){
+
+					## OUTPUT REPORT DATA IN JSON FORMAT
+					return json_encode($output_array, JSON_PRETTY_PRINT)."\n".json_encode($totals, JSON_PRETTY_PRINT)."\n";
+					
+				}
+				break;
+
+
+		}	
+
 	}
-	
-	
-	
+
+
+	function renderGenerateDataXML($results_array = [], $totals_array = []){
+		
+		# OUTPUT THE GENERATE DATA RESULTS AS FORMATTED XML
+		# ADD CALCULATIONS LIKE WE DO WITH THE HTML REPORT
+		# ADD TOTALS AT THE END
+		$outxml = '';
+
+		$outxml_head = '<SalesAnalysisReport>';
+		$outxml_foot = '</SalesAnalysisReport>';
+
+		$outxml_result_head = '<Result>';
+		$outxml_result_foot = '</Result>';
+
+		$outxml.=$outxml_head;
+		
+		foreach($results_array as $result_value){
+
+			if(is_array($result_value)){
+
+				foreach($result_value as $key => $val){
+				
+					$outxml.=$outxml_result_head;
+					if($key == 'cluster_id'){continue;}
+
+					$outxml.=$key.' '.$val;
+
+					$outxml.=$outxml_result_foot;
+
+				}
+
+			}
+
+		}
+
+		$outxml.=$outxml_foot;
+
+
+		return $outxml;
+
+
+
+
+
+	}
+	// function to_xml(SimpleXMLElement $object, array $data) {   
+
+	// 	## ARRAY TO XML
+	// 	foreach ($data as $key => $value) {
+	// 		if (is_array($value)) {
+	// 			$new_object = $object->addChild($key);
+	// 			$this->to_xml($new_object, $value);
+	// 		} else {
+	// 			// if the key is an integer, it needs text with it to actually work.
+	// 			if (is_numeric($key)) {
+	// 				$key = "key_$key";
+	// 			}
+
+	// 			$object->addChild($key, $value);
+	// 		}   
+	// 	}   
+	// }
 	
 	
 	function makeReport(){
@@ -1035,7 +1101,7 @@ $(function() {
 						<th>Agent Cluster:</th>
 						<td><?php
 
-                            echo $this->makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0)?-1:$_REQUEST['agent_cluster_id'], '', ""); ?></td>
+                            echo $this->makeClusterDD("agent_cluster_id[]", (!isset($_REQUEST['agent_cluster_id']) || count($_REQUEST['agent_cluster_id']) <= 0)?-1:$_REQUEST['agent_cluster_id'], '', "", 7); ?></td>
 					</tr>
 					<?/*<tr>
 						<th>Verifier Cluster:</th>
@@ -1179,7 +1245,7 @@ $(function() {
 //             }
 
             ## AGENT CLUSTER
-            $agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
+            //$agent_cluster_id = intval($_REQUEST['agent_cluster_id']);
 
 
             ## CAMPAIGN
@@ -1207,7 +1273,7 @@ $(function() {
             
             $user_team_id = intval($_REQUEST['user_team_id']);
             ## GENERATE AND DISPLAY REPORT
-            $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code, $ignore_arr, $vici_campaign_id);
+            $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $_REQUEST['agent_cluster_id'], $user_team_id, $combine_users, $_REQUEST['user_group'], $_REQUEST['ignore_group'], $vici_campaign_code, $ignore_arr, $vici_campaign_id);
 
             /*?><div style="border:1px dotted #999;padding:5px;margin:5px;width:950px"><?*/
 
@@ -1250,10 +1316,20 @@ $(function() {
 
 
     function makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
-    	//            print_r(func_get_args());
+		
+		
+		## GENERATE DATA FROM LOCAL FUNCTION
+		
+		list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code, $ignore_arr, $vici_campaign_id);
+		
+		
+		//            print_r(func_get_args());
     	echo '<span style="font-size:9px">makeHTMLReport(' . "$stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code,$ignore_arr,$vici_campaign_id) called</span><br /><br />\n";
 
-    	list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code, $ignore_arr, $vici_campaign_id);
+    	//list($agent_data_arr, $totals) = $this->generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code, $ignore_arr, $vici_campaign_id);
+
+
+
 
     	if (count($agent_data_arr) < 1) {
     		return NULL;
@@ -1546,21 +1622,33 @@ $(function() {
 
 
 
-    public function makeClusterDD($name, $selected, $css, $onchange)
+    public function makeClusterDD($name, $selected, $css, $onchange, $size = 0)
     {
 		$out = '<select name="'.$name.'" id="'.$name.'" ';
 
 		$out .= ($css)?' class="'.$css.'" ':'';
 		$out .= ($onchange)?' onchange="'.$onchange.'" ':'';
+		
+		if($size > 0){
+			$out .= " MULTIPLE size=\"".$size."\" ";
+		}
+		
 		$out .= '>';
 
-		$out .= '<option value="-1" '.(($selected == '-1')?' SELECTED ':'').'>[All]</option>';
+		$out .= '<option value="-1" '.(is_array($selected)?((in_array(-1, $selected))?' SELECTED ':''):(($selected == '-1')?' SELECTED ':'')).'>[All]</option>';
 
 
 		foreach($_SESSION['site_config']['db'] as $dbidx=>$db){
 
 			$out .= '<option value="'.$dbidx.'" ';
-			$out .= ($selected == $dbidx)?' SELECTED ':'';
+			
+			if(is_array($selected)){
+				
+				$out .= (in_array($dbidx, $selected))?' SELECTED ':'';
+				
+			}else{
+				$out .= ($selected == $dbidx)?' SELECTED ':'';
+			}
 			$out .= '>'.htmlentities($db['name']).'</option>';
 		}
 
@@ -2051,3 +2139,4 @@ $(function() {
 
 
 } // END OF CLASS
+
