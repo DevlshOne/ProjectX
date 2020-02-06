@@ -98,7 +98,7 @@ class EmployeeHours{
 					return true;
 					break;
 
-				case 'agent_id':
+				//case 'agent_id':
 				case 'campaign_id':
 				case 'cluster_id':
 				case 'office_id':
@@ -222,6 +222,17 @@ class EmployeeHours{
 			}
 
 
+			function addMoreUsers(cnt){
+
+				for(var x=0;x < cnt;x++){
+
+					$('#additional_users_span').append('<input type="text" size="5" name="agent_id[]" id="agent_id" /><br />');
+					
+				}
+
+				applyUniformity();
+			}
+
 
 		</script>
 
@@ -234,9 +245,12 @@ class EmployeeHours{
 		<table border="0" align="center">
 		<tr>
 			<th align="left">Agent:</th>
-			<td><?
+			<td>
+			
+				<input type="text" size="5" name="agent_id[]" id="agent_id" />&nbsp;<input type="button" value="Add more users" onclick="addMoreUsers(5)" /><br />
+				<span id="additional_users_span"></span><?
 
-				echo makeUserDD('agent_id', '' , '', '[Select user]');
+				//echo makeUserDD('agent_id', '' , '', '[Select user]');
 
 			?></td>
 		</tr>

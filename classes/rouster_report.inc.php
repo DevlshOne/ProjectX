@@ -313,6 +313,8 @@
                     ## HANGUPS - OUT OF ALL THE TRANSFERS, HOW MANY WHERE HANGUPS
                     $sql = "SELECT COUNT(`id`) FROM `lead_tracking` " . $lead_where . " AND dispo='hangup' ";
                     list($hangup_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
+                    
+                    
                     ## GET TOTAL DISPO COUNT FOR USE IN CONTACT %
                     $sql = "SELECT COUNT(`id`) FROM `lead_tracking` " . $lead_where . " AND (dispo IN('NI', 'VOID', 'DNC', 'SALE', 'PAIDCC', 'SALECC')) ";
                     list($contact_cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
@@ -365,6 +367,10 @@
                         //			" AND `account_id`='".$_SESSION['account']['id']."' ".
                         " AND `micro_time` BETWEEN '$stmicro' AND '$etmicro' " . " AND `result`='success' ");
 
+                        
+                    
+                        
+                        
                     $agent_array[$username]['sale_cnt'] = $cnt;
                     $agent_array[$username]['paid_sale_total'] = $paid_sales_amount;
                     $agent_array[$username]['paid_sale_cnt'] = $paid_sales_cnt;
@@ -393,6 +399,33 @@
                     //$agent_array[$username]['bump_percent'] = ($paid_sales_cnt > 0)?round( (($bump_count/$paid_sales_cnt)*100) , 2):0;
 
                     $agent_array[$username]['bump_count'] = $bump_count;
+                    
+                    
+                    
+                    
+                    // CONVERSION PERCENTAGE MATH
+                    //basically (PAIDCC+SALECC)/(VOID,NI,DNC)
+                    $agent_array[$username]['conversion_percent'] = 0;
+                    try{
+                    	
+                    	//echo $username." Calculating Conversion %... ";
+                    	
+                    	//echo "Sales=$cnt Contacts=$contact_cnt\n";
+                    	
+                    	$doodooheads = ($contact_cnt - $cnt);
+                    	$agent_array[$username]['conversion_percent'] = ($doodooheads > 0)?round( floatval(($cnt / $doodooheads) * 100), 2):0;
+                    	
+                    	
+                    	
+                    	//$agent_array[$username]['conversion_percent'] = ($agent_array[$username]['conversion_percent'] < )
+
+                    }catch(Exception $ex){}
+                    
+                    
+                    $agent_array[$username]['conversion_percent'] = (floatval($agent_array[$username]['conversion_percent']) <= 0 || $agent_array[$username]['conversion_percent'] == 'NaN')?0:$agent_array[$username]['conversion_percent'];
+
+                    //echo "Sales=$cnt Contacts=$contact_cnt Result: ".$agent_array[$username]['conversion_percent']." \n";
+                    
 
                 }
 
@@ -562,6 +595,8 @@
                 $out[$x]['paid_sale_cnt'] = $agent['paid_sale_cnt'];
                 $out[$x]['paid_sale_total'] = $agent['paid_sale_total'];
 
+                $out[$x]['conversion_percent'] = $agent['conversion_percent'];
+                
                 $out[$x]['call_cnt'] = $agent['call_cnt'];
                 $out[$x]['hangup_cnt'] = $agent['hangup_cnt'];
                 $out[$x]['contact_cnt'] = $agent['contact_cnt'];
@@ -677,6 +712,7 @@
                                 <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Paid/$Hour</th>
                                 <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Worked/$Hour</th>
                                 <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">$PaidCC</th>
+								<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Convert%</th>
                                 <?
                                     /**<th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Hangups</th>
                                      * <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Declines</th>**/ ?>
@@ -713,6 +749,8 @@
                                 $running_total_activity_time = 0;
                                 $running_total_total_time = 0;
 
+                                $running_total_convert_percent = 0;
+                                
                                 $running_total_bumps = 0;
                                 $running_total_pos_bump_agent_amount = 0;
                                 $running_total_pos_bump_verifier_amount = 0;
@@ -810,6 +848,7 @@
                                     $report_data[$x1]['ans_percent'] = $row['ans_percent'];
                                     $report_data[$x1]['worked_calls_hr'] = $row['worked_calls_hr'];
                                     $report_data[$x1]['contact_percent'] = $contact_percent;
+                                    $report_data[$x1]['conversion_percent'] = $row['conversion_percent'];
                                     $report_data[$x1]['paid_sale_cnt'] = $row['paid_sale_cnt'];
                                     $report_data[$x1]['paidcc_per_hour'] = $paidcc_per_hour;
                                     $report_data[$x1]['paidcc_per_worked_hour'] = $paidcc_per_worked_hour;
@@ -857,6 +896,8 @@
                                     $running_total_paid_sales += $row['paid_sale_cnt'];
                                     $running_total_reviews += $reviewcnt;
 
+                                    $running_total_convert_percent += $row['conversion_percent'];
+                                    
                                     $running_paid_time += $row['paid_time'];
 
                                     $percent_paidcc_calls = ($row['sale_cnt'] <= 0) ? 0 : ($row['paid_sale_cnt'] / $row['sale_cnt']) * 100;
@@ -1070,6 +1111,11 @@
                                     <td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?= number_format($report_data_row['paidcc_per_hour'], 2) ?></td>
                                     <td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?= number_format($report_data_row['paidcc_per_worked_hour'], 2) ?></td>
                                     <td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?= number_format($report_data_row['paid_sale_total'], 2) ?></td>
+
+                                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= number_format($report_data_row['conversion_percent'], 2) ?>%</td>
+                                  
+                                    
+                                    
                                     <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= $report_data_row['total_activity_time'] ?></td>
                                     <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= $report_data_row['total_incall_time'] ?></td>
                                     <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
@@ -1125,6 +1171,9 @@
 
                             ?></tbody><?
 
+                            
+                            
+                            
                                 $total_close_percent = (($running_total_calls <= 0) ? 0 : number_format(round((($running_total_sales) / ($running_total_calls)) * 100, 2), 2));
 
                                 $total_adj_close_percent = ((($running_total_calls - $running_total_hangups) <= 0) ? 0 : number_format(round((($running_total_sales) / ($running_total_calls - $running_total_hangups)) * 100, 2), 2));
@@ -1149,6 +1198,8 @@
                                 //			$total_paidcc_per_worked_hour = ($running_total_total_time <= 0)?0:($running_total_paid_sales_amount / ($running_total_total_time/3600));//($running_t_max/3600));
                                 $total_paidcc_per_worked_hour = ($running_total_activity_time <= 0) ? 0 : ($running_total_paid_sales_amount / ($running_total_activity_time / 3600));//($running_t_max/3600));
 
+                                
+                                $total_convert_percent = ($running_total_convert_percent <= 0)?0:round( ($running_total_convert_percent / count($report_data)), 2);
                                 // TOTALS ROW
                             ?>
                             <tfoot>
@@ -1183,8 +1234,11 @@
 
 
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right">$<?= number_format($running_total_paid_sales_amount, 2) ?></td>
-;
 
+                                <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($total_convert_percent, 2) ?>%</td>
+                                
+                                $
+                                
                                 <?
                                     /**
                                      * <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_hangups)?></td>

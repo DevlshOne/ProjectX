@@ -368,7 +368,7 @@ if(!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_REQ
                                         <a class="dropdown-item" href="?area=list_tools&tool=manage_lists&no_script=1">Vici List Management</a>
                                         <a class="dropdown-item" href="?area=list_tools&tool=tasks&no_script=1">Task / Status Management</a>
                                         <a class="dropdown-item" href="?area=list_tools&tool=load_list&no_script=1">Import Leads</a>
-                                        <a class="dropdown-item" href="?area=list_tools&tool=view_importss&no_script=1">List Imports / Counts</a>
+                                        <a class="dropdown-item" href="?area=list_tools&tool=view_imports&no_script=1">List Imports / Counts</a>
                                         <a class="dropdown-item" href="?area=list_tools&tool=performance_reports&no_script=1">List Performance Report</a>
                                         <a class="dropdown-item" href="?area=list_tools&tool=vici_report&no_script=1">Vicidial List Count</a>
                                     </div>
