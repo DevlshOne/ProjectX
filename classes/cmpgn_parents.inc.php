@@ -211,7 +211,6 @@
                     frm.s_name.value = '';
                 }
             </script>
-            <div id="dialog-modal-add-campaign-parent" title="Adding new Campaign Parent" class="nod"></div>
             <div class="block">
                 <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCampaign_parents();return false">
                     <input type="hidden" name="searching_campaign_parents">
@@ -221,6 +220,12 @@
                         <div id="campaign_parents_prev_td" class="page_system_prev"></div>
                         <div id="campaign_parents_page_td" class="page_system_page"></div>
                         <div id="campaign_parents_next_td" class="page_system_next"></div>
+                        <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>_pagesizeDD" id="<?=$this->order_prepend?>_pagesizeDD" onchange="<?$this->index_name=0?>;loadCampaign_parents(); return false;">' +
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
                     </div>
                     <div class="block-content">
                         <table class="table table-sm table-striped" id="campaign_parent_table">
@@ -234,8 +239,10 @@
                     </div>
                 </form>
             </div>
+            <div id="dialog-modal-add-campaign-parent" title="Adding new Campaign Parent" class="nod"></div>
             <script>
                 loadCampaign_parents();
+                $('#<?=$this->order_prepend?>_pagesizeDD').val(<?=$this->order_prepend?>pagesize);
             </script>
             <?
         }

@@ -458,3 +458,8 @@ function makeTimebar(basename,mode=0, curDate,stack, extra_attr){
 
 	return output;
 }
+
+function makePageSizeDD(pfx, pgsz, ldScr) {
+	debugger;
+	return '';
+}

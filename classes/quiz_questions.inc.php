@@ -67,12 +67,6 @@
             }
 
         }
-
-
-
-
-
-
         function listEntrys(){
             ?>
             <script>
@@ -123,21 +117,14 @@
                     var question_pagesize = 20;
                     loadAjaxData(getQuestionsURL(),'parseQuestions');
                 }
-
-
                 /**
                  * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
                  */
                 var <?=$this->order_prepend?>totalcount = 0;
                 function parseQuestions(xmldoc){
-
                     <?=$this->order_prepend?>totalcount = parseXMLData('question',QuestionsTableFormat,xmldoc);
-
-
                     // ACTIVATE PAGE SYSTEM!
                     if(<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize){
-
-
                         makePageSystem('questions',
                             '<?=$this->index_name?>',
                             <?=$this->order_prepend?>totalcount,
@@ -145,24 +132,14 @@
                             <?=$this->order_prepend?>pagesize,
                             'loadQuestions()'
                         );
-
                     }else{
-
                         hidePageSystem('questions');
-
                     }
-
                     eval('questions_loading_flag = false');
                 }
-
-
                 function handleQuestionListClick(id){
-
                     displayAddQuestionDialog(id);
-
                 }
-
-
                 function displayAddQuestionDialog(id){
                     var objname = 'dialog-modal-add-question';
                     if(id > 0){
@@ -185,9 +162,8 @@
                     questionsrchtog = !questionsrchtog;
                     ieDisplay('question_search_table', questionsrchtog);
                 }
-
             </script>
-            <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOSTSTRAP -->
+            <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
             <div class="block">
                 <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadQuestions();return false;">
                     <div class="block-header bg-primary-light">
@@ -212,18 +188,18 @@
                     <div class="block-content">
                         <table class="table table-sm table-striped" id="question_table">
                             <tr>
-                                <th class="row2 text-center"><?=$this->getOrderLink('quiz_id')?>Quiz</a></th>
+                                <th class="row2 text-left"><?=$this->getOrderLink('quiz_id')?>Quiz</a></th>
                                 <th class="row2 text-left"><?=$this->getOrderLink('question')?>Question</a></th>
                                 <th class="row2 text-center"><?=$this->getOrderLink('answer')?>Answer</a></th>
-                                <th class="row2 text-left"><?=$this->getOrderLink('filename')?>Filename</a></th>
-                                <th class="row2 text-left"><?=$this->getOrderLink('duration')?>Duration</a></th>
+                                <th class="row2 text-center"><?=$this->getOrderLink('filename')?>Filename</a></th>
+                                <th class="row2 text-center"><?=$this->getOrderLink('duration')?>Duration</a></th>
                                 <th class="row2 text-center">&nbsp;</th>
                             </tr>
                         </table>
                     </div>
                 </form>
             </div>
-            <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOSTSTRAP -->
+            <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
             <div id="dialog-modal-add-question" title="Adding new Question" class="nod"></div>
             <script>
                 $("#dialog-modal-add-question").dialog({
@@ -236,7 +212,9 @@
                     position: {my: 'center', at: 'center', of: '#main-container'},
                 });
                 loadQuestions();
-            </script><?
+                $('#s_quiz_id').addProp('title', 'Select Quiz ID');
+            </script>
+            <?
 
         }
 

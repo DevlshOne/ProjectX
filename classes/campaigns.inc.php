@@ -240,8 +240,7 @@ class Campaigns
             var campaign_delmsg = 'Are you sure you want to delete this campaign?';
             var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
             var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-            var <?=$this->index_name?> =
-            0;
+            var <?=$this->index_name?> = 0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
             var CampaignsTableFormat = [
                 ['id', 'text-center'],
@@ -330,10 +329,10 @@ class Campaigns
                     }
                 });
             }
-
             loadCampaigns();
+            $('#<?=$this->order_prepend?>_pagesizeDD').val(<?=$this->order_prepend?>pagesize);
         </script>
-        <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOSTSTRAP -->
+        <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <div class="block">
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCampaigns();return false">
                 <div class="block-header bg-primary-light">
@@ -342,6 +341,12 @@ class Campaigns
                     <div id="campaigns_prev_td" class="page_system_prev"></div>
                     <div id="campaigns_page_td" class="page_system_page"></div>
                     <div id="campaigns_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>_pagesizeDD" id="<?=$this->order_prepend?>_pagesizeDD" onchange="<?$this->index_name=0?>;loadCampaigns(); return false;">' +
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
                 </div>
                 <div class="block-content block-content-full">
                     <div id="DataTables_Campaign_Table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
@@ -361,7 +366,7 @@ class Campaigns
                 </div>
             </form>
         </div>
-        <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOSTSTRAP -->
+        <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <div id="dialog-modal-add-campaign" title="Adding new Campaign" class="nod"></div>
         <div id="dialog-modal-edit-campaign" title="Editing Campaign" class="nod">
             <div class="block-content block-content-full text-left">
