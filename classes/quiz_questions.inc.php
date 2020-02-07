@@ -184,7 +184,7 @@
                     <div class="bg-info-light nod" id="question_search_table">
                         <div class="input-group input-group-sm">
                             <input type="hidden" name="searching_question"/>
-                            <?=$this->makeDD('s_quiz_id',$_REQUEST['s_quiz_id'],'',"",0, "[All]");?>
+                            <?=$this->makeDD('s_quiz_id',$_REQUEST['s_quiz_id'],'',"",0, "[Select Quiz]");?>
                             <input type="text" class="form-control" placeholder="Question.." name="s_question" value="<?=htmlentities($_REQUEST['s_question'])?>" />
                             <input type="text" class="form-control" placeholder="Answer.." name="s_answer" value="<?= htmlentities($_REQUEST['s_answer']) ?>"/>
                             <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>

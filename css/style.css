@@ -637,4 +637,13 @@ td.countsRow {
     margin-left: 1em;
     margin-right: 1em;
 }
+.user-count-tile {
+    position: relative;
+    min-width: 296px !important;
+    padding-right: 14px;
+    padding-left: 14px;
+}
+.user-count-content {
+    padding: 0 0 0 0;
+}
 

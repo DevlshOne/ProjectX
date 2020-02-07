@@ -210,7 +210,7 @@ class HomeTileNotesClass
             }
         </script>
         <div id="dialog-modal-view_notes" title="Editing Note" class="nod"></div>
-        <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
+        <li id="tile_<?= $tidx ?>" class="user-count-tile">
             <div class="block block-rounded block-bordered">
                 <div class="block-header bg-primary text-left">
                     <h4 class="block-title">Notes</h4>

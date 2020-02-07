@@ -112,7 +112,7 @@ class HomeTileUserCountClass
             }
         </script>
         <div id="dialog-modal-edit_config" title="Editing Configuration" class="nod"></div>
-        <li id="tile_<?= $tidx ?>" class="col-sm-6 col-md-3">
+        <li id="tile_<?= $tidx ?>" class="user-count-tile">
             <div class="block block-rounded block-bordered">
                 <div class="block-header bg-primary text-left">
                     <h4 class="block-title">Users Online</h4>
@@ -126,7 +126,7 @@ class HomeTileUserCountClass
                         </button>
                     </div>
                 </div>
-                <div class="block-content">
+                <div class="block-content user-count-content">
                     <img src="graph.php?area=user_charts&max_mode=1&time_frame=<?= ($this->prefs['timeframe']) ? $this->prefs['timeframe'] : 'day' ?>&width=<?= ($this->tile_width - 6) ?>&height=<?= ($this->tile_height - 30) ?>"
                          border="0" height="<?= ($this->tile_height - 30) ?>" width="<?= ($this->tile_width - 6) ?>">
                 </div>

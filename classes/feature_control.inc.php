@@ -330,7 +330,7 @@ class FeatureControl
             $("#dialog-modal-add-feature").dialog({
                 autoOpen: false,
                 width: 'auto',
-                height: 420,
+                height: 'auto',
                 modal: false,
                 draggable: true,
                 resizable: false,

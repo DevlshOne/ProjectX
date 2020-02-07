@@ -178,15 +178,16 @@ class Scripts{
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load("index.php?area=scripts&add_script="+scriptid+"&printable=1&no_script=1");
 			}
 			function resetScriptForm(frm){
+			    frm.reset();
 				frm.s_keys.value='';
 				frm.s_name.value = '';
 				frm.s_filename.value = '';
-				frm.s_campaign_id.value = 0;
+				frm.s_campaign_id.value = null;
 				frm.s_voice_id.value = 0;
 				frm.s_screen_num.value=-1;
 				frm.s_variables.value = '';
 			}
-			var scriptsrchtog = true;
+			var scriptsrchtog = false;
 			function toggleScriptSearch(){
 				scriptsrchtog = !scriptsrchtog;
 				ieDisplay('script_search_table', scriptsrchtog);
@@ -202,7 +203,7 @@ class Scripts{
 				newopts[0] = document.createElement("OPTION");
 				if(ie)	obj.add(newopts[0]);
 				else	obj.add(newopts[0],null);
-				newopts[0].innerText	= '';
+				newopts[0].innerText	= '[Select Voice]';
 				newopts[0].value	= 0;
 				var curid=0;
 				for(x=0;x < item_id.length;x++){
@@ -288,12 +289,13 @@ class Scripts{
                         <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?=htmlentities($_REQUEST['s_name'])?>" />
                         <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
                         <input type="text" class="form-control" placeholder="Keys.." name="s_keys" value="<?= htmlentities($_REQUEST['s_keys']) ?>"/>
-                        <?=$_SESSION['campaigns']->makeDD('s_campaign_id',$_REQUEST['s_campaign_id'],'',"togVoiceDD(this.form)",0, 1);?>
+				        <input type="text" class="form-control" placeholder="Variables.." name="s_variables" value="<?=htmlentities($_REQUEST['s_variables'])?>">
+                        <?=$_SESSION['campaigns']->makeDD('s_campaign_id',$_REQUEST['s_campaign_id'],'',"togVoiceDD(this.form)", 0, "[Select Campaign]");?>
                         <select class="custom-select-sm" id="s_voice_id" name="s_voice_id" onchange="updateLanguage(this.form)">
 					        <option value="">[Loading...]</option>
 				        </select>
 				        <select class="custom-select-sm" name="s_screen_num">
-					        <option value="-1">[Show all]</option>
+					        <option value="-1">[Select Screen]</option>
 					        <option value="0">Quick Keys</option>
 					        <option value="1"<?=($_REQUEST['s_screen_num'] == 1)?' SELECTED ':''?>>Intro Screen</option>
 					        <option value="2"<?=($_REQUEST['s_screen_num'] == 2)?' SELECTED ':''?>>Screen 2</option>
@@ -301,7 +303,6 @@ class Scripts{
 					        <option value="4"<?=($_REQUEST['s_screen_num'] == 4)?' SELECTED ':''?>>Screen 4</option>
 					        <option value="5"<?=($_REQUEST['s_screen_num'] == 5)?' SELECTED ':''?>>Screen 5</option>
 				        </select>
-				        <input type="text" class="form-control" placeholder="Search by Variables.." name="s_variables" value="<?=htmlentities($_REQUEST['s_variables'])?>">
 				        <button type="button" value="Search" title="Search Scripts" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadScripts();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetScriptForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadScripts();return false;">Reset</button>
                     </div>

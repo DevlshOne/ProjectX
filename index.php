@@ -319,20 +319,20 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         }
                         if (checkAccess('ringing_calls')) {
                             ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=ringing_calls&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Ring Report</span>
-                                </a>
-                            </li>
+<!--                            <li class="nav-main-item">-->
+<!--                                <a class="nav-main-link" href="?area=ringing_calls&no_script=1" onclick="loadSection(this.href);return false">-->
+<!--                                    <span class="nav-main-link-name">Ring Report</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
                             <?
                         }
                         if (checkAccess('messages')) {
                             ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=messages&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Agent Messages</span>
-                                </a>
-                            </li>
+<!--                            <li class="nav-main-item">-->
+<!--                                <a class="nav-main-link" href="?area=messages&no_script=1" onclick="loadSection(this.href);return false">-->
+<!--                                    <span class="nav-main-link-name">Agent Messages</span>-->
+<!--                                </a>-->
+<!--                            </li>-->
                             <?
                         }
                         if (checkAccess('dialer_status')) {
