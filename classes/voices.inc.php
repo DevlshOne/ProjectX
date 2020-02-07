@@ -71,34 +71,19 @@ class Voices{
 		}
 
 	}
-
-
-
-
-
-
 	function listEntrys(){
-
-
 		?><script>
-
 			var voice_delmsg = 'Are you sure you want to delete this voice?';
-
 			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
-
-
 			var <?=$this->index_name?> = 0;
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-
 			var VoicesTableFormat = [
-
 				['name','align_left'],
 				['actor_name','align_left'],
 				['[get:language_name:language_id]','align_center'],
 				['[get:campaign_name:campaign_id]','align_center'],
 				['status','align_center'],
-
 				['[delete]','align_center']
 			];
 
@@ -108,15 +93,10 @@ class Voices{
 			function getVoicesURL(){
 
 				var frm = getEl('<?=$this->frm_name?>');
-
+                var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
 				return 'api/api.php'+
 								"?get=voices&"+
 								"mode=xml&"+
-
-								//'s_id='+escape(frm.s_id.value)+"&"+
-								//'s_name='+escape(frm.s_name.value)+"&"+
-								//'s_status='+escape(frm.s_status.value)+"&"+
-
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
@@ -199,121 +179,57 @@ class Voices{
 				}else{
 					$('#'+objname).dialog( "option", "title", 'Adding new Voice' );
 				}
-
-
-
 				$('#'+objname).dialog("open");
-
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
 				$('#'+objname).load("index.php?area=voices&add_voice="+voiceid+"&printable=1&no_script=1");
-
-				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
 			function resetVoiceForm(frm){
-
-//				frm.s_id.value='';
-//				frm.s_name.value = '';
-//				frm.s_status.value='active';
-
 			}
-
-
-
-
 		</script>
-		<div id="dialog-modal-add-voice" title="Adding new Voice" class="nod">
-		<?
-
-		?>
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadCampaigns();return false">
-			<input type="hidden" name="searching_voices">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr>
-			<td height="40" class="pad_left ui-widget-header">
-
-				<table border="0" width="100%" >
-				<tr>
-					<td>
-						Voices
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddVoiceDialog(0)">
-					</td>
-					<td align="right"><?
-						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-						<tr>
-							<td id="voices_prev_td" class="page_system_prev"></td>
-							<td id="voices_page_td" class="page_system_page"></td>
-							<td id="voices_next_td" class="page_system_next"></td>
-						</tr>
-						</table>
-
-					</td>
-				</tr>
-				</table>
-
-			</td>
-
-		</tr>
-		<?/**
-		<tr>
-			<td colspan="2"><table border="0" width="100%">
-			<tr>
-				<td rowspan="2"><font size="+1">SEARCH</font></td>
-				<th class="row2">ID</th>
-				<th class="row2">Name</th>
-				<th class="row2">Status</th>
-				<td><input type="submit" value="Search" name="the_Search_button"></td>
-			</tr>
-			<tr>
-				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-				<td align="center"><input type="text" name="s_name" size="20" value="<?=htmlentities($_REQUEST['s_name'])?>"></td>
-				<td align="center"><select name="s_status">
-					<option value="active">Active</option>
-					<option value="suspended">Suspended</option>
-					<option value="deleted">Deleted</option>
-				</select></td>
-				<td><input type="button" value="Reset" onclick="resetCampaignForm(this.form);resetPageSystem('<?=$this->index_name?>');loadCampaigns();"></td>
-			</tr>
-			</table></td>
-		</tr>**/
-
-		?></form>
-		<tr>
-			<td colspan="2"><table border="0" width="100%" id="voice_table">
-			<tr>
-				<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('actor_name')?>Voice Actor</a></th>
-				<th class="row2" width="150"><?=$this->getOrderLink('language_id')?>Language</a></th>
-				<th class="row2"><?=$this->getOrderLink('campaign_id')?>Campaign</a></th>
-				<th class="row2" width="100"><?=$this->getOrderLink('status')?>Status</a></th>
-				<th class="row2">&nbsp;</th>
-			</tr><?
-
-			?></table></td>
-		</tr></table>
-
+        <div class="block">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadVoices();return false">
+                <input type="hidden" name="searching_voices">
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">Voices</h4>
+                    <button type="button" value="Add" title="Add Voice" class="btn btn-sm btn-primary" onclick="displayAddVoiceDialog(0);">Add</button>
+                    <div id="voices_prev_td" class="page_system_prev"></div>
+                    <div id="voices_page_td" class="page_system_page"></div>
+                    <div id="voices_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadVoices(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                </div>
+                <div class="block-content">
+                    <table class="table table-sm table-striped" id="voice_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
+                        <tr>
+                            <th class="row2 text-left"><?=$this->getOrderLink('name')?>Name</a></th>
+                            <th class="row2 text-left"><?=$this->getOrderLink('actor_name')?>Voice Actor</a></th>
+                            <th class="row2 text-center"><?=$this->getOrderLink('language_id')?>Language</a></th>
+                            <th class="row2 text-center"><?=$this->getOrderLink('campaign_id')?>Campaign</a></th>
+                            <th class="row2 text-center"><?=$this->getOrderLink('status')?>Status</a></th>
+                            <th class="row2 text-center">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+        <div id="dialog-modal-add-voice" title="Adding new Voice" class="nod"></div>
 		<script>
-
 			$("#dialog-modal-add-voice").dialog({
 				autoOpen: false,
-				width: 450,
-				height: 250,
+				width: 'auto',
+				height: 'auto',
 				modal: false,
-				draggable:true,
-				resizable: false
-			});
-
+				draggable: true,
+				resizable: false,
+                position: {my: 'center', at: 'center', of: '#main-container'},
+            });
 			loadVoices();
-
 		</script><?
 
 	}

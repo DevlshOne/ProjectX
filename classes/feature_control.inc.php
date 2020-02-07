@@ -1,636 +1,650 @@
 <?php
-	/***************************************************************
-	 *	Feature Control - GUI/Interface to manage feature templates
-	 *	Written By: Jonathan Will
-	 ***************************************************************/
+/***************************************************************
+ *    Feature Control - GUI/Interface to manage feature templates
+ *    Written By: Jonathan Will
+ ***************************************************************/
 
 $_SESSION['feature_control'] = new FeatureControl;
 
 
-class FeatureControl{
+class FeatureControl
+{
 
-	var $table	= 'features';	## Classes main table to operate on
-	var $orderby	= 'id';		## Default Order field
-	var $orderdir	= 'DESC';	## Default order direction
+    var $table = 'features';    ## Classes main table to operate on
+    var $orderby = 'id';        ## Default Order field
+    var $orderdir = 'DESC';    ## Default order direction
 
 
-	## Page  Configuration
-	var $pagesize	= 20;	## Adjusts how many items will appear on each page
-	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+    ## Page  Configuration
+    var $pagesize = 20;    ## Adjusts how many items will appear on each page
+    var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
 
-	var $index_name = 'feat_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-	var $frm_name = 'featnextfrm';
+    var $index_name = 'feat_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+    var $frm_name = 'featnextfrm';
 
-	var $order_prepend = 'feat_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+    var $order_prepend = 'feat_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
-	function FeatureControl(){
+    function FeatureControl()
+    {
 
-		## REQURES DB CONNECTION!
-		$this->handlePOST();
-	}
+        ## REQURES DB CONNECTION!
+        $this->handlePOST();
+    }
 
 
+    function handlePOST()
+    {
 
+        ## AJAX'd YO!
 
-	function handlePOST(){
+    }
 
-		## AJAX'd YO!
+    function handleFLOW()
+    {
+        # Handle flow, based on query string
 
-	}
+        if (!checkAccess('feature_control')) {
 
-	function handleFLOW(){
-		# Handle flow, based on query string
 
-		if(!checkAccess('feature_control')){
+            accessDenied("Feature Control");
 
+            return;
 
-			accessDenied("Feature Control");
+        } else {
 
-			return;
+            if (isset($_REQUEST['add_feature'])) {
 
-		}else{
+                $this->makeAdd($_REQUEST['add_feature']);
 
-			if(isset($_REQUEST['add_feature'])){
+            } else {
+                $this->listEntrys();
+            }
 
-				$this->makeAdd($_REQUEST['add_feature']);
+        }
 
-			}else{
-				$this->listEntrys();
-			}
+    }
 
-		}
 
-	}
+    function makeDD($name, $sel, $class, $blank_entry = "[NO SECTIONS/ACCESS]")
+    {
 
+        $info = array(
 
+            'status' => 'active'
+        );
 
-	function makeDD($name, $sel, $class, $blank_entry="[NO SECTIONS/ACCESS]"){
+        $out = '<select id="' . htmlentities($name) . '" name="' . htmlentities($name) . '" ';
 
-		$info = array(
+        $out .= '>';
 
-			'status'=>'active'
-		);
 
-		$out = '<select id="'.htmlentities($name).'" name="'.htmlentities($name).'" ';
+        $out .= '<option value="">' . htmlentities($blank_entry) . '</option>';
 
-		$out.= '>';
+        $res = $_SESSION['dbapi']->features->getResults($info);
 
+        while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
-		$out .= '<option value="">'.htmlentities($blank_entry).'</option>';
+            $out .= '<option value="' . $row['id'] . '" ' . (($sel == $row['id']) ? ' SELECTED ' : '') . '>';
+            $out .= $row['name'] . '</option>';
 
-		$res = $_SESSION['dbapi']->features->getResults($info);
+        }
 
-		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+        $out .= '</select>';
 
-			$out .= '<option value="'.$row['id'].'" '.(($sel == $row['id'])?' SELECTED ':'').'>';
-			$out .= $row['name'].'</option>';
+        return $out;
+    }
 
-		}
 
-		$out .= '</select>';
+    function listEntrys()
+    {
 
-		return $out;
-	}
 
+        ?>
+        <script>
 
+            var feature_delmsg = 'Deleting this will cause any user using it, to lose access to the system.\nAre you sure you want to delete this feature set?';
 
+            var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
+            var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
 
-	function listEntrys(){
 
+            var <?=$this->index_name?> =
+            0;
+            var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
 
-		?><script>
+            var FeaturesTableFormat = [
+                ['id', 'align_center'],
+                ['name', 'align_left'],
+                ['[get:users_assigned:id]', 'align_center'],
+                ['[delete]', 'align_center']
+            ];
 
-			var feature_delmsg = 'Deleting this will cause any user using it, to lose access to the system.\nAre you sure you want to delete this feature set?';
+            /**
+             * Build the URL for AJAX to hit, to build the list
+             */
+            function getFeaturesURL() {
 
-			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
-			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
+                var frm = getEl('<?=$this->frm_name?>');
 
+                return 'api/api.php' +
+                    "?get=features&" +
+                    "mode=xml&" +
 
-			var <?=$this->index_name?> = 0;
-			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
+                    's_id=' + escape(frm.s_id.value) + "&" +
+                    's_name=' + escape(frm.s_name.value) + "&" +
+                    's_status=' + escape(frm.s_status.value) + "&" +
 
-			var FeaturesTableFormat = [
-				['id','align_center'],
-				['name','align_left'],
-				['[get:users_assigned:id]','align_center'],
-				['[delete]','align_center']
-			];
+                    "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
+            )
+                +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
+                "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+            }
 
-			/**
-			* Build the URL for AJAX to hit, to build the list
-			*/
-			function getFeaturesURL(){
 
-				var frm = getEl('<?=$this->frm_name?>');
+            var features_loading_flag = false;
 
-				return 'api/api.php'+
-								"?get=features&"+
-								"mode=xml&"+
+            /**
+             * Load the data - make the ajax call, callback to the parse function
+             */
+            function loadFeatures() {
 
-								's_id='+escape(frm.s_id.value)+"&"+
-								's_name='+escape(frm.s_name.value)+"&"+
-								's_status='+escape(frm.s_status.value)+"&"+
+                // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
+                var val = null;
+                eval('val = features_loading_flag');
 
-								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
-								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
-			}
 
+                // CHECK IF WE ARE ALREADY LOADING THIS DATA
+                if (val == true) {
 
-			var features_loading_flag = false;
+                    //console.log("extensions ALREADY LOADING (BYPASSED) \n");
+                    return;
+                } else {
 
-			/**
-			* Load the data - make the ajax call, callback to the parse function
-			*/
-			function loadFeatures(){
+                    eval('features_loading_flag = true');
+                }
 
-				// ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
-				var val = null;
-				eval('val = features_loading_flag');
+                // PAGE SIZE SUPPORT!
+                <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
 
 
-				// CHECK IF WE ARE ALREADY LOADING THIS DATA
-				if(val == true){
+                loadAjaxData(getFeaturesURL(), 'parseFeatures');
 
-					//console.log("extensions ALREADY LOADING (BYPASSED) \n");
-					return;
-				}else{
+            }
 
-					eval('features_loading_flag = true');
-				}
 
-				// PAGE SIZE SUPPORT!
-				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
+            /**
+             * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
+             */
+            var <?=$this->order_prepend?>totalcount = 0;
 
+            function parseFeatures(xmldoc) {
 
-				loadAjaxData(getFeaturesURL(),'parseFeatures');
+                <?=$this->order_prepend?>totalcount = parseXMLData('feature', FeaturesTableFormat, xmldoc);
 
-			}
 
+                // ACTIVATE PAGE SYSTEM!
+                if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
 
-			/**
-			* CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
-			*/
-			var <?=$this->order_prepend?>totalcount = 0;
-			function parseFeatures(xmldoc){
 
-				<?=$this->order_prepend?>totalcount = parseXMLData('feature',FeaturesTableFormat,xmldoc);
+                    makePageSystem('features',
+                        '<?=$this->index_name?>',
+                        <?=$this->order_prepend?>totalcount,
+                        <?=$this->index_name?>,
+                        <?=$this->order_prepend?>pagesize,
+                        'loadFeatures()'
+                    );
 
+                } else {
 
-				// ACTIVATE PAGE SYSTEM!
-				if(<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize){
+                    hidePageSystem('features');
 
+                }
 
-					makePageSystem('features',
-									'<?=$this->index_name?>',
-									<?=$this->order_prepend?>totalcount,
-									<?=$this->index_name?>,
-									<?=$this->order_prepend?>pagesize,
-									'loadFeatures()'
-								);
+                eval('features_loading_flag = false');
+            }
 
-				}else{
 
-					hidePageSystem('features');
+            function handleFeatureListClick(id) {
 
-				}
+                displayAddFeatureDialog(id);
 
-				eval('features_loading_flag = false');
-			}
+            }
 
 
-			function handleFeatureListClick(id){
+            function displayAddFeatureDialog(featureid) {
 
-				displayAddFeatureDialog(id);
+                var objname = 'dialog-modal-add-feature';
 
-			}
 
+                if (featureid > 0) {
+                    $('#' + objname).dialog("option", "title", 'Editing Feature Set');
+                } else {
+                    $('#' + objname).dialog("option", "title", 'Adding new Feature Set');
+                }
 
-			function displayAddFeatureDialog(featureid){
 
-				var objname = 'dialog-modal-add-feature';
+                $('#' + objname).dialog("open");
 
+                $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
 
-				if(featureid > 0){
-					$('#'+objname).dialog( "option", "title", 'Editing Feature Set' );
-				}else{
-					$('#'+objname).dialog( "option", "title", 'Adding new Feature Set' );
-				}
+                $('#' + objname).load("index.php?area=feature_control&add_feature=" + featureid + "&printable=1&no_script=1");
 
+            }
 
+            function resetFeatureForm(frm) {
 
-				$('#'+objname).dialog("open");
+                frm.s_id.value = '';
+                frm.s_name.value = '';
+                frm.s_status.value = 'active';
 
-				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+            }
 
-				$('#'+objname).load("index.php?area=feature_control&add_feature="+featureid+"&printable=1&no_script=1");
 
-				$('#'+objname).dialog('option', 'position', 'center');
-			}
+        </script>
+        <div id="dialog-modal-add-feature" title="Adding new Feature Set" class="nod">
+            <?
 
-			function resetFeatureForm(frm){
+            ?>
+        </div><?
 
-				frm.s_id.value='';
-				frm.s_name.value = '';
-				frm.s_status.value='active';
 
-			}
+        ?>
+        <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadFeatures();return false">
+            <input type="hidden" name="searching_features">
+            <? /**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/ ?>
 
+            <table border="0" width="100%" class="lb" cellspacing="0">
+                <tr>
+                    <td height="40" class="pad_left ui-widget-header">
 
+                        <table border="0" width="100%">
+                            <tr>
+                                <td width="500">
+                                    Features
+                                    &nbsp;&nbsp;&nbsp;&nbsp;
+                                    <input type="button" value="Add" onclick="displayAddFeatureDialog(0)">
+                                </td>
+                                <td width="150" align="center">PAGE SIZE: <select name="<?= $this->order_prepend ?>pagesizeDD" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0; loadFeatures();return false">
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="500">500</option>
+                                    </select></td>
+                                <td align="right"><?
+                                    /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/ ?>
+                                    <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
+                                        <tr>
+                                            <td id="features_prev_td" class="page_system_prev"></td>
+                                            <td id="features_page_td" class="page_system_page"></td>
+                                            <td id="features_next_td" class="page_system_next"></td>
+                                        </tr>
+                                    </table>
 
+                                </td>
+                            </tr>
+                        </table>
 
-		</script>
-		<div id="dialog-modal-add-feature" title="Adding new Feature Set" class="nod">
-		<?
+                    </td>
 
-		?>
-		</div><?
+                </tr>
 
+                <tr>
+                    <td colspan="2">
+                        <table border="0" width="100%">
+                            <tr>
+                                <th class="row2">ID</th>
+                                <th class="row2">Name</th>
+                                <th class="row2">Status</th>
+                                <td><input type="submit" value="Search" name="the_Search_button"></td>
+                            </tr>
+                            <tr>
+                                <td align="center"><input type="text" name="s_id" size="5" value="<?= htmlentities($_REQUEST['s_id']) ?>"></td>
+                                <td align="center"><input type="text" name="s_name" size="20" value="<?= htmlentities($_REQUEST['s_name']) ?>"></td>
+                                <td align="center"><select name="s_status">
+                                        <option value="active">Active</option>
+                                        <option value="disabled">Disabled</option>
+                                    </select></td>
+                                <td><input type="button" value="Reset" onclick="resetFeatureForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadFeatures();"></td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
 
+        </form>
+        <tr>
+            <td colspan="2">
+                <table border="0" width="100%" id="feature_table">
+                    <tr>
+                        <th class="row2" align="center"><?= $this->getOrderLink('id') ?>ID</a></th>
+                        <th class="row2" align="left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                        <th class="row2" align="center">Users Assigned</th>
+                        <th class="row2">&nbsp;</th>
+                    </tr><?
 
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadFeatures();return false">
-			<input type="hidden" name="searching_features">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
+                    ?></table>
+            </td>
+        </tr></table>
 
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr>
-			<td height="40" class="pad_left ui-widget-header">
+        <script>
 
-				<table border="0" width="100%" >
-				<tr>
-					<td width="500">
-						Features
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddFeatureDialog(0)">
-					</td>
-					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadFeatures();return false">
-						<option value="20">20</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-						<option value="500">500</option>
-					</select></td>
-					<td align="right"><?
-						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-						<tr>
-							<td id="features_prev_td" class="page_system_prev"></td>
-							<td id="features_page_td" class="page_system_page"></td>
-							<td id="features_next_td" class="page_system_next"></td>
-						</tr>
-						</table>
+            $("#dialog-modal-add-feature").dialog({
+                autoOpen: false,
+                width: 'auto',
+                height: 'auto',
+                modal: false,
+                draggable: true,
+                resizable: false,
+                position: {my: 'center', at: 'center', of: '#main-container'},
+            });
 
-					</td>
-				</tr>
-				</table>
+            // CALL FUNCTION TO POPULATE THE TABLE WITH DATA
+            loadFeatures();
+            applyUniformity();
+        </script>
+        <?
 
-			</td>
+    }
 
-		</tr>
 
-		<tr>
-			<td colspan="2"><table border="0" width="100%">
-			<tr>
-				<th class="row2">ID</th>
-				<th class="row2">Name</th>
-				<th class="row2">Status</th>
-				<td><input type="submit" value="Search" name="the_Search_button"></td>
-			</tr>
-			<tr>
-				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-				<td align="center"><input type="text" name="s_name" size="20" value="<?=htmlentities($_REQUEST['s_name'])?>"></td>
-				<td align="center"><select name="s_status">
-					<option value="active">Active</option>
-					<option value="disabled">Disabled</option>
-				</select></td>
-				<td><input type="button" value="Reset" onclick="resetFeatureForm(this.form);resetPageSystem('<?=$this->index_name?>');loadFeatures();"></td>
-			</tr>
-			</table></td>
-		</tr>
+    function makeAdd($id)
+    {
 
-		</form>
-		<tr>
-			<td colspan="2"><table border="0" width="100%" id="feature_table">
-			<tr>
-				<th class="row2" align="center"><?=$this->getOrderLink('id')?>ID</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>
-				<th class="row2" align="center">Users Assigned</th>
-				<th class="row2">&nbsp;</th>
-			</tr><?
+        $row = $_SESSION['dbapi']->features->getByID($id);
 
-			?></table></td>
-		</tr></table>
 
-		<script>
+        ?>
+        <script>
 
-			$("#dialog-modal-add-feature").dialog({
-				autoOpen: false,
-				width: 430,
-				height: 420,
-				modal: false,
-				draggable:true,
-				resizable: false
-			});
+            function validateFeatureField(name, value, frm) {
 
-			// CALL FUNCTION TO POPULATE THE TABLE WITH DATA
-			loadFeatures();
+                //alert(name+","+value);
 
-		</script><?
 
-	}
+                switch (name) {
+                    default:
 
+                        // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
+                        return true;
+                        break;
 
-	function makeAdd($id){
+                    case 'name':
 
-		$row = $_SESSION['dbapi']->features->getByID($id);
 
+                        if (!value) return false;
 
-		?><script>
+                        return true;
 
-			function validateFeatureField(name,value,frm){
 
-				//alert(name+","+value);
+                        break;
+                }
+            }
 
 
-				switch(name){
-				default:
+            function submitFeatureChanges(frm) {
 
-					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-					return true;
-					break;
 
-				case 'name':
+                var params = getFormValues(frm, 'validateFeatureField');
 
+                // FORM VALIDATION FAILED!
+                // param[0] == field name
+                // param[1] == field value
+                if (typeof params == "object") {
 
-					if(!value)return false;
+                    switch (params[0]) {
+                        default:
 
-					return true;
+                            alert("Error submitting form. Check your values");
 
+                            break;
 
-					break;
-				}
-			}
+                        case 'name':
 
+                            alert("Please enter a name for the feature set.");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
 
-			function submitFeatureChanges(frm){
+                    }
 
+                    // SUCCESS - POST AJAX TO SERVER
+                } else {
 
-				var params = getFormValues(frm,'validateFeatureField');
 
-				// FORM VALIDATION FAILED!
-				// param[0] == field name
-				// param[1] == field value
-				if(typeof params == "object"){
+                    //alert("Form validated, posting");
 
-					switch(params[0]){
-					default:
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        url: 'api/api.php?get=features&mode=xml&action=edit',
+                        data: params,
+                        error: function () {
+                            alert("Error saving feature form. Please contact an admin.");
+                        },
+                        success: function (msg) {
 
-						alert("Error submitting form. Check your values");
 
-						break;
+                            var result = handleEditXML(msg);
+                            var res = result['result'];
 
-					case 'name':
+                            if (res <= 0) {
 
-						alert("Please enter a name for the feature set.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
+                                alert(result['message']);
 
-					}
+                                return;
 
-				// SUCCESS - POST AJAX TO SERVER
-				}else{
+                            }
 
+                            // IF ADDING
+                            //if(parseInt(frm.adding_user.value) <= 0){
 
-					//alert("Form validated, posting");
+                            alert(result['message']);
 
-					$.ajax({
-						type: "POST",
-						cache: false,
-						url: 'api/api.php?get=features&mode=xml&action=edit',
-						data: params,
-						error: function(){
-							alert("Error saving feature form. Please contact an admin.");
-						},
-						success: function(msg){
+                            try {
 
+                                loadFeatures();
+                            } catch (e) {
 
-							var result = handleEditXML(msg);
-							var res = result['result'];
+                                // LOAD FEATURES FAILS, MEANS WE ARE PROB IN USERS SECTION
 
-							if(res <= 0){
+                                // ATTEMPT TO REFRESH PAGE OR DROPDOWN?
 
-								alert(result['message']);
 
-								return;
+                                loadSection('index.php?area=users&add_user=<?=intval($_REQUEST['add_user'])?>&printable=1&no_script=1');
 
-							}
+                            }
 
-							// IF ADDING
-							//if(parseInt(frm.adding_user.value) <= 0){
 
-							alert(result['message']);
+                            try {
+                                displayAddFeatureDialog(res);
+                            } catch (e) {
+                            }
 
-							try{
 
-								loadFeatures();
-							}catch(e){
+                        }
 
-								// LOAD FEATURES FAILS, MEANS WE ARE PROB IN USERS SECTION
 
-								// ATTEMPT TO REFRESH PAGE OR DROPDOWN?
+                    });
 
+                }
 
-								loadSection('index.php?area=users&add_user=<?=intval($_REQUEST['add_user'])?>&printable=1&no_script=1');
+                return false;
+            }
 
-							}
+        </script>
 
 
-							try{
-								displayAddFeatureDialog(res);
-							}catch(e){}
+        <form method="POST" action="<?= stripurl() ?>" onsubmit="return submitFeatureChanges(this)">
 
+            <input type="hidden" name="adding_feature" value="<?= $id ?>">
 
 
+            <table border="0">
+                <tr>
+                    <th>Template Name</th>
+                    <td><input type="text" size="40" name="name" value="<?= htmlentities($row['name']) ?>"></td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td><select name="status">
+                            <option value="active"<?= ($row['status'] == 'active') ? " SELECTED " : "" ?>>Active</option>
+                            <option value="disabled"<?= ($row['status'] == 'disabled') ? " SELECTED " : "" ?>>Disabled</option>
+                        </select></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><input type="submit" value="Save Changes"></td>
+                </tr>
+                <tr valign="top">
+                    <td colspan="2">
 
-						}
+                        <table border="0" width="100%">
+                            <tr valign="top">
+                                <td>
 
+                                    <table border="0" width="100%">
+                                        <tr>
+                                            <th colspan="2" class="row2">Campaign Setup</th>
+                                        </tr><?
 
-					});
+                                        $this->renderFeatureRow('campaigns', 'Campaigns', ($row['campaigns'] == 'yes') ? true : false);
 
-				}
+                                        $this->renderFeatureRow('voices', 'Voices', ($row['voices'] == 'yes') ? true : false);
 
-				return false;
-			}
+                                        $this->renderFeatureRow('names', 'Names', ($row['names'] == 'yes') ? true : false);
 
-		</script>
+                                        $this->renderFeatureRow('scripts', 'Scripts', ($row['scripts'] == 'yes') ? true : false);
 
+                                        ?>
+                                        <tr>
+                                            <th colspan="2" class="row2">Management Tools</th>
+                                        </tr><?
 
-		<form method="POST" action="<?=stripurl()?>" onsubmit="return submitFeatureChanges(this)">
+                                        $this->renderFeatureRow('lead_management', 'Lead Management', ($row['lead_management'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('lmt_edit_lead', '|--&gt;Edit Lead', ($row['lmt_edit_lead'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('lmt_change_dispo', '|--&gt;Change Dispo', ($row['lmt_change_dispo'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('lmt_create_sale', '|--&gt;Create Sale', ($row['lmt_create_sale'] == 'yes') ? true : false);
 
-			<input type="hidden" name="adding_feature" value="<?=$id?>">
+                                        $this->renderFeatureRow('sales_management', 'Sales Management', ($row['sales_management'] == 'yes') ? true : false);
 
 
-		<table border="0">
-		<tr>
-			<th>Template Name</th>
-			<td><input type="text" size="40" name="name" value="<?=htmlentities($row['name'])?>"></td>
-		</tr>
-		<tr>
-			<th>Status</th>
-			<td><select name="status">
-					<option value="active"<?=($row['status'] == 'active')?" SELECTED ":""?>>Active</option>
-					<option value="disabled"<?=($row['status'] == 'disabled')?" SELECTED ":""?>>Disabled</option>
-			</select></td>
-		</tr>
-		<tr>
-			<td colspan="2" align="center"><input type="submit" value="Save Changes"></td>
-		</tr>
-		<tr valign="top">
-			<td colspan="2">
+                                        $this->renderFeatureRow('employee_hours', 'Employee Hours', ($row['employee_hours'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('employee_hours_edit', '|--&gt;Edit Hours', ($row['employee_hours_edit'] == 'yes') ? true : false);
 
-				<table border="0" width="100%">
-				<tr valign="top">
-					<td>
 
-						<table border="0" width="100%" >
-						<tr>
-							<th colspan="2" class="row2">Campaign Setup</th>
-						</tr><?
+                                        $this->renderFeatureRow('phone_lookup', 'DRIPP Phone lookup', ($row['phone_lookup'] == 'yes') ? true : false);
 
-							$this->renderFeatureRow('campaigns', 'Campaigns', ($row['campaigns'] == 'yes')?true:false );
+                                        $this->renderFeatureRow('quiz_results', 'Quiz Results', ($row['quiz_results'] == 'yes') ? true : false);
 
-							$this->renderFeatureRow('voices', 'Voices', ($row['voices'] == 'yes')?true:false );
+                                        $this->renderFeatureRow('ringing_calls', 'Ring Report', ($row['ringing_calls'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes') ? true : false);
 
-							$this->renderFeatureRow('names', 'Names', ($row['names'] == 'yes')?true:false );
+                                        //$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
 
-							$this->renderFeatureRow('scripts', 'Scripts', ($row['scripts'] == 'yes')?true:false );
 
-						?><tr>
-							<th colspan="2" class="row2">Management Tools</th>
-						</tr><?
+                                        $this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('server_status', 'Server Status', ($row['server_status'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('extensions', 'Extensions', ($row['extensions'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('process_tracker_schedules', 'Process Tracker Schedules', ($row['process_tracker_schedules'] == 'yes') ? true : false);
 
-							$this->renderFeatureRow('lead_management', 'Lead Management', ($row['lead_management'] == 'yes')?true:false );
-							$this->renderFeatureRow('lmt_edit_lead', '|--&gt;Edit Lead', ($row['lmt_edit_lead'] == 'yes')?true:false );
-							$this->renderFeatureRow('lmt_change_dispo', '|--&gt;Change Dispo', ($row['lmt_change_dispo'] == 'yes')?true:false );
-							$this->renderFeatureRow('lmt_create_sale', '|--&gt;Create Sale', ($row['lmt_create_sale'] == 'yes')?true:false );
-							
-							$this->renderFeatureRow('sales_management', 'Sales Management', ($row['sales_management'] == 'yes')?true:false );
-							
-							
-							$this->renderFeatureRow('employee_hours', 'Employee Hours', ($row['employee_hours'] == 'yes')?true:false );
-							$this->renderFeatureRow('employee_hours_edit', '|--&gt;Edit Hours', ($row['employee_hours_edit'] == 'yes')?true:false );
-							
-							
-							$this->renderFeatureRow('phone_lookup', 'DRIPP Phone lookup', ($row['phone_lookup'] == 'yes')?true:false );
 
-							$this->renderFeatureRow('quiz_results', 'Quiz Results', ($row['quiz_results'] == 'yes')?true:false );
+                                        ?>
+                                        <tr>
+                                            <th colspan="2" class="row2">List Tools</th>
+                                        </tr><?
 
-							$this->renderFeatureRow('ringing_calls', 'Ring Report', ($row['ringing_calls'] == 'yes')?true:false );
-							$this->renderFeatureRow('messages', 'Agent Messages', ($row['messages'] == 'yes')?true:false );
+                                        $this->renderFeatureRow('list_tools', 'List Tools', ($row['list_tools'] == 'yes') ? true : false);
 
-							//$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
-							
-							
-							
-							$this->renderFeatureRow('dialer_status', 'Dialer Status', ($row['dialer_status'] == 'yes')?true:false );
-							$this->renderFeatureRow('server_status', 'Server Status', ($row['server_status'] == 'yes')?true:false );
-							$this->renderFeatureRow('extensions', 'Extensions', ($row['extensions'] == 'yes')?true:false );
-							$this->renderFeatureRow('process_tracker_schedules', 'Process Tracker Schedules', ($row['process_tracker_schedules'] == 'yes')?true:false );
+                                        ?></table>
+                                </td>
+                                <td width="20">&nbsp;</td>
+                                <td>
 
+                                    <table border="0" width="100%">
 
-						?><tr>
-							<th colspan="2" class="row2">List Tools</th>
-						</tr><?
+                                        <tr>
+                                            <th colspan="2" class="row2">Reports</th>
+                                        </tr><?
 
-						$this->renderFeatureRow('list_tools', 'List Tools', ($row['list_tools'] == 'yes')?true:false );
+                                        $this->renderFeatureRow('fronter_closer', 'Fronter/Closer Report', ($row['fronter_closer'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('sales_analysis', 'Sales Analysis', ($row['sales_analysis'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('agent_call_stats', 'Verifier Call Stats', ($row['agent_call_stats'] == 'yes') ? true : false);
 
-						?></table>
-					</td>
-					<td width="20">&nbsp;</td>
-					<td>
 
-						<table border="0" width="100%">
+                                        $this->renderFeatureRow('rouster_report', 'Rouster Call Stats', ($row['rouster_report'] == 'yes') ? true : false);
 
-						<tr>
-							<th colspan="2" class="row2">Reports</th>
-						</tr><?
+                                        $this->renderFeatureRow('summary_report', 'Summary Reports', ($row['summary_report'] == 'yes') ? true : false);
 
-							$this->renderFeatureRow('fronter_closer', 'Fronter/Closer Report', ($row['fronter_closer'] == 'yes')?true:false );
-							$this->renderFeatureRow('sales_analysis', 'Sales Analysis', ($row['sales_analysis'] == 'yes')?true:false );
-							$this->renderFeatureRow('agent_call_stats', 'Verifier Call Stats', ($row['agent_call_stats'] == 'yes')?true:false );
 
+                                        $this->renderFeatureRow('user_charts', 'User Charts', ($row['user_charts'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('recent_hangups', 'Recent Hangups', ($row['recent_hangups'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('script_statistics', 'Script Statistics', ($row['script_statistics'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('dispo_log', 'Dispo Log', ($row['dispo_log'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('user_status_report', 'User Status Report', ($row['user_status_report'] == 'yes') ? true : false);
 
-							$this->renderFeatureRow('rouster_report', 'Rouster Call Stats', ($row['rouster_report'] == 'yes')?true:false );
-							
-							$this->renderFeatureRow('summary_report', 'Summary Reports', ($row['summary_report'] == 'yes')?true:false );
-							
+                                        ?>
+                                        <tr>
+                                            <th colspan="2" class="row2">PAC Maintenance</th>
+                                        </tr><?
 
-							$this->renderFeatureRow('user_charts', 'User Charts', ($row['user_charts'] == 'yes')?true:false );
-							$this->renderFeatureRow('recent_hangups', 'Recent Hangups', ($row['recent_hangups'] == 'yes')?true:false );
-							$this->renderFeatureRow('script_statistics', 'Script Statistics', ($row['script_statistics'] == 'yes')?true:false );
-							$this->renderFeatureRow('dispo_log', 'Dispo Log', ($row['dispo_log'] == 'yes')?true:false );
-							$this->renderFeatureRow('user_status_report', 'User Status Report', ($row['user_status_report'] == 'yes')?true:false );
+                                        $this->renderFeatureRow('pac_web_donations', 'Web Donations', ($row['pac_web_donations'] == 'yes') ? true : false);
 
-						?><tr>
-							<th colspan="2" class="row2">PAC Maintenance</th>
-						</tr><?
-						
-							$this->renderFeatureRow('pac_web_donations', 'Web Donations', ($row['pac_web_donations'] == 'yes')?true:false );
-						
-						
-						?><tr>
-							<th colspan="2" class="row2">Users</th>
-						</tr><?
 
-							$this->renderFeatureRow('users', 'Central User Management', ($row['users'] == 'yes')?true:false );
-							$this->renderFeatureRow('user_teams', 'Team Management', ($row['user_teams'] == 'yes')?true:false );
-							
-							
-							$this->renderFeatureRow('feature_control', 'Feature Control', ($row['feature_control'] == 'yes')?true:false );
-							$this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes')?true:false );
-							$this->renderFeatureRow('login_tracker_kick_user', '|--&gt;Kick User', ($row['login_tracker_kick_user'] == 'yes')?true:false );
-							$this->renderFeatureRow('action_log', 'Action Log', ($row['action_log'] == 'yes')?true:false );
-							
-						?><tr>
-							<th colspan="2" class="row2">Account</th>
-						</tr><?
+                                        ?>
+                                        <tr>
+                                            <th colspan="2" class="row2">Users</th>
+                                        </tr><?
 
-							$this->renderFeatureRow('change_password', 'Change Password', ($row['change_password'] == 'yes')?true:false );
+                                        $this->renderFeatureRow('users', 'Central User Management', ($row['users'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('user_teams', 'Team Management', ($row['user_teams'] == 'yes') ? true : false);
 
-						?>
-					</table>
-					</td>
-				</tr>
-				</table>
 
-			</td>
-		</tr>
+                                        $this->renderFeatureRow('feature_control', 'Feature Control', ($row['feature_control'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('login_tracker', 'Login Tracker', ($row['login_tracker'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('login_tracker_kick_user', '|--&gt;Kick User', ($row['login_tracker_kick_user'] == 'yes') ? true : false);
+                                        $this->renderFeatureRow('action_log', 'Action Log', ($row['action_log'] == 'yes') ? true : false);
 
+                                        ?>
+                                        <tr>
+                                            <th colspan="2" class="row2">Account</th>
+                                        </tr><?
 
-		</form>
-		</table><?
+                                        $this->renderFeatureRow('change_password', 'Change Password', ($row['change_password'] == 'yes') ? true : false);
 
+                                        ?>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
 
+                    </td>
+                </tr>
 
-	}
 
+        </form>
+        </table><?
 
-	function renderFeatureRow($name, $friendly_name, $checked){
 
-		?><tr>
-			<td align="center"><input type="checkbox" name="<?=htmlentities($name)?>" value="yes" <?=($checked)?' CHECKED ':''?>></td>
-			<th align="left"><?=$friendly_name?></th>
-		</tr><?
-	}
+    }
 
 
+    function renderFeatureRow($name, $friendly_name, $checked)
+    {
 
-	function getOrderLink($field){
+        ?>
+        <tr>
+        <td align="center"><input type="checkbox" name="<?= htmlentities($name) ?>" value="yes" <?= ($checked) ? ' CHECKED ' : '' ?>></td>
+        <th align="left"><?= $friendly_name ?></th>
+        </tr><?
+    }
 
-		$var = '<a href="#" onclick="setOrder(\''.addslashes($this->order_prepend).'\',\''.addslashes($field).'\',';
 
-		$var .= "((".$this->order_prepend."orderdir == 'DESC')?'ASC':'DESC')";
+    function getOrderLink($field)
+    {
 
-		$var.= ");loadFeatures();return false;\">";
+        $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
 
-		return $var;
-	}
+        $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
+
+        $var .= ");loadFeatures();return false;\">";
+
+        return $var;
+    }
 }

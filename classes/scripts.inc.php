@@ -1,7 +1,7 @@
 <?php
 /***************************************************************
- *	Script Management - Handles File uploads, and variable/custom programming.
- *	Written By: Jonathan Will
+ *    Script Management - Handles File uploads, and variable/custom programming.
+ *    Written By: Jonathan Will
  ***************************************************************/
 
 $_SESSION['scripts'] = new Scripts;
@@ -62,7 +62,7 @@ class Scripts{
 			return;
 
 		}else{
-		
+
 			if(isset($_REQUEST['add_script'])){
 
 				$this->makeAdd($_REQUEST['add_script']);
@@ -73,7 +73,7 @@ class Scripts{
 
 			}elseif(isset($_REQUEST['play_voice_file'])) {
 
-				$this->PlayVoiceFile($_REQUEST['play_voice_file']);				
+				$this->PlayVoiceFile($_REQUEST['play_voice_file']);
 
 			}else{
 
@@ -88,42 +88,31 @@ class Scripts{
 
 	function listEntrys(){
 
-		?><script>
-
+		?>
+		<script>
 			var script_delmsg = 'Are you sure you want to delete this script?';
-
 			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
 			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
-
-
 			var <?=$this->index_name?> = 0;
 			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-
 			var ScriptsTableFormat = [
 				['name','align_left'],
 				['keys','align_center'],
-
 				['[get:screen_name:screen_num]','align_center'],
 				['[get:campaign_name:campaign_id]','align_center'],
 				['[get:voice_name:voice_id]','align_center'],
-
 				['[time:time_modified]','align_center'],
-
 				['[delete]','align_center']
 			];
-
 			/**
 			* Build the URL for AJAX to hit, to build the list
 			*/
 			function getScriptsURL(){
-
 				var frm = getEl('<?=$this->frm_name?>');
-
+                var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
 				return 'api/api.php'+
 								"?get=scripts&"+
 								"mode=xml&"+
-
-								//'s_id='+escape(frm.s_id.value)+"&"+
 								's_name='+escape(frm.s_name.value)+"&"+
 								's_filename='+escape(frm.s_filename.value)+"&"+
 								's_keys='+escape(frm.s_keys.value)+"&"+
@@ -131,56 +120,35 @@ class Scripts{
 								's_voice_id='+escape(frm.s_voice_id.value)+"&"+
 								's_variables='+escape(frm.s_variables.value)+"&"+
 								((frm.s_screen_num.value > -1)?'s_screen_num='+escape(frm.s_screen_num.value)+"&":'')+
-
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
-
-
 			var scripts_loading_flag = false;
-
 			/**
 			* Load the scripts data - make the ajax call, callback to the parse function
 			*/
 			function loadScripts(){
-
 				// ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
 				var val = null;
 				eval('val = scripts_loading_flag');
-
-
 				// CHECK IF WE ARE ALREADY LOADING THIS DATA
 				if(val == true){
-
 					return;
-
 				}else{
-
 					eval('scripts_loading_flag = true');
-
 				}
-
-
 				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-
-				loadAjaxData(getScriptsURL(),'parseScripts');
-
+				var scr_pagesize = 20;
+                loadAjaxData(getScriptsURL(),'parseScripts');
 			}
-
-
 			/**
 			* CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
 			*/
 			var <?=$this->order_prepend?>totalcount = 0;
 			function parseScripts(xmldoc){
-
 				<?=$this->order_prepend?>totalcount = parseXMLData('script',ScriptsTableFormat,xmldoc);
-
-
 				// ACTIVATE PAGE SYSTEM!
 				if(parseInt(<?=$this->order_prepend?>totalcount) > parseInt(<?=$this->order_prepend?>pagesize)){
-
-
 					makePageSystem('scripts',
 									'<?=$this->index_name?>',
 									<?=$this->order_prepend?>totalcount,
@@ -188,30 +156,17 @@ class Scripts{
 									<?=$this->order_prepend?>pagesize,
 									'loadScripts()'
 								);
-
 				}else{
-
 					hidePageSystem('scripts');
-
 				}
-
 				eval('scripts_loading_flag = false');
 			}
-
-
 			function handleScriptListClick(id){
-
 				displayAddScriptDialog(id);
 
 			}
-
-
-
 			function displayAddScriptDialog(scriptid){
-
 				var objname = 'dialog-modal-add-script';
-
-
 				if(scriptid > 0){
 					$('#'+objname).dialog( "option", "title", 'Editing Script' );
 					$('#'+objname).dialog( "option", "height", '600' );
@@ -219,96 +174,59 @@ class Scripts{
 					$('#'+objname).dialog( "option", "title", 'Adding new Script' );
 					$('#'+objname).dialog( "option", "height", '380' );
 				}
-
-
-
 				$('#'+objname).dialog("open");
-
-				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
-				$('#'+objname).load("index.php?area=scripts&add_script="+scriptid+"&printable=1&no_script=1");
-
-				$('#'+objname).dialog('option', 'position', 'center');
+				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load("index.php?area=scripts&add_script="+scriptid+"&printable=1&no_script=1");
 			}
-
 			function resetScriptForm(frm){
-
+			    frm.reset();
 				frm.s_keys.value='';
 				frm.s_name.value = '';
 				frm.s_filename.value = '';
-				frm.s_campaign_id.value = 0;
+				frm.s_campaign_id.value = null;
 				frm.s_voice_id.value = 0;
 				frm.s_screen_num.value=-1;
 				frm.s_variables.value = '';
-
 			}
-
-
-			var scriptsrchtog = true;
+			var scriptsrchtog = false;
 			function toggleScriptSearch(){
 				scriptsrchtog = !scriptsrchtog;
 				ieDisplay('script_search_table', scriptsrchtog);
 			}
-
-
-
 			function buildVoicesDD(selid){
-
 				var obj=getEl('s_voice_id');
 				var opt = obj.options;
 				var catid=getEl('s_campaign_id').value;
-
 				// Empty DD
 				for(var x=0;x<opt.length;x++){obj.remove(x);}
 				obj.options.length=0;
-
 				var newopts = new Array();
 				newopts[0] = document.createElement("OPTION");
-
 				if(ie)	obj.add(newopts[0]);
 				else	obj.add(newopts[0],null);
-
-				newopts[0].innerText	= '';
+				newopts[0].innerText	= '[Select Voice]';
 				newopts[0].value	= 0;
 				var curid=0;
 				for(x=0;x < item_id.length;x++){
 					//curid=item_id[x];
 					curid=x;
-
 					//alert(which+' '+item_name[curid]);
-
 					if(catid && item_cpgnid[curid] != catid){
 						continue;
 					}
-
 					newopts[x] = document.createElement("OPTION");
-
 					if(ie)	obj.add(newopts[x]);
 					else	obj.add(newopts[x],null);
-
 					newopts[x].value	= item_id[curid];
-
-
 					if(ie)	newopts[x].innerText	= item_name[curid];
 					else	newopts[x].innerHTML	= item_name[curid];
-
 					if(selid == item_id[curid])obj.value=item_id[curid];
-
-
-
 				}
-
-
 			}
-
-
 			var itemp = 0;
 			var item_id	= new Array();
 			var item_name	= new Array();
 			var item_cpgnid	= new Array();
 			var item_langid	= new Array();
-
-
 			var lang_names = new Array();
 			<?
 
@@ -341,135 +259,86 @@ class Scripts{
 				}
 				return 0;
 			}
-
 			function togVoiceDD(frm){
-
 				buildVoicesDD(frm.s_voice_id.value);
-
 				updateLanguage(frm);
 			}
-
 			function updateLanguage(frm){
 				$('#lang_td_row').html( lang_names[getLangID(frm.s_voice_id.value)]  );
 			}
-
-
-
 		</script>
-		<div id="dialog-modal-add-script" title="Adding new Script" class="nod">
-		</div>
-		<div id="dialog-modal-edit-voicefile" title="Editing Voice File" class="nod">
-		</div>
-		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadScripts();return false">
-			<input type="hidden" name="searching_scripts">
-
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr>
-			<td height="40" class="pad_left ui-widget-header">
-
-				<table border="0" width="100%" >
-				<tr>
-					<td width="500">
-						Scripts
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddScriptDialog(0)">
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Search" onclick="toggleScriptSearch()">
-					</td>
-					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadScripts();return false">
-						<option value="20">20</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-						<option value="500">500</option>
-					</select></td>
-					<td align="right"><?
-						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-						<tr>
-							<td id="scripts_prev_td" class="page_system_prev"></td>
-							<td id="scripts_page_td" class="page_system_page"></td>
-							<td id="scripts_next_td" class="page_system_next"></td>
-						</tr>
-						</table>
-
-					</td>
-				</tr>
-				</table>
-
-			</td>
-
-		</tr>
-		<tr>
-			<td colspan="2"><table border="0" id="script_search_table">
-			<tr>
-
-				<th class="row2">Name</th>
-				<th class="row2">Filename</th>
-				<th class="row2">Keys</th>
-				<th class="row2">Campaign</th>
-				<th class="row2">Voice</th>
-				<th class="row2">Screen</th>
-				<th class="row2">Variables</th>
-				<td><input type="submit" value="Search" name="the_Search_button"></td>
-			</tr>
-			<tr>
-				<td align="center"><input type="text" name="s_name" size="15" value="<?=htmlentities($_REQUEST['s_name'])?>"></td>
-				<td align="center"><input type="text" name="s_filename" size="10" value="<?=htmlentities($_REQUEST['s_filename'])?>"></td>
-				<td align="center"><input type="text" name="s_keys" size="5" value="<?=htmlentities($_REQUEST['s_keys'])?>"></td>
-				<td align="center"><?
-
-					echo $_SESSION['campaigns']->makeDD('s_campaign_id',$_REQUEST['s_campaign_id'],'',"togVoiceDD(this.form)",0, 1);
-
-				?></td>
-				<td align="center"><select id="s_voice_id" name="s_voice_id" onchange="updateLanguage(this.form)">
-					<option value="">[Loading...]</option>
-				</select></td>
-				<td align="center"><select name="s_screen_num">
-					<option value="-1">[Show all]</option>
-					<option value="0">Quick Keys</option>
-					<option value="1"<?=($_REQUEST['s_screen_num'] == 1)?' SELECTED ':''?>>Intro Screen</option>
-					<option value="2"<?=($_REQUEST['s_screen_num'] == 2)?' SELECTED ':''?>>Screen 2</option>
-					<option value="3"<?=($_REQUEST['s_screen_num'] == 3)?' SELECTED ':''?>>Screen 3</option>
-					<option value="4"<?=($_REQUEST['s_screen_num'] == 4)?' SELECTED ':''?>>Screen 4</option>
-					<option value="5"<?=($_REQUEST['s_screen_num'] == 5)?' SELECTED ':''?>>Screen 5</option>
-				</select></td>
-				<td align="center"><input type="text" name="s_variables" size="20" value="<?=htmlentities($_REQUEST['s_variables'])?>"></td>
-				<td><input type="button" value="Reset" onclick="resetScriptForm(this.form);resetPageSystem('<?=$this->index_name?>');loadScripts();"></td>
-			</tr>
-			</table></td>
-		</tr>
-		</form>
-		<tr>
-			<td colspan="2"><table border="0" width="100%" id="script_table">
-			<tr>
-				<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>
-				<th class="row2"><?=$this->getOrderLink('keys')?>Keys</a></th>
-				<th class="row2"><?=$this->getOrderLink('screen_num')?>Screen</a></th>
-				<th class="row2"><?=$this->getOrderLink('campaign_id')?>Campaign</a></th>
-				<th class="row2"><?=$this->getOrderLink('voice_id')?>Voice</a></th>
-				<th class="row2"><?=$this->getOrderLink('time_modified')?>Last Modified</a></th>
-				<th class="row2">&nbsp;</th>
-			</tr><?
-
-			?></table></td>
-		</tr></table>
-
+        <div class="block">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadScripts();return false;">
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">Scripts</h4>
+                    <button type="button" value="Add" title="Add Scripts" class="btn btn-sm btn-primary" onclick="displayAddScriptDialog(0)">Add</button>
+                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleScriptSearch();">Toggle Search</button>
+                    <div id="scripts_prev_td" class="page_system_prev"></div>
+                    <div id="scripts_page_td" class="page_system_page"></div>
+                    <div id="scripts_next_td" class="page_system_next"></div>
+                        <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadScripts(); return false;">
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
+                </div>
+                <div class="bg-info-light nod" id="script_search_table">
+                    <div class="input-group input-group-sm">
+                        <input type="hidden" name="searching_scripts"/>
+                        <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?=htmlentities($_REQUEST['s_name'])?>" />
+                        <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Keys.." name="s_keys" value="<?= htmlentities($_REQUEST['s_keys']) ?>"/>
+				        <input type="text" class="form-control" placeholder="Variables.." name="s_variables" value="<?=htmlentities($_REQUEST['s_variables'])?>">
+                        <?=$_SESSION['campaigns']->makeDD('s_campaign_id',$_REQUEST['s_campaign_id'],'',"togVoiceDD(this.form)", 0, "[Select Campaign]");?>
+                        <select class="custom-select-sm" id="s_voice_id" name="s_voice_id" onchange="updateLanguage(this.form)">
+					        <option value="">[Loading...]</option>
+				        </select>
+				        <select class="custom-select-sm" name="s_screen_num">
+					        <option value="-1">[Select Screen]</option>
+					        <option value="0">Quick Keys</option>
+					        <option value="1"<?=($_REQUEST['s_screen_num'] == 1)?' SELECTED ':''?>>Intro Screen</option>
+					        <option value="2"<?=($_REQUEST['s_screen_num'] == 2)?' SELECTED ':''?>>Screen 2</option>
+					        <option value="3"<?=($_REQUEST['s_screen_num'] == 3)?' SELECTED ':''?>>Screen 3</option>
+					        <option value="4"<?=($_REQUEST['s_screen_num'] == 4)?' SELECTED ':''?>>Screen 4</option>
+					        <option value="5"<?=($_REQUEST['s_screen_num'] == 5)?' SELECTED ':''?>>Screen 5</option>
+				        </select>
+				        <button type="button" value="Search" title="Search Scripts" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadScripts();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetScriptForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadScripts();return false;">Reset</button>
+                    </div>
+                </div>
+                <div class="block-content">
+                    <table class="table table-sm table-striped" id="script_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
+                        <tr>
+				            <th class="row2 text-left"><?=$this->getOrderLink('name')?>Name</a></th>
+				            <th class="row2 text-center"><?=$this->getOrderLink('keys')?>Keys</a></th>
+				            <th class="row2 text-center"><?=$this->getOrderLink('screen_num')?>Screen</a></th>
+				            <th class="row2 text-center"><?=$this->getOrderLink('campaign_id')?>Campaign</a></th>
+				            <th class="row2 text-center"><?=$this->getOrderLink('voice_id')?>Voice</a></th>
+				            <th class="row2 text-center"><?=$this->getOrderLink('time_modified')?>Last Modified</a></th>
+				            <th class="row2 text-center">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
+		<div id="dialog-modal-add-script" title="Adding new Script" class="nod"></div>
+		<div id="dialog-modal-edit-voicefile" title="Editing Voice File" class="nod"></div>
 		<script>
-
 			$("#dialog-modal-add-script").dialog({
 				autoOpen: false,
-				width: 560,
+				width: 'auto',
 				height: 360,
 				modal: false,
 				draggable:true,
-				resizable: false
+				resizable: false,
+				position: {my: 'center', at: 'center', of: '#main-container'},
 			});
-
 			loadScripts();
-
 			togVoiceDD(getEl('<?=$this->frm_name?>'));
-
-		</script><?
+		</script>
+		<?
 
 	}
 
@@ -716,7 +585,7 @@ class Scripts{
 				$('#del_voice_id').val(id);
 
 				checkScriptFrm(getEl('scr_add_frm'));
-			}			
+			}
 
 			// SET TITLEBAR
 			$('#dialog-modal-add-script').dialog( "option", "title", '<?=($id)?'Editing Script #'.$id.' - '.addslashes(htmlentities($row['name'])):'Adding new Script'?>' );
@@ -905,14 +774,14 @@ class Scripts{
 
 				$('#'+objname).dialog('option', 'position', 'center');
 
-			}						
+			}
 
 			// Function to display edit voice file dialog box on list click
 			function handleFileListClick(id){
 
 				displayEditVoiceFile(id);
 
-			}	
+			}
 
 			// Edit voice file dialog spec
 			$("#dialog-modal-edit-voicefile").dialog({
@@ -925,7 +794,7 @@ class Scripts{
 				close: function(event, ui){
 
 					hideAudio();
-					
+
 				}
 			});
 
@@ -951,7 +820,7 @@ class Scripts{
 					<td colspan="2">
 					<textarea name="file_description" rows="4" cols="35"></textarea>
 					</td>
-				</tr>				
+				</tr>
 				<tr>
 					<th align="left">
 						<select name="upload_mode">
@@ -1063,7 +932,7 @@ class Scripts{
 				var objname = 'dialog-modal-edit-voicefile';
 
 				$('#'+objname).dialog("close");
-			
+
 			}
 
 			// Used by form submit to validate form fields
@@ -1118,7 +987,7 @@ class Scripts{
 
 				// SUCCESS - POST AJAX TO SERVER
 				}else{
-					
+
 					$.ajax({
 						type: "POST",
 						cache: false,
@@ -1214,7 +1083,7 @@ class Scripts{
 			</td>
 		</tr>
 
-		
+
 		<?
 
 
@@ -1239,7 +1108,7 @@ class Scripts{
 			Your browser does not support the audio element.
 		</audio><br>
 		<a href="#" onclick="parent.hideAudio();return false">[Hide Player]</a>
-		
+
 		<script>
 			parent.applyUniformity();
 		</script><?

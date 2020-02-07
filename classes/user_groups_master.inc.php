@@ -8,12 +8,12 @@
 $_SESSION['user_groups_master'] = new UserGroupsMaster;
 
 class UserGroupsMaster{
-	
+
         var $table = 'user_groups_master';            ## Classes main table to operate on
-        
+
         var $orderby = 'user_group';                ## Default Order field
         var $orderdir = 'ASC';                    ## Default order direction
-        
+
         ## Page  Configuration
         var $pagesize = 100;                        ## Adjusts how many items will appear on each page
         var $index = 0;                            ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
@@ -71,9 +71,9 @@ class UserGroupsMaster{
                  * Build the URL for AJAX to hit, to build the list
                  */
                 function getUserGroupsMasterURL() {
-                     
+
                     let frm = getEl('<?=$this->frm_name?>');
-                    
+
                     return 'api/api.php' +
                         '?get=user_groups_master&' +
                         'mode=xml&' +
@@ -143,7 +143,6 @@ class UserGroupsMaster{
                     $('#' + objname).dialog("open");
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=user_groups_master&add_user_groups_master=" + id + "&printable=1&no_script=1");
-                    $('#' + objname).dialog('option', 'position', 'center');
                 }
 
                 function resetUserGroupsMasterForm(frm) {
@@ -273,11 +272,12 @@ class UserGroupsMaster{
             <script>
                 $("#dialog-modal-add-user-groups-master").dialog({
                     autoOpen: false,
-                    width: 500,
+                    width: 'auto',
                     height: 260,
                     modal: false,
                     draggable: true,
-                    resizable: false
+                    resizable: false,
+                    position: {my: 'center', at: 'center', of: '#main-container'}
                 });
                 loadUser_groups_master();
             </script>
@@ -441,8 +441,8 @@ class UserGroupsMaster{
             </table>
             <?
         }
-        
-        
+
+
         function getOrderLink($field){
             $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
             $var .= "((" . $this->order_prepend . "orderdir == 'ASC')?'DESC':'ASC')";

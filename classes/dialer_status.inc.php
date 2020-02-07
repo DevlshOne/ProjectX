@@ -13,21 +13,21 @@ class DialerStatus {
 	public $selectedClusters = [];
 	public $table = 'vici_cluster';
 	public $clusterInfo = [];
-	
+
 	## Classes main table to operate on
-	
+
 	function DialerStatus() {
 		$this->handlePOST();
 	}
-	
-	function handlePOST() {
+
+    function handlePOST() {
 	}
-	
-	function handleFLOW() {
+
+    function handleFLOW() {
 		$this->displayDialers();
 	}
-	
-	function getClusterInfo() {
+
+    function getClusterInfo() {
 		foreach (getClusterIDs() as $i => $v) {
 			$this->clusterInfo[$i]['cluster_id'] = $v;
 			$this->clusterInfo[$i]['type'] = getClusterType($v);
@@ -39,8 +39,8 @@ class DialerStatus {
 			$this->clusterInfo[$i]['usergroup_options'] = getClusterUserGroups($v);
 		}
 	}
-	
-	function displayDialers() {
+
+    function displayDialers() {
 		/*
 		 * TODO
 		 * auto-refresh every 4 seconds
@@ -575,8 +575,8 @@ class DialerStatus {
                             $('body').css('background-color', '#000000');
                             $('body').css('color', '#FFFFFF');
 
-                            $('#main_content').css('background-color', '#000000');
-                            $('#main_content').css('color', '#FFFFFF');
+                            $('#main-container').css('background-color', '#000000');
+                            $('#main-container').css('color', '#FFFFFF');
 
                             $('#dialerStatusZone').css('background-color', '#000000');
                             $('.clusterTile').css('background-color', 'black');
@@ -586,8 +586,8 @@ class DialerStatus {
                             $('body').css('background-color', '#FFFFFF');
                             $('body').css('color', '#000000');
 
-                            $('#main_content').css('background-color', '#FFFFFF');
-                            $('#main_content').css('color', '#000000');
+                            $('#main-container').css('background-color', '#FFFFFF');
+                            $('#main-container').css('color', '#000000');
 
                             $('#dialerStatusZone').css('background-color', '#FFFFFF');
                             $('.clusterTile').css('background-color', 'navy');
@@ -1101,8 +1101,8 @@ class DialerStatus {
                             $('body').css('background-color', '#000000');
                             $('body').css('color', '#FFFFFF');
 
-                            $('#main_content').css('background-color', '#000000');
-                            $('#main_content').css('color', '#FFFFFF');
+                            $('#main-container').css('background-color', '#000000');
+                            $('#main-container').css('color', '#FFFFFF');
 
 
                             $('#dialerStatusZone').css('background-color', '#000000');

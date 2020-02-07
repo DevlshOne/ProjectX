@@ -1,516 +1,480 @@
 <?php
-    /***************************************************************
-     *    Campaigns - handles listing and editing campaigns
-     *    Written By: Jonathan Will
-     ***************************************************************/
+/***************************************************************
+ *    Campaigns - handles listing and editing campaigns
+ *    Written By: Jonathan Will
+ ***************************************************************/
 
-    $_SESSION['campaigns'] = new Campaigns;
+$_SESSION['campaigns'] = new Campaigns;
 
-    class Campaigns {
+class Campaigns
+{
+    var $table = 'campaigns';            ## Classes main table to operate on
+    var $orderby = 'id';        ## Default Order field
+    var $orderdir = 'DESC';    ## Default order direction
+    ## Page  Configuration
+    var $pagesize = 20;    ## Adjusts how many items will appear on each page
+    var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+    var $index_name = 'cmpgn_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+    var $frm_name = 'cpgnnextfrm';
+    var $order_prepend = 'cpgn_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
-        var $table = 'campaigns';            ## Classes main table to operate on
-        var $orderby = 'id';        ## Default Order field
-        var $orderdir = 'DESC';    ## Default order direction
+    function __construct()
+    {
+        require_once("classes/cmpgn_parents.inc.php");
+    }
 
-        ## Page  Configuration
-        var $pagesize = 20;    ## Adjusts how many items will appear on each page
-        var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+    function Campaigns()
+    {
+        ## REQURES DB CONNECTION!
+        $this->handlePOST();
+    }
 
-        var $index_name = 'cmpgn_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-        var $frm_name = 'cpgnnextfrm';
-
-        var $order_prepend = 'cpgn_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
-
-        function __construct() {
-            require_once("classes/cmpgn_parents.inc.php");
-        }
-
-        function Campaigns() {
-            ## REQURES DB CONNECTION!
-            $this->handlePOST();
-        }
-
-        function makeDD($name, $sel, $class, $onchange, $size, $blank_entry = 1, $extra_where = NULL) {
-            $names = 'name';    ## or Array('field1','field2')
-            $value = 'id';
-            $seperator = '';        ## If $names == Array, this will be the seperator between fields
-            $fieldstring = '';
-            if (is_array($names)) {
-                $x = 0;
-                foreach ($names as $name) {
-                    $fieldstring .= $name . ',';
-                }
-            } else {
-                $fieldstring .= $names . ',';
+    function makeDD($name, $sel, $class, $onchange, $size, $blank_entry = 1, $extra_where = NULL)
+    {
+        $names = 'name';    ## or Array('field1','field2')
+        $value = 'id';
+        $seperator = '';        ## If $names == Array, this will be the seperator between fields
+        $fieldstring = '';
+        if (is_array($names)) {
+            $x = 0;
+            foreach ($names as $name) {
+                $fieldstring .= $name . ',';
             }
-            $fieldstring .= $value;
-            $sql = "SELECT $fieldstring FROM " . $this->table . " WHERE status='active' " . (($extra_where != NULL) ? $extra_where : '');
-            $DD = new genericDD($sql, $names, $value, $seperator);
-            return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
+        } else {
+            $fieldstring .= $names . ',';
         }
+        $fieldstring .= $value;
+        $sql = "SELECT $fieldstring FROM " . $this->table . " WHERE status='active' " . (($extra_where != NULL) ? $extra_where : '');
+        $DD = new genericDD($sql, $names, $value, $seperator);
+        return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
+    }
 
-        function makeDDByCode($name, $sel, $class, $onchange, $size, $blank_entry = 1, $extra_where = NULL) {
-            $names = 'vici_campaign_id';    ## or Array('field1','field2')
-            $value = 'id';
-            $seperator = '';        ## If $names == Array, this will be the seperator between fields
-            $fieldstring = '';
-            if (is_array($names)) {
-                $x = 0;
-                foreach ($names as $name) {
-                    $fieldstring .= $name . ',';
-                }
-            } else {
-                $fieldstring .= $names . ',';
+    function makeDDByCode($name, $sel, $class, $onchange, $size, $blank_entry = 1, $extra_where = NULL)
+    {
+        $names = 'vici_campaign_id';    ## or Array('field1','field2')
+        $value = 'id';
+        $seperator = '';        ## If $names == Array, this will be the seperator between fields
+        $fieldstring = '';
+        if (is_array($names)) {
+            $x = 0;
+            foreach ($names as $name) {
+                $fieldstring .= $name . ',';
             }
-            $fieldstring .= $value;
-            $sql = "SELECT $fieldstring FROM " . $this->table . " WHERE status='active' " . (($extra_where != NULL) ? $extra_where : '');
-            $DD = new genericDD($sql, $names, $value, $seperator);
-            return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
+        } else {
+            $fieldstring .= $names . ',';
         }
+        $fieldstring .= $value;
+        $sql = "SELECT $fieldstring FROM " . $this->table . " WHERE status='active' " . (($extra_where != NULL) ? $extra_where : '');
+        $DD = new genericDD($sql, $names, $value, $seperator);
+        return $DD->makeDD($name, $sel, $class, $blank_entry, $onchange, $size);
+    }
 
-        function handlePOST() {
+    function handlePOST()
+    {
 
-            // THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
-            // SEE api/campaigns.api.php FOR POST HANDLING!
-            // <3 <3 -Jon
+        // THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
+        // SEE api/campaigns.api.php FOR POST HANDLING!
+        // <3 <3 -Jon
 
-        }
+    }
 
-        function handleFLOW() {
-            # Handle flow, based on query string
+    function handleFLOW()
+    {
+        # Handle flow, based on query string
 
-            if (!checkAccess('campaigns')) {
+        if (!checkAccess('campaigns')) {
 
-                accessDenied("Campaigns");
+            accessDenied("Campaigns");
 
-                return;
+            return;
+
+        } else {
+            if (isset($_REQUEST['add_campaign'])) {
+
+                $this->makeAdd($_REQUEST['add_campaign']);
 
             } else {
-                if (isset($_REQUEST['add_campaign'])) {
-
-                    $this->makeAdd($_REQUEST['add_campaign']);
-
-                } else {
-                    $this->listEntrys();
-                }
+                $this->listEntrys();
             }
         }
+    }
 
-        function listEntrys() {
+    function listEntrys()
+    {
 
-            ?>
-            <script>
-
-                var campaign_delmsg = 'Are you sure you want to delete this campaign?';
-
-                var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
-                var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-
-
-                var <?=$this->index_name?> = 0;
-                var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-
-                var CampaignsTableFormat = [
-                    ['id', 'align_center'],
-                    ['name', 'align_left'],
-                    ['status', 'align_center'],
-
-                    ['[delete]', 'align_center']
-                ];
-
-                /**
-                 * Build the URL for AJAX to hit, to build the list
-                 */
-                function getCampaignsURL() {
-
-                    var frm = getEl('<?=$this->frm_name?>');
-
-                    return 'api/api.php' +
-                        "?get=campaigns&" +
-                        "mode=xml&" +
-
-                        //'s_id='+escape(frm.s_id.value)+"&"+
-                        //'s_name='+escape(frm.s_name.value)+"&"+
-                        //'s_status='+escape(frm.s_status.value)+"&"+
-
-                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
-                        "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
-                }
-
-
-                var campaigns_loading_flag = false;
-
-                /**
-                 * Load the campaign data - make the ajax call, callback to the parse function
-                 */
-                function loadCampaigns() {
-
-                    // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
-                    var val = null;
-                    eval('val = campaigns_loading_flag');
-
-
-                    // CHECK IF WE ARE ALREADY LOADING THIS DATA
-                    if (val == true) {
-
-                        //console.log("CAMPAIGNS ALREADY LOADING (BYPASSED) \n");
-                        return;
-                    } else {
-
-                        eval('campaigns_loading_flag = true');
-                    }
-
-
-                    loadAjaxData(getCampaignsURL(), 'parseCampaigns');
-
-                }
-
-
-                /**
-                 * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
-                 */
-                var <?=$this->order_prepend?>totalcount = 0;
-
-                function parseCampaigns(xmldoc) {
-
-                    <?=$this->order_prepend?>totalcount = parseXMLData('campaign', CampaignsTableFormat, xmldoc);
-
-
-                    // ACTIVATE PAGE SYSTEM!
-                    if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
-
-
-                        makePageSystem('campaigns',
-                            '<?=$this->index_name?>',
-                            <?=$this->order_prepend?>totalcount,
-                            <?=$this->index_name?>,
-                            <?=$this->order_prepend?>pagesize,
-                            'loadCampaigns()'
-                        );
-
-                    } else {
-
-                        hidePageSystem('campaigns');
-
-                    }
-
-                    eval('campaigns_loading_flag = false');
-                }
-
-
-                function handleCampaignListClick(id) {
-
-                    displayAddCampaignDialog(id);
-
-                }
-
-
-                function displayAddCampaignDialog(campaignid) {
-
-                    var objname = 'dialog-modal-add-campaign';
-
-
-                    if (campaignid > 0) {
-                        $('#' + objname).dialog("option", "title", 'Editing Campaign');
-                    } else {
-                        $('#' + objname).dialog("option", "title", 'Adding new Campaign');
-                    }
-
-
-                    $('#' + objname).dialog("open");
-
-                    $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
-                    $('#' + objname).load("index.php?area=campaigns&add_campaign=" + campaignid + "&printable=1&no_script=1");
-
-                    $('#' + objname).dialog('option', 'position', 'center');
-                }
-
+        ?>
+        <script>
+            $(function () {
                 function resetCampaignForm(frm) {
-
                     frm.s_id.value = '';
                     frm.s_name.value = '';
                     frm.s_status.value = 'active';
-
                 }
 
-
-            </script>
-            <div id="dialog-modal-add-campaign" title="Adding new Campaign" class="nod">
-            </div>
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCampaigns();return false">
-                <input type="hidden" name="searching_campaigns">
-                <table border="0" width="100%" class="lb" cellspacing="0">
-                    <tr>
-                        <td height="40" class="pad_left ui-widget-header">
-
-                            <table border="0" width="100%">
-                                <tr>
-                                    <td>
-                                        Campaigns
-                                        &nbsp;&nbsp;&nbsp;&nbsp;
-                                        <input type="button" value="Add" onclick="displayAddCampaignDialog(0)">
-                                    </td>
-                                    <td align="right"><?
-                                            /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/ ?>
-                                        <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-                                            <tr>
-                                                <td id="campaigns_prev_td" class="page_system_prev"></td>
-                                                <td id="campaigns_page_td" class="page_system_page"></td>
-                                                <td id="campaigns_next_td" class="page_system_next"></td>
-                                            </tr>
-                                        </table>
-
-                                    </td>
-                                </tr>
-                            </table>
-
-                        </td>
-
-                    </tr>
-            </form>
-            <tr>
-                <td colspan="2">
-                    <table border="0" width="100%" id="campaign_table">
-                        <tr>
-                            <th class="row2 align_left"><?= $this->getOrderLink('id') ?>ID</a></th>
-                            <th class="row2 align_left"><?= $this->getOrderLink('name') ?>Name</a></th>
-							<th class="row2 align_center"><?= $this->getOrderLink('status') ?>Status</a></th>
-                            <th class="row2">&nbsp;</th>
-                        </tr>
-                    </table>
-                </td>
-            </tr></table>
-            <script>
-                $("#dialog-modal-add-campaign").dialog({
-                    autoOpen: false,
-                    width: 480,
-                    height: 340,
-                    modal: false,
-                    draggable: true,
-                    resizable: false
-                });
-                loadCampaigns();
-            </script>
-            <?
-
-        }
-
-        function makeAdd($id) {
-
-            $id = intval($id);
-
-            if ($id) {
-
-                $row = $_SESSION['dbapi']->campaigns->getByID($id);
-
-            }
-
-            ?>
-            <script>
-
                 function validateCampaignField(name, value, frm) {
-
                     //alert(name+","+value);
-
-
                     switch (name) {
                         default:
-
                             // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
                             return true;
                             break;
-
                         case 'vici_campaign_id':
                         case 'name':
-
-
                             if (!value) return false;
-
                             return true;
-
-
                             break;
                     }
                     return true;
                 }
 
-
-                function checkCampaignFrm(frm) {
-
-
-                    var params = getFormValues(frm, 'validateCampaignField');
-
-
-                    // FORM VALIDATION FAILED!
-                    // param[0] == field name
-                    // param[1] == field value
-                    if (typeof params == "object") {
-
-                        switch (params[0]) {
-                            default:
-
-                                alert("Error submitting form. Check your values");
-
-                                break;
-                            case 'vici_campaign_id':
-
-                                alert("Please enter the exact campaign ID field from vici\nExample: BCRSFC");
-                                eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                break;
-
-                            case 'name':
-
-                                alert("Please enter a name for this campaign.");
-                                eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                break;
-
-                        }
-
-                        // SUCCESS - POST AJAX TO SERVER
-                    } else {
-
-
-                        //alert("Form validated, posting");
-
-                        $.ajax({
-                            type: "POST",
-                            cache: false,
-                            url: 'api/api.php?get=campaigns&mode=xml&action=edit',
-                            data: params,
-                            error: function () {
-                                alert("Error saving user form. Please contact an admin.");
-                            },
-                            success: function (msg) {
-
-//alert(msg);
-
-                                var result = handleEditXML(msg);
-                                var res = result['result'];
-
-                                if (res <= 0) {
-
-                                    alert(result['message']);
-
-                                    return;
-
+                console.log('Initializing campaign add dialog');
+                $("#dialog-modal-add-campaign").dialog({
+                    autoOpen: false,
+                    width: 480,
+                    height: 320,
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    buttons: {
+                        'Submit': function (e, ui) {
+                            e.preventDefault();
+                            let frm = $(this).closest('form');
+                            let params = getFormValues(frm, 'validateCampaignField');
+                            if (typeof params == "object") {
+                                switch (params[0]) {
+                                    default:
+                                        alert("Error submitting form. Check your values");
+                                        break;
+                                    case 'vici_campaign_id':
+                                        alert("Please enter the exact campaign ID field from vici\nExample: BCRSFC");
+                                        eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                                        break;
+                                    case 'name':
+                                        alert("Please enter a name for this campaign.");
+                                        eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                                        break;
                                 }
-
-
-                                loadCampaigns();
-
-
-                                displayAddCampaignDialog(res);
-
-                                alert(result['message']);
-
+                            } else {
+                                $.ajax({
+                                    type: 'POST',
+                                    url: 'api/api.php?get=dialer_status&mode=json&action=setViciCreds&vici_username=' + $('#vici_username').val() + '&vici_password=' + $('#vici_password').val(),
+                                    success: function () {
+                                        alert('Vici Username/Password SAVED for this session');
+                                    },
+                                    error: function (response) {
+                                        console.log('FAILURE - ' + response);
+                                    }
+                                });
                             }
-
-
-                        });
-
+                            $(this).dialog('close');
+                        },
+                        'Reset': function (e, ui) {
+                            resetCampaignForm(frm);
+                        }
                     }
+                });
+                $('#addCampaignButton').on('click', function () {
+                    let $dlgObj = $('#dialog-modal-add-campaign');
+                    $dlgObj.dialog('open');
+                    $dlgObj.html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                    $dlgObj.load("index.php?area=campaigns&add_campaign=0&printable=1&no_script=1");
+                });
+                $("#dialog-modal-edit-campaign").dialog({
+                    autoOpen: false,
+                    width: 480,
+                    height: 320,
+                    modal: false,
+                    draggable: true,
+                    resizable: false,
+                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    buttons: {
+                        'Submit': function (e) {
+                            e.preventDefault();
+                            let frm = $(this).closest('form');
+                            let params = getFormValues(frm, 'validateCampaignField');
+                            if (typeof params == "object") {
+                                switch (params[0]) {
+                                    default:
+                                        alert("Error submitting form. Check your values");
+                                        break;
+                                    case 'vici_campaign_id':
+                                        alert("Please enter the exact campaign ID field from vici\nExample: BCRSFC");
+                                        eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                                        break;
+                                    case 'name':
+                                        alert("Please enter a name for this campaign.");
+                                        eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                                        break;
+                                }
+                            } else {
+                                $.ajax({
+                                    type: "POST",
+                                    cache: false,
+                                    url: 'api/api.php?get=campaigns&mode=xml&action=edit',
+                                    data: params,
+                                    error: function (response) {
+                                        swReportErrorMessage('Campaign did not save');
+                                    },
+                                    success: function (msg) {
+                                        var result = handleEditXML(msg);
+                                        var res = result['result'];
+                                        if (res <= 0) {
+                                            swReportSuccessMessage(result['message']);
+                                            return;
+                                        }
+                                        loadCampaigns();
+                                        swReportSuccessMessage(result['message']);
+                                        $(this).dialog('close');
+                                    }
+                                });
+                            }
+                        },
+                        'Reset': function (e) {
+                            resetCampaignForm(frm);
+                        }
+                    }
+                });
+            });
 
-                    return false;
+            var campaign_delmsg = 'Are you sure you want to delete this campaign?';
+            var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
+            var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
+            var <?=$this->index_name?> = 0;
+            var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
+            var CampaignsTableFormat = [
+                ['id', 'text-center'],
+                ['name', 'text-left'],
+                ['status', 'text-center'],
+                ['[delete]', 'text-center']
+            ];
 
+            /**
+             * Build the URL for AJAX to hit, to build the list
+             */
+            function getCampaignsURL() {
+                var frm = getEl('<?=$this->frm_name?>');
+                var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
+                return 'api/api.php' +
+                    "?get=campaigns&" +
+                    "mode=xml&" +
+                    "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
+            )
+                +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
+                "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+            }
+
+            var campaigns_loading_flag = false;
+
+            /**
+             * Load the campaign data - make the ajax call, callback to the parse function
+             */
+            function loadCampaigns() {
+                // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
+                var val = null;
+                eval('val = campaigns_loading_flag');
+                // CHECK IF WE ARE ALREADY LOADING THIS DATA
+                if (val == true) {
+                    //console.log("CAMPAIGNS ALREADY LOADING (BYPASSED) \n");
+                    return;
+                } else {
+                    eval('campaigns_loading_flag = true');
                 }
+                loadAjaxData(getCampaignsURL(), 'parseCampaigns');
+            }
 
+            /**
+             * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
+             */
+            var <?=$this->order_prepend?>totalcount = 0;
 
-                // SET TITLEBAR
-                $('#dialog-modal-add-campaign').dialog("option", "title", '<?=($id) ? 'Editing Campaign #' . $id . ' - ' . htmlentities($row['name']) : 'Adding new Campaign'?>');
+            function parseCampaigns(xmldoc) {
+                <?=$this->order_prepend?>totalcount = parseXMLData('campaign', CampaignsTableFormat, xmldoc);
+                // ACTIVATE PAGE SYSTEM!
+                if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
+                    makePageSystem('campaigns',
+                        '<?=$this->index_name?>',
+                        <?=$this->order_prepend?>totalcount,
+                        <?=$this->index_name?>,
+                        <?=$this->order_prepend?>pagesize,
+                        'loadCampaigns()'
+                    );
+                } else {
+                    hidePageSystem('campaigns');
+                }
+                eval('campaigns_loading_flag = false');
+            }
 
-
-            </script>
-            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkCampaignFrm(this); return false">
-                <input type="hidden" id="adding_campaign" name="adding_campaign" value="<?= $id ?>">
-
-
-                <table border="0" align="center">
-                    <tr>
-                        <th align="left" height="30">Name</th>
-                        <td><input name="name" type="text" size="50" value="<?= htmlentities($row['name']) ?>"></td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Parent Campaign:</th>
-                        <td>
-                            <? echo $_SESSION['cmpgn_parents']->makeDDvalIDtxtCODE($row['parent_campaign_id']); ?>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <th align="left" height="30">Entity Type:</th>
-                        <td><select name="type">
-                                <option value="charity">Charity</option>
-                                <option value="pac" <?= ($row['type'] == 'pac') ? ' SELECTED ' : '' ?>>PAC</option>
-                                <option value="verifier" <?= ($row['type'] == 'verifier') ? ' SELECTED ' : '' ?>>Verifier</option>
-                                <option value="other" <?= ($row['type'] == 'other') ? ' SELECTED ' : '' ?>>Other</option>
-
-                            </select></td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Status</th>
-                        <td>
-                            <select name="status">
-                                <option value="active">Active</option>
-                                <option value="suspended" <?= ($row['status'] == 'suspended') ? ' SELECTED ' : '' ?>>Suspended</option>
-                                <option value="deleted" <?= ($row['status'] == 'deleted') ? ' SELECTED ' : '' ?>>Deleted</option>
-                            </select>
-
-
-                            &nbsp;&nbsp;PX Hidden (<a href="#" onclick="alert('PX Hidden will remove the campaign from the PX login screen dropdown, but still appear in other places of the PX GUI.');return false">help?</a>):&nbsp;&nbsp;
-                            <select name="px_hidden">
-                                <option value="no">No</option>
-                                <option value="yes" <?= ($row['px_hidden'] == 'yes') ? ' SELECTED ' : '' ?>>Yes</option>
-                            </select>
-
-                        </td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Vici Campaign ID</th>
-                        <td><input name="vici_campaign_id" type="text" size="50" value="<?= htmlentities($row['vici_campaign_id']) ?>"></td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Manager Transfer:</th>
-                        <td><select name="manager_transfer">
-                                <option value="no">Disabled</option>
-                                <option value="yes" <?= ($row['manager_transfer'] == 'yes') ? ' SELECTED ' : '' ?>>Enabled</option>
-                            </select>
-                            
-                            &nbsp;&nbsp;Warm Transfers: &nbsp;&nbsp;
-                            <select name="warm_transfers">
-                                <option value="no">Disabled</option>
-                                <option value="yes" <?= ($row['warm_transfers'] == 'yes') ? ' SELECTED ' : '' ?>>Enabled</option>
-                            </select>
-                            </td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Verifier Mode</th>
-                        <td><select name="verifier_mode">
-                                <option value="no">No</option>
-                                <option value="yes" <?= ($row['verifier_mode'] == 'yes') ? ' SELECTED ' : '' ?>>Yes</option>
-                            </select></td>
-                    </tr>
-                    <tr>
-                        <th align="left" height="30">Variables</th>
-                        <td><input name="variables" type="text" size="50" value="<?= htmlentities($row['variables']) ?>"></td>
-                    </tr>
-                    <tr>
-
-                        <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
-                    </tr>
+            function handleCampaignListClick(id) {
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'json',
+                    url: 'api/api.php?get=campaigns&mode=json&action=getRowByID&campaign_id=' + id,
+                    success: function (data) {
+                        let $dlgObj = $('#dialog-modal-edit-campaign');
+                        $dlgObj.dialog('open');
+                        $('#adding_campaign').val(id);
+                        $('#cmp_name').val(data.name);
+                        $('#ent_type').val(data.type);
+                        $('#cmp_status').val(data.status);
+                        $('#px_hidden').val(data.px_hidden);
+                        $('#vcmp_id').val(data.vici_campaign_id);
+                        $('#mgr_trf').val(data.manager_transfer);
+                        $('#wrm_trf').val(data.warm_transfers);
+                        $('#cmp_vars').val(data.variables);
+                        $('#prt_cmp_dd').html(data.parent_dd);
+                        applyUniformity();
+                    },
+                    error: function () {
+                        swReportErrorMessage('Unable to get data for campaign id :: ' + id);
+                    }
+                });
+            }
+            loadCampaigns();
+        </script>
+        <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
+        <div class="block">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCampaigns();return false">
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">Campaigns</h4>
+                    <button type="button" value="Add" title="Add Campaign" class="btn btn-sm btn-primary" id="addCampaignButton">Add</button>
+                    <div id="campaigns_prev_td" class="page_system_prev"></div>
+                    <div id="campaigns_page_td" class="page_system_page"></div>
+                    <div id="campaigns_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadCampaigns(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                </div>
+                <div class="block-content block-content-full">
+                    <div id="DataTables_Campaign_Table_wrapper" class="dataTables_wrapper dt-bootstrap4 no-footer">
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-sm table-striped" id="campaign_table">
+                                    <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
+                                    <tr>
+                                        <th class="row2 text-center"><?= $this->getOrderLink('id') ?>ID</a></th>
+                                        <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                                        <th class="row2 text-center"><?= $this->getOrderLink('status') ?>Status</a></th>
+                                        <th class="row2">&nbsp;</th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
-            </table><?
+        </div>
+        <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
+        <div id="dialog-modal-add-campaign" title="Adding new Campaign" class="nod"></div>
+        <div id="dialog-modal-edit-campaign" title="Editing Campaign" class="nod">
+            <div class="block-content block-content-full text-left">
+                <form method="POST" action="#" autocomplete="off">
+                    <input type="hidden" id="adding_campaign" name="adding_campaign" value="">
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="name">Campaign Name</label>
+                        </div>
+                        <div class="col">
+                            <input id="cmp_name" class="form-control" name="name" type="text" size="50" placeholder="Campaign name..." value="">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="name">Parent Campaign</label>
+                        </div>
+                        <div class="col">
+                            <div id="prt_cmp_dd"></div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="name">Entity Type</label>
+                        </div>
+                        <div class="col">
+                            <select class="form-control" id="ent_type" name="type">
+                                <option value="charity">Charity</option>
+                                <option value="pac">PAC</option>
+                                <option value="verifier">Verifier</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="status">Status</label>
+                        </div>
+                        <div class="col">
+                            <select id="cmp_status" name="status">
+                                <option value="active">Active</option>
+                                <option value="suspended">Suspended</option>
+                                <option value="deleted">Deleted</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="px_hidden">PX Hidden</label>
+                        </div>
+                        <div class="col">
+                            <select id="px_hidden" name="px_hidden" tooltip="PX Hidden will remove the campaign from the PX login screen dropdown, but still appear in other places of the PX GUI.">
+                                <option value="no">No</option>
+                                <option value="yes">Yes</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="vici_campaign_id">VICI Campaign ID</label>
+                        </div>
+                        <div class="col">
+                            <input id="vcmp_id" name="vici_campaign_id" type="text" class="form-control" size="50" value="" placeholder="VICI Campaign ID...">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="manager_transfer">Manager Transfer</label>
+                        </div>
+                        <div class="col">
+                            <select id="mgr_trf" name="manager_transfer">
+                                <option value="no">Disabled</option>
+                                <option value="yes">Enabled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="warm_transfers">Warm Transfers</label>
+                        </div>
+                        <div class="col">
+                            <select id="wrm_trf" name="warm_transfers">
+                                <option value="no">Disabled</option>
+                                <option value="yes">Enabled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="col">
+                            <label for="variables">Variables</label>
+                        </div>
+                        <div class="col">
+                            <input id="cmp_vars" name="variables" type="text" class="form-control" size="50" value="" placeholder="Variables...">
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <?
 
-        }
-
-        function getOrderLink($field) {
-
-            $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
-
-            $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-
-            $var .= ");loadCampaigns();return false;\">";
-
-            return $var;
-        }
     }
+
+    function getOrderLink($field)
+    {
+        $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
+        $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
+        $var .= ");loadCampaigns();return false;\">";
+        return $var;
+    }
+}

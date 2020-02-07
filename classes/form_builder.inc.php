@@ -64,6 +64,7 @@
                 var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
                 var <?=$this->index_name?> = 0;
                 var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
+                var forms_loading_flag = false;
                 var FormBuildersTableFormat = [
                     ['[get:campaign_name:campaign_id]', 'align-left'],
                     ['[get:num_screens:campaign_id]', 'align_center'],
@@ -75,13 +76,12 @@
                  * Build the URL for AJAX to hit, to build the list
                  */
                 function getFormsURL() {
-                    let frm = getEl('<?=$this->frm_name?>');
+                    var frm = getEl('<?=$this->frm_name?>');
+                    var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
                     return 'api/api.php' +
                         "?get=form_builder&" +
                         "mode=xml&" +
-                        "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
-                        ) + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
-                        "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+                        "index=" + <?=$this->index_name?> * <?=$this->order_prepend?>pagesize + "&pagesize=" + <?=$this->order_prepend?>pagesize + "&" + "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
                 }
 
                 function getFieldsURL(c, s) {
@@ -91,7 +91,6 @@
                         '&mode=xml';
                 }
 
-                let forms_loading_flag = false;
 
                 /**
                  * Load the name data - make the ajax call, callback to the parse function
@@ -160,7 +159,7 @@
                 }
 
                 function displayAddFormBuilderDialog(id) {
-                    let objname = 'main_content';
+                    let objname = 'main-container';
                     $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                     $('#' + objname).load("index.php?area=form_builder&add=" + id + "&printable=1&no_script=1");
                 }
@@ -199,11 +198,11 @@
                     modal: false,
                     draggable: true,
                     resizable: false,
-                    position: 'center'
+                    position: {my: 'center', at: 'center', of: '#main-container'},
                 });
                 $("#dialog-modal-add-form-builder").dialog({
                     autoOpen: false,
-                    width: 500,
+                    width: 'auto',
                     height: 160,
                     modal: false,
                     draggable: true,
@@ -221,7 +220,7 @@
                             $(this).dialog('close');
                         }
                     },
-                    position: 'center'
+                    position: {my: 'center', at: 'center', of: '#main-container'},
                 });
                 $("#dialog-modal-delete-last-field").dialog({
                     autoOpen: false,
@@ -231,7 +230,7 @@
                     draggable: true,
                     resizable: false,
                     title: 'CONFIRM - Delete Last Field',
-                    position: 'center',
+                    position: {my: 'center', at: 'center', of: '#main-container'},
                     buttons: {
                         'Confirm': function () {
                             let i = $(this).data('fieldID');
@@ -244,52 +243,35 @@
                     }
                 });
             </script>
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST"
-                  action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForm_builders();return false">
-                <input type="hidden" name="searching_name">
-                <table border="0" width="100%" class="lb" cellspacing="0">
-                    <tr>
-                        <td height="40" class="pad_left ui-widget-header">
-                            <table border="0" width="100%">
-                                <tr>
-                                    <td width="500">Form Builder</td>
-                                    <td width="150" align="center">PAGE SIZE: <select
-                                                name="<?= $this->order_prepend ?>pagesizeDD"
-                                                id="<?= $this->order_prepend ?>pagesizeDD"
-                                                onchange="<?= $this->index_name ?>=0; loadForm_builders();return false">
-                                            <option value="20">20</option>
-                                            <option value="50">50</option>
-                                            <option value="100">100</option>
-                                            <option value="500">500</option>
-                                        </select></td>
-                                    <td class="righty">
-                                        <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-                                            <tr>
-                                                <td id="form_builder_prev_td" class="page_system_prev"></td>
-                                                <td id="form_builder_page_td" class="page_system_page"></td>
-                                                <td id="form_builder_next_td" class="page_system_next"></td>
-                                            </tr>
-                                        </table>
-                                        <input class="righty" title="Create new form" type="button" value="New Form" onclick="displayNewFormBuilderDialog(); return false;">
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-            </form>
-            <tr>
-                <td colspan="2">
-                    <table border="0" width="100%" id="form_builder_table">
-                        <tr>
-                            <th class="row2" align="left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                            <th class="row2">Total Screens</th>
-                            <th class="row2">Total Fields</th>
-                            <th class="row2">Action</th>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
-            </table>
+            <div class="block">
+                <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadForm_builders();return false">
+                    <input type="hidden" name="searching_name">
+                    <div class="block-header bg-primary-light">
+                        <h4 class="block-title">Form Builder</h4>
+                        <button type="button" value="Add" title="Add Form" class="btn btn-sm btn-primary" onclick="displayNewFormBuilderDialog(); return false;">Add</button>
+                        <div id="form_builder_prev_td" class="page_system_prev"></div>
+                        <div id="form_builder_page_td" class="page_system_page"></div>
+                        <div id="form_builder_next_td" class="page_system_next"></div>
+                        <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadForm_builders()s(); return false;">
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
+                    </div>
+                    <div class="block-content">
+                        <table class="table table-sm table-striped" id="form_builder_table">
+                            <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
+                            <tr>
+                                <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                                <th class="row2 text-center">Total Screens</th>
+                                <th class="row2 text-center">Total Fields</th>
+                                <th class="row2 text-center">Action</th>
+                            </tr>
+                        </table>
+                    </div>
+                </form>
+            </div>
             <div id="dialog-modal-add-form-builder" title="Creating new form" class="nod"><?= $this->makeNew(); ?></div>
             <div id="dialog-modal-copy-form-builder" title="Copying form and custom fields" class="nod"></div>
             <div id="dialog-modal-delete-last-field" title="CONFIRM - Deleting Last Field" class="nod">
@@ -334,7 +316,7 @@
                     </tr>
                     <tr>
                         <th colspan="2" class="centery">
-                            <input id="btnMakeCopy" type="button" value="Make Copy">
+                            <button id="btnMakeCopy" class="btn btn-small btn-primary" type="button" value="Make Copy">Copy</button>
                         </th>
                     </tr>
                 </table>
@@ -585,32 +567,30 @@
                     changeScreen(formID, 0);
                 });
             </script>
-            <div class="pct100">
-                <div class="ht40 pd10 ui-widget-header">
-                    <div style="float:left;">Editing Form for Campaign : <?= $sourceName; ?></div>
-                    <div style="float:right;"><input type="button" value="Back" onclick="loadSection('?area=form_builder&no_script=1');"/></div>
+            <div class="block block-themed">
+                <div class="block-header bg-primary-light">
+                    <div class="block-title ">Editing Form for Campaign : <?= $sourceName; ?></div>
+                    <div class="block-options">
+                        <button type="button" title="Back" class="btn-block-option" onclick="loadSection('?area=form_builder&no_script=1');">
+                            <i class="fa fa-backward"></i>
+                        </button>
+                    </div>
                 </div>
-                <div id="screenTabs">
-                    <ul>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 0); return false;">All Screens</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 1); return false;">Screen 1</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 2); return false;">Screen 2</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 3); return false;">Screen 3</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 4); return false;">Screen 4</a></li>
-                        <li><a href="#mainPanel" class="loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
+                <div class="block-content">
+                    <ul class="nav nav-tabs nav-tabs-alt" data-toggle="tabs" role="tablist">
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 0); return false;">All Screens</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 1); return false;">Screen 1</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 2); return false;">Screen 2</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 3); return false;">Screen 3</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 4); return false;">Screen 4</a></li>
+                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
                     </ul>
                     <div id="mainPanel" class="pct100">
-                        <div class="ht40" style="margin-bottom:10px;">
-                            <input type="button" value="Add Field" onclick="addField(formID, currentScreen); return false;" style="float:left;" class="frmActionButton"/>
-                            <input type="button" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton"/>
-                            <input type="button" value="Refresh Form" onclick="changeScreen(formID, currentScreen); return false;" class="frmActionButton"/>
-                            <input type="button" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton"/>
-                            <!--                        <ul id="dragZone" class="lefty pct100">-->
-                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="0">TEXT Field</li>-->
-                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="1">SELECT Field</li>-->
-                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="2">TEXTAREA Field</li>-->
-                            <!--                            <li class="ui-state-highlight ui-widget-content fldMaker" data-fldType="99">EMPTY Filler</li>-->
-                            <!--                        </ul>-->
+                        <div class="ht40 block-options" style="margin-bottom:10px;">
+                            <button type="button" class="btn btn-sm btn-primary" title="Add" value="Add Field" onclick="addField(formID, currentScreen); return false;" style="float:left;" class="frmActionButton">Add</button>
+                            <button type="button" class="btn btn-sm btn-primary" title="Preview" value="Preview Form" onclick="previewForm(); return false;" class="frmActionButton">Preview</button>
+                            <button type="button" class="btn btn-sm btn-primary" title="Refresh" value="Refresh Form" onclick="changeScreen(formID, currentScreen); return false;" class="frmActionButton">Refresh</button>
+                            <button type="button" class="btn btn-sm btn-primary" title="Save" value="Save Form" onclick="saveForm(); return false;" class="frmActionButton">Save</button>
                         </div>
                         <div id="dropZone" class="lefty pct100">
                             <div class="ui-state-default fldHolder"></div>
