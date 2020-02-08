@@ -57,6 +57,9 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
 <html>
 <head>
     <title>Project X - Management Tools and Reports</title>
+    <META HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+    <META HTTP-EQUIV="EXPIRES" CONTENT="Mon, 22 Jul 2002 11:11:11 GMT">
+    
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"/>
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <script type="text/javascript" src="js/functions.js"></script>
@@ -64,16 +67,26 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <META HTTP-EQUIV="Access-Control-Allow-Origin" CONTENT="http://skynet.advancedtci.com">
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
-    <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />
+   <?/* <link rel="stylesheet" type="text/css" href="css/jquery.dataTables.css" />*/?>
     <link rel="stylesheet" id="css-main" href="src/assets/css/oneui.min.css" />
+    
+    <link rel="stylesheet" type="text/css" href="src/assets/js/plugins/datatables/dataTables.bootstrap4.css" />
+    <link rel="stylesheet" type="text/css" href="src/assets/js/plugins/datatables/buttons-bs4/buttons.bootstrap4.min.css">
+    
     <link rel="stylesheet" href="css/jquery-ui.min.css" />
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
+    
     <script type="text/javascript" src="src/assets/js/core/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+
     <script type="text/javascript" src="js/ajax_functions.js"></script>
     <script type="text/javascript" src="js/functions.js"></script>
     <script type="text/javascript" src="js/page_system.js"></script>
     <script type="text/javascript" src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
+    
+
+
+    
+   <?/* <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>*/?>
     <script>
         var feDebug = false;
         $('nav').ready(function () {
@@ -633,7 +646,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     </nav>
     <header id="page-header">
         <!-- Header Content -->
-        <div class="content-header">
+        <div class="content-header" style="background-color:rgba(64,64,64,.20)">
             <!-- Left Section -->
             <div class="d-flex align-items-center">
                 <!-- Toggle Sidebar -->
@@ -1135,6 +1148,16 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         <script type="text/javascript" src="src/assets/js/oneui.app.min.js"></script>
         <script type="text/javascript" src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+        
+        <script src="src/assets/js/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/dataTables.buttons.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/buttons.print.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/buttons.html5.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/buttons.flash.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/buttons.colVis.min.js"></script>
+		<script src="src/assets/js/pages/be_tables_datatables.min.js"></script>
+        
         <?
     }
     ?>
