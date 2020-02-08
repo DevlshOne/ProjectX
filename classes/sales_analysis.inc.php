@@ -1051,7 +1051,7 @@ class SalesAnalysis{
 
 			<table border="0" width="100%">
 			<tr>
-				<td height="40" class="pad_left ui-widget-header">
+				<td height="40" class="pad_left block-header bg-primary-light">
 
 					Daily Sales Analysis Report
 
@@ -1421,7 +1421,7 @@ $(function() {
 
 		</script>
 
-		<table id="sales_anal_table" style="width:100%" border="0"  cellspacing="1">
+		<table id="sales_anal_table" style="width:100%" border="0"  cellspacing="1" class="table table-bordered table-striped table-vcenter js-dataTable-full">
 		<thead>
 		<tr><?
 

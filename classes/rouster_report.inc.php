@@ -687,7 +687,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <table id="verifier_report_table" border="0" width="900">
+                        <table id="verifier_report_table" border="0" width="900" class="table table-bordered table-striped table-vcenter js-dataTable-full">
                             <thead>
                             <tr><?
 
@@ -1380,7 +1380,7 @@
 
                 ?>
                 <tr>
-                    <td height="40" class="ui-widget-header pad_left">Rouster Call Stats</td>
+                    <td height="40" class="pad_left block-header bg-primary-light">Rouster Call Stats</td>
                 </tr>
                 <tr>
                 <td>

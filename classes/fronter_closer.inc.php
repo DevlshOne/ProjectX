@@ -388,7 +388,7 @@ class FronterCloser{
 
 		<table border="0" width="100%">
 		<tr>
-			<td height="40" class="pad_left ui-widget-header">Fronter/Closer Report</td>
+			<td height="40" class="pad_left block-header bg-primary-light">Fronter/Closer Report</td>
 		</tr>
 		<tr>
 			<td colspan="2">

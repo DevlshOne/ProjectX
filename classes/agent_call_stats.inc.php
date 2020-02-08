@@ -347,7 +347,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <table id="verifier_report_table" border="0" width="900">
+                        <table id="verifier_report_table" border="0" width="900" class="table table-bordered table-striped table-vcenter js-dataTable-full">
                             <thead>
                             <tr><?
                                     // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
@@ -740,7 +740,7 @@
             if (!isset($_REQUEST['no_nav'])) {
                 ?>
                 <tr>
-                    <td height="40" class="ui-widget-header pad_left">Verifier Call Stats</td>
+                    <td height="40" class="pad_left block-header bg-primary-light">Verifier Call Stats</td>
                 </tr>
                 <tr>
                     <td>
