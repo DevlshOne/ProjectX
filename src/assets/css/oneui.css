@@ -13249,7 +13249,7 @@ a.badge-secondary:focus, a.badge-secondary.focus {
 #page-container > #page-header .content,
 #page-container > #main-container .content,
 #page-container > #page-footer .content {
-    max-width: 1690px;
+    /*max-width: 1690px;*/
 }
 
 @media (min-width: 1200px) {
