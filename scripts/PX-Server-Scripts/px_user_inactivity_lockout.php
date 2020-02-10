@@ -34,7 +34,7 @@
     
     
     # BUILD SQL TO UPDATE USERS ENABLED FIELD BASED ON INACTIVITY TIME
-    $sql = "UPDATE `".$users_table."` SET `".$users_enable_field."`='no' ".$where;
+    $sql = "UPDATE `".$users_table."` SET `".$users_enable_field."`='no', modifiedby_time=UNIX_TIMESTAMP() ".$where;
 
     //echo $sql;exit;
 

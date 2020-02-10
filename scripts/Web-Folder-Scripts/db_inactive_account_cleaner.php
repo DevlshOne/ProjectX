@@ -9,7 +9,25 @@
 
         connectPXDB();
 
-        $cnt =  execSQL("DELETE FROM `users` WHERE enabled='no'");
+        
+        $buffertime = time() - 1209600; // TWO WEEKS
+        
+        $where = " WHERE enabled='no' AND modifiedby_time <= '$buffertime' ";
+        
+        $userstr = "";
+        $x=0;
+        $rowarr = fetchAllAssoc("SELECT username FROM `users` $where ");
+        foreach($rowarr as $row){
+        	
+        	
+        	$userstr .= ($x++ > 0)?',':'';
+        	
+        	$userstr .= $row['username'];
+        	
+        }
+        
+        
+        $cnt =  execSQL("DELETE FROM `users` $where");
 
-        echo date("H:i:s m/d/Y")."- $cnt rows deleted!\n";
+        echo date("H:i:s m/d/Y")." - Deleted users ($userstr): $cnt rows deleted!\n";
 
