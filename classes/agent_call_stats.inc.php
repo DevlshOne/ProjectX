@@ -347,7 +347,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <table id="verifier_report_table" border="0" width="900" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                        <table id="verifier_report_table" border="0" width="900" class="table table-bordered table-striped table-vcenter js-dataTable-full" style="color:#000">
                             <thead>
                             <tr><?
                                     // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
@@ -453,8 +453,10 @@
                                     $running_total_bumps += $row['agent']['bump_count'];
                                     $running_total_pos_bump_agent_amount += $row['agent']['positive_agent_amount_total'];
                                     $running_total_pos_bump_verifier_amount += $row['agent']['positive_verifier_amount_total'];
+                                    
+                                    
                                     ?>
-                                    <tr><?
+                                    <tr style="color:#000"><?
                                     // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
                                     if ($_SESSION['user']['priv'] > 3) {
                                         ?>

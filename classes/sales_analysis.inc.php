@@ -1477,7 +1477,7 @@ $(function() {
 
 		</script>
 
-		<table id="sales_anal_table" style="width:100%" border="0"  cellspacing="1" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+		<table id="sales_anal_table" style="width:100%" border="0"  cellspacing="1" class="table table-bordered table-striped table-vcenter js-dataTable-full" style="color:#000">
 		<thead>
 		<tr><?
 
@@ -1534,7 +1534,7 @@ $(function() {
 			$ans_percent = round(  (($agent_data['num_AnswerMachines'] / $agent_data['calls_today']) * 100), 2);
 
 
-			?><tr><?
+			?><tr style="color:#000"><?
 
 					// CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
 					if($_SESSION['user']['priv'] > 3){

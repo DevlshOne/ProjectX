@@ -687,7 +687,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <table id="verifier_report_table" border="0" width="900" class="table table-bordered table-striped table-vcenter js-dataTable-full">
+                        <table id="verifier_report_table" border="0" width="900" class="table table-bordered table-striped table-vcenter js-dataTable-full" style="color:#000">
                             <thead>
                             <tr><?
 
@@ -1079,7 +1079,7 @@
                                 foreach ($report_data as $report_data_row) {
 
                                     ?>
-                                    <tr><?
+                                    <tr style="color:#000"><?
 
                                     // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
                                     if ($_SESSION['user']['priv'] > 3) {
