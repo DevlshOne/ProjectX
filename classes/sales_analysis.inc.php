@@ -918,15 +918,8 @@ class SalesAnalysis{
 			case 'xml':
 
 				if($output_array && $totals){
+
 					## OUTPUT REPORT DATA IN XML FORMAT
-					// $xml = new SimpleXMLElement('<Results/>');
-					// $this->to_xml($xml, $output_array);
-
-					// $xml_totals = new SimpleXMLElement('<Totals/>');
-					// $this->to_xml($xml_totals, $totals);
-
-					// return $xml->asXML()."\n".$xml_totals->asXML();
-
 					return $this->renderGenerateDataXML($output_array, $totals);
 
 				}
@@ -955,60 +948,121 @@ class SalesAnalysis{
 		# ADD TOTALS AT THE END
 		$outxml = '';
 
-		$outxml_head = '<SalesAnalysisReport>';
-		$outxml_foot = '</SalesAnalysisReport>';
+		# SET HEADERS AND FOOTERS
+		$outxml_head = '<SalesAnalysisReport>'."\n";
+		$outxml_foot = '</SalesAnalysisReport>'."\n";
 
-		$outxml_result_head = '<Result>';
-		$outxml_result_foot = '</Result>';
+		$outxml_result_head = "\t".'<Result>'."\n";
+		$outxml_result_foot = "\t".'</Result>'."\n";
 
+		$outxml_totals_head = "\t".'<Totals>'."\n";
+		$outxml_totals_foot = "\t".'</Totals>'."\n";
+
+
+
+		# BEGIN XML OUTPUT GENERATION
 		$outxml.=$outxml_head;
 		
+		# REPORT RESULT OUTPUT
 		foreach($results_array as $result_value){
 
+			# MAKE SURE THE RESULT IS AN ARRAY
 			if(is_array($result_value)){
 
-				foreach($result_value as $key => $val){
+				# RESULTS DATA CALCULATIONS PULLED FROM THE FRONT END DISPLAY
+				$paid_sale_percent = ($result_value['sale_cnt'] <= 0)?0:round( ((float)$result_value['paid_sale_cnt'] / $result_value['sale_cnt']) * 100, 2);
 				
-					$outxml.=$outxml_result_head;
-					if($key == 'cluster_id'){continue;}
+				$unpaid_sale_percent = 100 - $paid_sale_percent;
 
-					$outxml.=$key.' '.$val;
+				$paid_sale_amount_percent = ($result_value['sales_total'] <= 0)?0:round( ((float)$result_value['paid_sales_total'] / $result_value['sales_total']) * 100, 2);
 
-					$outxml.=$outxml_result_foot;
+				$ans_percent = round(  (($result_value['num_AnswerMachines'] / $result_value['calls_today']) * 100), 2);
 
-				}
+				# BEGIN RESULT XML OUTPUT WITH HEADER
+				$outxml.=$outxml_result_head;
+
+				# OUTPUT RESULT DATA
+				$outxml.="\t\t".'<Agent>'.strtoupper($result_value['agent_username']).'</Agent>'."\n";
+				$outxml.="\t\t".'<PaidHrs>'.number_format($result_value['activity_paid'],2).'</PaidHrs>'."\n";
+				$outxml.="\t\t".'<WorkedHrs>'.number_format($result_value['activity_wrkd'],2).'</WorkedHrs>'."\n";
+				$outxml.="\t\t".'<TotalCalls>'.number_format($result_value['calls_today']).'</TotalCalls>'."\n";
+				$outxml.="\t\t".'<NotInterested>'.number_format($result_value['num_NI']).'</NotInterested>'."\n";
+				$outxml.="\t\t".'<Transfers>'.number_format($result_value['num_XFER']).'</Transfers>'."\n";
+				$outxml.="\t\t".'<AnsweringMachineCalls>'.number_format($result_value['num_AnswerMachines']).'</AnsweringMachineCalls>'."\n";
+				$outxml.="\t\t".'<AnsweringMachinePercent>'.$ans_percent.'%</AnsweringMachinePercent>'."\n";
+				$outxml.="\t\t".'<ConversionAndCallsHr>'.number_format($result_value['contacts_per_worked_hour'],2).' / '.number_format($result_value['calls_per_worked_hour'],2).'</ConversionAndCallsHr>'."\n";
+				$outxml.="\t\t".'<TotalSales>'.number_format($result_value['sale_cnt']).'</TotalSales>'."\n";
+				$outxml.="\t\t".'<PaidSales>'.number_format($result_value['paid_sale_cnt']).' ($'.number_format($result_value['paid_sales_total']).')</PaidSales>'."\n";
+				$outxml.="\t\t".'<PaidPercent>'.number_format($paid_sale_percent,2).'%</PaidPercent>'."\n";
+				$outxml.="\t\t".'<DollarsPaidPercent>'.number_format($paid_sale_amount_percent,2).'%</DollarsPaidPercent>'."\n";
+				$outxml.="\t\t".'<UnpaidSales>'.number_format(($result_value['sale_cnt']-$result_value['paid_sale_cnt'])).'</UnpaidSales>'."\n";
+				$outxml.="\t\t".'<UnpaidPercent>'.number_format($unpaid_sale_percent,2).'%</UnpaidPercent>'."\n";
+				$outxml.="\t\t".'<ClosingPercent>'.number_format($result_value['closing_percent'],2).'%</ClosingPercent>'."\n";
+				$outxml.="\t\t".'<ConversionPercent>'.number_format($result_value['conversion_percent'],2).'%</ConversionPercent>'."\n";
+				$outxml.="\t\t".'<Yes2AllPercent>'.number_format($result_value['yes2all_percent'],2).'%</Yes2AllPercent>'."\n";
+				$outxml.="\t\t".'<TotalSales>$'.number_format($result_value['sales_total']).'</TotalSales>'."\n";
+				$outxml.="\t\t".'<AvgSale>$'.number_format($result_value['avg_sale'],2).'</AvgSale>'."\n";
+				$outxml.="\t\t".'<PDDollarHr>$'.number_format($result_value['paid_hr'],2).'</PDDollarHr>'."\n";
+				$outxml.="\t\t".'<WorkedDollarHr>$'.number_format($result_value['wrkd_hr'],2).'</WorkedDollarHr>'."\n";
+
+				# CLOSE RESULT OUTPUT WITH FOOTER
+				$outxml.=$outxml_result_foot;
 
 			}
 
 		}
 
+		
+		# TOTALS OUTPUT
+		if(count($totals_array)>0){
+
+			# REPORT TOTALS CALCULATIONS
+			$total_paid_sale_percent = round( ((float)$totals_array['total_paid_sale_cnt'] / $totals_array['total_sale_cnt']) * 100, 2);
+			$total_unpaid_sale_percent = 100 - $total_paid_sale_percent;
+
+			$total_paid_sale_amount_percent = ($totals_array['total_sales'] <= 0)?0:round( ((float)$totals_array['total_paid_sales'] / $totals_array['total_sales']) * 100, 2);
+
+			$t_ans_percent = round(  (($totals_array['total_AnswerMachines'] / $totals_array['total_calls']) * 100), 2);
+
+			# REPORTS TOTALS OUTPUT
+			$outxml.=$outxml_totals_head;
+
+			$outxml.="\t\t".'<TotalAgents>'.count($results_array).'</TotalAgents>'."\n";
+			$outxml.="\t\t".'<TotalPaidHrs>'.number_format($totals_array['total_activity_paid_hrs'],2).'</TotalPaidHrs>'."\n";
+			$outxml.="\t\t".'<TotalWorkedHrs>'.number_format($totals_array['total_activity_wrkd_hrs'],2).'</TotalWorkedHrs>'."\n";
+			$outxml.="\t\t".'<TotalCalls>'.number_format($totals_array['total_calls']).'</TotalCalls>'."\n";
+			$outxml.="\t\t".'<TotalNotInterested>'.number_format($totals_array['total_NI']).'</TotalNotInterested>'."\n";
+			$outxml.="\t\t".'<TotalTransfers>'.number_format($totals_array['total_XFER']).'</TotalTransfers>'."\n";
+			$outxml.="\t\t".'<TotalAnsweringMachineCalls>'.number_format($totals_array['total_AnswerMachines']).'</TotalAnsweringMachineCalls>'."\n";
+			$outxml.="\t\t".'<TotalAnsweringMachinePercent>'.$t_ans_percent.'%</TotalAnsweringMachinePercent>'."\n";
+			$outxml.="\t\t".'<TotalContactsPerHour>'.number_format($totals_array['total_contacts_per_worked_hour'],2).' - '.number_format($totals_array['total_calls_per_worked_hour'],2).'</TotalContactsPerHour>'."\n";
+			$outxml.="\t\t".'<TotalSaleCount>'.number_format($totals_array['total_sale_cnt']).'</TotalSaleCount>'."\n";
+			$outxml.="\t\t".'<TotalPaidSales>'.number_format($totals_array['total_paid_sale_cnt']).' ($'.number_format($totals_array['total_paid_sales']).')</TotalPaidSales>'."\n";
+			$outxml.="\t\t".'<TotalPaidPercent>'.number_format($total_paid_sale_percent,2).'%</TotalPaidPercent>'."\n";
+			$outxml.="\t\t".'<TotalDollarsPaidPercent>'.number_format($total_paid_sale_amount_percent,2).'%</TotalDollarsPaidPercent>'."\n";
+			$outxml.="\t\t".'<TotalUnpaidSales>'.number_format(($totals_array['total_sale_cnt']-$totals_array['total_paid_sale_cnt'])).'</TotalUnpaidSales>'."\n";
+			$outxml.="\t\t".'<TotalUnpaidPercent>'.number_format($total_unpaid_sale_percent,2).'%</TotalUnpaidPercent>'."\n";
+			$outxml.="\t\t".'<TotalClosingPercent>'.number_format($totals_array['total_closing'],2).'%</TotalClosingPercent>'."\n";
+			$outxml.="\t\t".'<TotalConversionPercent>'.number_format($totals_array['total_conversion'],2).'%</TotalConversionPercent>'."\n";
+			$outxml.="\t\t".'<TotalYes2AllPercent>'.number_format($totals_array['total_yes2all'],2).'%</TotalYes2AllPercent>'."\n";
+			$outxml.="\t\t".'<TotalSales>$'.number_format($totals_array['total_sales']).'</TotalSales>'."\n";
+			$outxml.="\t\t".'<TotalAvgSale>$'.number_format($totals_array['total_avg'],2).'</TotalAvgSale>'."\n";
+			$outxml.="\t\t".'<TotalPDDollarHr>$'.number_format($totals_array['total_paid_hr'],2).'</TotalPDDollarHr>'."\n";
+			$outxml.="\t\t".'<TotalWorkedDollarHr>$'.number_format($totals_array['total_wrkd_hr'],2).'</TotalWorkedDollarHr>'."\n";
+
+			$outxml.=$outxml_totals_foot;
+
+		}
+
+
+		# REPORT RESULTS FOOTER
 		$outxml.=$outxml_foot;
 
-
+		# RETURN XML OUTPUT
 		return $outxml;
 
-
-
-
-
 	}
-	// function to_xml(SimpleXMLElement $object, array $data) {   
 
-	// 	## ARRAY TO XML
-	// 	foreach ($data as $key => $value) {
-	// 		if (is_array($value)) {
-	// 			$new_object = $object->addChild($key);
-	// 			$this->to_xml($new_object, $value);
-	// 		} else {
-	// 			// if the key is an integer, it needs text with it to actually work.
-	// 			if (is_numeric($key)) {
-	// 				$key = "key_$key";
-	// 			}
-
-	// 			$object->addChild($key, $value);
-	// 		}   
-	// 	}   
-	// }
 	
 	
 	function makeReport(){
