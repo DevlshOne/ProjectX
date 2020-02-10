@@ -50,7 +50,9 @@ class RoustingReportAPI
             AND `vici_cluster_id` = {$clusterId}
             AND `username` IN ( {$users} )
 SQL;
-
+        
+        if(isset($_REQUEST['debug'])) { var_dump($hourlySql); die(); }
+        
         $result = $_SESSION['dbapi']->ROquerySQL($hourlySql);
 
         return $result;
