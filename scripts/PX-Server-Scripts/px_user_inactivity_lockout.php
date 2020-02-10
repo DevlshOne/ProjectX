@@ -8,22 +8,22 @@
     
 
     # VARIABLE DECLARATIONS
-    $inactivity_days = "90";
-    $inactity_time = strtotime("-".$inactivity_days." days");
+    $inactivity_days = 90;
+    $inactity_time = time() - (86400 * $inactivity_days); //strtotime("-".$inactivity_days." days");
     $minimum_priv = "4"; 
     $users_table = "users";
     $users_enable_field = "enabled";
     $user_last_login_field = "last_login";
 
 
-    $where = "WHERE priv >= '".$minimum_priv."' AND ".$user_last_login_field." <= '".intval($inactity_time)."' AND enabled='yes' ";
+    $where = "WHERE priv >= '".$minimum_priv."' AND `".$user_last_login_field."` <= '".intval($inactity_time)."' AND enabled='yes' ";
     
     
     
     $rows = fetchAllAssoc("SELECT username FROM `users` ".$where." ORDER BY `username` ASC");
     
     if(count($rows) > 0){
-	    echo "Disabling the following users: ";
+	    echo date("H:i:s m/d/Y")." - Disabling the following users: ";
     	foreach($rows as $row){
     		echo $row['username']." ";
 	    }
@@ -41,6 +41,6 @@
     $cnt = execSQL($sql);
 
     if($cnt>0){
-        echo "Updated ".$cnt." user records enabled flag to no.\n";
+    	echo date("H:i:s m/d/Y")." - Updated ".$cnt." user records enabled flag to no.\n";
     }
     
