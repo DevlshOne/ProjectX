@@ -841,7 +841,9 @@ class SalesAnalysis{
 		}
 		
 		
-		//print_r($output_array);
+		// ZERO THEM OUT/INIT
+		$total_closing=$total_conversion=$total_yes2all=$total_avg=$total_paid_hr=0;
+		$total_wrkd_hr=$total_contacts_hr=$total_calls_hr=$total_worked_contacts_hr=$total_worked_calls_hr=0;
 		
 		if(count($output_array) > 0){
 			
