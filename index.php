@@ -183,6 +183,26 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             return;
         }
     </script>
+        <?
+    if (!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])) {
+        ?>
+        <script type="text/javascript" src="src/assets/js/oneui.core.min.js"></script>
+        <script type="text/javascript" src="src/assets/js/oneui.app.min.js"></script>
+        <script type="text/javascript" src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
+        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+        
+        <script src="src/assets/js/plugins/datatables/jquery.dataTables.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/dataTables.bootstrap4.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/dataTables.buttons.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/buttons.print.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/buttons.html5.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/buttons.flash.min.js"></script>
+		<script src="src/assets/js/plugins/datatables/buttons/buttons.colVis.min.js"></script>
+		<script src="src/assets/js/pages/be_tables_datatables.min.js"></script>
+        
+        <?
+    }
+    ?>
 </head>
 <body>
 <div id="page-container" class="sidebar-o sidebar-dark page-header-fixed">
@@ -746,7 +766,9 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             </script>
             <?
         }
+        
         $_SESSION['interface']->makeNewheader();
+        
         } else {
             switch ($_REQUEST['area']) {
                 case 'home':
@@ -1141,26 +1163,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         ?>
     </main>
     <footer id="page-footer"></footer>
-    <?
-    if (!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])) {
-        ?>
-        <script type="text/javascript" src="src/assets/js/oneui.core.min.js"></script>
-        <script type="text/javascript" src="src/assets/js/oneui.app.min.js"></script>
-        <script type="text/javascript" src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
-        <script type="text/javascript" src="js/jquery-ui.min.js"></script>
-        
-        <script src="src/assets/js/plugins/datatables/jquery.dataTables.min.js"></script>
-		<script src="src/assets/js/plugins/datatables/dataTables.bootstrap4.min.js"></script>
-		<script src="src/assets/js/plugins/datatables/buttons/dataTables.buttons.min.js"></script>
-		<script src="src/assets/js/plugins/datatables/buttons/buttons.print.min.js"></script>
-		<script src="src/assets/js/plugins/datatables/buttons/buttons.html5.min.js"></script>
-		<script src="src/assets/js/plugins/datatables/buttons/buttons.flash.min.js"></script>
-		<script src="src/assets/js/plugins/datatables/buttons/buttons.colVis.min.js"></script>
-		<script src="src/assets/js/pages/be_tables_datatables.min.js"></script>
-        
-        <?
-    }
-    ?>
+
 </div>
 </body>
 </html>
