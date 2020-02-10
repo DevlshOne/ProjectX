@@ -175,10 +175,11 @@
                     $ofcsql.
                     "ORDER BY user_group ASC");
 
+        $force_height = $size * 20;
 
         $out = '<select name="' . $name . '" id="' . $name . '" ';
 
-        $out .= ($size > 0) ? " MULTIPLE size=\"" . $size . "\" " : '';
+        $out .= ($size > 0) ? " MULTIPLE size=\"" . $size . "\" style=\"height:".$force_height."px\"" : '';
 
         $out .= ($css) ? ' class="' . $css . '" ' : '';
         $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';

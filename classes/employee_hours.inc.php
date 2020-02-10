@@ -934,7 +934,7 @@ class EmployeeHours{
 
 				<td><input type="submit" value="Search" onclick="<?=$this->index_name?> = 0;" name="the_Search_button"></td>
 			</tr>
-			<tr>
+			<tr valign="top">
 				<td align="center">
 					<input type="text" size="4" name="s_agent_id" value="<?=htmlentities($_REQUEST['s_agent_id'])?>">
 				</td>
