@@ -570,6 +570,20 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             </li>
                             <?
                         }
+                        
+                        
+                        if (checkAccess('script_statistics')) {
+                        	?>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link" href="?area=script_statistics&no_script=1" onclick="loadSection(this.href);return false">
+                                    <span class="nav-main-link-name">Script Statistics</span>
+                                </a>
+                            </li>
+                            <?
+                        }
+                        
+                        
+                        
                         ?>
                     </ul>
                 </li>
