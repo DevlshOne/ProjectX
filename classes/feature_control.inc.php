@@ -334,7 +334,7 @@ class FeatureControl
                 modal: false,
                 draggable: true,
                 resizable: false,
-                position: {my: 'center', at: 'center', of: '#main-container'},
+                position: {my: 'center', at: 'center'},
             });
 
             // CALL FUNCTION TO POPULATE THE TABLE WITH DATA

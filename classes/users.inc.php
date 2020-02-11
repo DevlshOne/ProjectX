@@ -988,7 +988,7 @@ class UserClass
                     modal: false,
                     draggable: true,
                     resizable: true,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                 });
                 $("#dialog-modal-bulk-tools").dialog({
                     autoOpen: false,
@@ -997,7 +997,7 @@ class UserClass
                     modal: false,
                     draggable: true,
                     resizable: true,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                 });
                 loadUsers();
                 applyUniformity();

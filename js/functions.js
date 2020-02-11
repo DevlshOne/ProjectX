@@ -170,6 +170,8 @@ function getYearDD(name,sel,extra_attr){
 	return out;
 }
 
+// SWEET ALERT FUNCTIONS
+
 function swReportSuccessMessage(msg) {
 	swal("Success!", msg, "success");
 }
