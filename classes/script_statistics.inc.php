@@ -111,9 +111,9 @@ class ScriptStatistics{
 				$.ajax({
 					type: "POST",
 					cache: false,
-					url: 'api/api.php?get=scripts&mode=xml&action=reset_script&script_id='+id,
+					url: 'api/api.php?get=scriptstats&mode=xml&action=reset_script&script_id='+id,
 					error: function(){
-						alert("Error saving lead form. Please contact an admin.");
+						alert("Error reseting script stats. Please contact an admin.");
 					},
 					success: function(msg){
 
@@ -145,7 +145,7 @@ class ScriptStatistics{
 				$.ajax({
 					type: "POST",
 					cache: false,
-					url: 'api/api.php?get=scripts&mode=xml&action=reset_all_scripts',
+					url: 'api/api.php?get=scriptstats&mode=xml&action=reset_all_scripts',
 					error: function(){
 						alert("Error saving lead form. Please contact an admin.");
 					},
