@@ -1511,9 +1511,17 @@ $(function() {
 
 			echo "Sales Analysis - ";
 
-			if($agent_cluster_id >= 0){
-
+			if(!is_array($agent_cluster_id) && $agent_cluster_id >= 0){
+				//				echo getClusterName($agent_cluster_id);//$_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
 				echo $_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
+			}else if(is_array($agent_cluster_id)){
+				foreach($agent_cluster_id as $aci){
+					
+					echo (($aci == -1)?'[ALL]':$_SESSION['site_config']['db'][$aci]['name']).' - ';
+					
+					// ALL MEANS ALL
+					if($aci == -1)break;
+				}
 			}
 
 //			if($user_group){
