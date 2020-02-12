@@ -914,7 +914,7 @@ class Extensions
                     height: 'auto',
                     modal: false,
                     draggable: true,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                     resizable: false
                 });
 
@@ -924,7 +924,7 @@ class Extensions
                     height: 'auto',
                     modal: false,
                     draggable: true,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                     resizable: false
                 });
 
@@ -934,7 +934,7 @@ class Extensions
                     height: 'auto',
                     modal: false,
                     draggable: true,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                     resizable: true
                 });
                 loadExtensions();

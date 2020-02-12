@@ -333,7 +333,7 @@ class Scripts{
 				modal: false,
 				draggable:true,
 				resizable: false,
-				position: {my: 'center', at: 'center', of: '#main-container'},
+				position: {my: 'center', at: 'center'},
 			});
 			loadScripts();
 			togVoiceDD(getEl('<?=$this->frm_name?>'));

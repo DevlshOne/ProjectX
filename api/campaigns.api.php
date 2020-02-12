@@ -79,7 +79,9 @@ class API_Campaigns{
 			break;
             case 'getRowByID':
                 $id = intval($_REQUEST['campaign_id']);
-                $row = $_SESSION['dbapi']->campaigns->getByID($id);
+                if ($id) {
+                    $row = $_SESSION['dbapi']->campaigns->getByID($id);
+                }
                 $sql = "SELECT `id`, `code` FROM `campaign_parents` WHERE `deleted` = 0";
                 $res = $_SESSION['dbapi']->query($sql, 1);
                 $row['parent_dd'] = "<select class='form-control' name='parent_campaign_id' id='dd-parent_campaign_id'>";
@@ -98,77 +100,39 @@ class API_Campaigns{
                 echo $out;
                 break;
             case 'edit':
-
 			$id = intval($_POST['adding_campaign']);
-
 			$name = trim($_POST['name']);
-
 			unset($dat);
-
-
 			$dat['name'] = $name;
 			$dat['parent_campaign_id'] = $_POST['parent_campaign_id'];
 			$dat['status'] = $_POST['status'];
-
-
 			if($_POST['px_hidden']){
-
 				$dat['px_hidden'] = ($_POST['px_hidden'] == 'yes')?'yes':'no';
 			}
-
-
 			$dat['vici_campaign_id'] = trim($_POST['vici_campaign_id']);
-
 			$dat['manager_transfer'] = ($_POST['manager_transfer'] == 'yes')?'yes':'no';
-
-
 			if(isset($_POST['warm_transfers'])){
 				$dat['warm_transfers'] = ($_POST['warm_transfers'] == 'yes')?'yes':'no';
 			}
-
 			if(isset($_POST['verifier_mode'])){
 				$dat['verifier_mode'] = ($_POST['verifier_mode'] == 'yes')?'yes':'no';
 			}
-
 			$dat['type'] = trim($_POST['type']);
-
-
 			$dat['variables'] = trim($_REQUEST['variables']);
-
-
 			if($id){
-
 				$dat['time_modified'] = time();
-
 				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->campaigns->table);
-
-
 				logAction('edit', 'campaigns', $id, "Name: $name");
 			}else{
-
 				$dat['time_created'] = time();
-
-
 				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->campaigns->table);
 				$id = mysqli_insert_id($_SESSION['dbapi']->db);
-
 				logAction('add', 'campaigns', $id, "Name: $name");
 			}
-
-
-
-
 			$_SESSION['api']->outputEditSuccess($id);
-
-
-
 			break;
-
 		default:
 		case 'list':
-
-
-
 			$dat = array();
 			$totalcount = 0;
 			$pagemode = false;

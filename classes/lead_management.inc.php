@@ -498,7 +498,7 @@ class LeadManagement
                     modal: false,
                     draggable: true,
                     resizable: false,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                     close: function (event, ui) {
                         hideAudio();
                     }

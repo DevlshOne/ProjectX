@@ -190,7 +190,7 @@ class UserTeamsClass
                 draggable: true,
                 resizable: false,
                 title: 'Add New User Team',
-                position: {my: 'center', at: 'center', of: '#main-container'},
+                position: {my: 'center', at: 'center'},
                 buttons: {
                     'Save': function () {
                         if ($('#new_team_name').val().length) {
