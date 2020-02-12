@@ -43,6 +43,7 @@ class RoustingReportAPI
                         WHERE `sale_time` BETWEEN {$startTime} AND {$endTime}
                         AND ( agent_cluster_id = {$clusterId})
                         AND agent_username IN ( {$users} )
+                        AND call_group = '{$userGroup}'
                     GROUP BY agent_username
                 ) `agent_sales` ON `activity_log`.`username` = `agent_sales`.`agent_username`
             WHERE
@@ -51,7 +52,7 @@ class RoustingReportAPI
             AND `username` IN ( {$users} )
 SQL;
         
-        if(isset($_REQUEST['debug'])) { var_dump($hourlySql); die(); }
+        if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 2) { var_dump($hourlySql); die(); }
         
         $result = $_SESSION['dbapi']->ROquerySQL($hourlySql);
 
@@ -67,6 +68,9 @@ SQL;
             AND cluster_id='{$clusterId}'
             AND `user_group` IN ('{$userGroup}')
 SQL;
+
+        if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) { var_dump($sql); die(); }
+
         foreach ($_SESSION['dbapi']->getResult($sql) as $result) {
             $users[] = $result['username'];
         }
