@@ -927,7 +927,7 @@ class SalesAnalysis{
 				if($output_array){
 
 					## OUTPUT REPORT DATA IN JSON FORMAT
-					return json_encode($output_array, JSON_PRETTY_PRINT)."\n".json_encode($totals, JSON_PRETTY_PRINT)."\n";
+					return $this->renderGenerateDataJSON($output_array, $totals);
 					
 				}
 				break;
@@ -1059,6 +1059,104 @@ class SalesAnalysis{
 		return $outxml;
 
 	}
+
+
+	function renderGenerateDataJSON($results_array = [], $totals_array = []){
+		
+		# OUTPUT THE GENERATE DATA RESULTS AS JSON
+		# ADD CALCULATIONS LIKE WE DO WITH THE HTML REPORT
+		# ADD TOTALS AT THE END
+		$json_output = [];
+
+		
+		# GENERATE ARRAY WITH FORMATTED DATA FROM RESULTS ARRAY
+		foreach($results_array as $result_value){
+
+			# MAKE SURE THE RESULT IS AN ARRAY
+			if(is_array($result_value)){
+
+				# RESULTS DATA CALCULATIONS PULLED FROM THE FRONT END DISPLAY
+				$paid_sale_percent = ($result_value['sale_cnt'] <= 0)?0:round( ((float)$result_value['paid_sale_cnt'] / $result_value['sale_cnt']) * 100, 2);
+				
+				$unpaid_sale_percent = 100 - $paid_sale_percent;
+
+				$paid_sale_amount_percent = ($result_value['sales_total'] <= 0)?0:round( ((float)$result_value['paid_sales_total'] / $result_value['sales_total']) * 100, 2);
+
+				$ans_percent = round(  (($result_value['num_AnswerMachines'] / $result_value['calls_today']) * 100), 2);
+
+
+				# ADD FORMATTED DATA TO OUTPUT ARRAY
+				$json_output['Agent']					=	strtoupper($result_value['agent_username']);
+				$json_output['PaidHrs']					=	number_format($result_value['activity_paid'],2);
+				$json_output['WorkedHrs']				=	number_format($result_value['activity_wrkd'],2);
+				$json_output['TotalCalls']				=	number_format($result_value['calls_today']);
+				$json_output['NotInterested']			=	number_format($result_value['num_NI']);
+				$json_output['Transfers']				=	number_format($result_value['num_XFER']);
+				$json_output['AnsweringMachineCalls']	=	number_format($result_value['num_AnswerMachines']);
+				$json_output['AnsweringMachinePercent']	=	$ans_percent."%";
+				$json_output['ConversionAndCallsHr']	=	number_format($result_value['contacts_per_worked_hour'],2)." / ".number_format($result_value['calls_per_worked_hour'],2);
+				$json_output['TotalSales']				=	number_format($result_value['sale_cnt']);
+				$json_output['PaidSales']				=	number_format($result_value['paid_sale_cnt'])." ($".number_format($result_value['paid_sales_total']).")";
+				$json_output['PaidPercent']				=	number_format($paid_sale_percent,2)."%";
+				$json_output['DollarsPaidPercent']		=	number_format($paid_sale_amount_percent,2)."%";
+				$json_output['UnpaidSales']				=	number_format(($result_value['sale_cnt']-$result_value['paid_sale_cnt']));
+				$json_output['UnpaidPercent']			=	number_format($unpaid_sale_percent,2)."%";
+				$json_output['ClosingPercent']			=	number_format($result_value['closing_percent'],2)."%";
+				$json_output['ConversionPercent']		=	number_format($result_value['conversion_percent'],2)."%";
+				$json_output['Yes2AllPercent']			=	number_format($result_value['yes2all_percent'],2)."%";
+				$json_output['TotalSales']				=	"$".number_format($result_value['sales_total']);
+				$json_output['AvgSale']					=	"$".number_format($result_value['avg_sale'],2);
+				$json_output['PDDollarHr']				=	"$".number_format($result_value['paid_hr'],2);
+				$json_output['WorkedDollarHr']			=	"$".number_format($result_value['wrkd_hr'],2);
+	
+
+			}
+
+		}
+
+		
+		# TOTALS OUTPUT
+		if(count($totals_array)>0){
+
+			# REPORT TOTALS CALCULATIONS
+			$total_paid_sale_percent = round( ((float)$totals_array['total_paid_sale_cnt'] / $totals_array['total_sale_cnt']) * 100, 2);
+			$total_unpaid_sale_percent = 100 - $total_paid_sale_percent;
+
+			$total_paid_sale_amount_percent = ($totals_array['total_sales'] <= 0)?0:round( ((float)$totals_array['total_paid_sales'] / $totals_array['total_sales']) * 100, 2);
+
+			$t_ans_percent = round(  (($totals_array['total_AnswerMachines'] / $totals_array['total_calls']) * 100), 2);
+
+			# ADD FORMATTED REPORTS TOTAL DATA TO OUTPUT ARRAY
+			$json_output['TotalAgents']						=	count($results_array);
+			$json_output['TotalPaidHrs']					=	number_format($totals_array['total_activity_paid_hrs'],2);
+			$json_output['TotalWorkedHrs']					=	number_format($totals_array['total_activity_wrkd_hrs'],2);
+			$json_output['TotalCalls']						=	number_format($totals_array['total_calls']);
+			$json_output['TotalNotInterested']				=	number_format($totals_array['total_NI']);
+			$json_output['TotalTransfers']					=	number_format($totals_array['total_XFER']);
+			$json_output['TotalAnsweringMachineCalls']		=	number_format($totals_array['total_AnswerMachines']);
+			$json_output['TotalAnsweringMachinePercent']	=	$t_ans_percent."%";
+			$json_output['TotalContactsPerHour']			=	number_format($totals_array['total_contacts_per_worked_hour'],2)." / ".number_format($totals_array['total_calls_per_worked_hour'],2);
+			$json_output['TotalSaleCount']					=	number_format($totals_array['total_sale_cnt']);
+			$json_output['TotalPaidSales']					=	number_format($totals_array['total_paid_sale_cnt'])." ($".number_format($totals_array['total_paid_sales']).")";
+			$json_output['TotalPaidPercent']				=	number_format($total_paid_sale_percent,2)."%";
+			$json_output['TotalDollarsPaidPercent']			=	number_format($total_paid_sale_amount_percent,2)."%";
+			$json_output['TotalUnpaidSales']				=	number_format(($totals_array['total_sale_cnt']-$totals_array['total_paid_sale_cnt']));
+			$json_output['TotalUnpaidPercent']				=	number_format($total_unpaid_sale_percent,2)."%";
+			$json_output['TotalClosingPercent']				=	number_format($totals_array['total_closing'],2)."%";
+			$json_output['TotalConversionPercent']			=	number_format($totals_array['total_conversion'],2)."%";
+			$json_output['TotalYes2AllPercent']				=	number_format($totals_array['total_yes2all'],2)."%";
+			$json_output['TotalSales']						=	"$".number_format($totals_array['total_sales']);
+			$json_output['TotalAvgSale']					=	"$".number_format($totals_array['total_avg'],2);
+			$json_output['TotalPDDollarHr']					=	"$".number_format($totals_array['total_paid_hr'],2);
+			$json_output['TotalWorkedDollarHr']				=	"$".number_format($totals_array['total_wrkd_hr'],2);
+
+		}
+
+
+		# RETURN ENCODED JSON OUTPUT
+		return json_encode($json_output, JSON_PRETTY_PRINT);
+
+	}	
 
 	
 	
