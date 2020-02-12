@@ -1088,23 +1088,23 @@ class SalesAnalysis{
 
 
 				# ADD FORMATTED DATA TO OUTPUT ARRAY
-				$formatted_results['Agent']					=	strtoupper($result_value['agent_username']);
+				$formatted_results['Agent']						=	strtoupper($result_value['agent_username']);
 				$formatted_results['PaidHrs']					=	number_format($result_value['activity_paid'],2);
-				$formatted_results['WorkedHrs']				=	number_format($result_value['activity_wrkd'],2);
+				$formatted_results['WorkedHrs']					=	number_format($result_value['activity_wrkd'],2);
 				$formatted_results['TotalCalls']				=	number_format($result_value['calls_today']);
-				$formatted_results['NotInterested']			=	number_format($result_value['num_NI']);
-				$formatted_results['Transfers']				=	number_format($result_value['num_XFER']);
-				$formatted_results['AnsweringMachineCalls']	=	number_format($result_value['num_AnswerMachines']);
+				$formatted_results['NotInterested']				=	number_format($result_value['num_NI']);
+				$formatted_results['Transfers']					=	number_format($result_value['num_XFER']);
+				$formatted_results['AnsweringMachineCalls']		=	number_format($result_value['num_AnswerMachines']);
 				$formatted_results['AnsweringMachinePercent']	=	$ans_percent."%";
-				$formatted_results['ConversionAndCallsHr']	=	number_format($result_value['contacts_per_worked_hour'],2)." - ".number_format($result_value['calls_per_worked_hour'],2);
+				$formatted_results['ConversionAndCallsHr']		=	number_format($result_value['contacts_per_worked_hour'],2)." - ".number_format($result_value['calls_per_worked_hour'],2);
 				$formatted_results['TotalSales']				=	number_format($result_value['sale_cnt']);
-				$formatted_results['PaidSales']				=	number_format($result_value['paid_sale_cnt'])." ($".number_format($result_value['paid_sales_total']).")";
+				$formatted_results['PaidSales']					=	number_format($result_value['paid_sale_cnt'])." ($".number_format($result_value['paid_sales_total']).")";
 				$formatted_results['PaidPercent']				=	number_format($paid_sale_percent,2)."%";
 				$formatted_results['DollarsPaidPercent']		=	number_format($paid_sale_amount_percent,2)."%";
 				$formatted_results['UnpaidSales']				=	number_format(($result_value['sale_cnt']-$result_value['paid_sale_cnt']));
-				$formatted_results['UnpaidPercent']			=	number_format($unpaid_sale_percent,2)."%";
+				$formatted_results['UnpaidPercent']				=	number_format($unpaid_sale_percent,2)."%";
 				$formatted_results['ClosingPercent']			=	number_format($result_value['closing_percent'],2)."%";
-				$formatted_results['ConversionPercent']		=	number_format($result_value['conversion_percent'],2)."%";
+				$formatted_results['ConversionPercent']			=	number_format($result_value['conversion_percent'],2)."%";
 				$formatted_results['Yes2AllPercent']			=	number_format($result_value['yes2all_percent'],2)."%";
 				$formatted_results['TotalSales']				=	"$".number_format($result_value['sales_total']);
 				$formatted_results['AvgSale']					=	"$".number_format($result_value['avg_sale'],2);
@@ -1112,7 +1112,7 @@ class SalesAnalysis{
 				$formatted_results['WorkedDollarHr']			=	"$".number_format($result_value['wrkd_hr'],2);
 
 				# APPEND FORMATTED RESULTS TO JSON OUTPUT ARRAY
-				$json_output[] = formatted_results;
+				$json_output[] = $formatted_results;
 	
 
 			}
@@ -1132,7 +1132,7 @@ class SalesAnalysis{
 			$t_ans_percent = round(  (($totals_array['total_AnswerMachines'] / $totals_array['total_calls']) * 100), 2);
 
 			# ADD FORMATTED REPORTS TOTAL DATA TO OUTPUT ARRAY
-			$formatted_totals['TotalAgents']						=	count($results_array);
+			$formatted_totals['TotalAgents']					=	count($results_array);
 			$formatted_totals['TotalPaidHrs']					=	number_format($totals_array['total_activity_paid_hrs'],2);
 			$formatted_totals['TotalWorkedHrs']					=	number_format($totals_array['total_activity_wrkd_hrs'],2);
 			$formatted_totals['TotalCalls']						=	number_format($totals_array['total_calls']);
@@ -1144,19 +1144,19 @@ class SalesAnalysis{
 			$formatted_totals['TotalSaleCount']					=	number_format($totals_array['total_sale_cnt']);
 			$formatted_totals['TotalPaidSales']					=	number_format($totals_array['total_paid_sale_cnt'])." ($".number_format($totals_array['total_paid_sales']).")";
 			$formatted_totals['TotalPaidPercent']				=	number_format($total_paid_sale_percent,2)."%";
-			$formatted_totals['TotalDollarsPaidPercent']			=	number_format($total_paid_sale_amount_percent,2)."%";
+			$formatted_totals['TotalDollarsPaidPercent']		=	number_format($total_paid_sale_amount_percent,2)."%";
 			$formatted_totals['TotalUnpaidSales']				=	number_format(($totals_array['total_sale_cnt']-$totals_array['total_paid_sale_cnt']));
 			$formatted_totals['TotalUnpaidPercent']				=	number_format($total_unpaid_sale_percent,2)."%";
-			$formatted_totals['TotalClosingPercent']				=	number_format($totals_array['total_closing'],2)."%";
+			$formatted_totals['TotalClosingPercent']			=	number_format($totals_array['total_closing'],2)."%";
 			$formatted_totals['TotalConversionPercent']			=	number_format($totals_array['total_conversion'],2)."%";
-			$formatted_totals['TotalYes2AllPercent']				=	number_format($totals_array['total_yes2all'],2)."%";
+			$formatted_totals['TotalYes2AllPercent']			=	number_format($totals_array['total_yes2all'],2)."%";
 			$formatted_totals['TotalSales']						=	"$".number_format($totals_array['total_sales']);
 			$formatted_totals['TotalAvgSale']					=	"$".number_format($totals_array['total_avg'],2);
-			$formatted_totals['TotalPDDollarHr']					=	"$".number_format($totals_array['total_paid_hr'],2);
-			$formatted_totals['TotalWorkedDollarHr']				=	"$".number_format($totals_array['total_wrkd_hr'],2);
+			$formatted_totals['TotalPDDollarHr']				=	"$".number_format($totals_array['total_paid_hr'],2);
+			$formatted_totals['TotalWorkedDollarHr']			=	"$".number_format($totals_array['total_wrkd_hr'],2);
 
 			# APPEND FORMATTED TOTALS TO JSON OUTPUT ARRAY
-			$json_output[] = formatted_totals;
+			$json_output[] = $formatted_totals;
 
 		}
 
