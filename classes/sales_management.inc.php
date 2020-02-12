@@ -510,7 +510,7 @@ class SalesManagement{
 				<td><input type="button" value="Reset" onclick="resetSaleForm(this.form);resetPageSystem('<?=$this->index_name?>');loadSales();"></td>
 			</tr>
 			<tr>
-				<td colspan="5"><table border="0" width="100%">
+				<td colspan="8"><table border="0" width="100%">
 				<tr>
 					<th class="row2">Agent</th>
 					<th class="row2">Verifier</th>
@@ -531,10 +531,10 @@ class SalesManagement{
 						<input type="text" name="s_lastname" size="5" value="<?=htmlentities($_REQUEST['s_lastname'])?>">
 					</td>
 
-					<td align="center"><input type="text" name="s_lead_id" size="5" value="<?=htmlentities($_REQUEST['s_lead_id'])?>"></td>
+					<td align="center"><input type="text" name="s_lead_id" size="8" style="width:80px" value="<?=htmlentities($_REQUEST['s_lead_id'])?>"></td>
 
 
-					<td align="center"><input type="text" name="s_phone" size="10" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
+					<td align="center"><input type="text" name="s_phone" size="10" style="width:110px" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
 					<td align="center"><input type="text" name="s_city" size="10" value="<?=htmlentities($_REQUEST['s_city'])?>"></td>
 					<td align="center"><input type="text" name="s_state" size="3" value="<?=htmlentities($_REQUEST['s_state'])?>"></td>
 					<td align="center"><input type="text" name="s_amount" size="3" value="<?=htmlentities($_REQUEST['s_amount'])?>"></td>
