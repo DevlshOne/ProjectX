@@ -324,7 +324,7 @@ class SalesManagement{
 				loadSales();
 			}
 
-			var salesrchtog = false;
+			var salesrchtog = true;
 
 			function toggleSaleSearch(){
 				salesrchtog = !salesrchtog;
@@ -389,7 +389,7 @@ class SalesManagement{
                     <input type="hidden" name="searching_sales">
                     <div class="block-header bg-primary-light">
                         <h4 class="block-title">Sales Management</h4>
-                        <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSaleSearch();">Toggle Search</button>
+<!--                        <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSaleSearch();">Toggle Search</button>-->
                         <div id="sales_prev_td" class="page_system_prev"></div>
                         <div id="sales_page_td" class="page_system_page"></div>
                         <div id="sales_next_td" class="page_system_next"></div>
@@ -400,9 +400,9 @@ class SalesManagement{
                             <option value="500">500</option>
                         </select>
                     </div>
-                    <div class="bg-info-light nod" id="sale_search_table">
+                    <div class="bg-info-light" id="sale_search_table">
                         <div class="input-group input-group-sm">
-                            <input type="hidden" name="searching_scripts"/>
+                            <input type="hidden" name="searching_sales"/>
                             <input type="text" class="form-control" placeholder="Sale ID.." name="s_id" value="<?=htmlentities($_REQUEST['s_id'])?>" />
                             <input type="text" class="form-control" placeholder="PX ID.." name="s_lead_tracking_id" value="<?= htmlentities($_REQUEST['s_lead_tracking_id']) ?>"/>
                             <?=makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", "[Select Cluster]");?>
@@ -482,13 +482,8 @@ class SalesManagement{
 					modal: false,
 					draggable:true,
 					resizable: false,
-					close: function(event, ui){
-
-						//hideAudio();
-
-					}
+                     position: {my: 'center', at: 'center'},
 				});
-
 				<?
 			if(($leadid=intval($_REQUEST['auto_open_sale'])) > 0){
 
@@ -496,15 +491,8 @@ class SalesManagement{
 			}
 
 		?>
-
-
 			 });
-
-
 			loadSales();
-
-
-
 		</script><?
 
 	}
