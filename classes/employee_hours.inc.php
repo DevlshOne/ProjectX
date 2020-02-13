@@ -77,6 +77,10 @@ class EmployeeHours{
 
 		?><script>
 
+			
+
+
+	        
 			function validateHourField(name,value,frm){
 
 				//alert(name+","+value);
@@ -114,6 +118,8 @@ class EmployeeHours{
 				}
 				return true;
 			}
+
+
 
 
 
@@ -175,6 +181,12 @@ class EmployeeHours{
 				// SUCCESS - POST AJAX TO SERVER
 				}else{
 
+					if(usererrorcount > 0){
+						alert("Please check the username fields first. All users must exist.");
+						return false;
+					}
+					
+
 
 					//alert("Form validated, posting");
 
@@ -222,16 +234,102 @@ class EmployeeHours{
 			}
 
 
+			var curuseridx = 1;
+			
 			function addMoreUsers(cnt){
 
 				for(var x=0;x < cnt;x++){
 
-					$('#additional_users_span').append('<input type="text" size="5" name="agent_id[]" id="agent_id" /><br />');
+					$('#additional_users_span').append(
+
+
+
+							'<input type="text" size="5" name="agent_id['+curuseridx+']" id="agent_id_'+curuseridx+'" style="width:50px;display:initial" onchange="checkAllUsersExist()" /><span id="agent_username_check_'+curuseridx+'"></span><br />'
+							//'<input type="text" size="5" name="agent_id[]" id="agent_id" /><br />'
+
+
+					);
+
+					curuseridx++;
 					
 				}
 
 				applyUniformity();
 			}
+
+
+			var usererrorcount = 0;
+			
+			function checkAllUsersExist(){
+
+				usererrorcount = 0;
+
+				var obj = null;
+				
+				for(var x=0;(obj=getEl('agent_id_'+x)) != null;x++){
+
+					$('#agent_username_check_' + x).html('');
+					
+					if(obj.value.trim() == '')continue;
+				
+					//alert(index+" "+$( this ).val() );
+					checkUserExists(x, obj.value);
+					
+				
+					  
+				}
+
+				
+			}
+			
+			function checkUserExists(idx, username) {
+
+	
+	            // AJAX POST TO SERVER TO CHECK
+	            $.ajax({
+	                type: "POST",
+	                cache: false,
+	                url: 'ajax.php?mode=check_user_exists&username=' + username,
+	                //data: params,
+	                error: function () {
+	                    alert("Error checking if user exists. Please contact an admin.");
+	                },
+	                success: function (msg) {
+	
+	                    //resultcnt++;
+	
+	                    var tmparr = msg.split(":");
+	
+	
+	                    // USER EXISTS
+	                    if (parseInt(tmparr[0]) > 0) {
+
+
+	                    	$('#agent_username_check_' + idx).html("<img src=\"images/circle-green.gif\" title=\"" + tmparr[1] + "\" /><span style=\"background-color:green\"></span>");
+
+	
+	                       // errorcnt++;
+	
+	                        // USER NOT FOUND
+	                    } else if (parseInt(tmparr[0]) == 0) {
+	
+	                        $('#agent_username_check_' + idx).html("<img src=\"images/circle-red.gif\" /><span style=\"background-color:red\" >" + tmparr[1] + "</span>");	                        
+
+	                        usererrorcount++;
+	                    	
+	                        // SOMETHING BAD HAPPENED
+	                    } else {
+	                        // UT OHHHHH *POOPS*
+	
+	                        $('#agent_username_check_' + idx).html("FROM SERVER: <span style=\"background-color:red\" >" + msg + "</span>");
+	                    }
+	
+
+	
+	                }
+	            });
+	
+	        }	
 
 
 		</script>
@@ -240,14 +338,12 @@ class EmployeeHours{
 		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="checkHourForm(this);return false">
 			<input type="hidden" name="adding_hours" value="<?=$id?>">
 
-
-
 		<table border="0" align="center">
 		<tr>
 			<th align="left">Agent:</th>
 			<td>
 			
-				<input type="text" size="5" name="agent_id[]" id="agent_id" />&nbsp;<input type="button" value="Add more users" onclick="addMoreUsers(5)" /><br />
+				<input type="text" size="5" name="agent_id[0]" id="agent_id_0" style="width:50px;display:inline" onchange="checkAllUsersExist()" /><span id="agent_username_check_0"></span>&nbsp;<input type="button" value="Add more users" onclick="addMoreUsers(5)" /><br />
 				<span id="additional_users_span"></span><?
 
 				//echo makeUserDD('agent_id', '' , '', '[Select user]');
@@ -348,7 +444,11 @@ class EmployeeHours{
 
 
 		</form>
-		</table><?
+		</table>
+		
+		<script>
+			applyUniformity();		
+		</script><?
 	}
 
 
