@@ -110,7 +110,7 @@ class SalesManagement{
 
 				['call_group','align_left'],
 				['office','align_center'],
-				
+
 				//['city','align_center'],
 				//['state','align_center'],
 
@@ -255,7 +255,7 @@ class SalesManagement{
 
 
 				$('#'+objname).dialog( "option", "title", 'Viewing Sale #'+id  );
-				
+
 
 
 
@@ -288,7 +288,7 @@ class SalesManagement{
 				frm.s_lead_id.value = '';
 				frm.s_id.value = '';
 				frm.s_lead_tracking_id.value = '';
-				
+
 				frm.s_agent_username.value = '';
 				frm.s_verifier_username.value = '';
 
@@ -382,263 +382,99 @@ class SalesManagement{
 			}
 
 		</script>
-		<div id="dialog-modal-view_sale" title="Viewing Sale">
-
-
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadSales();return false">
-			<input type="hidden" name="searching_sales">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr class="ui-widget-header">
-			<td height="40" class="pad_left">
-
-				Sales Management
-
-			</td>
-
-			<td width="150" align="center">Page Size: <select name="s_pagesize" onchange="setPageSize(this.value);">
-				<option value="20">20</option>
-				<option value="50">50</option>
-				<option value="100">100</option>
-				<option value="500">500</option>
-			</select></td>
-
-			<td align="right"><?
-				/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-				<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-				<tr>
-					<td id="sales_prev_td" class="page_system_prev"></td>
-					<td id="sales_page_td" class="page_system_page"></td>
-					<td id="sales_next_td" class="page_system_next"></td>
-				</tr>
-				</table>
-
-			</td>
-		</tr>
-
-		<tr>
-			<td colspan="2"><table border="0" width="700" id="sale_search_table">
-			<tr>
-				<td rowspan="2" width="70" align="center" style="border-right:1px solid #000">
-
-
-					<div id="total_count_div"></div>
-
-				</td>
-				<th class="row2">SALE ID</th>
-				<th class="row2">PX ID</th>
-				<th class="row2">Cluster</th>
-				<th class="row2">Campaign</th>
-				<th class="row2">Is Paid?</th>
-				<th class="row2"><select name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
-						<option value="date">Date</option>
-						<option value="daterange"<?=($_REQUEST['s_date_mode']=='daterange')?' SELECTED ':''?>>Date Range</option>
-						<option value="datetimerange"<?=($_REQUEST['s_date_mode']=='datetimerange')?' SELECTED ':''?>>Date/Time Range</option>
-						<option value="any"<?=($_REQUEST['s_date_mode']=='any')?' SELECTED ':''?>>ANY</option>
-				</select></th>
-
-
-				<td>
-
-					<input type="submit" value="Search" onclick="<?=$this->index_name?> = 0;"  name="the_Search_button">
-				</td>
-			</tr>
-			<tr>
-				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-				<td align="center"><input type="text" name="s_lead_tracking_id" size="5" value="<?=htmlentities($_REQUEST['s_lead_tracking_id'])?>"></td>
-				<td align="center">
-					<?
-						echo makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', ""); //loadLeads();
-					?>
-				</td>
-				<td align="center">
-					<?
-						echo makeCampaignIDDD('s_campaign_id', $_REQUEST['s_campaign_id'], '', ""); //loadLeads();
-					?>
-				</td>
-				<td align="center"><select name="s_is_paid">
-				
-					<option value="">[All]</option>
-					<option value="no"<?=(		$_REQUEST['s_is_paid'] == 'no')?" SELECTED ":''?>>No (Unpaid)</option>
-					<option value="yes"<?=(		$_REQUEST['s_is_paid'] == 'yes')?" SELECTED ":''?>>Yes (Paid Credit Card)</option>
-					<option value="roustedcc"<?=($_REQUEST['s_is_paid'] == 'roustedcc')?" SELECTED ":''?>>Yes (Rousted Credit Card)</option>
-				
-				</select></td>
-
-				<td nowrap><?
-
-					?><span id="date1_span"><?
-						echo makeTimebar("stime_", 1, null,false,time());
-
-						?><span id="time1_span" class="nod">
-
-							<br /><?
-
-							echo makeTimebar("stime_", 2, null,false,(time() - 3600));
-
-
-						?><br /></span><?
-
-					?></span><?
-
-					?><span id="date2_span" class="nod"><br /><?
-
-						echo makeTimebar("etime_",1,null,false,time());
-
-						?><span id="time2_span" class="nod">
-
-							<br /><?
-
-							echo makeTimebar("etime_", 2, null,false,time());
-
-
-						?></span><?
-
-					?></span>
-
-
-
-					<span id="nodate_span" class="nod">
-						ANY/ALL DATES
-					</span>
-				</td>
-				<td><input type="button" value="Reset" onclick="resetSaleForm(this.form);resetPageSystem('<?=$this->index_name?>');loadSales();"></td>
-			</tr>
-			<tr>
-				<td colspan="8"><table border="0" width="100%">
-				<tr>
-					<th class="row2">Agent</th>
-					<th class="row2">Verifier</th>
-					<th class="row2">First/Last Name</th>
-					<th class="row2">Lead ID</th>
-
-					<th class="row2">Phone</th>
-					<th class="row2">City</th>
-					<th class="row2">State</th>
-					<th class="row2">Amount</th>
-					<th class="row2">Office</th>
-				</tr>
-				<tr>
-					<td align="center"><input type="text" name="s_agent_username" size="5" value="<?=htmlentities($_REQUEST['s_agent_username'])?>"></td>
-					<td align="center"><input type="text" name="s_verifier_username" size="5" value="<?=htmlentities($_REQUEST['s_verifier_username'])?>"></td>
-					<td align="center" NOWRAP >
-						<input type="text" name="s_firstname" size="5" value="<?=htmlentities($_REQUEST['s_firstname'])?>">
-						<input type="text" name="s_lastname" size="5" value="<?=htmlentities($_REQUEST['s_lastname'])?>">
-					</td>
-
-					<td align="center"><input type="text" name="s_lead_id" size="8" style="width:80px" value="<?=htmlentities($_REQUEST['s_lead_id'])?>"></td>
-
-
-					<td align="center"><input type="text" name="s_phone" size="10" style="width:110px" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
-					<td align="center"><input type="text" name="s_city" size="10" value="<?=htmlentities($_REQUEST['s_city'])?>"></td>
-					<td align="center"><input type="text" name="s_state" size="3" value="<?=htmlentities($_REQUEST['s_state'])?>"></td>
-					<td align="center"><input type="text" name="s_amount" size="3" value="<?=htmlentities($_REQUEST['s_amount'])?>"></td>
-
-					<td align="center"><?
-
-					/**if(		($_SESSION['user']['priv'] >= 5) ||
-							($_SESSION['user']['allow_all_offices'] == 'yes')
-						){**/
-
-
-						echo makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", 1);
-
-				/**	}else{
-
-
-						?><select name="s_office_id">
-							<option value="">[All Assigned]</option><?
-
-						foreach($_SESSION['assigned_offices'] as $ofc){
-							echo '<option value="'.$ofc.'"';
-
-							if($_REQUEST['s_office_id'] == $ofc) echo ' SELECTED ';
-
-							echo '>Office '.$ofc.'</option>';
-						}
-
-						?></select><?
-
-
-					}**/
-
-
-					?></td>
-				</tr>
-				</table></td>
-			</tr>
-			</table></td>
-		</tr></form>
-		<tr>
-			<td colspan="2"><table border="0" width="990" id="sale_table">
-			<tr>
-			<?/**
-				var SalesTableFormat = [
-				['id','align_center'],
-				['lead_tracking_id','align_center'],
-				['agent_lead_id','align_center'],
-				['[get:cluster_name:agent_cluster_id]','align_center'],
-				['campaign_code','align_center'],
-				['[concat:agent_username:verifier_username]','align_center'],
-				['[time:sale_time]','align_center'],
-				['phone','align_center'],
-
-				//['[duration:agent_duration]','align_center'],
-
-				['is_paid','align_center'],
-
-				['[concat:first_name:last_name]','align_center'],
-
-				['call_group'],
-				['office'],**/
-				/**?>
-				<th class="row2"><?=$this->getOrderLink('id')?>ID</a></th>**/
-					
-				?><th class="row2"><?=$this->getOrderLink('lead_tracking_id')?>PX ID</a></th>
-				<th class="row2"><?=$this->getOrderLink('agent_lead_id')?>Lead ID</a></th>
-				<th class="row2"><?=$this->getOrderLink('agent_cluster_id')?>Cluster</a></th>
-				<th class="row2"><?=$this->getOrderLink('campaign_id')?>Campaign</a></th>
-				<th class="row2"><?=$this->getOrderLink('agent_username')?>Agent</a>/<?=$this->getOrderLink('verifier_username')?>Verifier</a></th>
-				<th class="row2"><?=$this->getOrderLink('sale_time')?>Sale Time</a></th>
-				<th class="row2"><?=$this->getOrderLink('amount')?>Amount</a></th>
-				<th class="row2"><?=$this->getOrderLink('phone')?>Phone Number</a></th>
-				<th class="row2">Is Paid</th>
-				<th class="row2"><?=$this->getOrderLink('first_name')?>First</a>/<?=$this->getOrderLink('last_name')?>Last</a> Name</a></th>
-
-				<th class="row2"><?=$this->getOrderLink('call_group')?>User Group</a></th>
-				<th class="row2"><?=$this->getOrderLink('office')?>Office</a></th>
-				
-
-			</tr><?
-
-			// MAGICAL FUCKING AJAX FAIRIES WILL POPULATE THIS SECTION
-
-			?></table></td>
-		</tr>
-		<tr>
-			<td colspan="2" height="50" valign="bottom">
-
-				<span id="current_time_span" style="font-size:8px">
-
-					Server Time: <?=date("g:ia m/d/Y T")?>
-
-				</span>
-
-			</td>
-		</tr></table>
-
+		<div id="dialog-modal-view_sale" title="Viewing Sale"></div>
+            <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
+            <div class="block">
+                <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadSales();return false">
+                    <input type="hidden" name="searching_sales">
+                    <div class="block-header bg-primary-light">
+                        <h4 class="block-title">Sales Management</h4>
+                        <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSaleSearch();">Toggle Search</button>
+                        <div id="sales_prev_td" class="page_system_prev"></div>
+                        <div id="sales_page_td" class="page_system_page"></div>
+                        <div id="sales_next_td" class="page_system_next"></div>
+                        <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadSales(); return false;">
+                            <option value="20">20</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                            <option value="500">500</option>
+                        </select>
+                    </div>
+                    <div class="bg-info-light nod" id="sale_search_table">
+                        <div class="input-group input-group-sm">
+                            <input type="hidden" name="searching_scripts"/>
+                            <input type="text" class="form-control" placeholder="Sale ID.." name="s_id" value="<?=htmlentities($_REQUEST['s_id'])?>" />
+                            <input type="text" class="form-control" placeholder="PX ID.." name="s_lead_tracking_id" value="<?= htmlentities($_REQUEST['s_lead_tracking_id']) ?>"/>
+                            <?=makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", "[Select Cluster]");?>
+                            <?=makeCampaignIDDD('s_campaign_id', $_REQUEST['s_campaign_id'], '', "", "[Select Campaign]");?>
+                            <select class="custom-select-sm" name="s_is_paid">
+                                <option value="">[Select Paid Status]</option>
+                                <option value="no"<?=(		$_REQUEST['s_is_paid'] == 'no')?" SELECTED ":''?>>No (Unpaid)</option>
+                                <option value="yes"<?=(		$_REQUEST['s_is_paid'] == 'yes')?" SELECTED ":''?>>Yes (Paid Credit Card)</option>
+                                <option value="roustedcc"<?=($_REQUEST['s_is_paid'] == 'roustedcc')?" SELECTED ":''?>>Yes (Rousted Credit Card)</option>
+                            </select>
+                            <input type="text" class="form-control" placeholder="Agent.." name="s_agent_username" value="<?=htmlentities($_REQUEST['s_agent_username'])?>" />
+                            <input type="text" class="form-control" placeholder="Verifier.." name="s_verifier_username" value="<?= htmlentities($_REQUEST['s_verifier_username']) ?>"/>
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control" placeholder="First Name.." name="s_firstname" value="<?=htmlentities($_REQUEST['s_firstname'])?>" />
+                            <input type="text" class="form-control" placeholder="Last Name.." name="s_lastname" value="<?= htmlentities($_REQUEST['s_lastname']) ?>"/>
+                            <input type="text" class="form-control" placeholder="Lead ID.." name="s_lead_id" value="<?=htmlentities($_REQUEST['s_lead_id'])?>" />
+                            <input type="text" class="form_control" placeholder="Phone #.." name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
+                            <input type="text" class="form_control" placeholder="City.." name="s_city" value="<?= htmlentities($_REQUEST['s_city']) ?>"/>
+                            <input type="text" class="form_control" placeholder="State.." name="s_state" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
+                            <input type="text" class="form_control" placeholder="Amount.." name="s_amount" value="<?= htmlentities($_REQUEST['s_amount']) ?>"/>
+                            <?= makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", "[Select Office]"); ?>
+                            <button type="submit" value="Search" title="Search Sales" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadScripts();return false;">Search</button>
+                            <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetSaleForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadSales();return false;">Reset</button>
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <select title="Select Date Mode" name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
+                                <option value="date">Date Mode</option>
+                                <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
+                                <option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range Mode</option>
+                                <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
+                            </select>
+                            <span id="date1_span">
+                            <?= makeTimebar("stime_", 1, null, false, time()); ?>
+                                <span id="time1_span" class="nod">
+                                    <?= makeTimebar("stime_", 2, null, false, (time() - 3600)); ?>
+                                </span>
+                            </span>
+                            <span id="date2_span" class="nod">
+                                <?= makeTimebar("etime_", 1, null, false, time()); ?>
+                                <span id="time2_span" class="nod">
+                                    <?= makeTimebar("etime_", 2, null, false, time()); ?>
+                                </span>
+                            </span>
+                            <span id="nodate_span" class="nod">ANY/ALL DATES</span>
+
+                        </div>
+                    </div>
+                    <div class="block-content block-content-full">
+                        <table class="table table-sm table-striped" id="sale_table">
+                            <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                            <tr>
+                                <th class="row2 text-center"><?= $this->getOrderLink('lead_tracking_id') ?>PX ID</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('agent_lead_id') ?>Lead ID</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('agent_cluster_id') ?>Cluster</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('campaign_id') ?>Campaign</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('agent_username') ?>Agent / Verifier</a>&nbsp;/&nbsp;<?= $this->getOrderLink('verifier_username') ?>Verifier</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('sale_time') ?>Sale Time</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('amount') ?>Amount</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('phone') ?>Phone Number</a></th>
+                                <th class="row2 text-center">Is Paid</th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('first_name') ?>First / Last</a>/<?= $this->getOrderLink('last_name') ?>Last</a> Name</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('call_group') ?>User Group</a></th>
+                                <th class="row2 text-center"><?= $this->getOrderLink('office') ?>Office</a></th>
+                            </tr>
+                        </table>
+                    </div>
+                </form>
+            </div>
+            <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
 		<script>
-
-
 			 $(function() {
-
-				 //$( "#tabs" ).tabs();
-
 				 $("#dialog-modal-view_sale").dialog({
 					autoOpen: false,
 					width: 780,
@@ -649,7 +485,7 @@ class SalesManagement{
 					close: function(event, ui){
 
 						//hideAudio();
-						
+
 					}
 				});
 
@@ -766,14 +602,14 @@ class SalesManagement{
 							<th align="left" height="25">Address:</th>
 							<td><?=htmlentities($row['address1'])?></td>
 						</tr><?
-						
+
 						if(trim($row['address2'])){
 							?><tr>
 								<th align="left" height="25">Address 2:</th>
 								<td><?=htmlentities($row['address2'])?></td>
 							</tr><?
 						}
-						
+
 						?><tr>
 							<th align="left" height="25">City/State/Zip:</th>
 							<td>
@@ -793,17 +629,17 @@ class SalesManagement{
 							<th align="left" height="25">Employer:</th>
 							<td><?=($lead_row)?(($lead_row['employer'])?htmlentities($lead_row['employer']):'-Not Specified-'):(($row['employer'])?htmlentities($row['employer']):'-Not Specified-')?></td>
 						</tr>
-						
+
 						<tr>
 							<th align="left" height="25">Agent/Verifier:</th>
 							<td><?=htmlentities($row['agent_username']).' / '.htmlentities($row['verifier_username'])?></td>
 						</tr>
-						
+
 						<tr>
 							<th align="left" height="25">Campaign:</th>
 							<td><?=htmlentities($row['campaign']).' / '.htmlentities($row['campaign_code'])?></td>
 						</tr>
-						
+
 						</table>
 
 					</td>
@@ -829,16 +665,16 @@ class SalesManagement{
 						<tr>
 							<th align="left" height="25">PX ID#</th>
 							<td><?
-							
+
 							if($lead_row){
 								$url = "?area=lead_management&auto_open_lead=".$row['lead_tracking_id'].'&no_script=1';
 
 								?><a href="<?=$url?>" onclick="loadSection(this.href);return false"><u><?=htmlentities($row['lead_tracking_id'])?></u></a><?
-								
+
 							}else{
 								echo htmlentities($row['lead_tracking_id']);
 							}
-							
+
 							?></td>
 						</tr>
 						<tr>
@@ -894,10 +730,10 @@ class SalesManagement{
 						if($id > 0){
 							?><tr>
 								<td colspan="2" align="center" style="padding-top:10px">
-	
+
 									<input type="button" value="View Change History" style="font-size:10px" onclick="viewChangeHistory('lead_management', <?=$row['lead_tracking_id']?>)" />
-	
-	
+
+
 								</td>
 							</tr><?
 						}

@@ -441,7 +441,7 @@ class LeadManagement
                         <input type="text" class="form_control" placeholder="State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
                         <input type="text" class="form_control" placeholder="Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
                         <?= makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", "[Select Office]"); ?>
-                        <button type="button" value="Search" title="Search Leads" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadLeads();return false;">Search</button>
+                        <button type="submit" value="Search" title="Search Leads" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadLeads();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetLeadForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadLeads();return false;">Reset</button>
                     </div>
                     <div class="input-group input-group-sm">

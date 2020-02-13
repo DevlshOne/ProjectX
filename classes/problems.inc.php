@@ -312,7 +312,7 @@ class Problems{
 				<th class="row2">Acknowledged</th>
 				<th class="row2">Solved</th>
 
-				<td><input type="button" value="Search" name="the_Search_button" onclick="loadProblems()"></td>
+				<td><input type="submit" value="Search" name="the_Search_button" onclick="loadProblems()"></td>
 			</tr>
 			<tr>
 				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
