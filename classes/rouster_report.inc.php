@@ -268,35 +268,48 @@
                     $agent_array[$username]['total_activity_date_time_array'][$curdate] = intval($row['TotalTime']);
                     $agent_array[$username]['total_activity_date_daily_array'][$curdate] = intval($row['DailyActivityTime']);
                     // GET TOTAL SALES COUNTS FROM PX
-                    $sql = "SELECT COUNT(`id`) FROM `sales` " . " WHERE `sale_time` BETWEEN '$stime' AND '$etime' " . (($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . " AND (agent_cluster_id='$cluster_id') ";
+                    $sql = "SELECT COUNT(`id`) FROM `sales` " . 
+                    		" WHERE `sale_time` BETWEEN '$stime' AND '$etime' " . 
+                    		(($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . 
+                    		" AND (agent_cluster_id='$cluster_id') ".
+                    		$extra_sql;
+                    
+                    //echo $sql."\n"; 	
+                    
                     list($cnt) = $_SESSION['dbapi']->ROqueryROW($sql);
+                    
+                   // echo $sql." AND `is_paid` IN('yes','roustedcc') \n"; 	
+                    
                     list($paid_sales_cnt) = $_SESSION['dbapi']->ROqueryROW($sql . " AND `is_paid` IN('yes','roustedcc') ");
 
                     // GET TOTAL SALES AMOUNTS FOR PAID SALES
-                    $sql = "SELECT SUM(amount) FROM `sales` " . " WHERE `sale_time` BETWEEN '$stime' AND '$etime' " . //	" AND `account_id`='".$_SESSION['account']['id']."' ".
-                        //									" AND (agent_username='".mysqli_real_escape_string($_SESSION['db'],$username)."')".
-                        (($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . " AND (agent_cluster_id='$cluster_id') " .
+                    $sql = "SELECT SUM(amount) FROM `sales` " . 
+                    		" WHERE `sale_time` BETWEEN '$stime' AND '$etime' " . 
+                        
+                       		(($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . 
+                        	" AND (agent_cluster_id='$cluster_id') " .
+                        	" AND `is_paid` IN('yes','roustedcc') ".
+                        	$extra_sql;//" AND `call_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."'";
 
-                        " AND `is_paid` IN('yes','roustedcc') ";//" AND `call_group`='".mysqli_real_escape_string($_SESSION['db'],$call_group)."'";
-
+                    //   echo $sql."\n"; 	
+                        	
                     list($paid_sales_amount) = $_SESSION['dbapi']->ROqueryROW($sql);
 
                     $xfer_where = "WHERE xfer_time BETWEEN '$stime' AND '$etime' " . //	" AND `account_id`='".$_SESSION['account']['id']."' ".
                         //						" AND (agent_username='".mysqli_real_escape_string($_SESSION['db'],$username)."' )".
 
                         (($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") .
-
+                        $extra_sql.
                         " AND (agent_cluster_id='$cluster_id' ) " .
 
                         //						(($source_cluster_id > 0)?" AND agent_cluster_id='$source_cluster_id' ":'').
                         //						(($ignore_source_cluster_id > 0)?" AND agent_cluster_id != '$ignore_source_cluster_id' ":'')
                         "";
 
-                    $lead_where = "WHERE time BETWEEN '$stime' AND '$etime' " . //	" AND `account_id`='".$_SESSION['account']['id']."' ".
-
-                        (($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . //" AND (agent_username='".mysqli_real_escape_string($_SESSION['db'],$username)."')". // OR verifier_username='".mysqli_real_escape_string($_SESSION['db'],$username)."'
-                        " AND (vici_cluster_id='$cluster_id') " .
-
+                    $lead_where = "WHERE time BETWEEN '$stime' AND '$etime' " .
+                        (($combine_users) ? " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "'  OR agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "2') " : " AND (agent_username='" . mysqli_real_escape_string($_SESSION['db'], $username) . "') ") . 
+                    	 " AND (vici_cluster_id='$cluster_id') " .
+                    	 $user_group_sql.
                         "";
 
                     ## GET ALL TRANSFERS FOR THE AGENT/TIMEFRAME
@@ -686,9 +699,8 @@
                     </th>
                 </tr>
                 <tr>
-                    <td>
-                        <table id="verifier_report_table" border="0" width="900" class="table table-bordered table-striped table-vcenter js-dataTable-full" style="color:#000">
-                            <thead>
+                    <td><table id="verifier_report_table" border="0" width="900" class="table table-bordered table-striped table-vcenter js-dataTable-full" style="color:#000">
+					<thead>
                             <tr><?
 
                                     // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
@@ -1236,9 +1248,6 @@
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right">$<?= number_format($running_total_paid_sales_amount, 2) ?></td>
 
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($total_convert_percent, 2) ?>%</td>
-                                
-                                $
-                                
                                 <?
                                     /**
                                      * <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_hangups)?></td>
