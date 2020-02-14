@@ -967,7 +967,7 @@ class EmployeeHours{
                 </div>
                 <div class="block-content block-content-full">
                     <table class="table table-sm table-striped" id="emp_table">
-                        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                        
                         <tr>
                             <th class="row2 text-center"><?= $this->getOrderLink('time_started') ?>Date</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('username') ?>Agent</a></th>
@@ -982,27 +982,43 @@ class EmployeeHours{
                     </table>
                 </div>
             </form>
+            
+            <div class="input-group input-group-sm">
+             <? if (checkAccess('employee_hours_edit')) {
+                ?><form method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" id="set_hours_form" onsubmit="return processListSubmit(this);">
+                    
+                        <input type="hidden" name="submitting_activity_changes">
+                        <input type="hidden" name="activity_ids" id="activity_ids"/>
+                        <input type="hidden" name="activity_hours" id="activity_hours"/>
+                        <input type="hidden" name="activity_notes" id="activity_notes"/>
+                        <div id="setallspan" style="margin-left:1.2em"></div>
+                        <button type="button" class="btn btn-sm btn-danger" title="Set All (On-Screen)" onclick="setAllToValue();">Set All (On-Screen)</button>
+                        <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="$('#set_hours_form').submit();" name="save_button">Save Changes</button>
+                    
+                </form>
+            <?
+            } ?>
+            
+            	
+	            	<span id="spn_total_activity"></span>
+	            
+	            	&nbsp;&nbsp;&nbsp;&nbsp;
+	                <span id="spn_total_paid"></span>
+	           
+            
+            
+            </div>
+            <br />
+                    
+                    
             <div class="input-group input-group-sm text-center">
                 <button type="button" class="btn btn-sm btn-success" title="Export Results to CSV" name="export_csv" onclick="exportResultsCSV()">Export Results CSV</button>
                 <button type="button" class="btn btn-sm btn-success" title="Export TOTALS to CSV" name="export_totals" onclick="exportResultsCSV(1)">Export Totals CSV</button>
                 <button type="button" class="btn btn-sm btn-success" title="Export Clean TOTALS to CSV" name="export_clean_totals" onclick="exportResultsCSV(2)">Export Clean Totals CSV</button>
             </div>
-            <? if (!checkAccess('employee_hours_edit')) {
-                ?>
-                <form method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" id="set_hours_form" onsubmit="return processListSubmit(this);">
-                    <div class="input-group input-group-sm">
-                        <input type="hidden" name="submitting_activity_changes">
-                        <input type="hidden" name="activity_ids" id="activity_ids"/>
-                        <input type="hidden" name="activity_hours" id="activity_hours"/>
-                        <input type="hidden" name="activity_notes" id="activity_notes"/>
-                        <div id="setallspan"></div>
-                        <button type="button" class="btn btn-sm btn-danger" title="Set All (On-Screen)" onclick="setAllToValue();">Set All (On-Screen)</button>
-                        <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="$('#set_hours_form').submit();" name="save_button">Save Changes</button>
-                    </div>
-                </form>
-            <?
-            } ?>
+           
         </div>
+        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
         <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <script>
             $(function () {
