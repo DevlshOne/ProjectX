@@ -249,23 +249,23 @@ class EmployeeHours
                 </tr>
                 <tr>
                     <th align="left">Cluster:</th>
-                    <td><?=makeClusterDD('cluster_id', $_REQUEST['cluster_id'], '', "", " ");?></td>
+                    <td><?= makeClusterDD('cluster_id', $_REQUEST['cluster_id'], '', "", " "); ?></td>
                 </tr>
                 <tr>
                     <th align="left">Office:</th>
-                    <td><?=makeOfficeDD("office_id", $_REQUEST['office_id'], '', "", " ");?></td>
+                    <td><?= makeOfficeDD("office_id", $_REQUEST['office_id'], '', "", " "); ?></td>
                 </tr>
                 <tr>
                     <th align="left">Campaign:</th>
-                    <td><?=makeCampaignDD('campaign_id', $_REQUEST['campaign_id'], '', "", " ");?></td>
+                    <td><?= makeCampaignDD('campaign_id', $_REQUEST['campaign_id'], '', "", " "); ?></td>
                 </tr>
                 <tr>
                     <th align="left">Vici Group:</th>
-                    <td><?=makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "", 0, " ");?></td>
+                    <td><?= makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "", 0, " "); ?></td>
                 </tr>
                 <tr>
                     <th align="left">Date:</th>
-                    <td><?=makeTimebar("date_", 1, null, false, time(), "");?></td>
+                    <td><?= makeTimebar("date_", 1, null, false, time(), ""); ?></td>
                 </tr>
                 <tr>
                     <th align="left">Paid Hours:</th>
@@ -297,10 +297,7 @@ class EmployeeHours
 
             var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
             var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-
-
-            var <?=$this->index_name?> =
-            0;
+            var <?=$this->index_name?> = 0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
 
 
@@ -347,8 +344,8 @@ class EmployeeHours
                     's_username=' + escape(frm.s_agent_id.value) + "&" +
                     's_office_id=' + escape(frm.s_office_id.value) + "&" +
                     's_user_group=' + escape(user_group_txt) + "&" + //frm.s_user_group.value
-                    's_date_month=' + escape(frm.stime_month.value) + "&" + 's_date_day=' + escape(frm.stime_day.value) + "&" + 's_date_year=' + escape(frm.stime_year.value) + "&" +
-                    's_date2_month=' + escape(frm.etime_month.value) + "&" + 's_date2_day=' + escape(frm.etime_day.value) + "&" + 's_date2_year=' + escape(frm.etime_year.value) + "&" +
+                    'stime_month=' + escape(frm.stime_month.value) + "&" + 'stime_day=' + escape(frm.stime_day.value) + "&" + 'stime_year=' + escape(frm.stime_year.value) + "&" +
+                    'etime_month=' + escape(frm.etime_month.value) + "&" + 'etime_day=' + escape(frm.etime_day.value) + "&" + 'etime_year=' + escape(frm.etime_year.value) + "&" +
                     's_date_mode=' + escape(frm.s_date_mode.value) + "&" +
                     's_show_problems=' + escape(frm.s_show_problems.checked) + "&" +
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
@@ -482,11 +479,14 @@ class EmployeeHours
                 frm.s_user_group.value = '';
                 toggleDateMode(frm.s_date_mode.value);
             }
+
             var empsrchtog = false;
+
             function toggleEmpSearch() {
                 empsrchtog = !empsrchtog;
                 ieDisplay('emp_search_table', empsrchtog);
             }
+
             function processListSubmit(frm) {
                 var obj = null;
                 var id_data = "";
@@ -713,7 +713,7 @@ class EmployeeHours
                     <!--<button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSaleSearch();">Toggle Search</button>-->
                     <? if (checkAccess('employee_hours_edit')) { ?>
                         <button class="btn btn-sm btn-primary" type="button" title="Add Employee Hours" onclick="displayEditEmpDialog(0)">Add Hours</button>
-                    <?
+                        <?
                     } ?>
                     <div id="emps_prev_td" class="page_system_prev"></div>
                     <div id="emps_page_td" class="page_system_page"></div>
@@ -726,53 +726,70 @@ class EmployeeHours
                     </select>
                 </div>
                 <div class="bg-info-light" id="emp_search_table">
-                    <div class="input-group input-group-sm">
-                        <input type="hidden" name="searching_emps"/>
-                        <input type="text" class="form-control" placeholder="Agent ID.." name="s_agent_id" value="<?= htmlentities($_REQUEST['s_agent_id']) ?>"/>
-                        <?
-                        if (($_SESSION['user']['priv'] >= 5) || ($_SESSION['user']['allow_all_offices'] == 'yes')) {
-                            echo makeOfficeDD("s_office_id", $_REQUEST['s_office_id'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps();");
-                        } else {
-                            ?>
-                            <select name="s_office_id" onchange="<?= $this->index_name ?> = 0;loadEmps()">
-                                <option value="">[Select Office]</option>
-                                <?
-                                foreach ($_SESSION['assigned_offices'] as $ofc) {
-                                    echo '<option value="' . $ofc . '"';
-                                    if ($_REQUEST['s_office_id'] == $ofc) echo ' SELECTED ';
-                                    echo '>Office ' . $ofc . '</option>';
-                                }
-                                ?>
-                            </select>
+                    <div class="form-group form-row">
+                        <div class="col-4 input-group input-group-sm">
+                            <input type="hidden" name="searching_emps"/>
+                            <input type="text" class="form-control" placeholder="Agent ID.." name="s_agent_id" value="<?= htmlentities($_REQUEST['s_agent_id']) ?>"/>
+                        </div>
+                        <div class="col-4">
                             <?
-                        }
-                        ?>
-                        <?= makeViciUserGroupDD("s_user_group", $_REQUEST['s_user_group'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps()", 5, "[Select Group(s)]"); ?>
-                        <input type="checkbox" ame="s_show_problems" onclick="loadEmps();"><label for="s_show_problems">Only Problems</label><br />
-                        <input type="checkbox" name="s_main_users" onclick="loadEmps();"><label for="s_main_users">Only Main Users</label>
+                            if (($_SESSION['user']['priv'] >= 5) || ($_SESSION['user']['allow_all_offices'] == 'yes')) {
+                                echo makeOfficeDD("s_office_id", $_REQUEST['s_office_id'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps();", "[Select Office]");
+                            } else {
+                                ?>
+                                <select name="s_office_id" onchange="<?= $this->index_name ?> = 0;loadEmps()">
+                                    <option value="">[Select Office]</option>
+                                    <?
+                                    foreach ($_SESSION['assigned_offices'] as $ofc) {
+                                        echo '<option value="' . $ofc . '"';
+                                        if ($_REQUEST['s_office_id'] == $ofc) echo ' SELECTED ';
+                                        echo '>Office ' . $ofc . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                                <?
+                            }
+                            ?>
+                        </div>
+                        <div class="col-4 input-group input-group-sm">
+                            <?= makeViciUserGroupDD("s_user_group", $_REQUEST['s_user_group'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps()", 5, "[Select Group(s)]"); ?>
+                        </div>
                     </div>
-                    <div class="input-group input-group-sm">
-                        <select class="custom-select-sm" title="Select Date Mode" name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
-                            <option value="date">Date Mode</option>
-                            <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
-                            <option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range Mode</option>
-                            <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
-                        </select>
-                        <span id="date1_span">
+                    <div class="form-group form-row">
+                        <div class="col-4 input-group input-group-sm">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="s_show_problems" onclick="loadEmps();" />
+                                <label class="form-check-label" for="s_show_problems">Only Problems</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="s_main_users" onclick="loadEmps();" />
+                                <label class="form-check-label" for="s_main_users">Only Main Users</label>
+                            </div>
+                        </div>
+                        <div class="col-4 input-group input-group-sm">
+                            <select class="custom-select-sm" title="Select Date Mode" name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
+                                <option value="date">Date Mode</option>
+                                <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
+                                <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
+                            </select>
+                            <span id="date1_span">
                             <?= makeTimebar("stime_", 1, null, false, time()); ?>
                                 <span id="time1_span" class="nod">
                                     <?= makeTimebar("stime_", 2, null, false, (time() - 3600)); ?>
                                 </span>
                             </span>
-                        <span id="date2_span" class="nod">
+                            <span id="date2_span" class="nod">
                                 <?= makeTimebar("etime_", 1, null, false, time()); ?>
                                 <span id="time2_span" class="nod">
                                     <?= makeTimebar("etime_", 2, null, false, time()); ?>
                                 </span>
                             </span>
-                        <span id="nodate_span" class="nod">ANY/ALL DATES</span>
-                        <button type="submit" value="Search" title="Search Employee Hours" class="btn btn-sm btn-primary" name="the_Search_button" onclick="<?= $this->index_name ?> = 0;loadEmps();return false;">Search</button>
-                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetEmpForm();resetPageSystem('<?= $this->index_name ?>');loadEmps();return false;">Reset</button>
+                            <span id="nodate_span" class="nod">ANY/ALL DATES</span>
+                        </div>
+                        <div class="col-4 input-group input-group-sm">
+                            <button type="submit" value="Search" title="Search Employee Hours" class="btn btn-sm btn-primary" name="the_Search_button" onclick="<?= $this->index_name ?> = 0;loadEmps();return false;">Search</button>
+                            <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetEmpForm();resetPageSystem('<?= $this->index_name ?>');loadEmps();return false;">Reset</button>
+                        </div>
                     </div>
                 </div>
                 <div class="block-content block-content-full">
@@ -810,7 +827,7 @@ class EmployeeHours
                         <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="$('#set_hours_form').submit();" name="save_button">Save Changes</button>
                     </div>
                 </form>
-            <?
+                <?
             } ?>
         </div>
         <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->

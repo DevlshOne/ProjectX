@@ -212,37 +212,27 @@ class PhoneLookupTool{
 			}
 
 		</script>
-		<form method="POST" action="<?=stripurl('')?>" onsubmit="return lookup_phone(this)">
-			<input type="hidden" name="lookingup_phone" value="1" />
-			<input type="hidden" name="mode" value="lookup" />
 
-
-				<table border="0" width="250" height="100">
-				<tr>
-					<th colspan="2" class="pad_left ui-widget-header" height="30">
-						Lookup DRIPP Sale
-					</th>
-				</tr>
-				<tr>
-					<th align="left">PHONE #:</th>
-					<td><input type="text" size="12" name="phone_num" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" /></td>
-				</tr>
-				<tr>
-					<td colspan="2" align="center"><input type="submit" value="Lookup"></td>
-				</tr>
-				</table>
-
-		</form>
-
-		<div id="lookup_results_div"></div>
-
+        <div class="block">
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">DRIPP Sale Lookup</h4>
+                    <form class="d-none d-sm-inline-block" method="POST" action="<?=stripurl('')?>" onsubmit="return lookup_phone(this);">
+                        <input type="hidden" name="lookingup_phone" />
+                        <input type="hidden" name="mode" value="lookup" />
+                        <div class="input-group input-group-sm">
+                            <input type="text" class="form-control form-control-alt" name="phone_num" placeholder="Phone.." pattern="\d{10}" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" />
+                            <button type="submit" title="Search" class="btn btn-sm btn-primary">Search..</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="block-content">
+                    <div id="lookup_results_div"></div>
+                    <div id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></div>
+                </div>
+        </div>
 		<script>
 			applyUniformity();
 		</script><?
 
 	}
-
-
-
-
 }
