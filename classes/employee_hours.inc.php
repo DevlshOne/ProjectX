@@ -1018,6 +1018,8 @@ class EmployeeHours{
                     position: {my: 'center', at: 'center'},
                     resizable: false
                 });
+
+                $("#dialog-modal-edit_emp").dialog("widget").draggable("option","containment","#main-container");
             });
             loadEmps();
         </script>
