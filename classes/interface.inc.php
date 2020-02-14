@@ -32,6 +32,8 @@ class InterfaceClass
                         resizable: false
                     });
 
+                    $("#change-password-expired-div").dialog("widget").draggable("option","containment","#main-container");
+
                     function loadChangeExpiredPassword() {
                         $('#change-password-expired-div').dialog("open");
                         $('#change-password-expired-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
@@ -64,6 +66,10 @@ class InterfaceClass
                 resizable: true
             });
 
+            $("#change-password-div").dialog("widget").draggable("option","containment","#main-container");
+            $("#dialog-modal-view_change_history").dialog("widget").draggable("option","containment","#main-container");
+
+            
             function loadChangePassword() {
                 $('#change-password-div').dialog("open");
                 $('#change-password-div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');

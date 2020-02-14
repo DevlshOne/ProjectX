@@ -335,6 +335,9 @@ class Scripts{
 				resizable: false,
 				position: {my: 'center', at: 'center'},
 			});
+
+			$("#dialog-modal-add-script").dialog("widget").draggable("option","containment","#main-container");
+			
 			loadScripts();
 			togVoiceDD(getEl('<?=$this->frm_name?>'));
 		</script>
@@ -797,6 +800,8 @@ class Scripts{
 
 				}
 			});
+
+			$("#dialog-modal-edit-voicefile").dialog("widget").draggable("option","containment","#main-container");
 
 			</script>
 				<div class="nod">

@@ -226,6 +226,9 @@ class Names
                 resizable: false,
                 position: {my: 'center', at: 'center'},
             });
+
+            $("#dialog-modal-add-name").dialog("widget").draggable("option","containment","#main-container");
+            
             loadNames();
         </script>
         <?

@@ -509,6 +509,10 @@ class LeadManagement
                 displayEditLeadDialog(<?=$leadid?>, 'general');<?
                 }
                 ?>
+
+
+                $("#dialog-modal-edit_lead").dialog("widget").draggable("option","containment","#main-container");
+                
             });
             $('#s_cluster_id').attr('title', 'Select Cluster');
             $('#s_campaign_id').attr('title', 'Select Campaign');

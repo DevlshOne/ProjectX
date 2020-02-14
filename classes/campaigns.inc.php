@@ -179,6 +179,9 @@ class Campaigns
                         }
                     }
                 });
+
+                $("#dialog-modal-edit-campaign").dialog("widget").draggable("option","containment","#main-container");
+                
             });
 
             var campaign_delmsg = 'Are you sure you want to delete this campaign?';

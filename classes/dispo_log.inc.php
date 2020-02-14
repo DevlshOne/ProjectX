@@ -409,6 +409,9 @@ class DispoLog{
 					draggable:true,
 					resizable: false
 				});
+
+				 $("#view_dispo_log").dialog("widget").draggable("option","containment","#main-container");
+					
 			 });
 
 

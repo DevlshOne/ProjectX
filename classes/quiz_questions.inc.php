@@ -219,6 +219,9 @@
                     resizable: false,
                     position: {my: 'center', at: 'center'},
                 });
+
+                $("#dialog-modal-add-question").dialog("widget").draggable("option","containment","#main-container");
+                
                 loadQuestions();
                 $('#s_quiz_id').attr('title', 'Select Quiz ID');
             </script>

@@ -337,6 +337,8 @@ class FeatureControl
                 position: {my: 'center', at: 'center'},
             });
 
+            $("#dialog-modal-add-feature").dialog("widget").draggable("option","containment","#main-container");
+
             // CALL FUNCTION TO POPULATE THE TABLE WITH DATA
             loadFeatures();
             applyUniformity();

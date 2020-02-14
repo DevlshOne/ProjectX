@@ -999,6 +999,11 @@ class UserClass
                     resizable: true,
                     position: {my: 'center', at: 'center'},
                 });
+
+                $("#dialog-modal-add-user").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-bulk-tools").dialog("widget").draggable("option","containment","#main-container");
+
+                
                 loadUsers();
                 applyUniformity();
             });
@@ -2725,6 +2730,10 @@ class UserClass
                     resizable: false
                 });
 
+
+                $("#dialog-modal-add-feature").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-vici-add").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-select_offices").dialog("widget").draggable("option","containment","#main-container");
 
             </script>
         </form><?

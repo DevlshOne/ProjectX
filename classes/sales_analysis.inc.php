@@ -1462,7 +1462,10 @@ $(function() {
 
 					    $('#sales_anal_table').DataTable({
 
-							"lengthMenu": [[ -1, 20, 50, 100, 500], ["All", 20, 50, 100,500 ]]
+							"lengthMenu": [[ -1, 20, 50, 100, 500], ["All", 20, 50, 100,500 ]],
+							buttons: [
+					            'copy'
+					        ],
 
 
 					    });
@@ -1619,7 +1622,9 @@ $(function() {
 
 
 			<th>TOTAL SALES</th>
-			<th>PAID SALES</th>
+			<th>PAID SALES #</th>
+			<th>PAID SALES $</th>
+
 			<th title="The percentage of deal counts that were paid, vs the total count sent">PAID %</th>
 			<th title="Percentage of paid deals, by the dollar amount, instead of count">$PAID %</th>
 			<th>UNPAID SALES</th>
@@ -1685,12 +1690,17 @@ $(function() {
 
 				<td align="center"><?=number_format($agent_data['sale_cnt'])?></td>
 
-
 				<td align="left">
 
-					<?=number_format($agent_data['paid_sale_cnt'])?> ($<?=number_format($agent_data['paid_sales_total'])?>)
+					<?=number_format($agent_data['paid_sale_cnt'])?>
 
 				</td>
+				<td align="left">
+
+					$<?=number_format($agent_data['paid_sales_total'])?>
+
+				</td>
+
 				<td align="right"><?=number_format($paid_sale_percent,2)?>%</td>
 				<td align="right"><?=number_format($paid_sale_amount_percent,2)?>%</td>
 
@@ -1754,7 +1764,9 @@ $(function() {
 
 			<th style="border-top:1px solid #000"><?=number_format($totals['total_sale_cnt'])?></th>
 
-			<th style="border-top:1px solid #000" align="left"><?=number_format($totals['total_paid_sale_cnt'])?> ($<?=number_format($totals['total_paid_sales'])?>)</th>
+			<th style="border-top:1px solid #000" align="left"><?=number_format($totals['total_paid_sale_cnt'])?></th>
+			<th style="border-top:1px solid #000" align="left">$<?=number_format($totals['total_paid_sales'])?></th>
+			
 			<th style="border-top:1px solid #000" align="right"><?=number_format($paid_sale_percent,2)?>%</th>
 			<th style="border-top:1px solid #000" align="right"><?=number_format($paid_sale_amount_percent,2)?>%</th>
 

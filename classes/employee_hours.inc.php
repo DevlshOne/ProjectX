@@ -1245,6 +1245,9 @@ class EmployeeHours{
 					draggable:true,
 					resizable: false
 				});
+
+				$("#dialog-modal-edit_emp").dialog("widget").draggable("option","containment","#main-container");
+					
 			 });
 
 

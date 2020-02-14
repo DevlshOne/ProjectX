@@ -229,6 +229,9 @@ class Voices{
 				resizable: false,
                 position: {my: 'center', at: 'center'},
             });
+
+			$("#dialog-modal-add-voice").dialog("widget").draggable("option","containment","#main-container");
+			 
 			loadVoices();
 		</script><?
 

@@ -937,6 +937,12 @@ class Extensions
                     position: {my: 'center', at: 'center'},
                     resizable: true
                 });
+
+                $("#dialog-modal-add-extension").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-add-bulk-extension").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-bulk-tools").dialog("widget").draggable("option","containment","#main-container");
+
+                
                 loadExtensions();
                 applyUniformity();
             });

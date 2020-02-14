@@ -264,6 +264,9 @@ class HomeTileNotesClass
                 draggable: true,
                 resizable: true
             });
+
+            $("#dialog-modal-view_notes").dialog("widget").draggable("option","containment","#main-container");
+            
             loadNotes();
         </script>
         <?

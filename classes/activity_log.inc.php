@@ -296,6 +296,8 @@ class ActivityLog{
 				resizable: false
 			});
 
+			$("#dialog-modal-add-activity").dialog("widget").draggable("option","containment","#main-container");
+
 			loadActivitys();
 
 		</script><?

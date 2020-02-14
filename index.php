@@ -191,7 +191,11 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         <script type="text/javascript" src="src/assets/js/plugins/sweetalert2/sweetalert2.min.js"></script>
         <script type="text/javascript" src="js/jquery-ui.min.js"></script>
 
-        <script src="src/assets/js/plugins/datatables/jquery.dataTables.min.js"></script>
+
+	<?/**	<script src="js/datatables-with-copy.min.js"></script>
+		<link rel="stylesheet" href="css/datatables-with-copy.min.css" />**/
+		
+        ?><script src="src/assets/js/plugins/datatables/jquery.dataTables.min.js"></script>
 		<script src="src/assets/js/plugins/datatables/dataTables.bootstrap4.min.js"></script>
 		<script src="src/assets/js/plugins/datatables/buttons/dataTables.buttons.min.js"></script>
 		<script src="src/assets/js/plugins/datatables/buttons/buttons.print.min.js"></script>
