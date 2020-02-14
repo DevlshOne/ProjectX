@@ -912,7 +912,7 @@ class EmployeeHours{
                         <input type="text" class="form-control" placeholder="Agent ID.." name="s_agent_id" value="<?= htmlentities($_REQUEST['s_agent_id']) ?>"/>
                         <?
                         if (($_SESSION['user']['priv'] >= 5) || ($_SESSION['user']['allow_all_offices'] == 'yes')) {
-                            echo makeOfficeDD("s_office_id", $_REQUEST['s_office_id'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps();");
+                            echo makeOfficeDD("s_office_id", $_REQUEST['s_office_id'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps();", "[Office]");
                         } else {
                             ?>
                             <select name="s_office_id" onchange="<?= $this->index_name ?> = 0;loadEmps()">
