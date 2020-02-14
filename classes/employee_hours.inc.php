@@ -929,7 +929,7 @@ class EmployeeHours{
                         }
                         ?>
                         <?= makeViciUserGroupDD("s_user_group", $_REQUEST['s_user_group'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps()", 5, "[Select Group(s)]"); ?>
-                        <input type="checkbox" ame="s_show_problems" onclick="loadEmps();"><label for="s_show_problems">Only Problems</label><br />
+                        <input type="checkbox" name="s_show_problems" onclick="loadEmps();"><label for="s_show_problems">Only Problems</label><br />
                         <input type="checkbox" name="s_main_users" onclick="loadEmps();"><label for="s_main_users">Only Main Users</label>
                     </div>
                     <div class="input-group input-group-sm">
