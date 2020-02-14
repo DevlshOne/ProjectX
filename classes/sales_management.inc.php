@@ -435,6 +435,7 @@ class SalesManagement{
                                 <option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range Mode</option>
                                 <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
                             </select>
+                            &nbsp;
                             <span id="date1_span">
                             <?= makeTimebar("stime_", 1, null, false, time()); ?>
                                 <span id="time1_span" class="nod">
@@ -442,7 +443,7 @@ class SalesManagement{
                                 </span>
                             </span>
                             <span id="date2_span" class="nod">
-                                <?= makeTimebar("etime_", 1, null, false, time()); ?>
+                                THRU<?= makeTimebar("etime_", 1, null, false, time()); ?>
                                 <span id="time2_span" class="nod">
                                     <?= makeTimebar("etime_", 2, null, false, time()); ?>
                                 </span>
