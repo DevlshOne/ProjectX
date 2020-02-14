@@ -288,6 +288,7 @@ class QuizResults
                         <tr>
                             <th class="row2 text-left"><?= $this->getOrderLink('time_started') ?>Time</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('quiz_id') ?>Quiz</a></th>
+                            <th class="row2 text-center">Username</th>
                             <th class="row2 text-center">Duration</th>
                             <th class="row2 text-center" title="The maximum time to wait for them to answer, before its considered failed">Response Time</th>
                             <th class="row2 text-center" title="If they chose to hide the question">Hidden?</th>
@@ -331,13 +332,9 @@ class QuizResults
 
     function getOrderLink($field)
     {
-
         $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
-
         $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-
         $var .= ");loadQuizs();return false;\">";
-
         return $var;
     }
 }
