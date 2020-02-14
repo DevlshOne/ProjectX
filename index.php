@@ -162,6 +162,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                 clearInterval(dispTimer);
                 dispTimer = false;
             }
+
+            applyUniformity();
         }
 
         function viewChangeHistory(area, areaid) {
