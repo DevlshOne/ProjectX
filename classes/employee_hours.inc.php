@@ -929,10 +929,15 @@ class EmployeeHours{
                         }
                         ?>
                         <?= makeViciUserGroupDD("s_user_group", $_REQUEST['s_user_group'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps()", 5, "[Select Group(s)]"); ?>
-                        <input type="checkbox" name="s_show_problems" onclick="loadEmps();"><label for="s_show_problems">Only Problems</label><br />
-                        <input type="checkbox" name="s_main_users" onclick="loadEmps();"><label for="s_main_users">Only Main Users</label>
+                        
                     </div>
                     <div class="input-group input-group-sm">
+                    
+                    
+                        <input type="checkbox" name="s_show_problems" onclick="loadEmps();"><label for="s_show_problems">Only Problems</label>
+                        &nbsp;&nbsp;
+                       	<input type="checkbox" name="s_main_users" onclick="loadEmps();"><label for="s_main_users">Only Main Users</label>
+                    	&nbsp;&nbsp;
                         <select class="custom-select-sm" title="Select Date Mode" name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
                             <option value="date">Date Mode</option>
                             <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
@@ -946,12 +951,16 @@ class EmployeeHours{
                                 </span>
                             </span>
                         <span id="date2_span" class="nod">
-                                <?= makeTimebar("etime_", 1, null, false, time()); ?>
+                                thru<?= makeTimebar("etime_", 1, null, false, time()); ?>
                                 <span id="time2_span" class="nod">
                                     <?= makeTimebar("etime_", 2, null, false, time()); ?>
                                 </span>
                             </span>
                         <span id="nodate_span" class="nod">ANY/ALL DATES</span>
+                        
+
+                       
+                        &nbsp;&nbsp;
                         <button type="submit" value="Search" title="Search Employee Hours" class="btn btn-sm btn-primary" name="the_Search_button" onclick="<?= $this->index_name ?> = 0;loadEmps();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetEmpForm();resetPageSystem('<?= $this->index_name ?>');loadEmps();return false;">Reset</button>
                     </div>
