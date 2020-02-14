@@ -100,8 +100,7 @@ class LeadManagement
     }
 
 
-    function listEntrys()
-    {
+    function listEntrys(){
 
 
         ?>

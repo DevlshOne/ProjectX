@@ -120,6 +120,14 @@ class Campaigns
                         url: 'api/api.php?get=campaigns&mode=json&action=getRowByID&campaign_id=0',
                         success: function (data) {
                             $('#adding_campaign').val(0);
+                            $('#cmp_name').val('');
+                            $('#ent_type').val('');
+                            $('#cmp_status').val('');
+                            $('#px_hidden').val('');
+                            $('#vcmp_id').val('');
+                            $('#mgr_trf').val('');
+                            $('#wrm_trf').val('');
+                            $('#cmp_vars').val('');
                             $('#prt_cmp_dd').html(data.parent_dd);
                         }
                     });
