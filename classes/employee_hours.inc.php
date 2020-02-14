@@ -891,6 +891,9 @@ class EmployeeHours{
                 <input type="hidden" name="searching_emp">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Employee Hours</h4>
+                    
+                    <div id="total_count_div"></div>
+                    
                     <!--<button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSaleSearch();">Toggle Search</button>-->
                     <? if (checkAccess('employee_hours_edit')) { ?>
                         <button class="btn btn-sm btn-primary" type="button" title="Add Employee Hours" onclick="displayEditEmpDialog(0)">Add Hours</button>
@@ -967,7 +970,6 @@ class EmployeeHours{
                 </div>
                 <div class="block-content block-content-full">
                     <table class="table table-sm table-striped" id="emp_table">
-                        
                         <tr>
                             <th class="row2 text-center"><?= $this->getOrderLink('time_started') ?>Date</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('username') ?>Agent</a></th>
