@@ -794,7 +794,6 @@ class EmployeeHours
                 </div>
                 <div class="block-content block-content-full">
                     <table class="table table-sm table-striped" id="emp_table">
-                        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
                         <tr>
                             <th class="row2 text-center"><?= $this->getOrderLink('time_started') ?>Date</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('username') ?>Agent</a></th>
