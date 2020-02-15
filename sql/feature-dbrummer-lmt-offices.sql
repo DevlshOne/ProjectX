@@ -1,0 +1,2 @@
+ALTER TABLE `features` ADD `offices` ENUM('no','yes') NOT NULL DEFAULT 'no' AFTER `process_tracker_schedules`;
+ALTER TABLE `offices` ADD `status` ENUM('ready','pending','new') NULL DEFAULT NULL AFTER `name`, ADD `contact_info` VARCHAR(64) NULL DEFAULT NULL AFTER `status`, ADD `contact_number` VARCHAR(64) NULL DEFAULT NULL AFTER `contact_info`, ADD `notes` TEXT NULL DEFAULT NULL AFTER `contact_number`;

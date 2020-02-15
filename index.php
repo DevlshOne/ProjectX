@@ -401,6 +401,15 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             </li>
                             <?
                         }
+                        if (checkAccess('offices')) {
+                            ?>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link" href="?area=offices&no_script=1" onclick="loadSection(this.href);return false">
+                                    <span class="nav-main-link-name">Offices</span>
+                                </a>
+                            </li>
+                            <?
+                        }                        
                         ?>
                     </ul>
                 </li>
@@ -1168,6 +1177,10 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     include_once("classes/change_password.inc.php");
                     $_SESSION['change_password']->handleFLOW(true);
                     break;
+                case 'offices':
+                    include_once("classes/offices.inc.php");
+                    $_SESSION['offices']->handleFLOW(true);
+                    break;                    
             }
         }
         // USER NOT LOGGED IN, SHOW LOGIN SCREEN

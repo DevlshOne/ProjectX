@@ -150,6 +150,8 @@ class DBAPI {
 	public $process_tracker;
 
 	public $rousting_report;
+
+	public $offices;
 	
 	
 	
@@ -410,7 +412,10 @@ class DBAPI {
 		$this->process_tracker = new ProcessTrackerAPI();
 
         include_once($_SESSION['site_config']['basedir']."dbapi/rousting_report.db.php");
-        $this->rousting_report = new RoustingReportAPI();
+		$this->rousting_report = new RoustingReportAPI();
+		
+		include_once($_SESSION['site_config']['basedir']."dbapi/offices.db.php");
+		$this->offices = new OfficesAPI();
 		
 		
 	}

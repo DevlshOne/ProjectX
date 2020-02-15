@@ -693,6 +693,13 @@
 		
 		$destroy_session=1;
 		break;
+
+	case 'offices':
+		include_once($basedir."api/offices.api.php");
+		$obj = new API_Offices();
+		$obj->handleAPI();
+
+		break;		
 	}
 
 
