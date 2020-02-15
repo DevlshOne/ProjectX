@@ -110,88 +110,40 @@ class Campaigns
                     frm.s_name.value = '';
                     frm.s_status.value = 'active';
                 }
-
-                function validateCampaignField(name, value, frm) {
-                    //alert(name+","+value);
-                    switch (name) {
-                        default:
-                            // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-                            return true;
-                            break;
-                        case 'vici_campaign_id':
-                        case 'name':
-                            if (!value) return false;
-                            return true;
-                            break;
-                    }
-                    return true;
-                }
-
-                console.log('Initializing campaign add dialog');
-                $("#dialog-modal-add-campaign").dialog({
-                    autoOpen: false,
-                    width: 480,
-                    height: 320,
-                    modal: false,
-                    draggable: true,
-                    resizable: false,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
-                    buttons: {
-                        'Submit': function (e, ui) {
-                            e.preventDefault();
-                            let frm = $(this).closest('form');
-                            let params = getFormValues(frm, 'validateCampaignField');
-                            if (typeof params == "object") {
-                                switch (params[0]) {
-                                    default:
-                                        alert("Error submitting form. Check your values");
-                                        break;
-                                    case 'vici_campaign_id':
-                                        alert("Please enter the exact campaign ID field from vici\nExample: BCRSFC");
-                                        eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                        break;
-                                    case 'name':
-                                        alert("Please enter a name for this campaign.");
-                                        eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                                        break;
-                                }
-                            } else {
-                                $.ajax({
-                                    type: 'POST',
-                                    url: 'api/api.php?get=dialer_status&mode=json&action=setViciCreds&vici_username=' + $('#vici_username').val() + '&vici_password=' + $('#vici_password').val(),
-                                    success: function () {
-                                        alert('Vici Username/Password SAVED for this session');
-                                    },
-                                    error: function (response) {
-                                        console.log('FAILURE - ' + response);
-                                    }
-                                });
-                            }
-                            $(this).dialog('close');
-                        },
-                        'Reset': function (e, ui) {
-                            resetCampaignForm(frm);
-                        }
-                    }
-                });
                 $('#addCampaignButton').on('click', function () {
-                    let $dlgObj = $('#dialog-modal-add-campaign');
+                    let $dlgObj = $('#dialog-modal-edit-campaign');
                     $dlgObj.dialog('open');
-                    $dlgObj.html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                    $dlgObj.load("index.php?area=campaigns&add_campaign=0&printable=1&no_script=1");
+                    $dlgObj.dialog('option', 'title','Adding Campaign');
+                    $.ajax({
+                        type: 'POST',
+                        dataType: 'json',
+                        url: 'api/api.php?get=campaigns&mode=json&action=getRowByID&campaign_id=0',
+                        success: function (data) {
+                            $('#adding_campaign').val(0);
+                            $('#cmp_name').val('');
+                            $('#ent_type').val('');
+                            $('#cmp_status').val('');
+                            $('#px_hidden').val('');
+                            $('#vcmp_id').val('');
+                            $('#mgr_trf').val('');
+                            $('#wrm_trf').val('');
+                            $('#cmp_vars').val('');
+                            $('#prt_cmp_dd').html(data.parent_dd);
+                        }
+                    });
                 });
                 $("#dialog-modal-edit-campaign").dialog({
                     autoOpen: false,
                     width: 480,
-                    height: 320,
+                    height: 'auto',
                     modal: false,
                     draggable: true,
                     resizable: false,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                     buttons: {
                         'Submit': function (e) {
                             e.preventDefault();
-                            let frm = $(this).closest('form');
+                            let frm = $(this).find('form')[0];
                             let params = getFormValues(frm, 'validateCampaignField');
                             if (typeof params == "object") {
                                 switch (params[0]) {
@@ -214,20 +166,20 @@ class Campaigns
                                     url: 'api/api.php?get=campaigns&mode=xml&action=edit',
                                     data: params,
                                     error: function (response) {
-                                        swReportErrorMessage('Campaign did not save');
+                                        alert('Campaign did not save');
                                     },
                                     success: function (msg) {
                                         var result = handleEditXML(msg);
                                         var res = result['result'];
                                         if (res <= 0) {
-                                            swReportSuccessMessage(result['message']);
+                                            alert(result['message']);
                                             return;
                                         }
                                         loadCampaigns();
-                                        swReportSuccessMessage(result['message']);
-                                        $(this).dialog('close');
+                                        alert(result['message']);
                                     }
                                 });
+                                $(this).dialog('close');
                             }
                         },
                         'Reset': function (e) {
@@ -235,6 +187,9 @@ class Campaigns
                         }
                     }
                 });
+
+                $("#dialog-modal-edit-campaign").dialog("widget").draggable("option","containment","#main-container");
+                
             });
 
             var campaign_delmsg = 'Are you sure you want to delete this campaign?';
@@ -305,6 +260,20 @@ class Campaigns
                 eval('campaigns_loading_flag = false');
             }
 
+            function validateCampaignField(name, value) {
+                switch (name) {
+                    default:
+                        // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
+                        return true;
+                        break;
+                    case 'vici_campaign_id':
+                    case 'name':
+                        if (!value) return false;
+                        return true;
+                        break;
+                }
+                return true;
+            }
             function handleCampaignListClick(id) {
                 $.ajax({
                     type: 'POST',
@@ -323,10 +292,9 @@ class Campaigns
                         $('#wrm_trf').val(data.warm_transfers);
                         $('#cmp_vars').val(data.variables);
                         $('#prt_cmp_dd').html(data.parent_dd);
-                        applyUniformity();
                     },
                     error: function () {
-                        swReportErrorMessage('Unable to get data for campaign id :: ' + id);
+                        alert('Unable to get data for campaign id :: ' + id);
                     }
                 });
             }
@@ -368,11 +336,10 @@ class Campaigns
             </form>
         </div>
         <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
-        <div id="dialog-modal-add-campaign" title="Adding new Campaign" class="nod"></div>
         <div id="dialog-modal-edit-campaign" title="Editing Campaign" class="nod">
             <div class="block-content block-content-full text-left">
-                <form method="POST" action="#" autocomplete="off">
-                    <input type="hidden" id="adding_campaign" name="adding_campaign" value="">
+                <form method="POST" action="#" autocomplete="off" name="edit-campaign">
+                    <input type="hidden" id="adding_campaign" name="adding_campaign" value="" />
                     <div class="form-row">
                         <div class="col">
                             <label class="col-form-label" for="name">Campaign Name</label>

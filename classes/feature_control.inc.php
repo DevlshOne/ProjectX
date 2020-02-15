@@ -334,8 +334,10 @@ class FeatureControl
                 modal: false,
                 draggable: true,
                 resizable: false,
-                position: {my: 'center', at: 'center', of: '#main-container'},
+                position: {my: 'center', at: 'center'},
             });
+
+            $("#dialog-modal-add-feature").dialog("widget").draggable("option","containment","#main-container");
 
             // CALL FUNCTION TO POPULATE THE TABLE WITH DATA
             loadFeatures();

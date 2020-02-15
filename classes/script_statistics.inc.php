@@ -446,7 +446,7 @@ class ScriptStatistics{
 					resizable: false
 				});
 
-
+				 $("#dialog-modal-edit_script").dialog("widget").draggable("option","containment","#main-container");
 			 });
 
 

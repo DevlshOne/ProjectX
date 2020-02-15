@@ -370,7 +370,7 @@ class ProcessTrackerSchedules{
 				resizable: false
 			});
 
-
+			$("#dialog-modal-view-schedule").dialog("widget").draggable("option","containment","#main-container");
 
 			loadSchedules();
 

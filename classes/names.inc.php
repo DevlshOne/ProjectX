@@ -199,7 +199,7 @@ class Names
                         <input type="text" class="form-control" placeholder="ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
                         <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?= htmlentities($_REQUEST['s_name']) ?>"/>
                         <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
-                        <button type="button" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadNames();return false;">Search</button>
+                        <button type="submit" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadNames();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetNameForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadNames();return false;">Reset</button>
                     </div>
                 </div>
@@ -224,8 +224,11 @@ class Names
                 modal: false,
                 draggable: true,
                 resizable: false,
-                position: {my: 'center', at: 'center', of: '#main-container'},
+                position: {my: 'center', at: 'center'},
             });
+
+            $("#dialog-modal-add-name").dialog("widget").draggable("option","containment","#main-container");
+            
             loadNames();
         </script>
         <?

@@ -481,13 +481,11 @@
         }
 
         if ($mode == 0 || $mode == 2) {
-
             /// makeNumberDD($name,$sel,$start,$end,$inc,$zeropad,$tag_inject)
             echo makeNumberDD($basename . 'hour', (($selarr[0] % 12 == 0) ? 12 : ($selarr[0] % 12)), 1, 12, 1, 0, $extra_attr) . ' : ';    # Hours
             echo makeNumberDD($basename . 'min', $selarr[1], 0, 59, 1, 1, 0, $extra_attr);        # minutes
-            echo '<select name="' . $basename . 'timemode' . '" ' . $extra_attr . ' id="' . $basename . 'timemode' . '"><option value="am"' . (($selarr[0] < 12) ? ' SELECTED' : '') . '>AM<option value="pm"' . (($selarr[0] >= 12 && $selarr[0] < 24) ? ' SELECTED' : '') . '>PM</select>';
+            echo '<select class="custom-select-sm" name="' . $basename . 'timemode' . '" ' . $extra_attr . ' id="' . $basename . 'timemode' . '"><option value="am"' . (($selarr[0] < 12) ? ' SELECTED' : '') . '>AM<option value="pm"' . (($selarr[0] >= 12 && $selarr[0] < 24) ? ' SELECTED' : '') . '>PM</select>';
         }
-
         if ($mode != 2) {
             echo ($mode == 0) ? ' &nbsp; ' : '';
             echo (($stack) ? '<br>' : '') . getMonthDD($basename . 'month', ((!$mode) ? $selarr[2] : $selarr[0]), $extra_attr) . '/' . getDayDD($basename . 'day', ((!$mode) ? $selarr[3] : $selarr[1]), $extra_attr) . '/' . getYearDD($basename . 'year', ((!$mode) ? $selarr[4] : $selarr[2]), $extra_attr);
@@ -496,7 +494,7 @@
 
     function makeHourDD($name, $sel, $class)
     {
-        $out = '<select name="' . $name . '" id="' . $name . '" ';
+        $out = '<select class="custom-select-sm" name="' . $name . '" id="' . $name . '" ';
         $out .= ($class) ? ' class="' . $class . '"' : '';
         $out .= '>';
 
@@ -521,7 +519,7 @@
     {
         $sel = intval($sel);
 
-        $out = '<select name="' . $name . '" id="' . $name . '" ' . $tag_inject . ' >';
+        $out = '<select class="custom-select-sm" name="' . $name . '" id="' . $name . '" ' . $tag_inject . ' >';
 
         $out .= ($blankfield) ? '<option value=""></option>' : '';
 
@@ -537,7 +535,7 @@
 
     function getMonthDD($name, $sel, $extra_attr)
     {
-        $out = '<select name="' . $name . '"  id="' . $name . '" ' . $extra_attr . ' >';
+        $out = '<select class="custom-select-sm" name="' . $name . '"  id="' . $name . '" ' . $extra_attr . ' >';
         for ($x = 1; $x <= 12; $x++) {
             $out .= '<option value="' . $x . '"';
             if ($x == $sel) {
@@ -551,7 +549,7 @@
 
     function getDayDD($name, $sel, $extra_attr)
     {
-        $out = '<select name="' . $name . '"  id="' . $name . '" ' . $extra_attr . ' >';
+        $out = '<select class="custom-select-sm" name="' . $name . '"  id="' . $name . '" ' . $extra_attr . ' >';
         for ($x = 1; $x <= 31; $x++) {
             $out .= '<option value="' . $x . '"';
             if ($x == $sel) {
@@ -565,7 +563,7 @@
 
     function getYearDD($name, $sel, $extra_attr)
     {
-        $out = '<select name="' . $name . '" id="' . $name . '" ' . $extra_attr . ' >';
+        $out = '<select class="custom-select-sm" name="' . $name . '" id="' . $name . '" ' . $extra_attr . ' >';
         for ($x = 1900; $x < (date("Y") + 15); $x++) {
             $out .= '<option value="' . $x . '"';
             if ($x == $sel) {

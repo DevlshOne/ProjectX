@@ -100,8 +100,7 @@ class LeadManagement
     }
 
 
-    function listEntrys()
-    {
+    function listEntrys(){
 
 
         ?>
@@ -441,7 +440,7 @@ class LeadManagement
                         <input type="text" class="form_control" placeholder="State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
                         <input type="text" class="form_control" placeholder="Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
                         <?= makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", "[Select Office]"); ?>
-                        <button type="button" value="Search" title="Search Leads" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadLeads();return false;">Search</button>
+                        <button type="submit" value="Search" title="Search Leads" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadLeads();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetLeadForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadLeads();return false;">Reset</button>
                     </div>
                     <div class="input-group input-group-sm">
@@ -450,7 +449,7 @@ class LeadManagement
                             <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
                             <option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range Mode</option>
                             <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
-                        </select>
+                        </select>&nbsp;
                         <span id="date1_span">
                             <?= makeTimebar("stime_", 1, null, false, time()); ?>
                                 <span id="time1_span" class="nod">
@@ -458,7 +457,7 @@ class LeadManagement
                                 </span>
                             </span>
                         <span id="date2_span" class="nod">
-                                <?= makeTimebar("etime_", 1, null, false, time()); ?>
+                                THRU<?= makeTimebar("etime_", 1, null, false, time()); ?>
                                 <span id="time2_span" class="nod">
                                     <?= makeTimebar("etime_", 2, null, false, time()); ?>
                                 </span>
@@ -498,7 +497,7 @@ class LeadManagement
                     modal: false,
                     draggable: true,
                     resizable: false,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                     close: function (event, ui) {
                         hideAudio();
                     }
@@ -509,6 +508,10 @@ class LeadManagement
                 displayEditLeadDialog(<?=$leadid?>, 'general');<?
                 }
                 ?>
+
+
+                $("#dialog-modal-edit_lead").dialog("widget").draggable("option","containment","#main-container");
+                
             });
             $('#s_cluster_id').attr('title', 'Select Cluster');
             $('#s_campaign_id').attr('title', 'Select Campaign');

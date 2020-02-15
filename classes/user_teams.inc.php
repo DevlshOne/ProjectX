@@ -182,6 +182,9 @@ class UserTeamsClass
                 title: 'Editing User Team',
                 position: {my: 'center', at: 'center'}
             });
+
+            $("#dialog-modal-edit-user-team").dialog("widget").draggable("option","containment","#main-container");
+            
             $("#dialog-modal-add-user-team").dialog({
                 autoOpen: false,
                 width: 'auto',
@@ -190,7 +193,7 @@ class UserTeamsClass
                 draggable: true,
                 resizable: false,
                 title: 'Add New User Team',
-                position: {my: 'center', at: 'center', of: '#main-container'},
+                position: {my: 'center', at: 'center'},
                 buttons: {
                     'Save': function () {
                         if ($('#new_team_name').val().length) {
@@ -226,6 +229,11 @@ class UserTeamsClass
                     }
                 }
             });
+
+
+            $("#dialog-modal-add-user-team").dialog("widget").draggable("option","containment","#main-container");
+
+            
             loadUserteams();
         </script>
         <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#userteamsarea" onsubmit="loadUserteams();return false">

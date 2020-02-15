@@ -384,6 +384,10 @@ class UserGroupsClass
                     resizable: true,
                     position: {my: 'center', at: 'center', of: '#main-container'}
                 });
+
+                $("#dialog-modal-add-user-group").dialog("widget").draggable("option","containment","#main-container");
+
+                
                 loadUsergroups();
                 applyUniformity();
             });

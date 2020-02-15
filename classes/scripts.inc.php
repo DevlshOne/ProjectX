@@ -303,7 +303,7 @@ class Scripts{
 					        <option value="4"<?=($_REQUEST['s_screen_num'] == 4)?' SELECTED ':''?>>Screen 4</option>
 					        <option value="5"<?=($_REQUEST['s_screen_num'] == 5)?' SELECTED ':''?>>Screen 5</option>
 				        </select>
-				        <button type="button" value="Search" title="Search Scripts" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadScripts();return false;">Search</button>
+				        <button type="submit" value="Search" title="Search Scripts" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadScripts();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetScriptForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadScripts();return false;">Reset</button>
                     </div>
                 </div>
@@ -333,8 +333,11 @@ class Scripts{
 				modal: false,
 				draggable:true,
 				resizable: false,
-				position: {my: 'center', at: 'center', of: '#main-container'},
+				position: {my: 'center', at: 'center'},
 			});
+
+			$("#dialog-modal-add-script").dialog("widget").draggable("option","containment","#main-container");
+			
 			loadScripts();
 			togVoiceDD(getEl('<?=$this->frm_name?>'));
 		</script>
@@ -797,6 +800,8 @@ class Scripts{
 
 				}
 			});
+
+			$("#dialog-modal-edit-voicefile").dialog("widget").draggable("option","containment","#main-container");
 
 			</script>
 				<div class="nod">

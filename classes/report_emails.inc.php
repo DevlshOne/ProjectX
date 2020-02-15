@@ -332,6 +332,8 @@ class ReportEmails{
 				resizable: false
 			});
 
+			$("#dialog-modal-add-report").dialog("widget").draggable("option","containment","#main-container");
+			
 			loadReports();
 
 		</script><?

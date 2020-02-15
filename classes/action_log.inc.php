@@ -341,6 +341,8 @@ class ActionLog{
 				resizable: true
 			});
 
+			$("#dialog-modal-view-action").dialog("widget").draggable("option","containment","#main-container");
+			
 			loadActions();
 
 		</script><?

@@ -279,6 +279,9 @@ class UserGroupsMaster{
                     resizable: false,
                     position: {my: 'center', at: 'center', of: '#main-container'}
                 });
+
+                $("#dialog-modal-add-user-groups-master").dialog("widget").draggable("option","containment","#main-container");
+                
                 loadUser_groups_master();
             </script>
             <?

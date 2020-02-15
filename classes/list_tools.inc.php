@@ -3032,6 +3032,8 @@ class ListToolsClass{
 //
 //			// SUBMIT HIDDEN FORM
 //			ninjafrm.submit();
+
+			
 		}
 
 
@@ -3126,7 +3128,7 @@ class ListToolsClass{
 						<?=makeClusterDD('source_cluster_id', '', '', "buildListDD('source_list', this.value);", "[Select Cluster]")?>
 						<br />
 
-						<select id="source_list" name="source_list[]" size="10" MULTIPLE onchange="updateStatesStatuses();" >
+						<select id="source_list" name="source_list[]" size="10" style="height:200px" MULTIPLE onchange="updateStatesStatuses();" >
 
 							<option value="">[Pick a cluster first]</option>
 
@@ -3140,7 +3142,7 @@ class ListToolsClass{
 						<span class="big">Destination</span><br />
 						<?=makeClusterDD('target_cluster_id', '', '', "buildListDD('target_list',this.value)", "[Select Cluster]")?><br />
 
-						<select id="target_list" name="target_list" >
+						<select id="target_list" name="target_list" size="10" style="height:200px">
 
 							<option value="">[Pick a cluster first]</option>
 
@@ -3227,14 +3229,14 @@ class ListToolsClass{
 						<tr>
 							<td>
 
-								<input type="radio" name="status_selection" id="status_selection_all" value="all" CHECKED onclick="toggleEnableAllChecks('selected_status_', 0);toggleAllChecks('selected_status_', 1);">All Statuses<br/>
-								<input type="radio" name="status_selection" value="selective"  onclick="toggleEnableAllChecks('selected_status_', 1)">Selective Statuses
+								<input type="radio" name="status_selection" id="status_selection_all" value="all" style="width:20px;height:20px" CHECKED onclick="toggleEnableAllChecks('selected_status_', 0);toggleAllChecks('selected_status_', 1);"><label>All Statuses</label><br/>
+								<input type="radio" name="status_selection" value="selective" style="width:20px;height:20px"  onclick="toggleEnableAllChecks('selected_status_', 1)"><label>Selective Statuses</label>
 
 							</td>
 							<td>
 
-								<input type="radio" name="state_selection" id="states_selection_all" value="all" CHECKED onclick="toggleEnableAllChecks('selected_states_', 0);toggleAllChecks('selected_states_', 1);">All States<br/>
-								<input type="radio" name="state_selection" value="selective" onclick="toggleEnableAllChecks('selected_states_', 1)">Selective States
+								<input type="radio" name="state_selection" id="states_selection_all" value="all" style="width:20px;height:20px" CHECKED onclick="toggleEnableAllChecks('selected_states_', 0);toggleAllChecks('selected_states_', 1);"><label>All States</label><br/>
+								<input type="radio" name="state_selection" value="selective" style="width:20px;height:20px" onclick="toggleEnableAllChecks('selected_states_', 1)"><label>Selective States</label>
 
 
 
@@ -3264,12 +3266,17 @@ class ListToolsClass{
 			</td>
 			<td>
 
-				Other tools here....
+				&nbp;
 
 			</td>
 		</tr>
 		</form>
-		</table><?
+		</table>
+		<script>
+
+			applyUniformity();
+		
+		</script><?
 
 	}
 

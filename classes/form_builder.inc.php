@@ -198,7 +198,7 @@
                     modal: false,
                     draggable: true,
                     resizable: false,
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                 });
                 $("#dialog-modal-add-form-builder").dialog({
                     autoOpen: false,
@@ -220,7 +220,7 @@
                             $(this).dialog('close');
                         }
                     },
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                 });
                 $("#dialog-modal-delete-last-field").dialog({
                     autoOpen: false,
@@ -230,7 +230,7 @@
                     draggable: true,
                     resizable: false,
                     title: 'CONFIRM - Delete Last Field',
-                    position: {my: 'center', at: 'center', of: '#main-container'},
+                    position: {my: 'center', at: 'center'},
                     buttons: {
                         'Confirm': function () {
                             let i = $(this).data('fieldID');
