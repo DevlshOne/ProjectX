@@ -1,5 +1,13 @@
 <?php
 
+	function json_encode_escape_whitespace($json){
+		$results = json_encode(array_filter($json, function($arr) use ($array){
+			return preg_replace('~\\[nrtfd]~', '\\\\$1', $arr);
+		}));
+			
+		return $results;
+	}
+
 	function filter09($str, $max_length = 0){
 
 		$out = preg_replace("/[^0-9]/",'',$str);
@@ -35,6 +43,19 @@
 		}
 
 
+		return $out;
+	}
+	
+	function filterEmail($str, $max_length = 0){
+		
+		$out = preg_replace('/[^a-zA-Z0-9,;.\-_\'\/\\#$@ ]/', '' , $str);
+		
+		if($max_length && $max_length > 0){
+			
+			$out = substr($out,0, $max_length);
+		}
+		
+		
 		return $out;
 	}
 
