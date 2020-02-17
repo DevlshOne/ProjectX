@@ -153,6 +153,8 @@ class DBAPI {
 
 	public $offices;
 	
+	public $report_emails_templates;
+	
 	
 	
 	/**
@@ -368,6 +370,9 @@ class DBAPI {
 		## Report Emails
 		include_once($_SESSION['site_config']['basedir']."dbapi/report_emails.db.php");
 		$this->report_emails = new ReportEmailsAPI();
+		
+		include_once($_SESSION['site_config']['basedir']."dbapi/report_emails_templates.db.php");
+		$this->report_emails_templates = new ReportEmailsTemplatesAPI();
 		
 		
 		include_once($_SESSION['site_config']['basedir']."dbapi/list_tool_tasks.db.php");
