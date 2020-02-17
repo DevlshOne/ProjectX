@@ -409,7 +409,19 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                                 </a>
                             </li>
                             <?
-                        }                        
+                        }  
+                        
+                        
+                        
+                        if (checkAccess('process_tracker_schedules')) {
+                        	?>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link" href="?area=process_tracker_schedules&no_script=1" onclick="loadSection(this.href);return false">
+                                    <span class="nav-main-link-name">Process Tracker</span>
+                                </a>
+                            </li>
+                            <?
+                        }  
                         ?>
                     </ul>
                 </li>
@@ -947,11 +959,11 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     }
                     break;
                 case 'process_tracker_schedules':
-                    if (($_SESSION['user']['priv'] >= 5) ||    // ADMINS ALLOWED, OR
-                        ($_SESSION['user']['priv'] == 4 && $_SESSION['features']['process_tracker_schedules'] == 'yes') // MANAGERS WITH USER STATUS REPORT ACCESS
-                    ) {
+                    if (checkAccess('process_tracker_schedules') ) {
+                    	
                         include_once("classes/process_tracker_schedules.inc.php");
                         $_SESSION['process_tracker_schedules']->handleFLOW();
+                        
                     } else {
                         accessDenied("ProcessTrackerSchedules");
                     }
