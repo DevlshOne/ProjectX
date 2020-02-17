@@ -1,4 +1,3 @@
-<script type="text/javascript" src="js/form_builder.js"></script>
 <? /***************************************************************
  *    Names - Handles list/search/import names
  *    Written By: Jonathan Will
@@ -42,7 +41,9 @@
             if (!checkAccess('campaigns')) {
                 accessDenied("Campaigns");
                 return;
-            } else {
+            } else { ?>
+                <script type="text/javascript" src="js/form_builder.js"></script>
+                <?
                 if (isset($_REQUEST['add'])) {
                     $this->makeAdd($_REQUEST['add']);
                 } elseif (isset($_REQUEST['copy'])) {
@@ -258,6 +259,12 @@
                             <option value="100">100</option>
                             <option value="500">500</option>
                         </select>
+                        <div class="d-inline-block ml-2">
+                            <button class="btn btn-sm btn-dark" title="Total Found">
+                                <i class="si si-list"></i>
+                                <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                            </button>
+                        </div>
                     </div>
                     <div class="block-content">
                         <table class="table table-sm table-striped" id="form_builder_table">

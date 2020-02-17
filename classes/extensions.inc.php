@@ -774,26 +774,18 @@ class Extensions
 
 
             function toggleAllOnScreen(way) {
-
                 // GRAB ARRAY OF CHECKED USERS
                 var obj = null;
                 for (var x = 0, y = 0; (obj = getEl('extchk' + x)) != null; x++) {
-
-
                     if (way == 0) {
-
                         obj.checked = false;
                     } else if (way == 1) {
-
                         obj.checked = true;
                     } else {
                         obj.checked = !obj.checked;
                     }
-
                 }
-
                 applyUniformity();
-
             }
 
 
@@ -805,105 +797,75 @@ class Extensions
             $this->makeBulkAdd();
             ?>
         </div>
-        <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadExtensions();return false">
-            <input type="hidden" name="searching_extensions">
-            <table border="0" width="100%" class="lb" cellspacing="0">
-                <tr>
-                    <td height="40" class="pad_left ui-widget-header">
-                        <div class="block-header bg-primary-light">
-                            <h4 class="block-title">Extensions</h4>
-                            <button type="button" value="Add" title="Add Extension" class="btn btn-sm btn-primary" onclick="displayAddExtensionDialog(0)">Add</button>
-                            <button type="button" value="Bulk Add" title="Bulk Add Extensions" class="btn btn-sm btn-primary" onclick="displayBulkAddExtensionDialog();">Bulk Add</button>
-                            <div id="extensions_prev_td" class="page_system_prev"></div>
-                            <div id="extensions_page_td" class="page_system_page"></div>
-                            <div id="extensions_next_td" class="page_system_next"></div>
-                            <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadExtensions(); return false;">
-                                <option value="20">20</option>
-                                <option value="50">50</option>
-                                <option value="100">100</option>
-                                <option value="500">500</option>
-                            </select>
+
+
+        <div class="block">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadExtensions();return false">
+                <input type="hidden" name="searching_quiz">
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">Extensions</h4>
+                    <button class="btn btn-sm btn-primary" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
+                    <div id="extensions_prev_td" class="page_system_prev"></div>
+                    <div id="extensions_page_td" class="page_system_page"></div>
+                    <div id="extensions_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0;loadExtensions(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                    <div class="d-inline-block ml-2">
+                        <button class="btn btn-sm btn-dark" title="Total Found">
+                            <i class="si si-list"></i>
+                            <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                        </button>
+                    </div>
+                </div>
+                <div class="bg-info-light" id="extension_search_table">
+                    <div class="input-group input-group-sm">
+                        <input type="hidden" name="searching_extensions"/>
+                        <input type="text" name="s_number" class="form-control" placeholder="Extension.." value="<?= htmlentities($_REQUEST['s_number']) ?>">
+                        <?= $this->makeServerDD('s_server_id', $_REQUEST['s_server_id'], true); ?>
+                        <select class="custom-select-sm" name="s_in_use">
+                            <option value="">[In Use?]</option>
+                            <option value="yes">Yes</option>
+                            <option value="no">No</option>
+                        </select>
+                        <select class="custom-select-sm" name="s_status">
+                            <option value="">[Select Status]</option>
+                            <option value="enabled">Enabled</option>
+                            <option value="suspended">Suspended</option>
+                            <option value="deleted">Deleted</option>
+                        </select>
+                        <input type="text" class="form-control" name="s_id" placeholder="ID.." value="<?= htmlentities($_REQUEST['s_id']) ?>">
+                        <button type="submit" value="Search" title="Search Sales" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadExtensions();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetExtensionForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadExtensions();return false;">Reset</button>
+                    </div>
+                </div>
+                <div class="block-content">
+                    <table class="table table-sm table-striped" id="extension_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                        <tr>
+                            <th class="row2 text-center">Select</th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('number') ?>Extension</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('server_id') ?>Server</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('iax_host') ?>Dialer Host</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('in_use') ?>In Use</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('in_use_by_userid') ?>In Use By</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('status') ?>Status</a></th>
+                            <th class="row2 text-center">&nbsp;</th>
+                        </tr>
+                    </table>
+                    <div class="text-center">
+                        <div class="input-group input-group-sm">
+                            <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(1);return false">Check All</button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(0);return false">Uncheck All</button>
+                            <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(2);return false">Toggle All</button>
                         </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <table border="0" width="100%">
-                            <tr>
-                                <td rowspan="2" width="70" align="center" style="border-right:1px solid #000">
-                                    <div id="total_count_div"></div>
-                                </td>
-                                <th class="row2">Extension</th>
-                                <th class="row2">Server</th>
-                                <th class="row2">In Use</th>
-                                <th class="row2">Status</th>
-                                <th class="row2">ID</th>
-                                <td>
-                                    <button type="submit" value="Search" onclick="<?= $this->index_name ?> = 0;" name="the_Search_button">Search</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td align="center"><input type="text" name="s_number" size="20" value="<?= htmlentities($_REQUEST['s_number']) ?>"></td>
-                                <td align="center"><?
-                                    echo $this->makeServerDD('s_server_id', $_REQUEST['s_server_id'], 1);
-                                    ?></td>
-                                <td align="center"><select name="s_in_use">
-                                        <option value="">[All]</option>
-                                        <option value="yes">Yes</option>
-                                        <option value="no">No</option>
-                                    </select>
-                                </td>
-                                <td align="center"><select name="s_status">
-                                        <option value="enabled">Enabled</option>
-                                        <option value="suspended">Suspended</option>
-                                        <option value="deleted">Deleted</option>
-                                    </select></td>
-                                <td align="center"><input type="text" name="s_id" size="5" value="<?= htmlentities($_REQUEST['s_id']) ?>"></td>
-                                <td>
-                                    <button type="button" value="Reset" onclick="resetExtensionForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadExtensions();">Reset</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <table border="0" width="100%" id="extension_table">
-                            <tr>
-                                <th class="row2" align="center">&nbsp;</th>
-                                <th class="row2" align="center"><?= $this->getOrderLink('number') ?>Extension</a></th>
-                                <th class="row2" align="left"><?= $this->getOrderLink('server_id') ?>Server</a></th>
-                                <th class="row2"><?= $this->getOrderLink('iax_host') ?>Dialer Host</a></th>
-                                <th class="row2"><?= $this->getOrderLink('in_use') ?>In Use</a></th>
-                                <th class="row2"><?= $this->getOrderLink('in_use_by_userid') ?>In Use By</a></th>
-                                <th class="row2"><?= $this->getOrderLink('status') ?>Status</a></th>
-                                <th class="row2">&nbsp;</th>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <table border="0">
-                            <tr>
-                                <td height="30" nowrap>
-                                    <a href="#" onclick="toggleAllOnScreen(1);return false">[CHECK ALL]</a>
-                                    &nbsp;
-                                    <a href="#" onclick="toggleAllOnScreen(0);return false">[UNCHECK ALL]</a>
-                                    &nbsp;
-                                    <a href="#" onclick="toggleAllOnScreen(2);return false">[TOGGLE ALL]</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <button type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </form>
+                    </div>
+                </div>
+            </form>
+        </div>
         <script>
 
             $(document).ready(function () {
@@ -1176,45 +1138,31 @@ class Extensions
                     <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
                 </tr>
         </form>
-        </table><?
+        </table>
+        <?
     }
 
-
-    function makeServerDD($name, $sel, $blank_field = 0)
+    function makeServerDD($name, $sel, $blank_field = false)
     {
-
-        $out = '<select name="' . $name . '" id="' . $name . '">';
-
+        $out = '<select class="custom-select-sm" name="' . $name . '" id="' . $name . '">';
         $res = $_SESSION['dbapi']->query("SELECT * FROM servers ORDER BY name ASC");
-
         if ($blank_field) {
-
-            $out .= '<option value="">[SELECT ONE]</option>';
+            $out .= '<option value="">[Select Server]</option>';
         }
-
         while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-
             $out .= '<option value="' . $row['id'] . '"';
-
             $out .= ($row['id'] == $sel) ? ' SELECTED ' : '';
-
             $out .= '>' . $row['name'] . '</option>';
         }
-
         $out .= '</select>';
-
         return $out;
     }
 
     function getOrderLink($field)
     {
-
         $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
-
         $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-
         $var .= ");loadExtensions();return false;\">";
-
         return $var;
     }
 }

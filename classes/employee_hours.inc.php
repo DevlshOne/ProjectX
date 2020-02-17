@@ -1,42 +1,44 @@
-<?	/***************************************************************
-*	Employee hours - A quick tool for whipping employees hours ass, with a belt
-*	Written By: Jonathan Will
+<? /***************************************************************
+*    Employee hours - A quick tool for whipping employees hours ass, with a belt
+*    Written By: Jonathan Will
 ***************************************************************/
 
 $_SESSION['employee_hours'] = new EmployeeHours;
 
 
-class EmployeeHours{
+class EmployeeHours
+{
 	
 	
-	var $table	= 'employee_hours';			## Classes main table to operate on
-	var $orderby	= 'username';		## Default Order field
-	var $orderdir	= 'ASC';	## Default order direction
+	var $table = 'employee_hours';            ## Classes main table to operate on
+	var $orderby = 'username';        ## Default Order field
+	var $orderdir = 'ASC';    ## Default order direction
 	
 	
 	## Page  Configuration
 	var $frm_name = 'empnextfrm';
 	var $index_name = 'emp_list';
-	var $order_prepend = 'emp_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+	var $order_prepend = 'emp_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 	
 	## Page  Configuration
-	var $pagesize	= 50;	## Adjusts how many items will appear on each page
-	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+	var $pagesize = 50;    ## Adjusts how many items will appear on each page
+	var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
 	
 	
-	
-	function EmployeeHours(){
+	function EmployeeHours()
+	{
 		
 		
 		## REQURES DB CONNECTION!
-		include_once($_SESSION['site_config']['basedir']."/utils/db_utils.php");
+		include_once($_SESSION['site_config']['basedir'] . "/utils/db_utils.php");
 		
 		
 		$this->handlePOST();
 	}
 	
 	
-	function handlePOST(){
+	function handlePOST()
+	{
 		
 		// THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
 		// SEE api/employee_hour.api.php FOR POST HANDLING!
@@ -44,22 +46,23 @@ class EmployeeHours{
 		
 	}
 	
-	function handleFLOW(){
+	function handleFLOW()
+	{
 		# Handle flow, based on query string
 		
-		if(!checkAccess('employee_hours')){
+		if (!checkAccess('employee_hours')) {
 			
 			
 			accessDenied("Employee Hours");
 			
 			return;
 			
-		}else{
-			if(isset($_REQUEST['edit_hours'])){
+		} else {
+			if (isset($_REQUEST['edit_hours'])) {
 				
 				$this->makeEdit(intval($_REQUEST['edit_hours']));
 				
-			}else{
+			} else {
 				$this->listEntrys();
 			}
 		}
@@ -67,408 +70,234 @@ class EmployeeHours{
 	}
 	
 	
-	
-	function makeEdit($id, $sub = ''){
+	function makeEdit($id, $sub = '')
+	{
 		
 		$id = intval($id);
 		
 		// RING DING DONG, RINGA DING DING DONG, west side.
 		
 		
-		?><script>
-
-			
-
-
-	        
-			function validateHourField(name,value,frm){
-
-				//alert(name+","+value);
-
-
-				switch(name){
-				default:
-
-					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-					return true;
-					break;
-
-				case 'hours':
-
-					var tmpval = parseFloat(value);
-
-					if(tmpval <= 0) return false;
-
-					return true;
-					break;
-
-				//case 'agent_id':
-				case 'campaign_id':
-				case 'cluster_id':
-				case 'office_id':
-				case 'user_group':
-
-
-					if(!value)return false;
-
-					return true;
-					break;
-
-
-				}
-				return true;
-			}
-
-
-
-
-
-			function checkHourForm(frm){
-
-
-				var params = getFormValues(frm,'validateHourField');
-
-
-				// FORM VALIDATION FAILED!
-				// param[0] == field name
-				// param[1] == field value
-				if(typeof params == "object"){
-
-					switch(params[0]){
-					default:
-
-						alert("Error submitting form. Check your values");
-
-						break;
-
-					case 'cluster_id':
-
-						alert("Please select the cluster for this agent.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-
-
-					case 'hours':
-
-						alert("Please enter the hours for this agent.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-
-					case 'agent_id':
-
-						alert("Please select the agent for these hours.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-
-					case 'office_id':
-						alert("Please select the office for the agent.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-
-					case 'user_group':
-						alert("Please select the user group for the agent.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-
-
-					case 'campaign_id':
-
-						alert("Please select the campaign for this entry.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-					}
-
-				// SUCCESS - POST AJAX TO SERVER
-				}else{
-
-					if(usererrorcount > 0){
-						alert("Please check the username fields first. All users must exist.");
-						return false;
-					}
-					
-
-
-					//alert("Form validated, posting");
-
-					$.ajax({
-						type: "POST",
-						cache: false,
-						url: 'api/api.php?get=employee_hours&mode=xml&action=add',
-						data: params,
-						error: function(){
-							alert("Error saving hours form. Please contact an admin.");
-						},
-						success: function(msg){
-
-
-							var result = handleEditXML(msg);
-							var res = result['result'];
-
-							if(res <= 0){
-
-								alert(result['message']);
-
-								return;
-
-							}
-
-
-							loadEmps();
-
-
-							$('#dialog-modal-edit_emp').dialog("close");
-
-							//displayEditLeadDialog(res);
-
-							alert(result['message']);
-
-						}
-
-
-					});
-
-				}
-
-				return false;
-
-			}
-
-
-			var curuseridx = 1;
-			
-			function addMoreUsers(cnt){
-
-				for(var x=0;x < cnt;x++){
-
-					$('#additional_users_span').append(
-
-
-
-							'<input type="text" size="5" name="agent_id['+curuseridx+']" id="agent_id_'+curuseridx+'" style="width:50px;display:initial" onchange="checkAllUsersExist()" /><span id="agent_username_check_'+curuseridx+'"></span><br />'
-							//'<input type="text" size="5" name="agent_id[]" id="agent_id" /><br />'
-
-
-					);
-
-					curuseridx++;
-					
-				}
-
-				applyUniformity();
-			}
-
-
-			var usererrorcount = 0;
-			
-			function checkAllUsersExist(){
-
-				usererrorcount = 0;
-
-				var obj = null;
-				
-				for(var x=0;(obj=getEl('agent_id_'+x)) != null;x++){
-
-					$('#agent_username_check_' + x).html('');
-					
-					if(obj.value.trim() == '')continue;
-				
-					//alert(index+" "+$( this ).val() );
-					checkUserExists(x, obj.value);
-					
-				
-					  
-				}
-
-				
-			}
-			
-			function checkUserExists(idx, username) {
-
-	
-	            // AJAX POST TO SERVER TO CHECK
-	            $.ajax({
-	                type: "POST",
-	                cache: false,
-	                url: 'ajax.php?mode=check_user_exists&username=' + username,
-	                //data: params,
-	                error: function () {
-	                    alert("Error checking if user exists. Please contact an admin.");
-	                },
-	                success: function (msg) {
-	
-	                    //resultcnt++;
-	
-	                    var tmparr = msg.split(":");
-	
-	
-	                    // USER EXISTS
-	                    if (parseInt(tmparr[0]) > 0) {
-
-
-	                    	$('#agent_username_check_' + idx).html("<img src=\"images/circle-green.gif\" title=\"" + tmparr[1] + "\" /><span style=\"background-color:green\"></span>");
-
-	
-	                       // errorcnt++;
-	
-	                        // USER NOT FOUND
-	                    } else if (parseInt(tmparr[0]) == 0) {
-	
-	                        $('#agent_username_check_' + idx).html("<img src=\"images/circle-red.gif\" /><span style=\"background-color:red\" >" + tmparr[1] + "</span>");	                        
-
-	                        usererrorcount++;
-	                    	
-	                        // SOMETHING BAD HAPPENED
-	                    } else {
-	                        // UT OHHHHH *POOPS*
-	
-	                        $('#agent_username_check_' + idx).html("FROM SERVER: <span style=\"background-color:red\" >" + msg + "</span>");
-	                    }
-	
-
-	
-	                }
-	            });
-	
-	        }	
-
-
-		</script>
-
-
-		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="checkHourForm(this);return false">
-			<input type="hidden" name="adding_hours" value="<?=$id?>">
-
-		<table border="0" align="center">
-		<tr>
-			<th align="left">Agent:</th>
-			<td>
-			
-				<input type="text" size="5" name="agent_id[0]" id="agent_id_0" style="width:50px;display:inline" onchange="checkAllUsersExist()" /><span id="agent_username_check_0"></span>&nbsp;<input type="button" value="Add more users" onclick="addMoreUsers(5)" /><br />
-				<span id="additional_users_span"></span><?
-
-				//echo makeUserDD('agent_id', '' , '', '[Select user]');
-
-			?></td>
-		</tr>
-		<tr>
-			<th align="left">Cluster:</th>
-			<td><?
-
-				echo makeClusterDD('cluster_id', $_REQUEST['cluster_id'], '', "", " ");
-
-			?></td>
-		</tr>
-		<tr>
-			<th align="left">Office:</th>
-			<td><?
-
-
-/**					if(		($_SESSION['user']['priv'] >= 5) ||
-							($_SESSION['user']['allow_all_offices'] == 'yes')
-						){**/
-
-
-
-						//echo makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", 1);
-						echo makeOfficeDD("office_id", $_REQUEST['office_id'], '', "", " ");
-
-/**					}else{
-
-
-
-						?><select name="office_id">
-							<option value="">[All Assigned]</option><?
-
-							foreach($_SESSION['assigned_offices'] as $ofc){
-								echo '<option value="'.$ofc.'"';
-
-								if($_REQUEST['s_office_id'] == $ofc) echo ' SELECTED ';
-
-								echo '>Office '.$ofc.'</option>';
-							}
-
-						?></select><?
-
-
-					}**/
-
-
-
-
-			?></td>
-		</tr>
-		<tr>
-			<th align="left">Campaign:</th>
-			<td><?
-
-				echo makeCampaignDD('campaign_id', $_REQUEST['campaign_id'], '', ""," ");
-
-			?></td>
-		</tr>
-		<tr>
-			<th align="left">Vici Group:</th>
-			<td><?
-
-				echo makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "", 0, " ");
-
-			?></td>
-		</tr>
-
-		<tr>
-			<th align="left">Date:</th>
-			<td><?
-
-				echo makeTimebar("date_",1,null,false,time(),"");
-
-			?></td>
-		</tr>
-
-		<tr>
-			<th align="left">Paid Hours:</th>
-			<td><input type="text" name="hours" value="0.0" size="5"></td>
-		</tr>
-		<tr>
-			<th align="left">Notes:</th>
-			<td><input type="text" name="notes" value="" size="30"></td>
-		</tr>
-
-		<tr>
-			<td colspan="2" align="center">
-
-				<input type="submit" value="Add Hours">
-
-			</td>
-		</tr>
-		</table>
-
-
-
-		</form>
-		</table>
-		
-		<script>
-			applyUniformity();		
-		</script><?
-	}
-
-
-
-
-
-	function listEntrys()
-	{
-		
 		?>
+        <script>
+
+            function validateHourField(name, value, frm) {
+
+                //alert(name+","+value);
+
+
+                switch (name) {
+                    default:
+
+                        // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
+                        return true;
+                        break;
+
+                    case 'hours':
+
+                        var tmpval = parseFloat(value);
+
+                        if (tmpval <= 0) return false;
+
+                        return true;
+                        break;
+
+                    //case 'agent_id':
+                    case 'campaign_id':
+                    case 'cluster_id':
+                    case 'office_id':
+                    case 'user_group':
+
+
+                        if (!value) return false;
+
+                        return true;
+                        break;
+
+
+                }
+                return true;
+            }
+
+
+            function checkHourForm(frm) {
+
+
+                var params = getFormValues(frm, 'validateHourField');
+
+
+                // FORM VALIDATION FAILED!
+                // param[0] == field name
+                // param[1] == field value
+                if (typeof params == "object") {
+
+                    switch (params[0]) {
+                        default:
+
+                            alert("Error submitting form. Check your values");
+
+                            break;
+
+                        case 'cluster_id':
+
+                            alert("Please select the cluster for this agent.");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
+
+
+                        case 'hours':
+
+                            alert("Please enter the hours for this agent.");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
+
+                        case 'agent_id':
+
+                            alert("Please select the agent for these hours.");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
+
+                        case 'office_id':
+                            alert("Please select the office for the agent.");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
+
+                        case 'user_group':
+                            alert("Please select the user group for the agent.");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
+
+
+                        case 'campaign_id':
+
+                            alert("Please select the campaign for this entry.");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
+                    }
+
+                    // SUCCESS - POST AJAX TO SERVER
+                } else {
+
+
+                    //alert("Form validated, posting");
+
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        url: 'api/api.php?get=employee_hours&mode=xml&action=add',
+                        data: params,
+                        error: function () {
+                            alert("Error saving hours form. Please contact an admin.");
+                        },
+                        success: function (msg) {
+
+
+                            var result = handleEditXML(msg);
+                            var res = result['result'];
+
+                            if (res <= 0) {
+
+                                alert(result['message']);
+
+                                return;
+
+                            }
+
+
+                            loadEmps();
+
+
+                            $('#dialog-modal-edit_emp').dialog("close");
+
+                            //displayEditLeadDialog(res);
+
+                            alert(result['message']);
+
+                        }
+
+
+                    });
+
+                }
+
+                return false;
+
+            }
+
+
+            function addMoreUsers(cnt) {
+
+                for (var x = 0; x < cnt; x++) {
+
+                    $('#additional_users_span').append('<input type="text" size="5" name="agent_id[]" id="agent_id" /><br />');
+
+                }
+
+                applyUniformity();
+            }
+
+
+        </script>
+        <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="checkHourForm(this);return false">
+            <input type="hidden" name="adding_hours" value="<?= $id ?>">
+            <table border="0" align="center">
+                <tr>
+                    <th align="left">Agent:</th>
+                    <td>
+                        <input type="text" size="5" name="agent_id[]" id="agent_id"/>&nbsp;<input type="button" value="Add more users" onclick="addMoreUsers(5)"/><br/>
+                        <span id="additional_users_span"></span></td>
+                </tr>
+                <tr>
+                    <th align="left">Cluster:</th>
+                    <td><?= makeClusterDD('cluster_id', $_REQUEST['cluster_id'], '', "", " "); ?></td>
+                </tr>
+                <tr>
+                    <th align="left">Office:</th>
+                    <td><?= makeOfficeDD("office_id", $_REQUEST['office_id'], '', "", " "); ?></td>
+                </tr>
+                <tr>
+                    <th align="left">Campaign:</th>
+                    <td><?= makeCampaignDD('campaign_id', $_REQUEST['campaign_id'], '', "", " "); ?></td>
+                </tr>
+                <tr>
+                    <th align="left">Vici Group:</th>
+                    <td><?= makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "", 0, " "); ?></td>
+                </tr>
+                <tr>
+                    <th align="left">Date:</th>
+                    <td><?= makeTimebar("date_", 1, null, false, time(), ""); ?></td>
+                </tr>
+                <tr>
+                    <th align="left">Paid Hours:</th>
+                    <td><input type="text" name="hours" value="0.0" size="5"></td>
+                </tr>
+                <tr>
+                    <th align="left">Notes:</th>
+                    <td><input type="text" name="notes" value="" size="30"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <input type="submit" value="Add Hours">
+                    </td>
+                </tr>
+            </table>
+        </form>
+        </table>
+        <?
+    }
+
+
+    function listEntrys()
+    {
+
+        ?>
         <script>
 
             var emp_delmsg = 'Are you sure you want to delete this record?';
 
             var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
             var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-
-
-            var <?=$this->index_name?> =
-            0;
+            var <?=$this->index_name?> = 0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
 
 
@@ -515,8 +344,8 @@ class EmployeeHours{
                     's_username=' + escape(frm.s_agent_id.value) + "&" +
                     's_office_id=' + escape(frm.s_office_id.value) + "&" +
                     's_user_group=' + escape(user_group_txt) + "&" + //frm.s_user_group.value
-                    's_date_month=' + escape(frm.stime_month.value) + "&" + 's_date_day=' + escape(frm.stime_day.value) + "&" + 's_date_year=' + escape(frm.stime_year.value) + "&" +
-                    's_date2_month=' + escape(frm.etime_month.value) + "&" + 's_date2_day=' + escape(frm.etime_day.value) + "&" + 's_date2_year=' + escape(frm.etime_year.value) + "&" +
+                    'stime_month=' + escape(frm.stime_month.value) + "&" + 'stime_day=' + escape(frm.stime_day.value) + "&" + 'stime_year=' + escape(frm.stime_year.value) + "&" +
+                    'etime_month=' + escape(frm.etime_month.value) + "&" + 'etime_day=' + escape(frm.etime_day.value) + "&" + 'etime_year=' + escape(frm.etime_year.value) + "&" +
                     's_date_mode=' + escape(frm.s_date_mode.value) + "&" +
                     's_show_problems=' + escape(frm.s_show_problems.checked) + "&" +
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
@@ -650,11 +479,14 @@ class EmployeeHours{
                 frm.s_user_group.value = '';
                 toggleDateMode(frm.s_date_mode.value);
             }
+
             var empsrchtog = false;
+
             function toggleEmpSearch() {
                 empsrchtog = !empsrchtog;
                 ieDisplay('emp_search_table', empsrchtog);
             }
+
             function processListSubmit(frm) {
                 var obj = null;
                 var id_data = "";
@@ -799,26 +631,13 @@ class EmployeeHours{
             function toggleDateMode(way) {
 
                 if (way == 'daterange') {
-                    
-                    $('#nodate_span').hide();
-                    $('#date1_span').show();
                     // SHOW EXTRA DATE FIELD
                     $('#date2_span').show();
-
-                } else if (way == 'any') {
-                    
-                    $('#nodate_span').show();
-                    $('#date1_span').hide();
-                    $('#date2_span').hide();
-
-
                 } else {
-                    $('#nodate_span').hide();
-                    $('#date1_span').show();
-                    // HIDE SECOND DATE FIELD
+                    // HIDE IT
                     $('#date2_span').hide();
-   
                 }
+
             }
 
 
@@ -891,81 +710,92 @@ class EmployeeHours{
                 <input type="hidden" name="searching_emp">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Employee Hours</h4>
-                    
-                    <div id="total_count_div"></div>
-                    
                     <!--<button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSaleSearch();">Toggle Search</button>-->
                     <? if (checkAccess('employee_hours_edit')) { ?>
                         <button class="btn btn-sm btn-primary" type="button" title="Add Employee Hours" onclick="displayEditEmpDialog(0)">Add Hours</button>
-                    <?
+                        <?
                     } ?>
                     <div id="emps_prev_td" class="page_system_prev"></div>
                     <div id="emps_page_td" class="page_system_page"></div>
                     <div id="emps_next_td" class="page_system_next"></div>
-                    <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0;loadEmps(); return false;">
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="setPageSize(this.value)">
                         <option value="20">20</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
                         <option value="500">500</option>
                     </select>
+                    <div class="d-inline-block ml-2">
+                        <button class="btn btn-sm btn-dark" title="Total Found">
+                            <i class="si si-list"></i>
+                            <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                        </button>
+                    </div>
                 </div>
                 <div class="bg-info-light" id="emp_search_table">
-                    <div class="input-group input-group-sm">
-                        <input type="hidden" name="searching_emps"/>
-                        <input type="text" class="form-control" placeholder="Agent ID.." name="s_agent_id" value="<?= htmlentities($_REQUEST['s_agent_id']) ?>"/>
-                        <?
-                        if (($_SESSION['user']['priv'] >= 5) || ($_SESSION['user']['allow_all_offices'] == 'yes')) {
-                            echo makeOfficeDD("s_office_id", $_REQUEST['s_office_id'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps();", "[Office]");
-                        } else {
-                            ?>
-                            <select name="s_office_id" onchange="<?= $this->index_name ?> = 0;loadEmps()">
-                                <option value="">[Select Office]</option>
-                                <?
-                                foreach ($_SESSION['assigned_offices'] as $ofc) {
-                                    echo '<option value="' . $ofc . '"';
-                                    if ($_REQUEST['s_office_id'] == $ofc) echo ' SELECTED ';
-                                    echo '>Office ' . $ofc . '</option>';
-                                }
-                                ?>
-                            </select>
+                    <div class="form-group form-row">
+                        <div class="col-4 input-group input-group-sm">
+                            <input type="hidden" name="searching_emps"/>
+                            <input type="text" class="form-control" placeholder="Agent ID.." name="s_agent_id" value="<?= htmlentities($_REQUEST['s_agent_id']) ?>"/>
+                        </div>
+                        <div class="col-4">
                             <?
-                        }
-                        ?>
-                        <?= makeViciUserGroupDD("s_user_group", $_REQUEST['s_user_group'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps()", 5, "[Select Group(s)]"); ?>
-                        
+                            if (($_SESSION['user']['priv'] >= 5) || ($_SESSION['user']['allow_all_offices'] == 'yes')) {
+                                echo makeOfficeDD("s_office_id", $_REQUEST['s_office_id'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps();", "[Select Office]");
+                            } else {
+                                ?>
+                                <select name="s_office_id" onchange="<?= $this->index_name ?> = 0;loadEmps()">
+                                    <option value="">[Select Office]</option>
+                                    <?
+                                    foreach ($_SESSION['assigned_offices'] as $ofc) {
+                                        echo '<option value="' . $ofc . '"';
+                                        if ($_REQUEST['s_office_id'] == $ofc) echo ' SELECTED ';
+                                        echo '>Office ' . $ofc . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                                <?
+                            }
+                            ?>
+                        </div>
+                        <div class="col-4 input-group input-group-sm">
+                            <?= makeViciUserGroupDD("s_user_group", $_REQUEST['s_user_group'], 'form-control custom-select-sm', $this->index_name . " = 0;loadEmps()", 5, "[Select Group(s)]"); ?>
+                        </div>
                     </div>
-                    <div class="input-group input-group-sm">
-                    
-                    
-                        <input type="checkbox" name="s_show_problems" onclick="loadEmps();"><label for="s_show_problems">Only Problems</label>
-                        &nbsp;&nbsp;
-                       	<input type="checkbox" name="s_main_users" onclick="loadEmps();"><label for="s_main_users">Only Main Users</label>
-                    	&nbsp;&nbsp;
-                        <select class="custom-select-sm" title="Select Date Mode" name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
-                            <option value="date">Date Mode</option>
-                            <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
-                           <?/*<option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range Mode</option>*/?>
-                            <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
-                        </select>
-                        <span id="date1_span">
+                    <div class="form-group form-row">
+                        <div class="col-4 input-group input-group-sm">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="s_show_problems" onclick="loadEmps();" />
+                                <label class="form-check-label" for="s_show_problems">Only Problems</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="s_main_users" onclick="loadEmps();" />
+                                <label class="form-check-label" for="s_main_users">Only Main Users</label>
+                            </div>
+                        </div>
+                        <div class="col-4 input-group input-group-sm">
+                            <select class="custom-select-sm" title="Select Date Mode" name="s_date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
+                                <option value="date">Date Mode</option>
+                                <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
+                                <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
+                            </select>
+                            <span id="date1_span">
                             <?= makeTimebar("stime_", 1, null, false, time()); ?>
                                 <span id="time1_span" class="nod">
                                     <?= makeTimebar("stime_", 2, null, false, (time() - 3600)); ?>
                                 </span>
                             </span>
-                        <span id="date2_span" class="nod">
-                                thru<?= makeTimebar("etime_", 1, null, false, time()); ?>
+                            <span id="date2_span" class="nod">
+                                <?= makeTimebar("etime_", 1, null, false, time()); ?>
                                 <span id="time2_span" class="nod">
                                     <?= makeTimebar("etime_", 2, null, false, time()); ?>
                                 </span>
                             </span>
-                        <span id="nodate_span" class="nod">ANY/ALL DATES</span>
-                        
-
-                       
-                        &nbsp;&nbsp;
-                        <button type="submit" value="Search" title="Search Employee Hours" class="btn btn-sm btn-primary" name="the_Search_button" onclick="<?= $this->index_name ?> = 0;loadEmps();return false;">Search</button>
-                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetEmpForm();resetPageSystem('<?= $this->index_name ?>');loadEmps();return false;">Reset</button>
+                            <span id="nodate_span" class="nod">ANY/ALL DATES</span>
+                        </div>
+                        <div class="col-4 input-group input-group-sm">
+                            <button type="submit" value="Search" title="Search Employee Hours" class="btn btn-sm btn-primary" name="the_Search_button" onclick="<?= $this->index_name ?> = 0;loadEmps();return false;">Search</button>
+                            <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetEmpForm();resetPageSystem('<?= $this->index_name ?>');loadEmps();return false;">Reset</button>
+                        </div>
                     </div>
                 </div>
                 <div class="block-content block-content-full">
@@ -984,43 +814,27 @@ class EmployeeHours{
                     </table>
                 </div>
             </form>
-            
-            <div class="input-group input-group-sm">
-             <? if (checkAccess('employee_hours_edit')) {
-                ?><form method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" id="set_hours_form" onsubmit="return processListSubmit(this);">
-                    
-                        <input type="hidden" name="submitting_activity_changes">
-                        <input type="hidden" name="activity_ids" id="activity_ids"/>
-                        <input type="hidden" name="activity_hours" id="activity_hours"/>
-                        <input type="hidden" name="activity_notes" id="activity_notes"/>
-                        <div id="setallspan" style="margin-left:1.2em"></div>
-                        <button type="button" class="btn btn-sm btn-danger" title="Set All (On-Screen)" onclick="setAllToValue();">Set All (On-Screen)</button>
-                        <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="$('#set_hours_form').submit();" name="save_button">Save Changes</button>
-                    
-                </form>
-            <?
-            } ?>
-            
-            	
-	            	<span id="spn_total_activity"></span>
-	            
-	            	&nbsp;&nbsp;&nbsp;&nbsp;
-	                <span id="spn_total_paid"></span>
-	           
-            
-            
-            </div>
-            <br />
-                    
-                    
             <div class="input-group input-group-sm text-center">
                 <button type="button" class="btn btn-sm btn-success" title="Export Results to CSV" name="export_csv" onclick="exportResultsCSV()">Export Results CSV</button>
                 <button type="button" class="btn btn-sm btn-success" title="Export TOTALS to CSV" name="export_totals" onclick="exportResultsCSV(1)">Export Totals CSV</button>
                 <button type="button" class="btn btn-sm btn-success" title="Export Clean TOTALS to CSV" name="export_clean_totals" onclick="exportResultsCSV(2)">Export Clean Totals CSV</button>
             </div>
-           
+            <? if (!checkAccess('employee_hours_edit')) {
+                ?>
+                <form method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" id="set_hours_form" onsubmit="return processListSubmit(this);">
+                    <div class="input-group input-group-sm">
+                        <input type="hidden" name="submitting_activity_changes">
+                        <input type="hidden" name="activity_ids" id="activity_ids"/>
+                        <input type="hidden" name="activity_hours" id="activity_hours"/>
+                        <input type="hidden" name="activity_notes" id="activity_notes"/>
+                        <div id="setallspan"></div>
+                        <button type="button" class="btn btn-sm btn-danger" title="Set All (On-Screen)" onclick="setAllToValue();">Set All (On-Screen)</button>
+                        <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="$('#set_hours_form').submit();" name="save_button">Save Changes</button>
+                    </div>
+                </form>
+                <?
+            } ?>
         </div>
-        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
         <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <script>
             $(function () {
@@ -1036,23 +850,17 @@ class EmployeeHours{
                     position: {my: 'center', at: 'center'},
                     resizable: false
                 });
-
-                $("#dialog-modal-edit_emp").dialog("widget").draggable("option","containment","#main-container");
             });
             loadEmps();
         </script>
         <?
     }
 
-
-	function getOrderLink($field){
-
-		$var = '<a href="#" onclick="setOrder(\''.addslashes($this->order_prepend).'\',\''.addslashes($field).'\',';
-
-		$var .= "((".$this->order_prepend."orderdir == 'DESC')?'ASC':'DESC')";
-
-		$var.= ");loadEmps();return false;\">";
-
-		return $var;
-	}
+    function getOrderLink($field)
+    {
+        $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
+        $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
+        $var .= ");loadEmps();return false;\">";
+        return $var;
+    }
 }

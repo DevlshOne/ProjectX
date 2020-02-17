@@ -202,6 +202,12 @@ class Voices{
                         <option value="100">100</option>
                         <option value="500">500</option>
                     </select>
+                    <div class="d-inline-block ml-2">
+                        <button class="btn btn-sm btn-dark" title="Total Found">
+                            <i class="si si-list"></i>
+                            <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                        </button>
+                    </div>
                 </div>
                 <div class="block-content">
                     <table class="table table-sm table-striped" id="voice_table">

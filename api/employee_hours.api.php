@@ -84,44 +84,44 @@ class API_Employee_Hours{
 
 
 
-			
-			
+
+
 			//agent_id[]
 			//$dat['username'] = trim(strtolower($_POST['agent_id']));
-			
+
 			foreach($_POST['agent_id'] as $username){
-			
+
 				$username = trim($username);
-				
+
 				// SKIP BLANKS
 				if(!$username)continue;
-				
-				
+
+
 				$dat = array();
-				
+
 				$dat['username'] = $username;
-				
+
 				$dat['time_started'] = mktime(0,0,0, $_POST['date_month'], $_POST['date_day'], $_POST['date_year']);
-				
+
 				$dat['vici_cluster_id'] = intval($_POST['cluster_id']);
 				$dat['campaign'] = trim($_POST['campaign_id']);
-	
+
 				$dat['call_group'] = trim($_POST['user_group']);
-	
+
 				$dat['office'] = $_POST['office_id'];
-	
+
 				$dat['paid_time'] = floatval($_POST['hours']) * 60;
-	
+
 				$dat['notes'] = trim($_POST['notes']);
-	
-	
+
+
 				aadd($dat, 'activity_log');
-	
+
 				$id = mysqli_insert_id($_SESSION['db']);
-	
+
 				logAction('add', 'employee_hours', $id, "");
 			}
-			
+
 			$_SESSION['api']->outputEditSuccess(1);
 
 			///print_r($dat);
@@ -132,14 +132,14 @@ class API_Employee_Hours{
 
 			//$id = intval($_POST['editing_emp']);
 
-			
+
 			if(!checkAccess('employee_hours_edit')){
-				
+
 				$_SESSION['api']->errorOut('Access denied to EDIT Employee Hours');
-				
+
 				return;
 			}
-			
+
 /// DO STUFF
 
 			$id_array = preg_split("/\t/", $_POST['activity_ids'], -1);
@@ -185,76 +185,21 @@ class API_Employee_Hours{
 
 		default:
 		case 'list':
-
-
-
 			$dat = array();
 			$totalcount = 0;
 			$pagemode = false;
-
-
 			$dat['date_mode'] = trim($_REQUEST['s_date_mode']);
-
-
 			if($dat['date_mode'] == 'daterange'){
-
-				$dat['date1'] = $_REQUEST['s_date_year'].'-'.$_REQUEST['s_date_month'].'-'.$_REQUEST['s_date_day'];
-				$dat['date2'] = $_REQUEST['s_date2_year'].'-'.$_REQUEST['s_date2_month'].'-'.$_REQUEST['s_date2_day'];
-
-
-
+				$dat['date1'] = $_REQUEST['stime_year'].'-'.$_REQUEST['stime_month'].'-'.$_REQUEST['stime_day'];
+				$dat['date2'] = $_REQUEST['etime_year'].'-'.$_REQUEST['etime_month'].'-'.$_REQUEST['etime_day'];
 			}else{
-
-
 				// RESERVED FOR TIME SEARCH STUFF
-				if($_REQUEST['s_date_month']){
-	//
-	//
-	//				$tmp0 = strtotime(]);
-	//				$tmp1 = $tmp0 + 86399;
-
-					//echo date("g:i:s m/d/Y", $tmp0).' ';
-					//echo date("g:i:s m/d/Y", $tmp1).' ';
-
-	//				$dat['time'] = array($tmp0, $tmp1);
-
-					$dat['date'] = $_REQUEST['s_date_year'].'-'.$_REQUEST['s_date_month'].'-'.$_REQUEST['s_date_day'];
-
+				if($_REQUEST['stime_month']){
+					$dat['date'] = $_REQUEST['stime_year'].'-'.$_REQUEST['stime_month'].'-'.$_REQUEST['stime_day'];
 				}else{
-
-
-
 					$dat['date'] = date("Y-m-d");
-
-
 				}
-
-
 			}
-
-
-
-
-
-			## STATUS SEARCH
-//			if($_REQUEST['s_status']){
-//
-//				if($_REQUEST['s_status'] == -1){
-//					// SHOW ALL STATUS
-//					unset($dat['status']);
-//
-//				}else{
-//					$dat['status'] = trim($_REQUEST['s_status']);
-//				}
-//
-//			/// DEFAULT STATUS IS "review"
-//			}else{
-//
-//				$dat['status'] = 'review';
-//			}
-
-
-
 			## ID SEARCH
 			if($_REQUEST['s_id']){
 

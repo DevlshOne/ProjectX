@@ -597,8 +597,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             </li>
                             <?
                         }
-                        
-                        
+
+
                         if (checkAccess('script_statistics')) {
                         	?>
                             <li class="nav-main-item">
@@ -608,9 +608,9 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             </li>
                             <?
                         }
-                        
-                        
-                        
+
+
+
                         ?>
                     </ul>
                 </li>
