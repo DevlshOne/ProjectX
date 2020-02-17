@@ -104,6 +104,8 @@ class OfficesClass{
 
 								's_id='+escape(frm.s_id.value)+"&"+
 								's_enabled='+escape(frm.s_enabled.value)+"&"+
+								's_status='+escape(frm.s_status.value)+"&"+
+								
 								's_name='+escape(frm.s_name.value)+"&"+
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
@@ -209,7 +211,7 @@ class OfficesClass{
 				frm.s_id.value = '';
 				frm.s_enabled.value = '';
 				frm.s_name.value='';
-					
+				frm.s_status.value='';
 			}
 
 
@@ -268,6 +270,7 @@ class OfficesClass{
 						</td>
 						<th class="row2">ID</th>
 						<th class="row2">Enabled</th>
+						<th class="row2">Status</th>
 						<th class="row2">Name</th>
 						<td><input type="submit" value="Search" name="the_Search_button"></td>
 					</tr>
@@ -277,7 +280,14 @@ class OfficesClass{
 								<option value="">[All]</option>
 								<option value="yes">yes</option>
 								<option value="no">no</option>
-							</select></td>
+							</select>
+						</td>
+						<td align="left"><select name="s_status">
+							<option value="">[All]</option>
+							<option value="new" <?=($_REQUEST['s_status'] == 'new')?" SELECTED ":''?>>New</option>
+							<option value="pending" <?=($_REQUEST['s_status'] == 'pending')?" SELECTED ":''?>>Pending</option>
+							<option value="ready" <?=($_REQUEST['s_status'] == 'ready')?" SELECTED ":''?>>Ready</option>
+						</select></td>
 						<td align="left"><input type="text" name="s_name" size="10" value="<?=htmlentities($_REQUEST['s_name'])?>"></td>
 						<td><input type="button" value="Reset" onclick="resetOfficesForm(this.form);resetPageSystem('<?=$this->index_name?>');loadOffices();"></td>
 					</tr>
@@ -388,12 +398,17 @@ class OfficesClass{
 
 			<table border="0" width="100%">
 			<tr>
-				<th align="left" height="30">Enabled:</th>
-				<td><input type="checkbox" name="enabled" value="yes" <?=($row['enabled'] == 'yes')?" CHECKED ":''?>></td>
+				<th align="left" height="30">OFFICE ID:</th>
+				<td>
+					<input type="text" name="office_id" value="<?=$row['id']?>" size="2" maxlength="2" onkeyup="this.value = this.value.replace(/^0-9/g, '')" />
+					&nbsp;&nbsp;Enabled:<input type="checkbox" name="enabled" value="yes" <?=($row['enabled'] == 'yes')?" CHECKED ":''?>>
+				</td>
 			</tr>
 			<tr>
-				<th align="left" height="30">Company ID:</th>
-				<td><input name="company_id" type="text" size="5" value="<?=intval($row['company_id'])?>"></td>
+				<th align="left" height="30">Company:</th>
+				<td>
+					<?=makeCompanyDD('company_id', intval($row['company_id']), '', false)?>
+				</td>
 			</tr>			
 			<tr>
 				<th align="left" height="30">Name:</th>

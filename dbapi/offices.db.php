@@ -106,7 +106,27 @@ class OfficesAPI{
 		}
 
 		
-
+## STATUS SEARCH
+		if(is_array($info['status'])){
+			
+			$sql .= " AND (";
+			
+			$x=0;
+			foreach($info['status'] as $idx=>$n){
+				if($x++ > 0)$sql .= " OR ";
+				
+				$sql .= "`status`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."' ";
+			}
+			
+			$sql .= ") ";
+			
+			## SINGLE STATUS SEARCH
+		}else if($info['status']){
+			
+			$sql .= " AND `status`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['status'])."' ";
+			
+		}
+		
 
 		### ORDER BY
 		if(is_array($info['order'])){

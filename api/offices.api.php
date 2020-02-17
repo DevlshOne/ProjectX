@@ -72,7 +72,9 @@ class API_Offices{
 			$dat['contact_number']			= trim($_POST['contact_number']);
 			$dat['notes']					= trim($_POST['notes']);
 			
-
+			$dat['id'] = intval($_POST['office_id']);
+			
+			
 			if($id){
 
 
@@ -83,6 +85,8 @@ class API_Offices{
 			}else{
 
 
+				
+				
 				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->offices->table);
 
 				$id = mysqli_insert_id($_SESSION['dbapi']->db);
@@ -90,6 +94,14 @@ class API_Offices{
 				logAction('add', 'offices', $id, "");
 
 			}
+			
+
+			// IF THE ID CHANGED, KICK TO THE NEW ID
+			if($id != $dat['id']){
+				$id = $dat['id'];
+			}
+			
+			
 
 			$_SESSION['api']->outputEditSuccess($id);
 
@@ -118,6 +130,13 @@ class API_Offices{
 
 			}			
 
+			if($_REQUEST['s_status']){
+				
+				$dat['status'] = trim($_REQUEST['s_status']);
+				
+			}	
+			
+			
 			## NAME SEARCH
 			if($_REQUEST['s_name']){
 
