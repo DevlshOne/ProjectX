@@ -63,9 +63,29 @@ class API_Offices{
 
 			$id = intval($_POST['adding_office']);
 
+			$newcmpyname = filterName(trim($_POST['new_company_name']));
+			
+			
+			// ADD A NEW COMPANY RECORD TOO
+			if($newcmpyname){
+				
+				$dat = array(
+						"status"	=> 'enabled',
+						'name' 		=> $newcmpyname
+				);
+				
+				$_SESSION['dbapi']->aadd($dat, 'companies');
+				
+				$company_id = mysqli_insert_id($_SESSION['dbapi']->db);
+				
+				
+			}else{
+				$company_id = intval($_POST['company_id']);
+			}
+			
 			unset($dat);
 			$dat['enabled']	 				= (isset($_POST['enabled']))?'yes':'no';
-			$dat['company_id']				= intval($_POST['company_id']);
+			$dat['company_id']				= $company_id;
 			$dat['name']					= trim($_POST['name']);
 			$dat['status']					= trim($_POST['status']);
 			$dat['contact_info']			= trim($_POST['contact_info']);

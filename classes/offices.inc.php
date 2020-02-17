@@ -386,6 +386,18 @@ class OfficesClass{
 			}
 
 
+			var cpynewshow=false;
+
+			function toggleNewCompany(){
+				cpynewshow = !cpynewshow;
+				
+				if(!cpynewshow){
+					// BLANK OUT COMPANY NAME
+					$('#new_company_name').val('');
+				}
+				ieDisplay('newcmpytrrow', cpynewshow);
+			}
+			
 			// SET TITLEBAR
 			$('#dialog-modal-view-Office').dialog( "option", "title", '<?=($id)?'Editing Office #'.$id.' - '.htmlentities($row['name']):'Adding new Office'?>' );
 
@@ -407,9 +419,22 @@ class OfficesClass{
 			<tr>
 				<th align="left" height="30">Company:</th>
 				<td>
-					<?=makeCompanyDD('company_id', intval($row['company_id']), '', false)?>
+					<?=makeCompanyDD('company_id', ($row['id'])?intval($row['company_id']):"1", '', false)?>
+					
+					<input type="button" value="New" onclick="toggleNewCompany()" />
+					
 				</td>
-			</tr>			
+			</tr>
+			<tr>
+				<td colspan="2" >
+					<table border="0" align="center" id="newcmpytrrow" class="nod">
+					<tr>
+						<th align="left" height="30">New Company Name:</th>
+						<td><input id="new_company_name" name="new_company_name" type="text" size="25" value="" required placeholder="Add new company name here"></td>
+					</tr>
+					</table>
+				</td>
+			</tr>
 			<tr>
 				<th align="left" height="30">Name:</th>
 				<td><input name="name" type="text" size="25" value="<?=htmlentities($row['name'])?>" required placeholder="Enter a name for this office."></td>
