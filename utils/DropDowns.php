@@ -113,6 +113,44 @@
         return $out;
     }
 
+    
+    function makeUserGroupDD($name, $sel, $class, $onchange, $size=0, $blank_option = 1){
+    	
+    	
+    	$force_height = $size * 20;
+    	
+    	
+    	
+    	$out = '<select name="' . $name . '" id="' . $name . '" ';
+    	$out .= ($class) ? ' class="' . $class . '" ' : '';
+    	$out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
+    	
+    	$out .= ($size > 0) ? " MULTIPLE size=\"" . $size . "\" style=\"height:".$force_height."px\"" : '';
+    	
+    	$out .= '>';
+    	
+    	if ($blank_option) {
+    		$out .= '<option value="" ' . (($sel == '') ? ' SELECTED ' : '') . '>' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
+    	}
+    	
+    	$res = query("SELECT DISTINCT(`user_group`) AS `user_group` FROM user_groups_master ORDER BY `user_group` ASC", 1);
+    	
+    	
+    	while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
+    		
+    		
+    		$out .= '<option value="' . htmlentities($row['user_group']) . '" ';
+    		$out .= ($sel == $row['user_group']) ? ' SELECTED ' : '';
+    		$out .= '>' . htmlentities($row['user_group']) . '</option>';
+    		
+    		
+    	}
+    	
+    	$out .= '</select>';
+    	return $out;
+    }
+    
+    
     /**
      * Makes a user Dropdown where the VALUE of the select box, is the ID, instead of name
      */
