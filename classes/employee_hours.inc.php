@@ -381,7 +381,7 @@ class EmployeeHours
                 page_load_start = new Date();
 
 
-                $('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
+                $('#total_count_div').html('<img src="images/ajax-loader.gif" height="20" border="0">');
 
 
                 loadAjaxData(getEmpsURL(), 'parseEmps');
@@ -720,9 +720,9 @@ class EmployeeHours
                     <div id="emps_next_td" class="page_system_next"></div>
                     <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="setPageSize(this.value)">
                         <option value="20">20</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                        <option value="500">500</option>
+                        <option value="50"<?=($this->pagesize == 50)?' SELECTED ':''?>>50</option>
+                        <option value="100"<?=($this->pagesize == 100)?' SELECTED ':''?>>100</option>
+                        <option value="500"<?=($this->pagesize == 500)?' SELECTED ':''?>>500</option>
                     </select>
                     <div class="d-inline-block ml-2">
                         <button class="btn btn-sm btn-dark" title="Total Found">

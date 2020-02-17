@@ -109,7 +109,7 @@ class UserTeamsClass
                     eval('userteams_loading_flag = true');
                 }
                 <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-                $('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
+                $('#total_count_div').html('<img src="images/ajax-loader.gif" height="20" border="0">');
                 loadAjaxData(getUserTeamsURL(), 'parseUserTeams');
             }
 

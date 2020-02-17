@@ -217,7 +217,7 @@ class ScriptStatistics{
 				page_load_start = new Date();
 
 
-				$('#total_count_div').html('<img src="images/ajax-loader.gif" border="0">');
+				$('#total_count_div').html('<img src="images/ajax-loader.gif" height="20" border="0">');
 
 
 
