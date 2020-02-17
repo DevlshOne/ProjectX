@@ -21,6 +21,18 @@ class API_Offices{
 		}
 
 		switch($_REQUEST['action']){
+		case 'delete':
+
+			$id = intval($_REQUEST['id']);
+
+			$_SESSION['dbapi']->offices->delete($id);
+
+			logAction('delete', 'offices', $id, "");
+
+			$_SESSION['api']->outputDeleteSuccess();
+
+
+			break;
 		case 'view':
 
 
@@ -47,6 +59,42 @@ class API_Offices{
 
 			break;
 
+		case 'edit':
+
+			$id = intval($_POST['adding_office']);
+
+			unset($dat);
+			$dat['enabled']	 				= (isset($_POST['enabled']))?'yes':'no';
+			$dat['company_id']				= intval($_POST['company_id']);
+			$dat['name']					= trim($_POST['name']);
+			$dat['status']					= trim($_POST['status']);
+			$dat['contact_info']			= trim($_POST['contact_info']);
+			$dat['contact_number']			= trim($_POST['contact_number']);
+			$dat['notes']					= trim($_POST['notes']);
+			
+
+			if($id){
+
+
+				$_SESSION['dbapi']->aedit($id,$dat,$_SESSION['dbapi']->offices->table);
+
+				logAction('edit', 'offices', $id, "");
+
+			}else{
+
+
+				$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->offices->table);
+
+				$id = mysqli_insert_id($_SESSION['dbapi']->db);
+
+				logAction('add', 'offices', $id, "");
+
+			}
+
+			$_SESSION['api']->outputEditSuccess($id);
+
+			break;			
+
 		default:
 		case 'list':
 
@@ -62,6 +110,13 @@ class API_Offices{
 				$dat['id'] = intval($_REQUEST['s_id']);
 
 			}
+
+			## ENABLED SEARCH
+			if($_REQUEST['s_enabled']){
+
+				$dat['enabled'] = trim($_REQUEST['s_enabled']);
+
+			}			
 
 			## NAME SEARCH
 			if($_REQUEST['s_name']){
@@ -134,38 +189,6 @@ class API_Offices{
 
 		}
 	}
-
-
-
-	function handleSecondaryAjax(){
-
-		$out_stack = array();
-
-
-		foreach($_REQUEST['special_stack'] as $idx => $data){
-
-			$tmparr = preg_split("/:/",$data);
-
-			switch($tmparr[1]){
-			default:
-
-				## ERROR
-				$out_stack[$idx] = -1;
-
-				break;
-
-			}## END SWITCH
-
-
-
-
-		}
-
-		$out = $_SESSION['api']->renderSecondaryAjaxXML('Data',$out_stack);
-
-		echo $out;
-
-	} ## END HANDLE SECONDARY AJAX
 
 
 }

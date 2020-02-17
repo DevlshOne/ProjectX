@@ -9,7 +9,9 @@ class OfficesAPI{
 
 	var $table = "offices";
 
-
+	function delete($id){
+		$_SESSION['dbapi']->adelete($id,$this->table);
+	}
 	/**
 	 * Get a Office by ID
 	 * 	@param 	$id		The database ID of the record
@@ -49,15 +51,6 @@ class OfficesAPI{
 
 		$sql = "SELECT $fields FROM `".$this->table."` WHERE 1 ";
 
-		
-		// TIME SEARCH
-		// array(start time, end time)
-
-		if(is_array($info['time'])){
-
-			$sql .= " AND `time` BETWEEN '".intval($info['time'][0])."' AND '".intval($info['time'][1])."' ";
-
-		}
 
 		## ID FIELD SEARCH
 		## ARRAY OF id's SEARCH
@@ -81,139 +74,38 @@ class OfficesAPI{
 
 		}
 
+		### ENABLED FIELD
+		if($info['enabled']){
+
+			$sql .= " AND `enabled`='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['enabled'])."' ";
+
+		}		
 
 
-		### USERNAME SEARCH
+
+		### NAME SEARCH
 		## ARRAY OF STRINGS, OR SEPERATED SEARCH
-		if(is_array($info['username'])){
+		if(is_array($info['name'])){
 
 			$sql .= " AND (";
 
 			$x=0;
-			foreach($info['username'] as $idx=>$n){
+			foreach($info['name'] as $idx=>$n){
 				if($x++ > 0)$sql .= " OR ";
 
-				$sql .= "`username` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
+				$sql .= "`name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
 			}
 
 			$sql .= ") ";
 
 		## SINGLE USERNAME SEARCH
-		}else if($info['username']){
+		}else if($info['name']){
 
-			$sql .= " AND `username` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['username'])."%' ";
+			$sql .= " AND `name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['name'])."%' ";
 
 		}
 
-		### RESULT SEARCH
-		## ARRAY OF STRINGS, OR SEPERATED SEARCH
-		if(is_array($info['result'])){
-
-			$sql .= " AND (";
-
-			$x=0;
-			foreach($info['result'] as $idx=>$n){
-				if($x++ > 0)$sql .= " OR ";
-
-				$sql .= "`result` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
-			}
-
-			$sql .= ") ";
-
-		## SINGLE RESULT SEARCH
-		}else if($info['result']){
-
-			$sql .= " AND `result` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['result'])."%' ";
-
-		}	
 		
-		### SECTION SEARCH
-		## ARRAY OF STRINGS, OR SEPERATED SEARCH
-		if(is_array($info['section'])){
-
-			$sql .= " AND (";
-
-			$x=0;
-			foreach($info['section'] as $idx=>$n){
-				if($x++ > 0)$sql .= " OR ";
-
-				$sql .= "`section` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
-			}
-
-			$sql .= ") ";
-
-		## SINGLE SECTION SEARCH
-		}else if($info['section']){
-
-			$sql .= " AND `section` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['section'])."%' ";
-
-		}
-		
-		### IP SEARCH
-		## ARRAY OF STRINGS, OR SEPERATED SEARCH
-		if(is_array($info['ip'])){
-
-			$sql .= " AND (";
-
-			$x=0;
-			foreach($info['ip'] as $idx=>$n){
-				if($x++ > 0)$sql .= " OR ";
-
-				$sql .= "`ip` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
-			}
-
-			$sql .= ") ";
-
-		## SINGLE IP SEARCH
-		}else if($info['ip']){
-
-			$sql .= " AND `ip` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['ip'])."%' ";
-
-		}	
-		
-		### BROWSER SEARCH
-		## ARRAY OF STRINGS, OR SEPERATED SEARCH
-		if(is_array($info['browser'])){
-
-			$sql .= " AND (";
-
-			$x=0;
-			foreach($info['browser'] as $idx=>$n){
-				if($x++ > 0)$sql .= " OR ";
-
-				$sql .= "`browser` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
-			}
-
-			$sql .= ") ";
-
-		## SINGLE BROWSER SEARCH
-		}else if($info['browser']){
-
-			$sql .= " AND `browser` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['browser'])."%' ";
-
-		}
-
-
-		## SKIP/IGNORE ID's
-		if(isset($info['skip_id'])){
-
-			$sql .= " AND (";
-
-			if(is_array($info['skip_id'])){
-				$x=0;
-				foreach($info['skip_id'] as $sid){
-
-					if($x++ > 0)$sql .= " AND ";
-
-					$sql .= "`id` != '".intval($sid)."'";
-				}
-
-			}else{
-				$sql .= "`id` != '".intval($info['skip_id'])."' ";
-			}
-
-			$sql .= ")";
-		}
 
 
 		### ORDER BY

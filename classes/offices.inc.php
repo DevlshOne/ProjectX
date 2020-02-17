@@ -200,7 +200,7 @@ class OfficesClass{
 
 				$('#'+objname).dialog('option', 'position', 'center');
 
-				$('#'+objname).dialog('option', 'height', '375');
+				$('#'+objname).dialog('option', 'height', '425');
 			}
 
 			function resetOfficesForm(frm){
@@ -305,7 +305,7 @@ class OfficesClass{
 			$("#dialog-modal-view-office").dialog({
 				autoOpen: false,
 				width: 500,
-				height: 375,
+				height: 425,
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -392,13 +392,33 @@ class OfficesClass{
 				<td><input type="checkbox" name="enabled" value="yes" <?=($row['enabled'] == 'yes')?" CHECKED ":''?>></td>
 			</tr>
 			<tr>
-				<th align="left" height="30">Office Name:</th>
-				<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>" required placeholder="Enter a name for this office."></td>
+				<th align="left" height="30">Company ID:</th>
+				<td><input name="company_id" type="text" size="5" value="<?=intval($row['company_id'])?>"></td>
+			</tr>			
+			<tr>
+				<th align="left" height="30">Name:</th>
+				<td><input name="name" type="text" size="25" value="<?=htmlentities($row['name'])?>" required placeholder="Enter a name for this office."></td>
 			</tr>
 			<tr>
-				<th align="left" height="30"></th>
-				<td></td>
+				<th align="left" height="30">Status:</th>
+				<td><select name="status">
+					<option value="new" <?=($row['status'] == 'new')?" SELECTED ":''?>>New</option>
+					<option value="pending" <?=($row['status'] == 'pending')?" SELECTED ":''?>>Pending</option>
+					<option value="ready" <?=($row['status'] == 'ready')?" SELECTED ":''?>>Ready</option>
+				</select></td>
 			</tr>
+			<tr>
+				<th align="left" height="30">Contact Info:</th>
+				<td><input name="contact_info" type="text" size="25" value="<?=htmlentities($row['contact_info'])?>"></td>
+			</tr>
+			<tr>
+				<th align="left" height="30">Contact Number:</th>
+				<td><input name="contact_number" type="text" size="40" value="<?=htmlentities($row['contact_number'])?>"></td>
+			</tr>
+			<tr>
+				<th align="left" height="30">Notes:</th>
+				<td><textarea name="notes" rows="5" cols="40"><?=htmlentities($row['notes'])?></textarea></td>
+			</tr>			
 			<tr>
 				<th colspan="2" align="center" height="50">
 
