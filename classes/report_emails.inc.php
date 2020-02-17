@@ -56,6 +56,10 @@ class ReportEmails{
 
 				$this->makeAdd($_REQUEST['add_report_email']);
 
+			}else if(isset($_REQUEST['bulk_add_report_email'])){
+				
+				$this->makeBulkAdd();
+				
 			}else{
 				$this->listEntrys();
 			}
@@ -181,6 +185,25 @@ class ReportEmails{
 
 			}
 
+			function displayBulkAddReportDialog(){
+				
+				var objname = 'dialog-modal-add-report';
+
+
+
+				$('#'+objname).dialog( "option", "title", 'Bulk Adding Report Emails' );
+				
+
+
+
+				$('#'+objname).dialog("open");
+
+				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+
+				$('#'+objname).load("index.php?area=report_emails&bulk_add_report_email&printable=1&no_script=1");
+
+				$('#'+objname).dialog('option', 'position', 'center');
+			}
 
 			function displayAddReportDialog(id){
 
@@ -245,7 +268,9 @@ class ReportEmails{
 					<td width="500">
 						Report Emails
 						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayAddReportDialog(0)">
+						<input type="button" value="Manual Add" onclick="displayAddReportDialog(0)">
+						&nbsp;&nbsp;
+						<input type="button" value="Bulk Add" onclick="displayBulkAddReportDialog(0)">
 						<?/**&nbsp;&nbsp;&nbsp;&nbsp;
 						<input type="button" value="Search" onclick="toggleReportSearch()">**/?>
 					</td>
@@ -325,8 +350,8 @@ class ReportEmails{
 
 			$("#dialog-modal-add-report").dialog({
 				autoOpen: false,
-				width: 570,
-				height: 350,
+				width: 'auto',
+				height: 'auto',
 				modal: false,
 				draggable:true,
 				resizable: false
@@ -340,7 +365,421 @@ class ReportEmails{
 
 	}
 
+	
+	
+	
+	
+	function makeBulkAdd(){
+		
+		?><script>
 
+			function validateBulkReportField(name,value,frm){
+
+				//alert(name+","+value);
+
+
+				switch(name){
+				default:
+
+					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
+					return true;
+					break;
+
+				case 'template_id':
+					
+					if(!value)return false;
+
+					return true;
+
+					break;
+				case 'user_groups':
+
+					if(!value)return false;
+
+					return true;
+
+					break;
+					
+				case 'email_address':
+
+
+					if(!value)return false;
+
+					return true;
+
+
+					break;
+
+				}
+				return true;
+			}
+
+
+
+			function checkBulkReportFrm(frm){
+
+
+				var params = getFormValues(frm,'validateBulkReportField');
+
+
+				// FORM VALIDATION FAILED!
+				// param[0] == field name
+				// param[1] == field value
+				if(typeof params == "object"){
+
+					switch(params[0]){
+					default:
+
+						alert("Error submitting form. Check your values");
+
+						break;
+					case 'template_id':
+						
+						alert("Please select a time template to use.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+						
+					case 'user_groups':
+
+						alert("Please select a user group to report on.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+						
+					case 'email_address':
+
+						alert("Please enter the recipients email.");
+						eval('try{frm.'+params[0]+'.select();}catch(e){}');
+						break;
+
+					}
+
+				// SUCCESS - POST AJAX TO SERVER
+				}else{
+
+
+					//alert("Form validated, posting");
+
+					$.ajax({
+						type: "POST",
+						cache: false,
+						url: 'api/api.php?get=report_emails&mode=xml&action=bulk_add',
+						data: params,
+						error: function(){
+							alert("Error saving user form. Please contact an admin.");
+						},
+						success: function(msg){
+
+//alert(msg);
+
+							var result = handleEditXML(msg);
+							var res = result['result'];
+
+							if(res <= 0){
+
+								alert(result['message']);
+
+								return;
+
+							}
+
+
+							loadReports();
+
+
+							$('#dialog-modal-add-report').dialog("close");
+
+							//displayAddReportDialog(res);
+							alert(result['message']);
+
+						}
+
+
+					});
+
+				}
+
+				return false;
+
+			}
+
+
+
+
+			// SET TITLEBAR
+			$('#dialog-modal-add-name').dialog( "option", "title", '<?=($id)?'Editing Report Email #'.$id.' - '.htmlentities($row['subject_append']):'Adding new Report Email'?>' );
+
+
+			function toggleReportMode(mode){
+
+				buildTemplateDD(mode, 'template_id');
+				
+				switch(mode){
+				case '1':
+				default:
+					ieDisplay('report_options_1', 1);
+					ieDisplay('report_options_2', 0);
+					ieDisplay('report_options_3', 0);
+					ieDisplay('report_options_4', 0);
+
+					ieDisplay('user_group_tr', 1);
+					ieDisplay('no_user_group_span', 0);
+					
+					//ieDisplay('weeklyrow', 1);
+					//ieDisplay('monthlyrow', 0);
+					break;
+				case '2':
+					ieDisplay('report_options_1', 0);
+					ieDisplay('report_options_2', 1);
+					ieDisplay('report_options_3', 0);
+					ieDisplay('report_options_4', 0);
+
+					ieDisplay('user_group_tr', 1);
+					ieDisplay('no_user_group_span', 0);
+					//ieDisplay('weeklyrow', 0);
+					//ieDisplay('monthlyrow', 1);
+					break;
+				case '3':
+					ieDisplay('report_options_1', 0);
+					ieDisplay('report_options_2', 0);
+					ieDisplay('report_options_3', 1);
+					ieDisplay('report_options_4', 0);
+
+
+					ieDisplay('user_group_tr', 0);
+					ieDisplay('no_user_group_span', 1);
+					//ieDisplay('monthlyrow', 0);
+					//ieDisplay('weeklyrow', 0);
+
+					break;
+				case '4':
+					ieDisplay('report_options_1', 0);
+					ieDisplay('report_options_2', 0);
+					ieDisplay('report_options_3', 0);
+					ieDisplay('report_options_4', 1);
+
+					ieDisplay('user_group_tr', 1);
+					ieDisplay('no_user_group_span', 0);
+					
+					break;
+				}
+
+			}
+
+		
+		var template_rows = new Array();
+		<?
+
+		$rowarr = $_SESSION['dbapi']->report_emails_templates->loadTemplates();
+		
+		
+		foreach($rowarr as $idx=>$r2){
+			
+			?>template_rows[<?=$idx?>] = '<?=addslashes(json_encode_escape_whitespace($r2))?>';
+			<?
+		}
+
+
+/**		EXAMPLE OUTPUT
+ * 		var template_rows = new Array();
+		template_rows[0] = '{"id":"1","report_id":"1","interval":"daily","trigger_time":"75600","name":"Daily Sales Analysis","settings":"$agent_cluster_idx = -1;\r\n$combine_users = 1;"}';
+			template_rows[1] = '{"id":"3","report_id":"1","interval":"weekly","trigger_time":"162000","name":"Weekly Sales Analysis","settings":"$agent_cluster_idx = -1;\r\n$combine_users = 1;"}';
+			template_rows[2] = '{"id":"5","report_id":"2","interval":"daily","trigger_time":"75600","name":"Daily Verifier Report","settings":"$cluster_id = 9;"}';
+			template_rows[3] = '{"id":"7","report_id":"2","interval":"weekly","trigger_time":"162000","name":"Weekly Verifier Report","settings":"$cluster_id = 9;"}';
+			template_rows[4] = '{"id":"9","report_id":"3","interval":"daily","trigger_time":"75600","name":"Daily Summary Report","settings":""}';
+			template_rows[5] = '{"id":"11","report_id":"3","interval":"weekly","trigger_time":"162000","name":"Weekly Summary Report","settings":null}';
+			template_rows[6] = '{"id":"13","report_id":"4","interval":"daily","trigger_time":"75600","name":"Daily Rouster Report","settings":""}';
+			template_rows[7] = '{"id":"15","report_id":"4","interval":"weekly","trigger_time":"162000","name":"Weekly Rouster Report","settings":null}';
+		*
+		*/
+?>
+
+
+		function buildTemplateDD(report_id, target_obj_name) {
+
+            var obj = getEl(target_obj_name);
+            var opt = obj.options;
+
+            // Empty DD
+            for (var x = 0; x < opt.length; x++) {
+                obj.remove(x);
+            }
+            obj.options.length = 0;
+
+            var newopts = new Array();
+//			newopts[0] = document.createElement("OPTION");
+//
+//			if(ie)	obj.add(newopts[0]);
+//			else	obj.add(newopts[0],null);
+//
+//			newopts[0].innerText	= '';
+//			newopts[0].value	= 0;
+            var curid = 0;
+            var data = null;
+            
+            for (x = 0; x < template_rows.length; x++) {
+                //curid=item_id[x];
+                curid = x;
+
+
+                data = JSON.parse(template_rows[x]);
+                //alert(catid+' '+item_name[curid]);
+
+                if (report_id > 0 && data.report_id != report_id){//item_clusterid[curid] != catid) {
+                    continue;
+                }
+
+                newopts[x] = document.createElement("OPTION");
+
+                if (ie) obj.add(newopts[x]);
+                else obj.add(newopts[x], null);
+
+                newopts[x].value = data.id;//item_id[curid];
+
+
+                if (ie) newopts[x].innerText = data.name;
+                else newopts[x].innerHTML = data.name;
+
+                //if(selid == item_id[curid])obj.value=item_id[curid];
+                //if (selid == item_name[curid]) obj.value = item_name[curid];
+
+
+            }
+
+
+        }
+
+		</script>
+		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkBulkReportFrm(this); return false">
+			<input type="hidden" id="bulk_adding_emails" name="bulk_adding_emails"  >
+
+
+		<table border="0" align="center">
+
+		<tr>
+			<th align="left" width="100" height="30">Report Type:</th>
+			<td><select id="report_id" name="report_id" onchange="toggleReportMode(this.value)">
+				<option value="1">
+					Sales Analysis
+				</option>
+				<option value="2">
+					Verifier Report
+				</option>
+				<option value="3">
+					Summary Report
+				</option>
+				<option value="4">
+					Rouster Report
+				</option>
+			</select></td>
+		</tr>
+		<tr>
+			<th align="left" height="30">Settings Template:</th>
+			<td>
+				<table border="0" width="100%">
+				<tr>
+					<td><select id="template_id" size="5" MULTIPLE name="template_id[]"><?
+	
+						echo 'generate template dropdowns here';
+				
+		
+					?></select></td>
+					<td>
+					
+						<span id="report_options_1" class="nod">
+						
+							<label>Combine Users:</label>
+							<input type="checkbox" name="combine_users" CHECKED /><br />
+							
+							<label>Cluster:</label>
+							<?
+								echo makeClusterDD('sales_cluster_id',-1, "", "", 1);
+							?>
+							
+						</span>
+						<span id="report_options_2" class="nod">
+						
+							<label>Cluster:</label>
+							<?
+								echo makeClusterDD('verifier_cluster_id',9, "", "", false);
+							?>
+						</span>
+						<span id="report_options_3" class="nod">
+						
+							<label>Summary Report Type:</label><br />
+							<select name="summary_report_type">
+							
+								<option value="cold">Cold</option>
+								<option value="taps">Taps</option>
+								<option value="verifier">Verifier</option>
+								<option value="company">Sub-Company and Group</option>
+							</select>
+							
+						</span>
+						<span id="report_options_4" class="nod">
+						
+							<label>Cluster:</label>
+							<?
+								echo makeClusterDD('rouster_cluster_id', 1, "", "", false);
+							?>
+							
+						</span>
+					
+					</td>
+				</tr>
+				</table>
+			</td>
+		</tr>
+		
+		<tr>
+			<th align="left" height="30">Email to:</th>
+			<td><input name="email_address" type="text" size="50" value=""></td>
+		</tr>
+
+		<tr>
+			<th align="left" height="30">User Groups:</th>
+			<td>
+				<table border="0" width="100%"  id="user_group_tr">
+				<tr>
+					<td><?
+			
+					//			makeUserGroupDD($name, $sel, $class, $onchange, $size=0, $blank_option = 1)
+						echo makeUserGroupDD('user_groups[]', '', '', "", 10, false);
+						
+					?></td>
+					<td>
+					
+						<label title="Instead of creating 1 report email record per group, combine the groups into 1 record (per template)">Combined Group Report</label>
+						<input type="checkbox" name="combined_group_report" />
+					
+					</td>
+					
+					
+				</tr>
+				</table>
+				<span id="no_user_group_span">N/A</span>
+			</td>
+		</tr>
+			
+		
+
+		<tr>
+			<th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
+		</tr>
+		</form>
+		</table>
+		<script>
+
+			toggleReportMode( $('#report_id').val() );
+			
+			//toggleTimeMode($('#interval').val());
+
+		</script><?
+	}
+
+	
+	
+	
+	
 	function makeAdd($id){
 
 		$id=intval($id);
