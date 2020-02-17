@@ -789,7 +789,11 @@ function parseXMLData(area, tableFormat, xmldoc) {
             }
         } // END FIELD LIST
     } // END OF XML TAGS
-    $('#total_count_div').html(totalcount + " Found");
+    
+    
+    $('#total_count_div').html(parseInt(totalcount).toLocaleString('en-US') + " Found");
+    
+    
     // SECONDARY AJAX - POST PROCESSING - MAKE A SECOND AJAX CALL TO RETRIEVE AND RENDER INFO
     if (special_idx > 0) {
         //console.dir(special_stack);
