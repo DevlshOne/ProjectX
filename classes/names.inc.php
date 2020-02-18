@@ -90,7 +90,6 @@ class Names
              * Load the name data - make the ajax call, callback to the parse function
              */
             function loadNames() {
-
                 // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
                 var val = null;
                 eval('val = names_loading_flag');
@@ -117,16 +116,10 @@ class Names
              * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
              */
             var <?=$this->order_prepend?>totalcount = 0;
-
             function parseNames(xmldoc) {
-
                 <?=$this->order_prepend?>totalcount = parseXMLData('name', NamesTableFormat, xmldoc);
-
-
                 // ACTIVATE PAGE SYSTEM!
                 if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
-
-
                     makePageSystem('names',
                         '<?=$this->index_name?>',
                         <?=$this->order_prepend?>totalcount,
@@ -134,13 +127,9 @@ class Names
                         <?=$this->order_prepend?>pagesize,
                         'loadNames()'
                     );
-
                 } else {
-
                     hidePageSystem('names');
-
                 }
-
                 eval('names_loading_flag = false');
             }
 
@@ -177,8 +166,10 @@ class Names
                 ieDisplay('name_search_table', namesrchtog);
             }
         </script>
+        <! *** BEGIN ONEUI STYLING REWORK -->
         <div class="block">
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadNames();return false;">
+                <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Names</h4>
                     <button type="button" value="Add" title="Add Names" class="btn btn-sm btn-primary" onclick="displayAddNameDialog(0)">Add</button>
@@ -199,6 +190,8 @@ class Names
                         </button>
                     </div>
                 </div>
+                <! ** END BLOCK HEADER -->
+                <! ** BEGIN BLOCK SEARCH TABLE -->
                 <div class="bg-info-light nod" id="name_search_table">
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_name"/>
@@ -209,6 +202,8 @@ class Names
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetNameForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadNames();return false;">Reset</button>
                     </div>
                 </div>
+                <! ** END BLOCK SEARCH TABLE -->
+                <! ** BEGIN BLOCK LIST (DATATABLE) -->
                 <div class="block-content">
                     <table class="table table-sm table-striped" id="name_table">
                         <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
@@ -220,8 +215,10 @@ class Names
                         </tr>
                     </table>
                 </div>
+                <! ** END BLOCK LIST (DATATABLE) -->
             </form>
         </div>
+        <! *** END ONEUI STYLING REWORK -->
         <div id="dialog-modal-add-name" title="Adding new Name" class="nod"></div>
         <script>
             $("#dialog-modal-add-name").dialog({
@@ -232,13 +229,10 @@ class Names
                 resizable: false,
                 position: {my: 'center', at: 'center'},
             });
-
             $("#dialog-modal-add-name").dialog("widget").draggable("option","containment","#main-container");
-            
             loadNames();
         </script>
         <?
-
     }
 
 

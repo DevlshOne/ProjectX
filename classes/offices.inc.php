@@ -105,7 +105,7 @@ class OfficesClass{
 								's_id='+escape(frm.s_id.value)+"&"+
 								's_enabled='+escape(frm.s_enabled.value)+"&"+
 								's_status='+escape(frm.s_status.value)+"&"+
-								
+
 								's_name='+escape(frm.s_name.value)+"&"+
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
@@ -191,20 +191,10 @@ class OfficesClass{
 				}else{
 					$('#'+objname).dialog( "option", "title", 'Adding new Office' );
 				}
-
-
-
 				$('#'+objname).dialog("open");
-
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
 				$('#'+objname).load("index.php?area=offices&add_office="+id+"&printable=1&no_script=1");
-
-				$('#'+objname).dialog('option', 'position', 'center');
-
-				$('#'+objname).dialog('option', 'height', '425');
 			}
-
 			function resetOfficesForm(frm){
 
 				// SET FORM VALUES TO BLANK
@@ -213,124 +203,81 @@ class OfficesClass{
 				frm.s_name.value='';
 				frm.s_status.value='';
 			}
-
-
-
 		</script>
 		<div id="dialog-modal-view-office" title="Viewing Office" class="nod">
-		<?
-
-		?>
-		</div><?
-
-
-
-		?>
+		</div>
+        <div class="block">
 		<form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadOffices();return false">
-		
-		<input type="hidden" name="searching_office">
-
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr>
-			<td height="40" class="pad_left ui-widget-header">
-				<table border="0" width="100%" >
-					<tr>
-						<td width="500">
-						Offices
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Add" onclick="displayViewOfficeDialog(0)">
-						</td>
-
-						<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadOffices();return false">
-							<option value="20">20</option>
-							<option value="50">50</option>
-							<option value="100">100</option>
-							<option value="500">500</option>
-						</select></td>
-
-						<td align="right"><?
-							/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-							<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-								<tr>
-									<td id="offices_prev_td" class="page_system_prev"></td>
-									<td id="offices_page_td" class="page_system_page"></td>
-									<td id="offices_next_td" class="page_system_next"></td>
-								</tr>
-							</table></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<table border="0" width="100%" id="office_search_table">
-					<tr>
-						<td rowspan="2" width="100" align="center" style="border-right:1px solid #000">
-							<span id="total_count_div"></span>
-						</td>
-						<th class="row2">ID</th>
-						<th class="row2">Enabled</th>
-						<th class="row2">Status</th>
-						<th class="row2">Name</th>
-						<td><input type="submit" value="Search" name="the_Search_button"></td>
-					</tr>
-					<tr>
-						<td align="left"><input type="text" name="s_id" size="2" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-						<td align="left"><select name="s_enabled" id="s_enabled">
-								<option value="">[All]</option>
-								<option value="yes">yes</option>
-								<option value="no">no</option>
-							</select>
-						</td>
-						<td align="left"><select name="s_status">
-							<option value="">[All]</option>
-							<option value="new" <?=($_REQUEST['s_status'] == 'new')?" SELECTED ":''?>>New</option>
-							<option value="pending" <?=($_REQUEST['s_status'] == 'pending')?" SELECTED ":''?>>Pending</option>
-							<option value="ready" <?=($_REQUEST['s_status'] == 'ready')?" SELECTED ":''?>>Ready</option>
-						</select></td>
-						<td align="left"><input type="text" name="s_name" size="10" value="<?=htmlentities($_REQUEST['s_name'])?>"></td>
-						<td><input type="button" value="Reset" onclick="resetOfficesForm(this.form);resetPageSystem('<?=$this->index_name?>');loadOffices();"></td>
-					</tr>
-				</table>
-			</td>
-		</tr>
+            <div class="block-header bg-primary-light">
+                <h4 class="block-title">Offices</h4>
+                <button type="button" value="Search" title="Add New Office" class="btn btn-sm btn-primary" onclick="displayViewOfficeDialog();">Add</button>
+                <div id="offices_prev_td" class="page_system_prev"></div>
+                <div id="offices_page_td" class="page_system_page"></div>
+                <div id="offices_next_td" class="page_system_next"></div>
+                <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0;loadLeads(); return false;">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                </select>
+                <div class="d-inline-block ml-2">
+                    <button class="btn btn-sm btn-dark" title="Total Found">
+                        <i class="si si-list"></i>
+                        <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                    </button>
+                </div>
+            </div>
+            <div class="bg-info-light" id="office_search_table">
+                <input type="hidden" name="searching_office">
+                <div class="input-group input-group-sm">
+                    <input type="hidden" name="searching_lead"/>
+                    <input type="text" class="form-control" placeholder="ID.." name="s_id" size="2" value="<?=htmlentities($_REQUEST['s_id'])?>">
+                    <select class="form-control custom-select-sm" name="s_enabled" id="s_enabled">
+                        <option value="">[Enabled?]</option>
+                        <option value="yes">yes</option>
+                        <option value="no">no</option>
+                    </select>
+                    <select class="form-control custom-select-sm" name="s_status">
+                        <option value="">[Select Status..]</option>
+                        <option value="new" <?=($_REQUEST['s_status'] == 'new')?" SELECTED ":''?>>New</option>
+                        <option value="pending" <?=($_REQUEST['s_status'] == 'pending')?" SELECTED ":''?>>Pending</option>
+                        <option value="ready" <?=($_REQUEST['s_status'] == 'ready')?" SELECTED ":''?>>Ready</option>
+                    </select>
+                    <input type="text" class="form-control" placeholder="Office Name.." name="s_name" size="10" value="<?=htmlentities($_REQUEST['s_name'])?>">
+                    <button type="submit" value="Search" title="Search Offices" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadOffices();return false;">Search</button>
+                    <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetOfficesForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadOffices();return false;">Reset</button>
+                </div>
+            </div>
+            <div class="block-content">
+                <table class="table table-sm table-striped" id="office_table">
+                    <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                    <tr>
+                        <th class="row2 text-left"><?= $this->getOrderLink('id') ?>ID</a></th>
+                        <th class="row2 text-left"><?= $this->getOrderLink('enabled') ?>Enabled</a></th>
+                        <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                        <th class="row2 text-left"><?= $this->getOrderLink('status') ?>Status</a></th>
+                        <th class="row2 text-center">&nbsp;</th>
+                    </tr>
+                </table>
+            </div>
 		</form>
-		<tr>
-			<td colspan="2">
-				<table border="0" width="100%" id="office_table">
-					<tr>
-						<th class="row2" align="left"><?=$this->getOrderLink('id')?>ID</a></th>
-						<th class="row2" align="left"><?=$this->getOrderLink('enabled')?>Enabled</a></th>
-						<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>
-						<th class="row2" align="left"><?=$this->getOrderLink('status')?>Status</a></th>
-					</tr>
-				</table>
-			</td>
-		</tr>
-
-		</table>
-
+        </div>
 		<script>
-
 			$("#dialog-modal-view-office").dialog({
 				autoOpen: false,
-				width: 500,
-				height: 425,
+				width: 'auto',
+				height: 'auto',
 				modal: false,
 				draggable:true,
-				resizable: false
-			});
-
-			$("#dialog-modal-view-office").dialog("widget").draggable("option","containment","#main-container");
-
+				resizable: false,
+                position: {my: 'center', at: 'center'},
+                containment: '#main-container'
+            });
 			loadOffices();
-
 		</script><?
-
-
 	}
 
-	
+
 	function makeAdd($id){
 
 		$id=intval($id);
@@ -390,14 +337,14 @@ class OfficesClass{
 
 			function toggleNewCompany(){
 				cpynewshow = !cpynewshow;
-				
+
 				if(!cpynewshow){
 					// BLANK OUT COMPANY NAME
 					$('#new_company_name').val('');
 				}
 				ieDisplay('newcmpytrrow', cpynewshow);
 			}
-			
+
 			// SET TITLEBAR
 			$('#dialog-modal-view-Office').dialog( "option", "title", '<?=($id)?'Editing Office #'.$id.' - '.htmlentities($row['name']):'Adding new Office'?>' );
 
@@ -405,7 +352,7 @@ class OfficesClass{
 		</script>
 
 		<form method="POST" id="ofc_add_frm" action="<?=stripurl('')?>" autocomplete="off" onsubmit="submitOfficeFrm(this); return false">
-			
+
 			<input type="hidden" id="adding_office" name="adding_office" value="<?=$id?>">
 
 			<table border="0" width="100%">
@@ -420,9 +367,9 @@ class OfficesClass{
 				<th align="left" height="30">Company:</th>
 				<td>
 					<?=makeCompanyDD('company_id', ($row['id'])?intval($row['company_id']):"1", '', false)?>
-					
+
 					<input type="button" value="New" onclick="toggleNewCompany()" />
-					
+
 				</td>
 			</tr>
 			<tr>
@@ -458,18 +405,18 @@ class OfficesClass{
 			<tr>
 				<th align="left" height="30">Notes:</th>
 				<td><textarea name="notes" rows="5" cols="40"><?=htmlentities($row['notes'])?></textarea></td>
-			</tr>			
+			</tr>
 			<tr>
 				<th colspan="2" align="center" height="50">
 
 					<input type="submit" value="Save Changes">
 
-				</th>	
+				</th>
 			</tr>
 			</table>
-		
+
 		</form>
-		
+
 		<?
 
 
