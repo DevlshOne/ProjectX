@@ -517,7 +517,7 @@ class LeadManagement
 
 
                 $("#dialog-modal-edit_lead").dialog("widget").draggable("option","containment","#main-container");
-                
+
             });
             $('#s_cluster_id').attr('title', 'Select Cluster');
             $('#s_campaign_id').attr('title', 'Select Campaign');
@@ -1539,7 +1539,7 @@ class LeadManagement
     function makeDispoDD($name, $sel, $onchange, $blank_entry = false, $skip_dispos = null)
     {
 
-        $out = '<select name="' . $name . '" id="' . $name . '" ';
+        $out = '<select class="form-control custom-select-sm" name="' . $name . '" id="' . $name . '" ';
 
         $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
 

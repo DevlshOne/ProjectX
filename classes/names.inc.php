@@ -227,7 +227,7 @@ class Names
                 modal: false,
                 draggable: true,
                 resizable: false,
-                position: {my: 'center', at: 'center'},
+                position: {my: 'center', at: 'center'}
             });
             $("#dialog-modal-add-name").dialog("widget").draggable("option","containment","#main-container");
             loadNames();

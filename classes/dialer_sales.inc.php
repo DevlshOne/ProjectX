@@ -107,16 +107,17 @@
             if (!isset($_REQUEST['no_nav'])) {
                 ?>
                 <script type="text/javascript" src="js/table2CSV.js"></script>
+        <div class="block">
+            <input type="hidden" name="generate_report">
+            <div class="block-header bg-primary-light">
+                <h4 class="block-title">Area Code Sales by Dialer</h4>
+            </div>
+            <div class="block-content">
                 <form id="dialersales_report" method="POST"
                       action="<?= $_SERVER['PHP_SELF'] ?>?area=dialer_sales&no_script=1"
                       onsubmit="return genReport(this, 'sales')">
                     <input type="hidden" name="generate_report">
-                    <table border="0" width="100%">
-                        <tr>
-                            <td height="40" class="pad_left ui-widget-header">
-                                Area Code Sales by Dialer
-                            </td>
-                        </tr>
+                    <table class="tightTable">
                         <tr>
                             <td colspan="2">
                                 <script>
@@ -205,7 +206,7 @@
                                         <th>Date Mode :</th>
                                         <td>
                                             <div class="lefty" id="timeOptions">
-                                                <select id="timeOptions" name="timeOptions">
+                                                <select class="form-control custom-select-sm" id="timeOptions" name="timeOptions">
                                                     <option value="1" <? echo ($timeOptionMode == 1) ? ' selected' : '' ?>>
                                                         Single Date
                                                     </option>
@@ -232,12 +233,12 @@
                                     <tr>
                                         <th>Agent Cluster [Dialer] :</th>
                                         <td><?php
-                                                echo makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0) ? -1 : $_REQUEST['agent_cluster_id'], '', ""); ?></td>
+                                                echo makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0) ? -1 : $_REQUEST['agent_cluster_id'], 'form-control custom-select-sm', ""); ?></td>
                                     </tr>
                                     <tr>
                                         <th>Area Code :</th>
                                         <td><?php
-                                                echo makeAreaCodeDD("area_code", (!isset($_REQUEST['area_code'])) ? 0 : $_REQUEST['area_code'], '', ""); ?></td>
+                                                echo makeAreaCodeDD("area_code", (!isset($_REQUEST['area_code'])) ? 0 : $_REQUEST['area_code'], 'form-control custom-select-sm', ""); ?></td>
                                     </tr>
                                     <tr>
                                         <th colspan="2">
@@ -245,12 +246,10 @@
                                                         src="images/ajax-loader.gif" border="0"/> Loading, Please
                                                 wait...
                                             </div>
-                                            <div id="dialersales_submit_report_button">
-                                                <input type="button" value="Generate PRINTABLE"
-                                                       onclick="genReport(getEl('dialersales_report'), 'sales', 1)">
-                                                <input type="button" id="btnGenCSV" value="Download CSV"
-                                                       onclick="genCSV(getEl('dialer_sales_table'))" disabled aria-disabled="true">
-                                                <input type="submit" value="Generate">
+                                            <div id="dialersales_submit_report_button" class="input-group-sm">
+                                                <button type="button" class="btn btn-sm btn-primary" title="Generate PRINTABLE" onclick="genReport(getEl('dialersales_report'), 'sales', 1)">Generate PRINTABLE</button>
+                                                <button type="button" class="btn btn-sm btn-secondary" id="btnGenCSV" title="Download CSV" onclick="genCSV(getEl('dialer_sales_table'))">Download CSV</button>
+                                                <button type="submit" class="btn btn-sm btn-success" title="Generate Report">Generate</button>
                                             </div>
                                         </th>
                                     </tr>
@@ -259,7 +258,9 @@
                         </tr>
                     </table>
                 </form>
-                <br/><br/><?php
+                </div>
+        </div>
+                <?php
             } else {
                 ?>
                 <meta charset="UTF-8">

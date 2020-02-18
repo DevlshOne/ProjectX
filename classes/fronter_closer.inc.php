@@ -372,12 +372,12 @@ class FronterCloser
 
         ?>
         <div class="block">
-    <form id="fcreport_frm" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?area=fronter_closer&no_script=1" onsubmit="return genReport(this,'frontercloser')">
-        <input type="hidden" name="generate_report">
-        <div class="block-header bg-primary-light">
-            <h4 class="block-title">Fronter / Closer Report</h4>
-        </div>
-        <div class="block-content">
+            <form id="fcreport_frm" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?area=fronter_closer&no_script=1" onsubmit="return genReport(this,'frontercloser')">
+                <input type="hidden" name="generate_report">
+                    <div class="block-header bg-primary-light">
+                        <h4 class="block-title">Fronter / Closer Report</h4>
+                    </div>
+                    <div class="block-content">
         <table border="0">
             <tr>
                 <th>Date:</th>
@@ -388,34 +388,33 @@ class FronterCloser
             <tr>
                 <th>Agent Cluster:</th>
                 <td>
-                    <?= $this->makeClusterDD("cluster_id", (isset($_REQUEST['cluster_id'])) ? $_REQUEST['cluster_id'] : -1, '', ""); ?>
+                    <?= $this->makeClusterDD("cluster_id", (isset($_REQUEST['cluster_id'])) ? $_REQUEST['cluster_id'] : -1, 'form-control custom-select-sm', ""); ?>
                 </td>
             </tr>
             <tr>
                 <th>Verifier Cluster:</th>
-                <td><?= $this->makeClusterDD("verifier_cluster_id", (isset($_REQUEST['verifier_cluster_id'])) ? $_REQUEST['verifier_cluster_id'] : -1, '', ""); ?></td>
+                <td><?= $this->makeClusterDD("verifier_cluster_id", (isset($_REQUEST['verifier_cluster_id'])) ? $_REQUEST['verifier_cluster_id'] : -1, 'form-control custom-select-sm', ""); ?></td>
             </tr>
             <tr>
                 <th>Campaign ID:</th>
                 <td><?
 
-                    echo $this->makeCampaignDD("campaign_id", $_REQUEST['campaign_id'], '', "");
+                    echo $this->makeCampaignDD("campaign_id", $_REQUEST['campaign_id'], 'form-control custom-select-sm', "");
 
                     ?></td>
             </tr>
             <tr>
                 <th>User Group:</th>
                 <td><?
-                    echo makeViciUserGroupDD("call_group", $_REQUEST['call_group'], '', "");
+                    echo makeViciUserGroupDD("call_group", $_REQUEST['call_group'], 'form-control custom-select-sm', "");
                     ?></td>
             </tr>
             <tr>
                 <th colspan="2">
                     <span id="frontercloser_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0"/> Loading, Please wait...</span>
-
-                    <span id="frontercloser_submit_report_button">
-							<input type="submit" value="Generate">
-						</span>
+                    <span id="frontercloser_submit_report_button" class="input-group-sm">
+                        <button class="btn btn-sm btn-success" type="submit" value="Generate">Generate</button>
+                    </span>
                 </th>
             </tr>
         </table>

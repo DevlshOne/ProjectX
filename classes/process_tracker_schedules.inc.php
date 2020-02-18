@@ -224,30 +224,18 @@ class ProcessTrackerSchedules
 
 
             function displayViewScheduleDialog(id) {
-
                 var objname = 'dialog-modal-view-schedule';
-
-
                 if (id > 0) {
                     $('#' + objname).dialog("option", "title", 'Editing Schedule');
                 } else {
                     $('#' + objname).dialog("option", "title", 'Adding new Schedule');
                 }
-
-
                 $('#' + objname).dialog("open");
-
                 $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
                 $('#' + objname).load("index.php?area=process_tracker_schedules&add_schedule=" + id + "&printable=1&no_script=1");
-
-                $('#' + objname).dialog('option', 'position', 'center');
-
-                $('#' + objname).dialog('option', 'height', '375');
             }
 
             function resetSchedulesForm(frm) {
-
                 // SET FORM VALUES TO BLANK
                 frm.s_id.value = '';
                 frm.s_enabled.value = '';
@@ -325,15 +313,14 @@ class ProcessTrackerSchedules
 
             $("#dialog-modal-view-schedule").dialog({
                 autoOpen: false,
-                width: 500,
-                height: 375,
+                width: 550,
+                height: 'auto',
                 modal: false,
                 draggable: true,
-                resizable: false
+                resizable: false,
+                position: {my: 'center', at: 'center'},
+                containment: '#main-container'
             });
-
-            $("#dialog-modal-view-schedule").dialog("widget").draggable("option", "containment", "#main-container");
-
             loadSchedules();
 
         </script><?
