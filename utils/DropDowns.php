@@ -335,8 +335,10 @@
             $dat['campaign_id'] = intval($campaign_id);
         }
 
-        if ($blank_opt) {
+        if (!$blank_opt) {
             $out .= '<option value="">[All]</option>';
+        } else {
+            $out .= '<option value="">' . $blank_opt . '</option>';
         }
 
         $dat['order'] = array('id' => 'ASC');

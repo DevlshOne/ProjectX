@@ -57,9 +57,9 @@ class ReportEmails{
 				$this->makeAdd($_REQUEST['add_report_email']);
 
 			}else if(isset($_REQUEST['bulk_add_report_email'])){
-				
+
 				$this->makeBulkAdd();
-				
+
 			}else{
 				$this->listEntrys();
 			}
@@ -180,285 +180,174 @@ class ReportEmails{
 
 
 			function handleReportListClick(id){
-
 				displayAddReportDialog(id);
-
 			}
-
 			function displayBulkAddReportDialog(){
-				
 				var objname = 'dialog-modal-add-report';
-
-
-
 				$('#'+objname).dialog( "option", "title", 'Bulk Adding Report Emails' );
-				
-
-
-
 				$('#'+objname).dialog("open");
-
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
 				$('#'+objname).load("index.php?area=report_emails&bulk_add_report_email&printable=1&no_script=1");
-
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
 			function displayAddReportDialog(id){
-
 				var objname = 'dialog-modal-add-report';
-
-
 				if(id > 0){
 					$('#'+objname).dialog( "option", "title", 'Editing Report Email' );
 				}else{
 					$('#'+objname).dialog( "option", "title", 'Adding new Report Email' );
 				}
-
-
-
 				$('#'+objname).dialog("open");
-
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
 				$('#'+objname).load("index.php?area=report_emails&add_report_email="+id+"&printable=1&no_script=1");
-
 				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
 			function resetReportForm(frm){
-
+                frm.reset();
 				frm.s_id.value = '';
 				frm.s_report_type.value = '';
 				frm.s_email_address.value = '';
 				frm.s_subject_append.value = '';
-
-
-
 			}
-
-
-			var reportsrchtog = false;
-
+			var reportsrchtog = true;
 			function toggleReportSearch(){
 				reportsrchtog = !reportsrchtog;
 				ieDisplay('report_search_table', reportsrchtog);
 			}
-
 		</script>
-		<div id="dialog-modal-add-report" title="Adding new Report" class="nod">
-		<?
-
-		?>
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadReports();return false">
-			<input type="hidden" name="searching_reports">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr>
-			<td height="40" class="pad_left ui-widget-header">
-
-				<table border="0" width="100%" >
-				<tr>
-					<td width="500">
-						Report Emails
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Manual Add" onclick="displayAddReportDialog(0)">
-						&nbsp;&nbsp;
-						<input type="button" value="Bulk Add" onclick="displayBulkAddReportDialog(0)">
-						<?/**&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Search" onclick="toggleReportSearch()">**/?>
-					</td>
-
-					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadNames();return false">
-						<option value="20">20</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-						<option value="500">500</option>
-					</select></td>
-
-					<td align="right"><?
-						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-						<tr>
-							<td id="reports_prev_td" class="page_system_prev"></td>
-							<td id="reports_page_td" class="page_system_page"></td>
-							<td id="reports_next_td" class="page_system_next"></td>
-						</tr>
-						</table>
-
-					</td>
-				</tr>
-				</table>
-
-			</td>
-
-		</tr>
-
-		<tr>
-			<td colspan="2"><table border="0" id="report_search_table">
-			<tr>
-				<td rowspan="2"><font size="+1">SEARCH</font></td>
-				<th class="row2">ID</th>
-				<th class="row2">Report Type</th>
-				<th class="row2">Email</th>
-				<th class="row2">Subject</th>
-
-
-				<td><input type="submit" value="Search" name="the_Search_button"></td>
-			</tr>
-			<tr>
-				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-				<td align="center"><select name="s_report_id">
-					<option value=""<?=(!$_REQUEST['s_report_id'])?" SELECTED ":""?>>[SELECT TYPE]</option>
-					<option value="1"<?=($_REQUEST['s_report_id'] == 1)?" SELECTED ":""?>>Sales Analysis</option>
-					<option value="2"<?=($_REQUEST['s_report_id'] == 2)?" SELECTED ":""?>>Verifier Report</option>
-					<option value="3"<?=($_REQUEST['s_report_id'] == 3)?" SELECTED ":""?>>Summary Report</option>
-					<option value="4"<?=($_REQUEST['s_report_id'] == 4)?" SELECTED ":""?>>Rouster Report</option>
-				</select></td>
-				<td align="center"><input type="text" name="s_email_address" size="15" value="<?=htmlentities($_REQUEST['s_email_address'])?>"></td>
-				<td align="center"><input type="text" name="s_subject_append" size="15" value="<?=htmlentities($_REQUEST['s_subject_append'])?>"></td>
-
-				<td><input type="button" value="Reset" onclick="resetReportForm(this.form);resetPageSystem('<?=$this->index_name?>');loadReports();"></td>
-			</tr>
-			</table></td>
-		</tr></form>
-		<tr>
-			<td colspan="2"><table border="0" width="100%" id="report_table">
-			<tr>
-
-				<th class="row2" align="center"><?=$this->getOrderLink('id')?>ID</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('report_id')?>Report Type</a></th>
-				<th class="row2" align="center"><?=$this->getOrderLink('interval')?>Interval</a></th>
-				<th class="row2" align="center"><?=$this->getOrderLink('trigger_time')?>Trigger Time</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('email_address')?>Email Address</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('subject_append')?>Subject Append</a></th>
-
-
-				<th class="row2">&nbsp;</th>
-			</tr><?
-
-			?></table></td>
-		</tr></table>
-
+		<div id="dialog-modal-add-report" title="Adding new Report" class="nod"></div>
+        <! *** BEGIN ONEUI STYLING REWORK -->
+        <div class="block">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadReports();return false;">
+                <! ** BEGIN BLOCK HEADER -->
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">Report Emails</h4>
+                    <button type="button" title="Manually Add" class="btn btn-sm btn-success" onclick="displayAddReportDialog(0)">Manual Add</button>
+                    <button type="button" title="Bulk Add" class="btn btn-sm btn-warning" onclick="displayBulkAddReportDialog(0)">Bulk Add</button>
+                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleReportSearch();">Toggle Search</button>
+                    <div id="reports_prev_td" class="page_system_prev"></div>
+                    <div id="reports_page_td" class="page_system_page"></div>
+                    <div id="reports_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadReports(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                    <div class="d-inline-block ml-2">
+                        <button class="btn btn-sm btn-dark" title="Total Found">
+                            <i class="si si-list"></i>
+                            <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                        </button>
+                    </div>
+                </div>
+                <! ** END BLOCK HEADER -->
+                <! ** BEGIN BLOCK SEARCH TABLE -->
+                <div class="bg-info-light" id="report_search_table">
+                    <div class="input-group input-group-sm">
+                        <input type="hidden" name="searching_reports"/>
+                        <input type="text" class="form-control" placeholder="ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
+                        <select class="form-control custom-select-sm" name="s_report_id">
+                            <option value=""<?=(!$_REQUEST['s_report_id'])?" SELECTED ":""?>>[Select Report Type]</option>
+                            <option value="1"<?=($_REQUEST['s_report_id'] == 1)?" SELECTED ":""?>>Sales Analysis</option>
+                            <option value="2"<?=($_REQUEST['s_report_id'] == 2)?" SELECTED ":""?>>Verifier Report</option>
+                            <option value="3"<?=($_REQUEST['s_report_id'] == 3)?" SELECTED ":""?>>Summary Report</option>
+                            <option value="4"<?=($_REQUEST['s_report_id'] == 4)?" SELECTED ":""?>>Rouster Report</option>
+                        </select>
+                        <input type="text" class="form-control" placeholder="Email Address.." name="s_email_address" value="<?= htmlentities($_REQUEST['s_email_address']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Subject.." name="s_subject_append" value="<?= htmlentities($_REQUEST['s_subject_append']) ?>"/>
+                        <button type="submit" value="Search" title="Search Reports" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadReports();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetReportForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadReports();return false;">Reset</button>
+                    </div>
+                </div>
+                <! ** END BLOCK SEARCH TABLE -->
+                <! ** BEGIN BLOCK LIST (DATATABLE) -->
+                <div class="block-content">
+                    <table class="table table-sm table-striped" id="report_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
+                        <tr>
+                            <th class="row2 text-center"><?=$this->getOrderLink('id')?>ID</a></th>
+                            <th class="row2 text-left"><?=$this->getOrderLink('report_id')?>Report Type</a></th>
+                            <th class="row2 text-center"><?=$this->getOrderLink('interval')?>Interval</a></th>
+                            <th class="row2 text-center"><?=$this->getOrderLink('trigger_time')?>Trigger Time</a></th>
+                            <th class="row2 text-left"><?=$this->getOrderLink('email_address')?>Email Address</a></th>
+                            <th class="row2 text-left"><?=$this->getOrderLink('subject_append')?>Subject Append</a></th>
+                            <th class="row2 text-center">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+                <! ** END BLOCK LIST (DATATABLE) -->
+            </form>
+        </div>
+        <! *** END ONEUI STYLING REWORK -->
 		<script>
-
 			$("#dialog-modal-add-report").dialog({
 				autoOpen: false,
 				width: 'auto',
 				height: 'auto',
 				modal: false,
-				draggable:true,
-				resizable: false
+				draggable: true,
+				resizable: false,
+                position: {my: 'center', at: 'center'},
+                containment: '#main-container'
 			});
-
-			$("#dialog-modal-add-report").dialog("widget").draggable("option","containment","#main-container");
-			
 			loadReports();
-
-		</script><?
-
+		</script>
+        <?
 	}
-
-	
-	
-	
-	
 	function makeBulkAdd(){
-		
-		?><script>
-
+		?>
+        <script>
 			function validateBulkReportField(name,value,frm){
-
 				//alert(name+","+value);
-
-
 				switch(name){
 				default:
-
 					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
 					return true;
 					break;
-
 				case 'template_id':
-					
 					if(!value)return false;
-
 					return true;
-
 					break;
 				case 'user_groups':
-
 					if(!value)return false;
-
 					return true;
-
 					break;
-					
 				case 'email_address':
-
-
 					if(!value)return false;
-
 					return true;
-
-
 					break;
-
 				}
 				return true;
 			}
-
-
-
 			function checkBulkReportFrm(frm){
-
-
 				var params = getFormValues(frm,'validateBulkReportField');
-
-
 				// FORM VALIDATION FAILED!
 				// param[0] == field name
 				// param[1] == field value
 				if(typeof params == "object"){
-
 					switch(params[0]){
 					default:
-
 						alert("Error submitting form. Check your values");
-
 						break;
 					case 'template_id':
-						
 						alert("Please select a time template to use.");
 						eval('try{frm.'+params[0]+'.select();}catch(e){}');
 						break;
-						
 					case 'user_groups':
-
 						alert("Please select a user group to report on.");
 						eval('try{frm.'+params[0]+'.select();}catch(e){}');
 						break;
-						
 					case 'email_address':
-
 						alert("Please enter the recipients email.");
 						eval('try{frm.'+params[0]+'.select();}catch(e){}');
 						break;
-
 					}
-
 				// SUCCESS - POST AJAX TO SERVER
-				}else{
-
-
+				} else {
 					//alert("Form validated, posting");
-
 					$.ajax({
 						type: "POST",
 						cache: false,
@@ -468,51 +357,26 @@ class ReportEmails{
 							alert("Error saving user form. Please contact an admin.");
 						},
 						success: function(msg){
-
 //alert(msg);
-
 							var result = handleEditXML(msg);
 							var res = result['result'];
-
 							if(res <= 0){
-
 								alert(result['message']);
-
 								return;
-
 							}
-
-
 							loadReports();
-
-
 							$('#dialog-modal-add-report').dialog("close");
-
 							//displayAddReportDialog(res);
 							alert(result['message']);
-
 						}
-
-
 					});
-
 				}
-
 				return false;
-
 			}
-
-
-
-
 			// SET TITLEBAR
 			$('#dialog-modal-add-name').dialog( "option", "title", '<?=($id)?'Editing Report Email #'.$id.' - '.htmlentities($row['subject_append']):'Adding new Report Email'?>' );
-
-
 			function toggleReportMode(mode){
-
 				buildTemplateDD(mode, 'template_id');
-				
 				switch(mode){
 				case '1':
 				default:
@@ -520,10 +384,8 @@ class ReportEmails{
 					ieDisplay('report_options_2', 0);
 					ieDisplay('report_options_3', 0);
 					ieDisplay('report_options_4', 0);
-
 					ieDisplay('user_group_tr', 1);
 					ieDisplay('no_user_group_span', 0);
-					
 					//ieDisplay('weeklyrow', 1);
 					//ieDisplay('monthlyrow', 0);
 					break;
@@ -532,7 +394,6 @@ class ReportEmails{
 					ieDisplay('report_options_2', 1);
 					ieDisplay('report_options_3', 0);
 					ieDisplay('report_options_4', 0);
-
 					ieDisplay('user_group_tr', 1);
 					ieDisplay('no_user_group_span', 0);
 					//ieDisplay('weeklyrow', 0);
@@ -543,37 +404,25 @@ class ReportEmails{
 					ieDisplay('report_options_2', 0);
 					ieDisplay('report_options_3', 1);
 					ieDisplay('report_options_4', 0);
-
-
 					ieDisplay('user_group_tr', 0);
 					ieDisplay('no_user_group_span', 1);
 					//ieDisplay('monthlyrow', 0);
 					//ieDisplay('weeklyrow', 0);
-
 					break;
 				case '4':
 					ieDisplay('report_options_1', 0);
 					ieDisplay('report_options_2', 0);
 					ieDisplay('report_options_3', 0);
 					ieDisplay('report_options_4', 1);
-
 					ieDisplay('user_group_tr', 1);
 					ieDisplay('no_user_group_span', 0);
-					
 					break;
 				}
-
 			}
-
-		
 		var template_rows = new Array();
 		<?
-
 		$rowarr = $_SESSION['dbapi']->report_emails_templates->loadTemplates();
-		
-		
 		foreach($rowarr as $idx=>$r2){
-			
 			?>template_rows[<?=$idx?>] = '<?=addslashes(json_encode_escape_whitespace($r2))?>';
 			<?
 		}
@@ -615,7 +464,7 @@ class ReportEmails{
 //			newopts[0].value	= 0;
             var curid = 0;
             var data = null;
-            
+
             for (x = 0; x < template_rows.length; x++) {
                 //curid=item_id[x];
                 curid = x;
@@ -678,58 +527,58 @@ class ReportEmails{
 				<table border="0" width="100%">
 				<tr>
 					<td><select id="template_id" size="5" MULTIPLE name="template_id[]"><?
-	
+
 						echo 'generate template dropdowns here';
-				
-		
+
+
 					?></select></td>
 					<td>
-					
+
 						<span id="report_options_1" class="nod">
-						
+
 							<label>Combine Users:</label>
 							<input type="checkbox" name="combine_users" CHECKED /><br />
-							
+
 							<label>Cluster:</label>
 							<?
 								echo makeClusterDD('sales_cluster_id',-1, "", "", 1);
 							?>
-							
+
 						</span>
 						<span id="report_options_2" class="nod">
-						
+
 							<label>Cluster:</label>
 							<?
 								echo makeClusterDD('verifier_cluster_id',9, "", "", false);
 							?>
 						</span>
 						<span id="report_options_3" class="nod">
-						
+
 							<label>Summary Report Type:</label><br />
 							<select name="summary_report_type">
-							
+
 								<option value="cold">Cold</option>
 								<option value="taps">Taps</option>
 								<option value="verifier">Verifier</option>
 								<option value="company">Sub-Company and Group</option>
 							</select>
-							
+
 						</span>
 						<span id="report_options_4" class="nod">
-						
+
 							<label>Cluster:</label>
 							<?
 								echo makeClusterDD('rouster_cluster_id', 1, "", "", false);
 							?>
-							
+
 						</span>
-					
+
 					</td>
 				</tr>
 				</table>
 			</td>
 		</tr>
-		
+
 		<tr>
 			<th align="left" height="30">Email to:</th>
 			<td><input name="email_address" type="text" size="50" value=""></td>
@@ -741,26 +590,26 @@ class ReportEmails{
 				<table border="0" width="100%"  id="user_group_tr">
 				<tr>
 					<td><?
-			
+
 					//			makeUserGroupDD($name, $sel, $class, $onchange, $size=0, $blank_option = 1)
 						echo makeUserGroupDD('user_groups[]', '', '', "", 10, false);
-						
+
 					?></td>
 					<td>
-					
+
 						<label title="Instead of creating 1 report email record per group, combine the groups into 1 record (per template)">Combined Group Report</label>
 						<input type="checkbox" name="combined_group_report" />
-					
+
 					</td>
-					
-					
+
+
 				</tr>
 				</table>
 				<span id="no_user_group_span">N/A</span>
 			</td>
 		</tr>
-			
-		
+
+
 
 		<tr>
 			<th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
@@ -770,16 +619,16 @@ class ReportEmails{
 		<script>
 
 			toggleReportMode( $('#report_id').val() );
-			
+
 			//toggleTimeMode($('#interval').val());
 
 		</script><?
 	}
 
-	
-	
-	
-	
+
+
+
+
 	function makeAdd($id){
 
 		$id=intval($id);
