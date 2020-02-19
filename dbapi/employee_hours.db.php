@@ -22,7 +22,7 @@ class EmployeeHoursAPI{
 
 	/**
 	 * Get a Name by ID
-	 * @param 	$id		The database ID of the record
+	 * param 	$id		The database ID of the record
 	 * 	 * @return	assoc-array of the database record
 	 */
 	function getByID($id){
