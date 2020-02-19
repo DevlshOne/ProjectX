@@ -109,7 +109,7 @@
 
 
 		if($dbidx < 0){
-			echo "ERROR WITH CLUSTER ID#".$cluster_id." - ".$vicidb['ip_address']." - Cannot locate cluster on site_config/cluster stack, SKIPPING\n";
+			echo date("H:i:s m/d/Y")." - ERROR WITH CLUSTER ID#".$cluster_id." - ".$vicidb['ip_address']." - Cannot locate cluster on site_config/cluster stack, SKIPPING\n";
 			continue;
 		}
 
@@ -117,7 +117,7 @@
 		connectViciDB($dbidx);
 
 
-		echo "Connected to CLUSTER ID#".$cluster_id." - ".$vicidb['ip_address']."\n";
+		echo date("H:i:s m/d/Y")." - Connected to CLUSTER ID#".$cluster_id." - ".$vicidb['ip_address']."\n";
 
 
 // GRAB ARRAY OF DISINCT CAMPAIGNS (FOR THE _ALL_ CAMPAIGNS OPTION (NULL CAMPAIGN SETTING)
@@ -177,7 +177,7 @@
 	$timer_end = microtime_float();
 	$runtime = $timer_end - $timer_start;
 
-	$str = "Cold Cluster(s) Total: ".number_format($cluster_total)."\n";
+	$str = date("H:i:s m/d/Y")." - Cold Cluster(s) Total: ".number_format($cluster_total)."\n";
 
 	$str .= "Run time: ".$runtime." seconds\n";
 
@@ -249,7 +249,7 @@
 		connectViciDB($dbidx);
 
 
-		echo "Connected to TAPS CLUSTER ID#".$cluster_id." - ".$vicidb['ip_address']."\n";
+		echo date("H:i:s m/d/Y")." - Connected to TAPS CLUSTER ID#".$cluster_id." - ".$vicidb['ip_address']."\n";
 
 
 // GRAB ARRAY OF DISINCT CAMPAIGNS (FOR THE _ALL_ CAMPAIGNS OPTION (NULL CAMPAIGN SETTING)
@@ -284,7 +284,7 @@
 	$timer_end = microtime_float();
 	$runtime = $timer_end - $timer_start;
 
-	$str = "TAPS Cluster(s) Total: ".number_format($cluster_total)."\n";
+	$str = date("H:i:s m/d/Y")." - TAPS Cluster(s) Total: ".number_format($cluster_total)."\n";
 
 	$str .="Run time: ".$runtime." seconds\n";
 
