@@ -219,7 +219,11 @@ class DBAPI {
 	public function logPageLoad($time_taken){
 		
 		// WRITE TO THE LOG FILE
-		$output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.intval($_SESSION['user']['id']).") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
+		if(isset($_SESSION['user'])){
+			$output = date("H:i:s m/d/Y").' End Page - '.$_SESSION['user']['username'].'(#'.intval($_SESSION['user']['id']).") - Total Queries: ".$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec - ".$_SERVER['REQUEST_URI']." from ".$_SERVER['REMOTE_ADDR']."\n";
+		}else{
+			$output = date("H:i:s m/d/Y").' End Page - Script/Non-user - Total Queries: '.$this->page_query_count." - Page Run Time: ".round($time_taken, 3)." sec.\n";
+		}
 		file_put_contents($this->query_log_file, $output, FILE_APPEND);
 		
 		
