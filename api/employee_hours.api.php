@@ -341,20 +341,41 @@ class API_Employee_Hours{
 				
 				if($_REQUEST['orderby'] == 'time_started'){
 
+					$dat['fields'] = '*, FROM_UNIXTIME(time_started, \'%Y-%m-%d\') as date_started ';
+					
 					$dat['order'] = array(
-										$_REQUEST['orderby']=>$_REQUEST['orderdir'],
+										"date_started"=>$_REQUEST['orderdir'],
 										'username' => 'ASC'
 									);
 					
 				}else if($_REQUEST['orderby'] == 'username'){
 					
+					$dat['fields'] = '*, FROM_UNIXTIME(time_started, \'%Y-%m-%d\') as date_started ';
+					
 					$dat['order'] = array(
 							$_REQUEST['orderby']=>$_REQUEST['orderdir'],
-							'time_started' => 'ASC'
+							'date_started' => 'ASC'
 					);
 					
 				}else{
 					$dat['order'] = array($_REQUEST['orderby']=>$_REQUEST['orderdir']);
+				}
+				
+// 				print_r($dat);
+				
+			}else if($dat['report_mode']){
+				
+				switch($dat['report_mode']){
+				default:
+					break;
+				case 5:
+					
+					$dat['order'] = array(
+										'username' => 'ASC',
+										'time_started' => 'ASC'
+									);
+					
+					break;
 				}
 				
 			}
