@@ -582,56 +582,28 @@ class SummaryReport
         //echo $type;
         ?>
         <div class="block">
-            <input type="hidden" name="generate_report">
-            <div class="block-header bg-primary-light">
-                <h4 class="block-title">Summary Report</h4>
-            </div>
-            <div class="block-content">
-                <form id="summary_report" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?area=summary_report&no_script=1" onsubmit="return genReport(this, 'summary')">
-                    <table class="tightTable">
-                        <tr>
-                            <td colspan="2">
-                                <table border="0">
-                                    <tr>
-                                        <th>Date Start:</th>
-                                        <td><?
-
-                                            echo makeTimebar("stime_", 1, null, false, $timestamp);
-
-                                            ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Date End:</th>
-                                        <td><?
-
-                                            echo makeTimebar("etime_", 1, null, false, $timestamp2);
-
-                                            ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Type:</th>
-                                        <td><select class="custom-select-sm" name="report_type">
-                                                <option value="cold"<?= ($type == 'cold') ? " SELECTED" : "" ?>>Cold</option>
-                                                <option value="taps"<?= ($type == 'taps') ? " SELECTED" : "" ?>>Taps</option>
-                                                <option value="verifier"<?= ($type == 'verifier') ? " SELECTED" : "" ?>>Verifier</option>
-                                                <option value="company"<?= ($type == 'company') ? " SELECTED" : "" ?>>Sub-Company and Group</option>
-                                            </select></td>
-                                    </tr>
-                                    <tr>
-                                        <th colspan="2">
-                                            <span id="summary_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0"/> Loading, Please wait...</span>
-                                            <span id="summary_submit_report_button" class="input-group-sm">
-                                                <button type="submit" class="btn btn-sm btn-success" title="Generate Report">Generate</button>
-						                    </span>
-                                        </th>
-                                    </tr>
-                                </table>
-                            </td>
-                        </tr>
-                    </table>
-                </form>
+        <form id="summary_report" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?area=summary_report&no_script=1" onsubmit="return genReport(this, 'summary');">
+        <input type="hidden" name="generate_report">
+        <div class="block-header bg-primary-light">
+            <h4 class="block-title">Summary Report</h4>
+            <span id="summary_submit_report_button" class="input-group-sm">
+                    <button type="submit" class="btn btn-sm btn-success" title="Generate Report">Generate</button>
+                </span>
+        </div>
+        <div class="bg-info-light" id="name_search_table">
+            <div class="input-group">
+                <input type="hidden" name="searching_report"/>
+                <?= makeTimebar("stime_", 1, null, false, $timestamp); ?>&nbsp;-&nbsp;<?= makeTimebar("etime_", 1, null, false, $timestamp2); ?>
+                <select class="custom-select-sm" name="report_type">
+                    <option value=""<?= ($type == '') ? " SELECTED" : "" ?>>[Select Type]</option>
+                    <option value="cold"<?= ($type == 'cold') ? " SELECTED" : "" ?>>Cold</option>
+                    <option value="taps"<?= ($type == 'taps') ? " SELECTED" : "" ?>>Taps</option>
+                    <option value="verifier"<?= ($type == 'verifier') ? " SELECTED" : "" ?>>Verifier</option>
+                    <option value="company"<?= ($type == 'company') ? " SELECTED" : "" ?>>Sub-Company and Group</option>
+                </select>
             </div>
         </div>
+        <div class="block-content">
         <?
         if (isset($_POST['generate_report'])) {
             $time_started = microtime_float();
@@ -650,76 +622,56 @@ class SummaryReport
             }
             $time_ended = microtime_float();
             $time_taken = $time_ended - $time_started;
-            echo "<br />Load time: " . $time_taken;
+            echo "<div class='small text-right'>Load time: " . $time_taken . "</div>";
         }
     }
 
     function makeHTMLReport($report_type, $stime, $etime)
     {
-
-        echo '<span style="font-size:9px">makeHTMLReport(\'' . $report_type . '\', ' . "$stime, $etime) called</span><br /><br />\n";
-
-
+        echo '<div class="small text-left">makeHTMLReport(\'' . $report_type . '\', ' . "$stime, $etime) called</div>\n";
         if ($report_type == 'verifier') {
-
             $cluster_data = $this->generateData($report_type, $stime, $etime);
-
             if (count($cluster_data) < 1) {
                 return null;
             }
-
-
-//print_r($cluster_data);
-//exit;
-
-
             // ACTIVATE OUTPUT BUFFERING
             ob_start();
             ob_clean();
-
-            ?><h1><?
-
-
-            echo "Verifier Summary Report - ";
-
+            echo "<h1>Verifier Summary Report - ";
             if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
-
                 echo date("m-d-Y", $stime);
-
             } else {
                 echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
-
             }
-
-
-            ?></h1>
-            <table border="0" width="900">
+            echo "</h1>";
+            ?>
+            <table class="table table-sm table-striped">
+                <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
                 <tr>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-left">Cluster</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right"># of Calls</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Sales</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">PaidCC</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">%PaidCC</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">PaidCC/Hour</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">$PaidCC</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Hangups</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Declines</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Activity</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">In Call</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Time</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Paid Time</th>
 
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="left">Cluster</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right"># of Calls</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Sales</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">PaidCC</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">%PaidCC</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">PaidCC/Hour</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">$PaidCC</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Hangups</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Declines</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Activity</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">In Call</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Time</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Paid Time</th>
-
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Pause</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Talk Avg</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Dead</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Closing %</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Adj. Closing %</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Hangup %</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Sale Reviews</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Bump $</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right">Bump %</th>
-                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" align="right"># of Bumps</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Pause</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Talk Avg</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Dead</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Closing %</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Adj. Closing %</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Hangup %</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Sale Reviews</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Bump $</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right">Bump %</th>
+                    <th nowrap style="border-bottom:1px dotted #000;padding-left:3px" class="text-right"># of Bumps</th>
 
                 </tr><?
 
@@ -838,33 +790,33 @@ class SummaryReport
                     ?>
                     <tr>
                     <td style="border-right:1px dotted #CCC;padding-right:3px" nowrap><?= strtoupper(getClusterName($cluster)) ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         echo number_format($data['call_cnt'])
 
                         //		number_format($row['t_call_count'])
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= number_format(($data['sale_cnt'] - $data['paid_sale_cnt'])) ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= number_format($data['paid_sale_cnt']) ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= number_format($percent_paidcc_calls) ?>%</td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= number_format($paidcc_per_hour, 2) ?></td>
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?= number_format(($data['sale_cnt'] - $data['paid_sale_cnt'])) ?></td>
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?= number_format($data['paid_sale_cnt']) ?></td>
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?= number_format($percent_paidcc_calls) ?>%</td>
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?= number_format($paidcc_per_hour, 2) ?></td>
 
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right">$<?= number_format($data['paid_sale_total'], 2) ?></td>
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right">$<?= number_format($data['paid_sale_total'], 2) ?></td>
 
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= number_format($data['hangup_cnt']) ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?= number_format($data['decline_cnt']) ?></td>
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?= number_format($data['hangup_cnt']) ?></td>
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?= number_format($data['decline_cnt']) ?></td>
 
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         echo $total_activity_time;
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         echo $total_incall_time;
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         //						if($row['t_time'] >= $this->time_limit){
 
@@ -875,7 +827,7 @@ class SummaryReport
                         //
                         //						}
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         // PAID TIME
 
@@ -884,7 +836,7 @@ class SummaryReport
 
                         ?></td>
 
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         //						if($row['t_pause'] <= $this->pause_limit){
 
@@ -896,7 +848,7 @@ class SummaryReport
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
                         $talktimeavg = floor($talktimeavg);
 
                         //echo $talktimeavg.' vs '.$this->talk_lower_limit.' ';
@@ -912,7 +864,7 @@ class SummaryReport
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         //						if($row['t_dead'] > $this->dead_time_limit){
                         //
@@ -923,7 +875,7 @@ class SummaryReport
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         //						if(intval($close_percent) >= $this->close_percent_limit){
 
@@ -935,7 +887,7 @@ class SummaryReport
                         //						}
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         //						if(intval($adjusted_close_percent) >= $this->close_percent_limit){
 
@@ -947,7 +899,7 @@ class SummaryReport
 
                         ?></td>
 
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         //if(intval($adjusted_close_percent) >= $this->close_percent_limit){
 
@@ -958,26 +910,26 @@ class SummaryReport
 
                         ?></td>
 
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         echo number_format($data['reviewcnt']);
 
                         ?></td>
 
 
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         echo '$' . number_format($bump_amount);
 
                         ?></td>
 
 
-                    <td style="border-right:1px dotted #CCC;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;padding-right:3px" class="text-right"><?
 
                         echo number_format($bump_percent, 2) . '%';
 
                         ?></td>
-                    <td align="right"><?
+                    <td class="text-right"><?
 
                         echo number_format($data['bump_count']);
 
@@ -1009,19 +961,17 @@ class SummaryReport
                 // TOTALS ROW
                 ?>
                 <tr>
-                    <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_calls) ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format(($running_total_sales - $running_total_paid_sales)) ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_paid_sales) ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($total_percent_paidcc_calls) ?>%</td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($total_paidcc_per_hour, 2) ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right">$<?= number_format($running_total_paid_sales_amount, 2) ?></td>
+                    <th style="border-right:1px dotted #CCC;border-top:1px solid #000" class="text-left">Totals:</th>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format($running_total_calls) ?></td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format(($running_total_sales - $running_total_paid_sales)) ?></td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format($running_total_paid_sales) ?></td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format($total_percent_paidcc_calls) ?>%</td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format($total_paidcc_per_hour, 2) ?></td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right">$<?= number_format($running_total_paid_sales_amount, 2) ?></td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format($running_total_hangups) ?></td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format($running_total_declines) ?></td>
 
-
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_hangups) ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_declines) ?></td>
-
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?
 
 
                         $tmphours = floor($running_total_activity_time / 3600);
@@ -1030,7 +980,7 @@ class SummaryReport
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?
 
                         //$running_total_incall_time
                         $tmphours = floor($running_total_incall_time / 3600);
@@ -1039,14 +989,14 @@ class SummaryReport
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?
 
 
                         echo renderTimeFormatted($running_t_time / 60);
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?
 
 
                         echo renderTimeFormatted($running_paid_time * 60);
@@ -1054,7 +1004,7 @@ class SummaryReport
 
                         ?></td>
                     <td style="border-right:1px dotted #CCC;border-top:1px solid #000">&nbsp;</td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?
 
 
                         //						if($total_talk_time_avg >= $this->talk_lower_limit && $total_talk_time_avg <= $this->talk_upper_limit){
@@ -1068,7 +1018,7 @@ class SummaryReport
 
                         ?></td>
                     <td style="border-right:1px dotted #CCC;border-top:1px solid #000">&nbsp;</td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?
 
                         //						if(intval($total_close_percent) >= $this->close_percent_limit){
 
@@ -1081,7 +1031,7 @@ class SummaryReport
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?
 
                         //						if(intval($total_adj_close_percent) >= $this->close_percent_limit){
 
@@ -1094,7 +1044,7 @@ class SummaryReport
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?
 
                         //if(intval($total_adj_close_percent) >= $this->close_percent_limit){
 
@@ -1106,24 +1056,21 @@ class SummaryReport
 
 
                         ?></td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_reviews) ?></td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format($running_total_reviews) ?></td>
 
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right">&nbsp;</td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right">&nbsp;</td>
 
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right">&nbsp;</td>
-                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_bumps) ?></td>
-
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right">&nbsp;</td>
+                    <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" class="text-right"><?= number_format($running_total_bumps) ?></td>
                 </tr>
-            </table></td>
-            </tr>
-            <tr>
-                <td style="font-size:10px">
-                    <br/>
-                    <i>Generated on: <?= date("g:ia m/d/Y") ?></i>
-                </td>
-            </tr>
-
-            </table><?
+            </table>
+            </div>
+            <div class="block-header bg-info-light">
+                <i class="si si-clock"></i>Generated on: <?= date("g:ia m/d/Y") ?>
+            </div>
+            </form>
+            </div>
+            <?
 
             // GRAB DATA FROM BUFFER
             $data = ob_get_contents();
@@ -1143,44 +1090,27 @@ class SummaryReport
 
             /******* REPORT TYPE : SUB COMPANY AND USER GROUP ********/
         } else if ($report_type == 'company') {
-
             $company_data = $this->generateData($report_type, $stime, $etime);
-
-
-            //echo nl2br(print_r($company_data,1));
-
-
             if (count($company_data) < 1) {
-
                 return null;
-
             }
-
             $gcount = 0;
-
             // ACTIVATE OUTPUT BUFFERING
             ob_start();
             ob_clean();
-
-            ?><h1><?
-
-
-            echo "Sub Company - Summary Report - ";
-
+            echo "<h1>Sub Company - Summary Report - ";
             if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
-
                 echo date("m-d-Y", $stime);
-
             } else {
                 echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
 
             }
-
-
-            ?></h1>
-            <table border="0" width="100%" cellspacing="1">
+            echo "</h1>";
+            ?>
+            <table class="table table-sm table-striped">
+                <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
                 <tr>
-                    <th style="border-bottom:1px solid #000;padding-left:5px" align="left">Company</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-left">Company</th>
                     <th style="border-bottom:1px solid #000;padding-left:5px">PD HRS</th>
                     <th style="border-bottom:1px solid #000;padding-left:5px">WRKD HRS</th>
                     <th style="border-bottom:1px solid #000;padding-left:5px">Total Calls</th>
@@ -1194,13 +1124,13 @@ class SummaryReport
                     <th style="border-bottom:1px solid #000;padding-left:5px">UNPAID SALES</th>
                     <th style="border-bottom:1px solid #000;padding-left:5px">UNPAID %</th>
 
-                    <th style="border-bottom:1px solid #000;padding-left:5px" align="right">CLOSING %</th>
-                    <th style="border-bottom:1px solid #000;padding-left:5px" align="right">CONVERSION %</th>
-                    <th style="border-bottom:1px solid #000;padding-left:5px" align="right">YES 2 ALL %</th>
-                    <th style="border-bottom:1px solid #000;padding-left:5px" align="right">TOTAL SALES</th>
-                    <th style="border-bottom:1px solid #000;padding-left:5px" align="right">AVG SALE</th>
-                    <th style="border-bottom:1px solid #000;padding-left:5px" align="right">PD $/HR</th>
-                    <th style="border-bottom:1px solid #000;padding-left:5px" align="right">WRKD $/HR</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">CLOSING %</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">CONVERSION %</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">YES 2 ALL %</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">TOTAL SALES</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">AVG SALE</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">PD $/HR</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">WRKD $/HR</th>
                 </tr><?
 
 
@@ -1242,7 +1172,7 @@ class SummaryReport
 
                     ?>
                     <tr>
-                    <th align="left" style="font-weight:bold"><?= $compdata['company_row']['name'] ?></th>
+                    <th class="text-left" style="font-weight:bold"><?= $compdata['company_row']['name'] ?></th>
                     <td colspan="<?= ($colspan - 1) ?>">&nbsp;</td>
                     </tr><?
 
@@ -1250,7 +1180,7 @@ class SummaryReport
 
                         ?>
                         <tr>
-                        <td colspan="<?= $colspan ?>" align="center">No records found.</td>
+                        <td colspan="<?= $colspan ?>" class="text-center">No records found.</td>
                         </tr><?
                         continue;
                     }
@@ -1308,34 +1238,34 @@ class SummaryReport
                         ?>
                         <tr>
                         <td style="padding-left:10px" nowrap><?= htmlentities(strtoupper($group_row['user_group'])) ?></td>
-                        <td align="center"><?= number_format($totals['total_activity_paid_hrs'], 2) ?></td>
-                        <td align="center"><?= number_format($totals['total_activity_wrkd_hrs'], 2) ?></td>
-                        <td align="center"><?= number_format($totals['total_calls']) ?></td>
-                        <td align="center"><?= number_format($totals['total_NI']) ?></td>
-                        <td align="center"><?= number_format($totals['total_XFER']) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_activity_paid_hrs'], 2) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_activity_wrkd_hrs'], 2) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_calls']) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_NI']) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_XFER']) ?></td>
 
 
-                        <td align="center"><?= number_format($totals['total_sale_cnt']) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_sale_cnt']) ?></td>
 
 
-                        <td align="center"><?= number_format($totals['total_paid_sale_cnt']) ?></td>
-                        <td align="right"><?= number_format($paid_sale_percent, 2) ?>%</td>
+                        <td class="text-center"><?= number_format($totals['total_paid_sale_cnt']) ?></td>
+                        <td class="text-right"><?= number_format($paid_sale_percent, 2) ?>%</td>
 
-                        <td align="right">$<?= number_format($totals['total_paid_sales']) ?></td>
-
-
-                        <td align="center"><?= number_format(($totals['total_sale_cnt'] - $totals['total_paid_sale_cnt'])) ?></td>
-                        <td align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</td>
+                        <td class="text-right">$<?= number_format($totals['total_paid_sales']) ?></td>
 
 
-                        <td align="right"><?= number_format($totals['total_closing'], 2) ?>%</td>
-                        <td align="right"><?= number_format($totals['total_conversion'], 2) ?>%</td>
-                        <td align="right"><?= number_format($totals['total_yes2all'], 2) ?>%</td>
-                        <td align="right">$<?= number_format($totals['total_sales']) ?></td>
+                        <td class="text-center"><?= number_format(($totals['total_sale_cnt'] - $totals['total_paid_sale_cnt'])) ?></td>
+                        <td class="text-right"><?= number_format($unpaid_sale_percent, 2) ?>%</td>
 
-                        <td align="right">$<?= number_format($totals['total_avg'], 2) ?></td>
-                        <td align="right">$<?= number_format($totals['total_paid_hr'], 2) ?></td>
-                        <td align="right">$<?= number_format($totals['total_wrkd_hr'], 2) ?></td>
+
+                        <td class="text-right"><?= number_format($totals['total_closing'], 2) ?>%</td>
+                        <td class="text-right"><?= number_format($totals['total_conversion'], 2) ?>%</td>
+                        <td class="text-right"><?= number_format($totals['total_yes2all'], 2) ?>%</td>
+                        <td class="text-right">$<?= number_format($totals['total_sales']) ?></td>
+
+                        <td class="text-right">$<?= number_format($totals['total_avg'], 2) ?></td>
+                        <td class="text-right">$<?= number_format($totals['total_paid_hr'], 2) ?></td>
+                        <td class="text-right">$<?= number_format($totals['total_wrkd_hr'], 2) ?></td>
                         </tr><?
 
                         $running_totals['total_paid_sale_cnt'] += $totals['total_paid_sale_cnt'];
@@ -1397,37 +1327,38 @@ class SummaryReport
 
                     ?>
                     <tr>
-                    <th style="border-top:1px solid #000;padding:3px" align="left" nowrap>Sub-Total:</th>
-                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_paid_hrs'], 2) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_wrkd_hrs'], 2) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_calls']) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_NI']) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_XFER']) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-left" nowrap>Sub-Total:</th>
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_paid_hrs'], 2) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_wrkd_hrs'], 2) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_calls']) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_NI']) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_XFER']) ?></th>
 
 
-                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_sale_cnt']) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_sale_cnt']) ?></th>
 
-                    <th style="border-top:1px solid #000;padding:3px" align="center"><?= number_format($running_totals['total_paid_sale_cnt']) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($paid_sale_percent, 2) ?>%</th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format($running_totals['total_paid_sale_cnt']) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($paid_sale_percent, 2) ?>%</th>
 
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_paid_sales']) ?></th>
-
-
-                    <th style="border-top:1px solid #000;padding:3px" align="center"><?= number_format(($running_totals['total_sale_cnt'] - $running_totals['total_paid_sale_cnt'])) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_paid_sales']) ?></th>
 
 
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($running_totals['total_closing'], 2) ?>%</th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($running_totals['total_conversion'], 2) ?>%</th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($running_totals['total_yes2all'], 2) ?>%</th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format(($running_totals['total_sale_cnt'] - $running_totals['total_paid_sale_cnt'])) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
 
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_sales']) ?></th>
 
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_avg'], 2) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_paid_hr'], 2) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_wrkd_hr'], 2) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_closing'], 2) ?>%</th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_conversion'], 2) ?>%</th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_yes2all'], 2) ?>%</th>
 
-                    </tr><?
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_sales']) ?></th>
+
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_avg'], 2) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_paid_hr'], 2) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_wrkd_hr'], 2) ?></th>
+
+                    </tr>
+                    <?
 
 
                     // ADD CURRENT COMPANY TOTALS TO GRAND TOTALS
@@ -1488,7 +1419,7 @@ class SummaryReport
 
                 ?>
                 <tr>
-                    <th style="border-top:1px solid #000;padding:3px" align="left" nowrap>Grand Total:</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-left" nowrap>Grand Total:</th>
                     <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_activity_paid_hrs'], 2) ?></th>
                     <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_activity_wrkd_hrs'], 2) ?></th>
                     <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_calls']) ?></th>
@@ -1498,32 +1429,34 @@ class SummaryReport
 
                     <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_sale_cnt']) ?></th>
 
-                    <th style="border-top:1px solid #000;padding:3px" align="center"><?= number_format($company_totals['total_paid_sale_cnt']) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($paid_sale_percent, 2) ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format($company_totals['total_paid_sale_cnt']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($paid_sale_percent, 2) ?>%</th>
 
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($company_totals['total_paid_sales']) ?></th>
-
-
-                    <th style="border-top:1px solid #000;padding:3px" align="center"><?= number_format(($company_totals['total_sale_cnt'] - $company_totals['total_paid_sale_cnt'])) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_paid_sales']) ?></th>
 
 
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($company_totals['total_closing'], 2) ?>%</th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($company_totals['total_conversion'], 2) ?>%</th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($company_totals['total_yes2all'], 2) ?>%</th>
-
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($company_totals['total_sales']) ?></th>
-
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($company_totals['total_avg'], 2) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($company_totals['total_paid_hr'], 2) ?></th>
-                    <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($company_totals['total_wrkd_hr'], 2) ?></th>
-
-                </tr><?
+                    <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format(($company_totals['total_sale_cnt'] - $company_totals['total_paid_sale_cnt'])) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
 
 
-                ?></table>
-            <br/>
-            <i>Generated on: <?= date("g:ia m/d/Y") ?></i>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($company_totals['total_closing'], 2) ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($company_totals['total_conversion'], 2) ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($company_totals['total_yes2all'], 2) ?>%</th>
+
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_sales']) ?></th>
+
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_avg'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_paid_hr'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_wrkd_hr'], 2) ?></th>
+
+                </tr>
+            </table>
+            </div>
+            <div class="block-header bg-info-light">
+                <i class="si si-clock"></i>Generated on: <?= date("g:ia m/d/Y") ?>
+            </div>
+            </form>
+            </div>
             <?
 
             // GRAB DATA FROM BUFFER
@@ -1545,268 +1478,230 @@ class SummaryReport
             /******* REPORT TYPE: COLD OR TAPS ************/
         } else {
             $cluster_data = $this->generateData($report_type, $stime, $etime);
-            //list($data_arr, $totals) = $this->generateData($report_type,$stime, $etime);
-
-//echo nl2br(print_r($data_arr,1));
-
-//echo nl2br(print_r($totals,1));
-
             if (count($cluster_data) < 1) {
-
                 return null;
-
             }
-
             // ACTIVATE OUTPUT BUFFERING
             ob_start();
             ob_clean();
-
-            ?><h1><?
-
-
-            echo "Summary Report - ";
-
-            if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
-
+            echo "<h1>Summary Report - ";
+            if(date("m-d-Y", $stime) === date("m-d-Y", $etime)) {
                 echo date("m-d-Y", $stime);
-
             } else {
                 echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
-
             }
+            echo "</h1>";
+            ?>
+            <table class="table table-sm table-striped">
+                <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                <tr>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-left">CLUSTER</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of hours being Paid for">PD HRS</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of hours of Activity tracked">WRKD HRS</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" title="Total number of calls for the day">Total Calls</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of Calls that were NOT INTERESTED">NI</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of Transfers">XFERS</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of Answering Machine calls">A</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" title="Percentage of calls that are Answering Machines">%ANS</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" title="Contacts per Worked hour, and Calls per Worked hour">CON&amp;CALLS/HR</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px">TOTAL SALES</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px">PAID SALES</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px">PAID %</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px">PAID $</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px">UNPAID SALES</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px">UNPAID %</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">CLOSE %</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">CON%</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">YES 2 ALL %</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">TOTAL SALES</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">AVG SALE</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">PD $/HR</th>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-right">WRKD $/HR</th>
+                </tr>
+                <?
+                $running_totals = array();
+                $running_totals['total_paid_sale_cnt'] = 0;
+                $running_totals['total_sale_cnt'] = 0;
+                $running_totals['total_activity_paid_hrs'] = 0;
+                $running_totals['total_activity_wrkd_hrs'] = 0;
+                $running_totals['total_calls'] = 0;
+                $running_totals['total_NI'] = 0;
+                $running_totals['total_XFER'] = 0;
+                $running_totals['total_sales'] = 0;
+                $running_totals['total_paid_sales'] = 0;
 
-
-            ?></h1>
-            <table border="0" width="100%" cellspacing="1">
-            <tr>
-                <th style="border-bottom:1px solid #000;padding-left:5px" align="left">CLUSTER</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of hours being Paid for">PD HRS</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of hours of Activity tracked">WRKD HRS</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" title="Total number of calls for the day">Total Calls</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of Calls that were NOT INTERESTED">NI</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of Transfers">XFERS</th>
-
-                <th style="border-bottom:1px solid #000;padding-left:5px" title="Number of Answering Machine calls">A</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" title="Percentage of calls that are Answering Machines">%ANS</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" title="Contacts per Worked hour, and Calls per Worked hour">CON&amp;CALLS/HR</th>
-
-
-                <th style="border-bottom:1px solid #000;padding-left:5px">TOTAL SALES</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px">PAID SALES</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px">PAID %</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px">PAID $</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px">UNPAID SALES</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px">UNPAID %</th>
-
-                <th style="border-bottom:1px solid #000;padding-left:5px" align="right">CLOSE %</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" align="right">CON%</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" align="right">YES 2 ALL %</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" align="right">TOTAL SALES</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" align="right">AVG SALE</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" align="right">PD $/HR</th>
-                <th style="border-bottom:1px solid #000;padding-left:5px" align="right">WRKD $/HR</th>
-            </tr><?
-
-
-            $running_totals = array();
-            $running_totals['total_paid_sale_cnt'] = 0;
-            $running_totals['total_sale_cnt'] = 0;
-            $running_totals['total_activity_paid_hrs'] = 0;
-            $running_totals['total_activity_wrkd_hrs'] = 0;
-            $running_totals['total_calls'] = 0;
-            $running_totals['total_NI'] = 0;
-            $running_totals['total_XFER'] = 0;
-            $running_totals['total_sales'] = 0;
-            $running_totals['total_paid_sales'] = 0;
-
-
-            // STUFF FOR AVERAGING
-            $running_totals['total_closing_num'] = 0;
-            $running_totals['total_closing_cnt'] = 0;
-            $running_totals['total_conversion_num'] = 0;
-            $running_totals['total_conversion_cnt'] = 0;
-            $running_totals['total_yes2all_num'] = 0;
-            $running_totals['total_yes2all_cnt'] = 0;
-            $running_totals['total_avg_num'] = 0;
-            $running_totals['total_avg_cnt'] = 0;
-            $running_totals['total_paid_hr_num'] = 0;
-            $running_totals['total_paid_hr_cnt'] = 0;
-            $running_totals['total_wrkd_hr_num'] = 0;
-            $running_totals['total_wrkd_hr_cnt'] = 0;
-
-
-            $running_totals['total_AnswerMachines'] = 0;
-
-
-            foreach ($cluster_data as $cluster_id => $agent_data_stack) {
-
-                //echo nl2br(print_r($agent_data_stack,1));
-
-                list($agent_data, $totals) = $agent_data_stack;
-
+                // STUFF FOR AVERAGING
+                $running_totals['total_closing_num'] = 0;
+                $running_totals['total_closing_cnt'] = 0;
+                $running_totals['total_conversion_num'] = 0;
+                $running_totals['total_conversion_cnt'] = 0;
+                $running_totals['total_yes2all_num'] = 0;
+                $running_totals['total_yes2all_cnt'] = 0;
+                $running_totals['total_avg_num'] = 0;
+                $running_totals['total_avg_cnt'] = 0;
+                $running_totals['total_paid_hr_num'] = 0;
+                $running_totals['total_paid_hr_cnt'] = 0;
+                $running_totals['total_wrkd_hr_num'] = 0;
+                $running_totals['total_wrkd_hr_cnt'] = 0;
+                $running_totals['total_AnswerMachines'] = 0;
+                foreach ($cluster_data as $cluster_id => $agent_data_stack) {
+                    //echo nl2br(print_r($agent_data_stack,1));
+                    list($agent_data, $totals) = $agent_data_stack;
 //				echo nl2br(print_r($totals,1));
+                    $paid_sale_percent = round(((float)$totals['total_paid_sale_cnt'] / $totals['total_sale_cnt']) * 100, 2);
+                    $unpaid_sale_percent = 100 - $paid_sale_percent;
+                    $t_ans_percent = round((($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2);
+                    ?>
+                    <tr>
+                    <td><?= htmlentities(strtoupper(getClusterName($cluster_id))) ?></td>
+                    <td class="text-center"><?= number_format($totals['total_activity_paid_hrs'], 2) ?></td>
+                    <td class="text-center"><?= number_format($totals['total_activity_wrkd_hrs'], 2) ?></td>
+                    <td class="text-center"><?= number_format($totals['total_calls']) ?></td>
+                    <td class="text-center"><?= number_format($totals['total_NI']) ?></td>
+                    <td class="text-center"><?= number_format($totals['total_XFER']) ?></td>
+
+                    <th><?= number_format($totals['total_AnswerMachines']) ?></th>
+                    <th><?= $t_ans_percent ?>%</th>
+                    <th><?= number_format($totals['total_contacts_per_worked_hour'], 2) . ' - ' . number_format($totals['total_calls_per_worked_hour'], 2) ?></th>
 
 
-                $paid_sale_percent = round(((float)$totals['total_paid_sale_cnt'] / $totals['total_sale_cnt']) * 100, 2);
+                    <td class="text-center"><?= number_format($totals['total_sale_cnt']) ?></td>
+
+
+                    <td class="text-center"><?= number_format($totals['total_paid_sale_cnt']) ?></td>
+                    <td class="text-right"><?= number_format($paid_sale_percent, 2) ?>%</td>
+
+                    <td class="text-right">$<?= number_format($totals['total_paid_sales']) ?></td>
+
+
+                    <td class="text-center"><?= number_format(($totals['total_sale_cnt'] - $totals['total_paid_sale_cnt'])) ?></td>
+                    <td class="text-right"><?= number_format($unpaid_sale_percent, 2) ?>%</td>
+
+
+                    <td class="text-right"><?= number_format($totals['total_closing'], 2) ?>%</td>
+                    <td class="text-right"><?= number_format($totals['total_conversion'], 2) ?>%</td>
+                    <td class="text-right"><?= number_format($totals['total_yes2all'], 2) ?>%</td>
+                    <td class="text-right">$<?= number_format($totals['total_sales']) ?></td>
+
+                    <td class="text-right">$<?= number_format($totals['total_avg'], 2) ?></td>
+                    <td class="text-right">$<?= number_format($totals['total_paid_hr'], 2) ?></td>
+                    <td class="text-right">$<?= number_format($totals['total_wrkd_hr'], 2) ?></td>
+                    </tr><?
+
+                    $running_totals['total_paid_sale_cnt'] += $totals['total_paid_sale_cnt'];
+                    $running_totals['total_sale_cnt'] += $totals['total_sale_cnt'];
+                    $running_totals['total_activity_paid_hrs'] += $totals['total_activity_paid_hrs'];
+                    $running_totals['total_activity_wrkd_hrs'] += $totals['total_activity_wrkd_hrs'];
+                    $running_totals['total_calls'] += $totals['total_calls'];
+
+
+                    $running_totals['total_NI'] += $totals['total_NI'];
+                    $running_totals['total_XFER'] += $totals['total_XFER'];
+
+                    $running_totals['total_AnswerMachines'] += $totals['total_AnswerMachines'];
+
+                    $running_totals['total_paid_sales'] += $totals['total_paid_sales'];
+                    $running_totals['total_sales'] += $totals['total_sales'];
+
+
+                    // CLOSING PERCENTAGE AVERAGING
+                    $running_totals['total_closing_num'] += $totals['total_closing'];
+                    $running_totals['total_closing_cnt']++;
+
+                    // CONVERSION PERCENTAGE AVERAGING
+                    $running_totals['total_conversion_num'] += $totals['total_conversion'];
+                    $running_totals['total_conversion_cnt']++;
+
+                    // YES2ALL PERCENTAGE AVERAGING
+                    $running_totals['total_yes2all_num'] += $totals['total_yes2all'];
+                    $running_totals['total_yes2all_cnt']++;
+
+                    // AVERAGE-SALE PERCENTAGE AVERAGING
+                    $running_totals['total_avg_num'] += $totals['total_avg'];
+                    $running_totals['total_avg_cnt']++;
+
+
+                    // PAID PER HOUR AVERAGING
+                    $running_totals['total_paid_hr_num'] += $totals['total_paid_hr'];
+                    $running_totals['total_paid_hr_cnt']++;
+
+
+                    // WORKED PER HOUR AVERAGING
+                    $running_totals['total_wrkd_hr_num'] += $totals['total_wrkd_hr'];
+                    $running_totals['total_wrkd_hr_cnt']++;
+
+
+                    $totals = null;
+                }
+
+
+                $paid_sale_percent = round(((float)$running_totals['total_paid_sale_cnt'] / $running_totals['total_sale_cnt']) * 100, 2);
 
                 $unpaid_sale_percent = 100 - $paid_sale_percent;
 
-                $t_ans_percent = round((($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2);
+                $running_totals['total_closing'] = ($running_totals['total_closing_cnt'] <= 0) ? 0 : $running_totals['total_closing_num'] / $running_totals['total_closing_cnt'];
+                $running_totals['total_conversion'] = ($running_totals['total_conversion_cnt'] <= 0) ? 0 : $running_totals['total_conversion_num'] / $running_totals['total_conversion_cnt'];
+                $running_totals['total_yes2all'] = ($running_totals['total_yes2all_cnt'] <= 0) ? 0 : $running_totals['total_yes2all_num'] / $running_totals['total_yes2all_cnt'];
+                $running_totals['total_avg'] = ($running_totals['total_avg_cnt'] <= 0) ? 0 : $running_totals['total_avg_num'] / $running_totals['total_avg_cnt'];
+                $running_totals['total_paid_hr'] = ($running_totals['total_paid_hr_cnt'] <= 0) ? 0 : $running_totals['total_paid_hr_num'] / $running_totals['total_paid_hr_cnt'];
+                $running_totals['total_wrkd_hr'] = ($running_totals['total_wrkd_hr_cnt'] <= 0) ? 0 : $running_totals['total_wrkd_hr_num'] / $running_totals['total_wrkd_hr_cnt'];
 
+                $total_worked_contacts_hr = ($running_totals['total_activity_wrkd_hrs'] <= 0) ? 0 : (($running_totals['total_NI'] + $running_totals['total_XFER']) / $running_totals['total_activity_wrkd_hrs']);
+                $total_worked_calls_hr = ($running_totals['total_activity_wrkd_hrs'] <= 0) ? 0 : (($running_totals['total_calls']) / $running_totals['total_activity_wrkd_hrs']);
+
+                $t_ans_percent = round((($running_totals['total_AnswerMachines'] / $running_totals['total_calls']) * 100), 2);
 
                 ?>
                 <tr>
-                <td><?= htmlentities(strtoupper(getClusterName($cluster_id))) ?></td>
-                <td align="center"><?= number_format($totals['total_activity_paid_hrs'], 2) ?></td>
-                <td align="center"><?= number_format($totals['total_activity_wrkd_hrs'], 2) ?></td>
-                <td align="center"><?= number_format($totals['total_calls']) ?></td>
-                <td align="center"><?= number_format($totals['total_NI']) ?></td>
-                <td align="center"><?= number_format($totals['total_XFER']) ?></td>
-
-                <th><?= number_format($totals['total_AnswerMachines']) ?></th>
-                <th><?= $t_ans_percent ?>%</th>
-                <th><?= number_format($totals['total_contacts_per_worked_hour'], 2) . ' - ' . number_format($totals['total_calls_per_worked_hour'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-left" nowrap><?= count($cluster_data) ?> Clusters:</th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_paid_hrs'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_wrkd_hrs'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_calls']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_NI']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_XFER']) ?></th>
 
 
-                <td align="center"><?= number_format($totals['total_sale_cnt']) ?></td>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_AnswerMachines']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= $t_ans_percent ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($total_worked_contacts_hr, 2) . ' - ' . number_format($total_worked_calls_hr, 2) ?></th>
 
 
-                <td align="center"><?= number_format($totals['total_paid_sale_cnt']) ?></td>
-                <td align="right"><?= number_format($paid_sale_percent, 2) ?>%</td>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_sale_cnt']) ?></th>
 
-                <td align="right">$<?= number_format($totals['total_paid_sales']) ?></td>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format($running_totals['total_paid_sale_cnt']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($paid_sale_percent, 2) ?>%</th>
 
-
-                <td align="center"><?= number_format(($totals['total_sale_cnt'] - $totals['total_paid_sale_cnt'])) ?></td>
-                <td align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</td>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_paid_sales']) ?></th>
 
 
-                <td align="right"><?= number_format($totals['total_closing'], 2) ?>%</td>
-                <td align="right"><?= number_format($totals['total_conversion'], 2) ?>%</td>
-                <td align="right"><?= number_format($totals['total_yes2all'], 2) ?>%</td>
-                <td align="right">$<?= number_format($totals['total_sales']) ?></td>
-
-                <td align="right">$<?= number_format($totals['total_avg'], 2) ?></td>
-                <td align="right">$<?= number_format($totals['total_paid_hr'], 2) ?></td>
-                <td align="right">$<?= number_format($totals['total_wrkd_hr'], 2) ?></td>
-                </tr><?
-
-                $running_totals['total_paid_sale_cnt'] += $totals['total_paid_sale_cnt'];
-                $running_totals['total_sale_cnt'] += $totals['total_sale_cnt'];
-                $running_totals['total_activity_paid_hrs'] += $totals['total_activity_paid_hrs'];
-                $running_totals['total_activity_wrkd_hrs'] += $totals['total_activity_wrkd_hrs'];
-                $running_totals['total_calls'] += $totals['total_calls'];
+                    <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format(($running_totals['total_sale_cnt'] - $running_totals['total_paid_sale_cnt'])) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
 
 
-                $running_totals['total_NI'] += $totals['total_NI'];
-                $running_totals['total_XFER'] += $totals['total_XFER'];
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_closing'], 2) ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_conversion'], 2) ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_yes2all'], 2) ?>%</th>
 
-                $running_totals['total_AnswerMachines'] += $totals['total_AnswerMachines'];
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_sales']) ?></th>
 
-                $running_totals['total_paid_sales'] += $totals['total_paid_sales'];
-                $running_totals['total_sales'] += $totals['total_sales'];
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_avg'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_paid_hr'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_wrkd_hr'], 2) ?></th>
 
-
-                // CLOSING PERCENTAGE AVERAGING
-                $running_totals['total_closing_num'] += $totals['total_closing'];
-                $running_totals['total_closing_cnt']++;
-
-                // CONVERSION PERCENTAGE AVERAGING
-                $running_totals['total_conversion_num'] += $totals['total_conversion'];
-                $running_totals['total_conversion_cnt']++;
-
-                // YES2ALL PERCENTAGE AVERAGING
-                $running_totals['total_yes2all_num'] += $totals['total_yes2all'];
-                $running_totals['total_yes2all_cnt']++;
-
-                // AVERAGE-SALE PERCENTAGE AVERAGING
-                $running_totals['total_avg_num'] += $totals['total_avg'];
-                $running_totals['total_avg_cnt']++;
-
-
-                // PAID PER HOUR AVERAGING
-                $running_totals['total_paid_hr_num'] += $totals['total_paid_hr'];
-                $running_totals['total_paid_hr_cnt']++;
-
-
-                // WORKED PER HOUR AVERAGING
-                $running_totals['total_wrkd_hr_num'] += $totals['total_wrkd_hr'];
-                $running_totals['total_wrkd_hr_cnt']++;
-
-
-                $totals = null;
-            }
-
-
-            $paid_sale_percent = round(((float)$running_totals['total_paid_sale_cnt'] / $running_totals['total_sale_cnt']) * 100, 2);
-
-            $unpaid_sale_percent = 100 - $paid_sale_percent;
-
-            $running_totals['total_closing'] = ($running_totals['total_closing_cnt'] <= 0) ? 0 : $running_totals['total_closing_num'] / $running_totals['total_closing_cnt'];
-            $running_totals['total_conversion'] = ($running_totals['total_conversion_cnt'] <= 0) ? 0 : $running_totals['total_conversion_num'] / $running_totals['total_conversion_cnt'];
-            $running_totals['total_yes2all'] = ($running_totals['total_yes2all_cnt'] <= 0) ? 0 : $running_totals['total_yes2all_num'] / $running_totals['total_yes2all_cnt'];
-            $running_totals['total_avg'] = ($running_totals['total_avg_cnt'] <= 0) ? 0 : $running_totals['total_avg_num'] / $running_totals['total_avg_cnt'];
-            $running_totals['total_paid_hr'] = ($running_totals['total_paid_hr_cnt'] <= 0) ? 0 : $running_totals['total_paid_hr_num'] / $running_totals['total_paid_hr_cnt'];
-            $running_totals['total_wrkd_hr'] = ($running_totals['total_wrkd_hr_cnt'] <= 0) ? 0 : $running_totals['total_wrkd_hr_num'] / $running_totals['total_wrkd_hr_cnt'];
-
-            $total_worked_contacts_hr = ($running_totals['total_activity_wrkd_hrs'] <= 0) ? 0 : (($running_totals['total_NI'] + $running_totals['total_XFER']) / $running_totals['total_activity_wrkd_hrs']);
-            $total_worked_calls_hr = ($running_totals['total_activity_wrkd_hrs'] <= 0) ? 0 : (($running_totals['total_calls']) / $running_totals['total_activity_wrkd_hrs']);
-
-            $t_ans_percent = round((($running_totals['total_AnswerMachines'] / $running_totals['total_calls']) * 100), 2);
-
-            ?>
-            <tr>
-                <th style="border-top:1px solid #000;padding:3px" align="left" nowrap><?= count($cluster_data) ?> Clusters:</th>
-                <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_paid_hrs'], 2) ?></th>
-                <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_wrkd_hrs'], 2) ?></th>
-                <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_calls']) ?></th>
-                <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_NI']) ?></th>
-                <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_XFER']) ?></th>
-
-
-                <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_AnswerMachines']) ?></th>
-                <th style="border-top:1px solid #000;padding:3px"><?= $t_ans_percent ?>%</th>
-                <th style="border-top:1px solid #000;padding:3px"><?= number_format($total_worked_contacts_hr, 2) . ' - ' . number_format($total_worked_calls_hr, 2) ?></th>
-
-
-                <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_sale_cnt']) ?></th>
-
-                <th style="border-top:1px solid #000;padding:3px" align="center"><?= number_format($running_totals['total_paid_sale_cnt']) ?></th>
-                <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($paid_sale_percent, 2) ?>%</th>
-
-                <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_paid_sales']) ?></th>
-
-
-                <th style="border-top:1px solid #000;padding:3px" align="center"><?= number_format(($running_totals['total_sale_cnt'] - $running_totals['total_paid_sale_cnt'])) ?></th>
-                <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
-
-
-                <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($running_totals['total_closing'], 2) ?>%</th>
-                <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($running_totals['total_conversion'], 2) ?>%</th>
-                <th style="border-top:1px solid #000;padding:3px" align="right"><?= number_format($running_totals['total_yes2all'], 2) ?>%</th>
-
-                <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_sales']) ?></th>
-
-                <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_avg'], 2) ?></th>
-                <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_paid_hr'], 2) ?></th>
-                <th style="border-top:1px solid #000;padding:3px" align="right">$<?= number_format($running_totals['total_wrkd_hr'], 2) ?></th>
-
-            </tr>
-            </table><?
-
+                </tr>
+            </table>
+            <div class="block-header bg-info-light">
+                <i class="si si-clock"></i>Generated on: <?= date("g:ia m/d/Y") ?>
+            </div>
+            </form>
+            </div>
+            <?
             // GRAB DATA FROM BUFFER
             $data = ob_get_contents();
-
             // TURN OFF OUTPUT BUFFERING, WITHOUT OUTPUTTING
             ob_end_clean();
-
             // RETURN HTML
             return $data;
-
         }
-
-
     }
-
-
 } // END OF CLASS

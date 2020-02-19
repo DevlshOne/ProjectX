@@ -92,7 +92,7 @@ class PACReports{
 	function handleFLOW(){
 		# Handle flow, based on query string
 		if(!checkAccess('pac_web_donations')){
-			
+
 			accessDenied("Web Donations");
 			return;
 		}
@@ -455,47 +455,30 @@ M4 -> N4*/
 
 
 			function handlePacListClick(id){
-
 				displayAddPacDialog(id);
-
 			}
 
-
 			function displayAddPacDialog(id){
-
 				var objname = 'dialog-modal-add-pac';
-
-
 				if(id > 0){
 					$('#'+objname).dialog( "option", "title", 'Editing PAC entry' );
 				}else{
 					$('#'+objname).dialog( "option", "title", 'Adding new PAC entry' );
 				}
-
-
-
 				$('#'+objname).dialog("open");
-
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
 				$('#'+objname).load("index.php?area=pac_reports&add_pac="+id+"&printable=1&no_script=1");
-
-				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
 			function resetPacForm(frm){
-
+                frm.reset();
 				frm.s_project.value = '';
 				frm.s_amount.value = '';
 				frm.s_phone.value = '';
-
 				frm.s_gateway.value = '';
-
 			}
 
-
-			var pacsrchtog = false;
-
+			var pacsrchtog = true;
 			function togglePacSearch(){
 				pacsrchtog = !pacsrchtog;
 				ieDisplay('pac_search_table', pacsrchtog);
@@ -507,35 +490,25 @@ M4 -> N4*/
 				ieDisplay('nams_export_table', namexporttog);
 			}
 
-
 			function toggleDateMode(way){
-
 				if(way == 'daterange'){
 					$('#nodate_span').hide();
 					$('#date1_span').show();
-
 					// SHOW EXTRA DATE FIELD
 					$('#date2_span').show();
-
 				}else if(way == 'any'){
-
 					$('#nodate_span').show();
 					$('#date1_span').hide();
 					$('#date2_span').hide();
-
 				}else{
 					$('#nodate_span').hide();
-
 					$('#date1_span').show();
-
 					// HIDE IT
 					$('#date2_span').hide();
 				}
-
 			}
 
 			function triggerExport(frm){
-
 				var url = "ajax.php?mode=pac_reports_export&"+
 						'date_month='+escape(frm.stime_month.value)+"&"+'date_day='+escape(frm.stime_day.value)+"&"+'date_year='+escape(frm.stime_year.value)+"&"+
 						'date2_month='+escape(frm.etime_month.value)+"&"+'date2_day='+escape(frm.etime_day.value)+"&"+'date2_year='+escape(frm.etime_year.value)+"&"+
@@ -545,187 +518,102 @@ M4 -> N4*/
 			}
 
 		</script>
-		<div id="dialog-modal-add-pac" title="Adding new PAC" class="nod">
-		<?
-
-		?>
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadPacs();return false">
-			<input type="hidden" name="searching_pac">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr>
-			<td height="40" class="pad_left ui-widget-header">
-
-				<table border="0" width="100%" >
-				<tr>
-					<td width="500">
-						Web Donation Entries
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Import" onclick="displayAddPacDialog(0)">
-
-						&nbsp;&nbsp;&nbsp;&nbsp;
-						<input type="button" value="Search" onclick="togglePacSearch()">
-						&nbsp;&nbsp;&nbsp;&nbsp;
-
-						<input type="button" value="NAMS Export" onclick="toggleNAMSExport()">
-					</td>
-
-					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadPacs();return false">
-						<option value="20">20</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-						<option value="500">500</option>
-					</select></td>
-
-					<td align="right"><?
-						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-						<tr>
-							<td id="pacs_prev_td" class="page_system_prev"></td>
-							<td id="pacs_page_td" class="page_system_page"></td>
-							<td id="pacs_next_td" class="page_system_next"></td>
-						</tr>
-						</table>
-
-					</td>
-				</tr>
-				</table>
-
-			</td>
-
-		</tr>
-		<tr>
-			<td colspan="2"><table border="0" width="300" id="nams_export_table" class="nod">
-			<tr>
-				<th class="row2" colspan="2">NAMS Export</th>
-			</tr>
-			<tr>
-				<th>Date Mode:</th>
-				<td>
-					<select name="date_mode" id="date_mode" onchange="toggleDateMode(this.value);">
-						<option value="date">Date</option>
-						<option value="daterange"<?=($_REQUEST['date_mode']=='daterange')?' SELECTED ':''?>>Date Range</option>
-						<option value="any"<?=($_REQUEST['date_mode']=='any')?' SELECTED ':''?>>ANY</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<th>Date(s):</th>
-				<td nowrap><?
-
-					?><span id="date1_span"><?
-						echo makeTimebar("stime_", 1, null,false,time());
-					?></span><?
-
-					?><span id="date2_span" class="nod"><br /><?
-						echo makeTimebar("etime_",1,null,false,time());
-					?></span>
-
-					<span id="nodate_span" class="nod">
+		<div id="dialog-modal-add-pac" title="Importing New PAC"></div>
+        <div class="block">
+        <form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadPacs();return false">
+            <! ** BEGIN BLOCK HEADER -->
+            <div class="block-header bg-primary-light">
+                <h4 class="block-title">Web Donation Entries</h4>
+                <button type="button" title="Import" class="btn btn-sm btn-info" onclick="displayAddPacDialog(0)">Import</button>
+                <button type="button" title="Toggle Search" class="btn btn-sm btn-primary" onclick="togglePacSearch();">Toggle Search</button>
+                <button type="button" title="Toggle Export NAMS" class="btn btn-sm btn-primary" onclick="toggleNAMSExport();">Toggle Export NAMS</button>
+                <div id="pacs_prev_td" class="page_system_prev"></div>
+                <div id="pacs_page_td" class="page_system_page"></div>
+                <div id="pacs_next_td" class="page_system_next"></div>
+                <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadPacs(); return false;">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                </select>
+                <div class="d-inline-block ml-2">
+                    <button class="btn btn-sm btn-dark" title="Total Found">
+                        <i class="si si-list"></i>
+                        <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                    </button>
+                </div>
+            </div>
+            <! ** END BLOCK HEADER -->
+            <! ** BEGIN BLOCK EXPORT TABLE -->
+            <div class="bg-info-light nod" id="nams_export_table">
+                <div class="input-group input-group-sm">
+                    <input type="hidden" name="searching_pac"/>
+                    <select name="date_mode" class="custom-select-sm"   id="date_mode" onchange="toggleDateMode(this.value);">
+                        <option value="date">Date Mode</option>
+                        <option value="daterange"<?=($_REQUEST['date_mode']=='daterange')?' SELECTED ':''?>>Date Range Mode</option>
+                        <option value="any"<?=($_REQUEST['date_mode']=='any')?' SELECTED ':''?>>ANY</option>
+                    </select>
+                    <span id="date1_span">
+                        <?=makeTimebar("stime_", 1, null,false,time());?>
+                    </span>
+                    <span id="date2_span" class="nod">&nbsp;-&nbsp;
+                        <?=makeTimebar("etime_",1,null,false,time());?>
+                    </span>
+                    <span id="nodate_span" class="text-center font-weight-bold px-auto pt-1 align-middle nod">
 						ANY/ALL DATES
 					</span>
-				</td>
-			</tr>
-			<tr>
-				<td colspan="2" align="center">
-					<input type="button" value="Export for NAMS" onclick=" triggerExport(this.form)"/>
-				</td>
-			</tr>
-			</table></td>
-		</tr>
-
-		<tr>
-			<td colspan="2"><table border="0" width="100%" id="pac_search_table" class="nod">
-			<tr>
-				<td rowspan="2" width="70" align="center" style="border-right:1px solid #000">
-
-
-					<div id="total_count_div"></div>
-
-				</td>
-				<th class="row2">Project</th>
-				<th class="row2">Amount</th>
-				<th class="row2">Phone#</th>
-				<th class="row2">Gateway</th>
-
-
-				<td><input type="submit" value="Search" name="the_Search_button"></td>
-			</tr>
-			<tr>
-				<td align="center"><?
-
-					echo $this->makeProjectDD('s_project', $_REQUEST['s_project'], '', "", "[ALL]");
-
-				?></td>
-				<td align="center"><input type="text" name="s_amount" size="5" value="<?=htmlentities($_REQUEST['s_amount'])?>"></td>
-				<td align="center"><input type="text" name="s_phone" size="5" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
-				<td align="center"><?
-
-					echo $this->makeGatewayDD('s_gateway', $_REQUEST['s_gateway'], '', "", "[ALL]");
-
-				?></td>
-
-				<td><input type="button" value="Reset" onclick="resetPacForm(this.form);resetPageSystem('<?=$this->index_name?>');loadPacs();"></td>
-			</tr>
-			</table></td>
-		</tr></form>
-		<tr>
-			<td colspan="2"><table border="0" width="100%" id="pac_table">
-			<tr><?/*
-				['project','align_left'],
-				['donation_id','align_center'],
-
-				['first_name','align_left'],
-				['last_name','align_left'],
-
-				['amount','align_right'],
-
-				['phone','align_left'],
-
-
-				['employer','align_left'],
-				['profession','align_left'],
-
-				['payment_gateway','align_left'],
-			*/?>
-
-				<th class="row2" align="left"><?=$this->getOrderLink('project')?>Project</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('donation_id')?>Don.ID</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('first_name')?>First&nbsp;Name</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('last_name')?>Last&nbsp;Name</a></th>
-				<th class="row2" align="right"><?=$this->getOrderLink('amount')?>Amount</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('phone')?>Phone</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('employer')?>Employer</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('profession')?>Profession</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('time')?>Time</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('payment_gateway')?>Payment Gateway</a></th>
-
-				<th class="row2">&nbsp;</th>
-			</tr><?
-
-			?></table></td>
-		</tr></table>
-
+                    <button type="button" title="Export to NAMS" class="btn btn-sm btn-warning" name="the_Search_button" onclick="triggerExport(this.form);">Export Now</button>
+                </div>
+            </div>
+            <! ** END BLOCK SEARCH TABLE -->
+            <! ** BEGIN BLOCK EXPORT TABLE -->
+            <div class="bg-info-light" id="pac_search_table">
+                <div class="input-group input-group-sm">
+                    <input type="hidden" name="searching_pac"/>
+                    <?=$this->makeProjectDD('s_project', $_REQUEST['s_project'], 'form-control custom-select-sm', "", "[Select Project]");?>
+                    <input type="text" class="form-control" placeholder="Amount.." name="s_amount" size="5" value="<?=htmlentities($_REQUEST['s_amount'])?>">
+                    <input type="text" class="form-control" placeholder="Phone.." name="s_phone" size="5" value="<?=htmlentities($_REQUEST['s_phone'])?>">
+                    <?=$this->makeGatewayDD('s_gateway', $_REQUEST['s_gateway'], 'form-control custom-select-sm', "", "[Select Gateway]");?>
+                    <button type="submit" title="Search" class="btn btn-sm btn-success" name="the_Search_button">Search</button>
+                    <button type="button" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetPacForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadPacs();return false;">Reset</button>
+                </div>
+            </div>
+            <! ** END BLOCK SEARCH TABLE -->
+            <! ** BEGIN BLOCK LIST (DATATABLE) -->
+            <div class="block-content">
+                <table class="table table-sm table-striped" id="pac_table">
+                    <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
+                    <tr>
+                        <th class="row2 text-left"><?=$this->getOrderLink('project')?>Project</a></th>
+                        <th class="row2 text-left"><?=$this->getOrderLink('donation_id')?>Don.ID</a></th>
+                        <th class="row2 text-left"><?=$this->getOrderLink('first_name')?>First&nbsp;Name</a></th>
+                        <th class="row2 text-left"><?=$this->getOrderLink('last_name')?>Last&nbsp;Name</a></th>
+                        <th class="row2 text-right"><?=$this->getOrderLink('amount')?>Amount</a></th>
+                        <th class="row2 text-left"><?=$this->getOrderLink('phone')?>Phone</a></th>
+                        <th class="row2 text-left"><?=$this->getOrderLink('employer')?>Employer</a></th>
+                        <th class="row2 text-left"><?=$this->getOrderLink('profession')?>Profession</a></th>
+                        <th class="row2 text-left"><?=$this->getOrderLink('time')?>Time</a></th>
+                        <th class="row2 text-left"><?=$this->getOrderLink('payment_gateway')?>Payment Gateway</a></th>
+                        <th class="row2 text-center">&nbsp;</th>
+                    </tr>
+                </table>
+            </div>
+        </form>
+        </div>
 		<script>
-
 			$("#dialog-modal-add-pac").dialog({
 				autoOpen: false,
-				width: 550,
-				height: 390,
+				width: 'auto',
+				height: 450,
 				modal: false,
-				draggable:true,
-				resizable: false
+				draggable: true,
+				resizable: false,
+                position: {my: 'center', at: 'center'},
+                containment: '#main-container'
 			});
-
 			loadPacs();
-
-		</script><?
-
+		</script>
+        <?
 	}
 
 
@@ -836,10 +724,6 @@ M4 -> N4*/
 			// SUBMIT HIDDEN FORM
 			ninjafrm.submit();
 		}
-
-		$('#dialog-modal-add-pac').dialog( "option", "width", '300' );
-		$('#dialog-modal-add-pac').dialog( "option", "height", '190' );
-
 		</script>
 
 		<div class="nod">
@@ -849,7 +733,7 @@ M4 -> N4*/
 		<form id="webdonation_upload_frm" name="webdonation_upload_frm" method="POST" enctype="multipart/form-data" action="ajax.php?mode=web_donation_import_upload" target="iframe_upload">
 			<input type="hidden" name="uploading_web_csv">
 
-		<table border="0" align="center">
+		<table class="tightTable">
 		<tr>
 			<th align="left" height="30">Project:</th>
 			<td nowrap>
@@ -1002,15 +886,12 @@ M4 -> N4*/
 			// SET TITLEBAR
 			$('#dialog-modal-add-pac').dialog( "option", "title", '<?=($id)?'Editing Web Entry #'.$id.' - '.htmlentities($row['name']):'Adding new Web entry'?>' );
 
-			$('#dialog-modal-add-pac').dialog( "option", "width", '550' );
-			$('#dialog-modal-add-pac').dialog( "option", "height", '390' );
-
 		</script>
 		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkPacFrm(this); return false">
 			<input type="hidden" id="adding_pac" name="adding_pac" value="<?=$id?>" >
 
 
-		<table border="0" align="center">
+		<table class="tightTable">
 
 		<tr>
 			<th align="left" height="30">Date/time:</th>
