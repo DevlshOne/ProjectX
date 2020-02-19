@@ -226,7 +226,7 @@
                     position: {my: 'center', at: 'center'},
                 });
 
-                $("#dialog-modal-add-question").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-add-question").closest('.ui-dialog').draggable("option","containment","#main-container");
                 
                 loadQuestions();
                 $('#s_quiz_id').attr('title', 'Select Quiz ID');

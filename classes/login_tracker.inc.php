@@ -410,7 +410,7 @@ class LoginTracker{
 				resizable: false
 			});
 
-			$("#dialog-modal-view-login").dialog("widget").draggable("option","containment","#main-container");
+			$("#dialog-modal-view-login").closest('.ui-dialog').draggable("option","containment","#main-container");
 
 			loadLogins();
 

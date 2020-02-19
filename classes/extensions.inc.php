@@ -900,9 +900,9 @@ class Extensions
                     resizable: true
                 });
 
-                $("#dialog-modal-add-extension").dialog("widget").draggable("option","containment","#main-container");
-                $("#dialog-modal-add-bulk-extension").dialog("widget").draggable("option","containment","#main-container");
-                $("#dialog-modal-bulk-tools").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-add-extension").closest('.ui-dialog').draggable("option","containment","#main-container");
+                $("#dialog-modal-add-bulk-extension").closest('.ui-dialog').draggable("option","containment","#main-container");
+                $("#dialog-modal-bulk-tools").closest('.ui-dialog').draggable("option","containment","#main-container");
 
                 
                 loadExtensions();

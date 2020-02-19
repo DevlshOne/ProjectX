@@ -67,15 +67,14 @@ class UserTeamsClass
         ?>
         <script>
             var userteam_delmsg = "Are you sure you want to delete this team?";
-            let <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
-            let <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-            let <?=$this->index_name?> =
-            0;
-            let <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-            let UserTeamsTableFormat = [
-                ['team_name', 'align_left'],
-                ['[get:num_users:id]', 'align_center'],
-                ['[delete]', 'align_center']
+            var userteam_orderby = "<?=addslashes($this->orderby)?>";
+            var userteam_orderdir = "<?=$this->orderdir?>";
+            var userteam_index = 0;
+            var userteam_pagesize = <?=$this->pagesize?>;
+            var UserTeamsTableFormat = [
+                ['team_name', 'text-left'],
+                ['[get:num_users:id]', 'text-center'],
+                ['[delete]', 'text-center']
             ];
 
             /**
@@ -93,7 +92,7 @@ class UserTeamsClass
                 "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
             }
 
-            let userteams_loading_flag = false;
+            var userteams_loading_flag = false;
 
             /**
              * Load the license data - make the ajax call, callback to the parse function
@@ -153,6 +152,7 @@ class UserTeamsClass
             }
 
             function resetUserTeamForm(frm) {
+                frm.reset();
                 frm.s_team_name.value = '';
             }
         </script>
@@ -183,8 +183,8 @@ class UserTeamsClass
                 position: {my: 'center', at: 'center'}
             });
 
-            $("#dialog-modal-edit-user-team").dialog("widget").draggable("option","containment","#main-container");
-            
+            $("#dialog-modal-edit-user-team").closest('.ui-dialog').draggable("option", "containment", "#main-container");
+
             $("#dialog-modal-add-user-team").dialog({
                 autoOpen: false,
                 width: 'auto',
@@ -213,13 +213,9 @@ class UserTeamsClass
                                     loadUserteams();
                                 }
                             });
-
                             $(this).dialog('close');
                             //location.href = 'index.php?area=user_teams';
-
                             $('#new_team_name').val("");
-
-
                         } else {
                             alert('Team name may not be empty!');
                         }
@@ -229,87 +225,58 @@ class UserTeamsClass
                     }
                 }
             });
-
-
-            $("#dialog-modal-add-user-team").dialog("widget").draggable("option","containment","#main-container");
-
-            
+            $("#dialog-modal-add-user-team").closest('.ui-dialog').draggable("option", "containment", "#main-container");
             loadUserteams();
         </script>
-        <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#userteamsarea" onsubmit="loadUserteams();return false">
-            <input type="hidden" name="searching_userteams">
-            <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
-            <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
-            <table class="lb tightTable pct100">
-                <tr>
-                    <td height="40" class="pad_left ui-widget-header">
-                        <table class="tightTable">
-                            <tr>
-                                <th width="15%">
-                                    <div class="lefty">User Teams</div> &nbsp;&nbsp;&nbsp;&nbsp;
-                                </th>
-                                <td width="50%" class="centery">PAGE SIZE: <select name="<?= $this->order_prepend ?>pagesizeDD" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0; loadUsergroups();return false">
-                                        <option value="20">20</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                        <option value="500">500</option>
-                                    </select></td>
-                                <td width="15%" class="righty">
-                                    <table class="page_system_container tightTable">
-                                        <tr>
-                                            <td id="userteams_prev_td" class="page_system_prev"></td>
-                                            <td id="userteams_page_td" class="page_system_page"></td>
-                                            <td id="userteams_next_td" class="page_system_next"></td>
-                                        </tr>
-                                    </table>
-                                </td>
-                                <td>
-                                    <div class="righty"><input type="button" value="Add" onclick="displayAddUserTeamDialog();"></div>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table border="0" id="userteam_search_table">
-                            <tr>
-                                <td rowspan="2" width="100" align="center" style="border-right:1px solid #000">
-                                    <span id="total_count_div"></span>
-                                </td>
-                                <th class="row2">Team Name</th>
-                                <td>
-                                    <input type="submit" value="Search" onclick="<?= $this->index_name ?> = 0;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" name="s_team_name" size="10" value="<?= htmlentities($_REQUEST['s_team_name']) ?>"></td>
-                                <td>
-                                    <input type="button" value="Reset" onclick="resetUserTeamForm(this.form);loadUserteams();">
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-        </form>
-        <tr>
-            <td colspan="2">
-                <table border="0" width="100%" id="userteam_table">
-                    <tr>
-                        <th class="row2" align="left"><?= $this->getOrderLink('team_name') ?>Team Name</a></th>
-                        <th class="row2" align="center"><?= $this->getOrderLink('user_count') ?>Member Count</a></th>
-                        <th class="row2">&nbsp;</th>
-                    </tr>
-                    <tr>
-                        <td colspan="5" align="center">
-                            <i>Loading, please wait...</i>
-                        </td>
-                    </tr>
-
-                </table>
-            </td>
-        </tr>
-        </table>
+        <div class="block">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#userteamsarea" onsubmit="loadUserteams();return false">
+                <! ** BEGIN BLOCK HEADER -->
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">User Teams</h4>
+                    <button type="button" title="Add User Team" class="btn btn-sm btn-primary" onclick="displayAddUserTeamDialog(0)">Add</button>
+                    <div id="userteams_prev_td" class="page_system_prev"></div>
+                    <div id="userteams_page_td" class="page_system_page"></div>
+                    <div id="userteams_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0;loadUserteams(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                    <div class="d-inline-block ml-2">
+                        <button class="btn btn-sm btn-dark" title="Total Found">
+                            <i class="si si-list"></i>
+                            <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                        </button>
+                    </div>
+                </div>
+                <! ** END BLOCK HEADER -->
+                <! ** BEGIN BLOCK SEARCH TABLE -->
+                <div class="bg-info-light" id="userteam_search_table">
+                    <div class="input-group input-group-sm">
+                        <input type="hidden" name="searching_userteams">
+                        <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
+                        <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
+                        <input type="text" class="form-control" placeholder="Team Name.." name="s_team_name" value="<?= htmlentities($_REQUEST['s_team_name']) ?>"/>
+                        <button type="submit" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadUsers();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetUserTeamForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadUserteams();return false;">Reset</button>
+                    </div>
+                </div>
+                <! ** END BLOCK SEARCH TABLE -->
+                <! ** BEGIN BLOCK LIST (DATATABLE) -->
+                <div class="block-content">
+                    <table class="table table-sm table-striped" id="userteam_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                        <tr>
+                            <th class="row2 text-left"><?= $this->getOrderLink('team_name') ?>Team Name</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('user_count') ?>Member Count</a></th>
+                            <th class="row2">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+                <! ** END BLOCK LIST (DATATABLE) -->
+            </form>
+        </div>
         <?
     }
 

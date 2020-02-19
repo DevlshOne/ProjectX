@@ -280,7 +280,7 @@ class UserGroupsMaster{
                     position: {my: 'center', at: 'center', of: '#main-container'}
                 });
 
-                $("#dialog-modal-add-user-groups-master").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-add-user-groups-master").closest('.ui-dialog').draggable("option","containment","#main-container");
                 
                 loadUser_groups_master();
             </script>

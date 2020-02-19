@@ -178,17 +178,16 @@ class ReportEmails{
 				eval('reports_loading_flag = false');
 			}
 
-
 			function handleReportListClick(id){
 				displayAddReportDialog(id);
 			}
+
 			function displayBulkAddReportDialog(){
 				var objname = 'dialog-modal-add-report';
 				$('#'+objname).dialog( "option", "title", 'Bulk Adding Report Emails' );
 				$('#'+objname).dialog("open");
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
 				$('#'+objname).load("index.php?area=report_emails&bulk_add_report_email&printable=1&no_script=1");
-				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
 			function displayAddReportDialog(id){
@@ -201,7 +200,6 @@ class ReportEmails{
 				$('#'+objname).dialog("open");
 				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
 				$('#'+objname).load("index.php?area=report_emails&add_report_email="+id+"&printable=1&no_script=1");
-				$('#'+objname).dialog('option', 'position', 'center');
 			}
 
 			function resetReportForm(frm){
@@ -293,7 +291,8 @@ class ReportEmails{
                 position: {my: 'center', at: 'center'},
                 containment: '#main-container'
 			});
-			loadReports();
+            $("#dialog-modal-add-report").closest('.ui-dialog').draggable("option", "containment", "#main-container");
+            loadReports();
 		</script>
         <?
 	}

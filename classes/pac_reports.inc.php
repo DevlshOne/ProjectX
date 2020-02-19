@@ -611,6 +611,7 @@ M4 -> N4*/
                 position: {my: 'center', at: 'center'},
                 containment: '#main-container'
 			});
+            $('#dialog-modal-add-pac').closest('.ui-dialog').draggable('option', 'containment', '#main-container');
 			loadPacs();
 		</script>
         <?
@@ -619,12 +620,10 @@ M4 -> N4*/
 
 
 	function makeProjectDD($name, $sel, $class, $onchange, $blank_option = 1){
-
 		$out = '<select name="'.$name.'" id="'.$name.'" ';
 		$out.= ($class)?' class="'.$class.'" ':'';
 		$out.= ($onchange)?' onchange="'.$onchange.'" ':'';
 		$out.= '>';
-
 		if($blank_option){
 			$out .= '<option value="" '.(($sel == '')?' SELECTED ':'').'>'.((!is_numeric($blank_option))?$blank_option:"[All]").'</option>';
 		}

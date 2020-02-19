@@ -67,30 +67,23 @@ class FeatureControl
 
     function makeDD($name, $sel, $class, $blank_entry = "[NO SECTIONS/ACCESS]")
     {
-
         $info = array(
-
             'status' => 'active'
         );
-
         $out = '<select id="' . htmlentities($name) . '" name="' . htmlentities($name) . '" ';
-
+        if (!empty($class)) {
+            $out .= 'class="' . $class . '"';
+        }
         $out .= '>';
-
-
         $out .= '<option value="">' . htmlentities($blank_entry) . '</option>';
-
         $res = $_SESSION['dbapi']->features->getResults($info);
-
         while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
 
             $out .= '<option value="' . $row['id'] . '" ' . (($sel == $row['id']) ? ' SELECTED ' : '') . '>';
             $out .= $row['name'] . '</option>';
 
         }
-
         $out .= '</select>';
-
         return $out;
     }
 
@@ -241,14 +234,7 @@ class FeatureControl
 
 
         </script>
-        <div id="dialog-modal-add-feature" title="Adding new Feature Set" class="nod">
-            <?
-
-            ?>
-        </div><?
-
-
-        ?>
+        <div id="dialog-modal-add-feature" title="Adding new Feature Set" class="nod"></div>
         <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadFeatures();return false">
             <input type="hidden" name="searching_features">
             <? /**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/ ?>
@@ -337,7 +323,7 @@ class FeatureControl
                 position: {my: 'center', at: 'center'},
             });
 
-            $("#dialog-modal-add-feature").dialog("widget").draggable("option","containment","#main-container");
+            $("#dialog-modal-add-feature").closest('.ui-dialog').draggable("option","containment","#main-container");
 
             // CALL FUNCTION TO POPULATE THE TABLE WITH DATA
             loadFeatures();

@@ -324,7 +324,7 @@ class DispoLog
                     position: {my: 'center', at: 'center'},
                     containment: '#main-container'
                 });
-                $("#view_dispo_log").dialog("widget").draggable("option", "containment", "#main-container");
+                $("#view_dispo_log").closest('.ui-dialog').draggable("option", "containment", "#main-container");
             });
             loadDispos();
         </script>

@@ -133,7 +133,7 @@ class CampaignParents
                 position: {my: 'center', at: 'center', of: '#main-container'}
             });
 
-            $("#dialog-modal-add-campaign-parent").dialog("widget").draggable("option","containment","#main-container");
+            $("#dialog-modal-add-campaign-parent").closest('.ui-dialog').draggable("option","containment","#main-container");
             
             var campaign_parent_delmsg = 'Are you sure you want to delete this campaign parent?';
             var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";

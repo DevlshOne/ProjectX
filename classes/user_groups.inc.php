@@ -266,113 +266,72 @@ class UserGroupsClass
                     $('#' + objname).dialog("option", "title", 'Adding new User Group');
                 }
                 $('#' + objname).dialog("open");
-
                 $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-
                 $('#' + objname).load("index.php?area=user_groups&add_user_group=" + id + "&printable=1&no_script=1");
             }
 
 
             function resetUserGroupForm(frm) {
-
+                frm.reset();
                 frm.s_name.value = '';
                 frm.s_cluster_id.value = '';
                 frm.s_group_name.value = '';
-
-
             }
-
         </script>
         <div id="dialog-modal-add-user-group" title="Adding new User Group" class="nod"></div>
-        <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#usergroupsarea" onsubmit="loadUsergroups();return false">
-            <input type="hidden" name="searching_usergroups">
-            <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
-            <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
+        <div class="block">
             <a name="usersarea"></a>
-            <table border="0" width="100%" class="lb" cellspacing="0">
-                <tr>
-                    <td height="40" class="pad_left ui-widget-header">
-                        <table border="0" width="100%">
-                            <tr>
-                                <th width="500" align="left">
-                                    User Groups
-                                    <input type="button" value="Add" onclick="displayAddUserGroupDialog(0);<? /**,'_blank','width=500,height=400,scrollbars=1,resizable=1')**/ ?>">
-                                </th>
-                                <td width="150" align="center">PAGE SIZE: <select name="<?= $this->order_prepend ?>pagesizeDD" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0; loadUsergroups();return false">
-                                        <option value="20">20</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                        <option value="500">500</option>
-                                    </select></td>
-                                <td align="right">
-                                    <? /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/ ?>
-                                    <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-                                        <tr>
-                                            <td id="usergroups_prev_td" class="page_system_prev"></td>
-                                            <td id="usergroups_page_td" class="page_system_page"></td>
-                                            <td id="usergroups_next_td" class="page_system_next"></td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table border="0" id="usrgrp_search_table">
-                            <tr>
-                                <td rowspan="2" width="100" align="center" style="border-right:1px solid #000">
-
-                                    <span id="total_count_div"></span>
-
-                                </td>
-                                <th class="row2">Name</th>
-                                <th class="row2">Group</th>
-                                <th class="row2">Cluster</th>
-                                <td>
-                                    <input type="submit" value="Search" onclick="<?= $this->index_name ?> = 0;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><input class="form-control" type="text" name="s_name" size="10" value="<?= htmlentities($_REQUEST['s_name']) ?>"></td>
-                                <td><input class="form-control" type="text" name="s_group_name" size="10" value="<?= htmlentities($_REQUEST['s_group_name']) ?>"></td>
-                                <td>
-                                    <?
-
-                                    echo $this->makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", 1);
-
-
-                                    ?>
-                                </td>
-                                <td>
-                                    <input type="button" value="Reset" onclick="resetUserGroupForm(this.form);loadUsergroups();">
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <table border="0" width="100%" id="usergroup_table">
-                            <tr>
-                                <th class="row2 text-left"><?= $this->getOrderLink('user_group') ?>User Group</a></th>
-                                <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                                <th class="row2 text-center"><?= $this->getOrderLink('vici_cluster_id') ?>Cluster</a></th>
-                                <th class="row2 text-center"><?= $this->getOrderLink('office') ?>Office</a></th>
-                                <th class="row2">&nbsp;</th>
-                            </tr>
-                            <tr>
-                                <td colspan="5" align="center">
-                                    <i>Loading, please wait...</i>
-                                </td>
-                            </tr>
-
-                        </table>
-                    </td>
-                </tr>
-            </table>
-        </form>
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#usergroupsarea" onsubmit="loadUsergroups();return false">
+                <! ** BEGIN BLOCK HEADER -->
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">User Groups</h4>
+                    <button type="button" title="Add User Group" class="btn btn-sm btn-primary" onclick="displayAddUserGroupDialog(0)">Add</button>
+                    <div id="usergroups_prev_td" class="page_system_prev"></div>
+                    <div id="usergroups_page_td" class="page_system_page"></div>
+                    <div id="usergroups_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0;loadUsergroups(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                    <div class="d-inline-block ml-2">
+                        <button class="btn btn-sm btn-dark" title="Total Found">
+                            <i class="si si-list"></i>
+                            <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                        </button>
+                    </div>
+                </div>
+                <! ** END BLOCK HEADER -->
+                <! ** BEGIN BLOCK SEARCH TABLE -->
+                <div class="bg-info-light" id="usrgrp_search_table">
+                    <div class="input-group input-group-sm">
+                        <input type="hidden" name="searching_usergroups">
+                        <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
+                        <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
+                        <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?= htmlentities($_REQUEST['s_name']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Group Name.." name="s_group_name" value="<?= htmlentities($_REQUEST['s_group_name']) ?>"/>
+                        <?= $this->makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], 'form-control custom-select-sm', "", "[Select Cluster]"); ?>
+                        <button type="submit" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadUsergroups();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetUserGroupForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadUsergroups();return false;">Reset</button>
+                    </div>
+                </div>
+                <! ** END BLOCK SEARCH TABLE -->
+                <! ** BEGIN BLOCK LIST (DATATABLE) -->
+                <div class="block-content">
+                    <table class="table table-sm table-striped" id="usergroup_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                        <tr>
+                            <th class="row2 text-left"><?= $this->getOrderLink('user_group') ?>User Group</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('vici_cluster_id') ?>Cluster</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('office') ?>Office</a></th>
+                            <th class="row2">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+            </form>
+        </div>
         <script>
             $(document).ready(function () {
                 $("#dialog-modal-add-user-group").dialog({
@@ -384,12 +343,8 @@ class UserGroupsClass
                     resizable: true,
                     position: {my: 'center', at: 'center', of: '#main-container'}
                 });
-
-                $("#dialog-modal-add-user-group").dialog("widget").draggable("option","containment","#main-container");
-
-                
+                $("#dialog-modal-add-user-group").closest('.ui-dialog').draggable("option", "containment", "#main-container");
                 loadUsergroups();
-                applyUniformity();
             });
         </script>
         <?
@@ -557,79 +512,53 @@ class UserGroupsClass
 
             // SET TITLEBAR
             $('#dialog-modal-add-user').dialog("option", "title", '<?=($id) ? 'Editing User #' . $id . ' - ' . htmlentities($row['username']) : 'Adding new User'?>');
-
-
         </script>
         <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkUserGroupFrm(this); return false">
             <input type="hidden" id="adding_user_group" name="adding_user_group" value="<?= $id ?>">
-
-            <table border="0" width="100%">
+            <table class="tightTable">
                 <tr valign="top">
                     <td align="center">
-
                         <table border="0" align="center">
-
                             <tr>
                                 <th align="left">Cluster:</th>
                                 <td><?
-
                                     echo $this->makeClusterDD('vici_cluster_id', $row['vici_cluster_id'], '', "", 0); //(($id > 0)?0:1) );// DISABLED THE [ALL] OPTION FOR NOW, SINCE WE DONT TUNE IN ALL THE PARAMS AND HAVE TO LINK THEM TO VICI TO EDIT
-
                                     ?></td>
                             </tr>
-
                             <tr>
                                 <th align="left">User Group:</th>
                                 <td><?
-
                                     if ($id) {
-
                                         echo htmlentities($row['user_group']);
-
                                         $url = "http://" . getClusterWebHost($row['vici_cluster_id']) . "/vicidial/admin.php?ADD=311111&user_group=" . $row['user_group'];
-
                                         ?><input type="button" value="EDIT IN VICIDIAL" onclick="window.open('<?= $url ?>')"><?
-
                                     } else {
                                         ?><input class="form-control" name="user_group" type="text" size="30" maxlength="20" value="<?= htmlentities($row['user_group']) ?>"><?
                                     }
-
                                     ?></td>
                             </tr>
                             <tr>
                                 <th align="left">Name:</th>
                                 <td><input class="form-control" name="name" type="text" size="30" value="<?= htmlentities($row['name']) ?>"></td>
                             </tr>
-
                             <tr>
                                 <th align="left">Office:</th>
                                 <td><?
-
                                     echo makeOfficeDD('office', $row['office'], '', "", 0);
-
                                     ?></td>
                             </tr>
-
                             <tr>
-                                <th colspan="2"><button class="btn btn-sm btn-primary" value="Save Changes">Save Changes</button></th>
+                                <th colspan="2">
+                                    <button class="btn btn-sm btn-primary" value="Save Changes">Save Changes</button>
+                                </th>
                             </tr>
-
-
                         </table>
-
-
                     </td>
-
                 </tr>
             </table>
-
-
             </div>
-            <script>
-
-
-            </script>
-        </form><?
+        </form>
+        <?
 
     }
 

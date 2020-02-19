@@ -159,8 +159,7 @@ class Names
                 frm.s_filename.value = '';
             }
 
-            var namesrchtog = false;
-
+            var namesrchtog = true;
             function toggleNameSearch() {
                 namesrchtog = !namesrchtog;
                 ieDisplay('name_search_table', namesrchtog);
@@ -192,7 +191,7 @@ class Names
                 </div>
                 <! ** END BLOCK HEADER -->
                 <! ** BEGIN BLOCK SEARCH TABLE -->
-                <div class="bg-info-light nod" id="name_search_table">
+                <div class="bg-info-light" id="name_search_table">
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_name"/>
                         <input type="text" class="form-control" placeholder="ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
@@ -230,7 +229,7 @@ class Names
                 position: {my: 'center', at: 'center'},
                 containment: '#main-container'
             });
-            $("#dialog-modal-add-name").dialog("widget").draggable("option","containment","#main-container");
+            $("#dialog-modal-add-name").closest('.ui-dialog').draggable("option","containment","#main-container");
             loadNames();
         </script>
         <?

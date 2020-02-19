@@ -141,8 +141,7 @@ class HomeTileUserCountClass
                 draggable: true,
                 resizable: true
             });
-
-            $("#dialog-modal-edit_config").dialog("widget").draggable("option","containment","#main-container");
+            $("#dialog-modal-edit_config").closest(".ui-dialog").draggable("option","containment","#main-container");
         </script>
         <?
     }

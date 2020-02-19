@@ -8,76 +8,76 @@ $_SESSION['employee_hours'] = new EmployeeHours;
 
 class EmployeeHours
 {
-	
-	
+
+
 	var $table = 'employee_hours';            ## Classes main table to operate on
 	var $orderby = 'username';        ## Default Order field
 	var $orderdir = 'ASC';    ## Default order direction
-	
-	
+
+
 	## Page  Configuration
 	var $frm_name = 'empnextfrm';
 	var $index_name = 'emp_list';
 	var $order_prepend = 'emp_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
-	
+
 	## Page  Configuration
 	var $pagesize = 50;    ## Adjusts how many items will appear on each page
 	var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
-	
-	
+
+
 	function EmployeeHours()
 	{
-		
-		
+
+
 		## REQURES DB CONNECTION!
 		include_once($_SESSION['site_config']['basedir'] . "/utils/db_utils.php");
-		
-		
+
+
 		$this->handlePOST();
 	}
-	
-	
+
+
 	function handlePOST()
 	{
-		
+
 		// THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
 		// SEE api/employee_hour.api.php FOR POST HANDLING!
 		// <3 <3 -Jon
-		
+
 	}
-	
+
 	function handleFLOW()
 	{
 		# Handle flow, based on query string
-		
+
 		if (!checkAccess('employee_hours')) {
-			
-			
+
+
 			accessDenied("Employee Hours");
-			
+
 			return;
-			
+
 		} else {
 			if (isset($_REQUEST['edit_hours'])) {
-				
+
 				$this->makeEdit(intval($_REQUEST['edit_hours']));
-				
+
 			} else {
 				$this->listEntrys();
 			}
 		}
-		
+
 	}
-	
-	
+
+
 	function makeEdit($id, $sub = '')
 	{
-		
+
 		$id = intval($id);
-		
+
 		// RING DING DONG, RINGA DING DING DONG, west side.
-		
-		
+
+
 		?>
         <script>
 
@@ -467,9 +467,6 @@ class EmployeeHours
 
                     $('#' + objname).load("index.php?area=employee_hours&edit_hours=" + id + "&printable=1&no_script=1");
                 }
-
-                $('#' + objname).dialog('option', 'position', 'center');
-
             }
 
             function resetEmpForm(frm) {
@@ -815,13 +812,13 @@ class EmployeeHours
                 </div>
             </form>
 
-            
-            
+
+
 	        <div class="input-group input-group-sm">
 	            <? if (checkAccess('employee_hours_edit')) {
-	            	
+
 	                ?><form method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" id="set_hours_form" onsubmit="return processListSubmit(this);">
-	                    
+
 	                        <input type="hidden" name="submitting_activity_changes">
 	                        <input type="hidden" name="activity_ids" id="activity_ids"/>
 	                        <input type="hidden" name="activity_hours" id="activity_hours"/>
@@ -829,20 +826,20 @@ class EmployeeHours
 	                        <div id="setallspan" style="margin-left:1.2em"></div>
 	                        <button type="button" class="btn btn-sm btn-danger" title="Set All (On-Screen)" onclick="setAllToValue();">Set All (On-Screen)</button>
 	                        <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="$('#set_hours_form').submit();" name="save_button">Save Changes</button>
-	                    
+
 	                </form>
 	                <?
 	            } ?>
-            
-            
+
+
                         <span id="spn_total_activity"></span>
 
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <span id="spn_total_paid"></span>
-            
-            
+
+
             </div>
-            
+
         </div>
 		<div class="input-group input-group-sm text-center">
                 <button type="button" class="btn btn-sm btn-success" title="Export Results to CSV" name="export_csv" onclick="exportResultsCSV()">Export Results CSV</button>
@@ -850,8 +847,8 @@ class EmployeeHours
                 <button type="button" class="btn btn-sm btn-success" title="Export Clean TOTALS to CSV" name="export_clean_totals" onclick="exportResultsCSV(2)">Export Clean Totals CSV</button>
 		</div>
         <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
-        
-        
+
+
         <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <script>
             $(function () {
@@ -868,6 +865,7 @@ class EmployeeHours
                     resizable: false
                 });
             });
+            $("#dialog-modal-edit_emp").closest(".ui-dialog").draggable("option", "containment", "#main-container");
             loadEmps();
         </script>
         <?

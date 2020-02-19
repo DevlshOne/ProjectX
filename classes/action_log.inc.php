@@ -340,9 +340,8 @@ class ActionLog{
 				draggable:true,
 				resizable: true
 			});
+			$("#dialog-modal-view-action").closest('.ui-dialog').draggable("option","containment","#main-container");
 
-			$("#dialog-modal-view-action").dialog("widget").draggable("option","containment","#main-container");
-			
 			loadActions();
 
 		</script><?

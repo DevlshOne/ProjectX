@@ -789,7 +789,7 @@ class UserClass
 
 
             function resetUserForm(frm) {
-
+                frm.reset();
                 frm.s_name.value = '';
                 frm.s_username.value = '';
                 //frm.s_campaign_id.value = 0;
@@ -818,167 +818,80 @@ class UserClass
         </script>
         <div id="dialog-modal-add-user" title="Adding new User" class="nod"></div>
         <div id="dialog-modal-bulk-tools" title="Bulk Tools" class="nod"></div>
-
-
-        <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#usersarea" onsubmit="loadUsers();return false">
-            <input type="hidden" name="searching_users">
-
-            <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
-            <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
+        <div class="block">
             <a name="usersarea"></a>
-            <table border="0" width="100%" class="lb" cellspacing="0">
-                <tr>
-                    <td height="40" class="pad_left ui-widget-header">
-
-                        <table border="0" width="100%">
-                            <tr>
-                                <th width="500" align="left">
-                                    Users
-                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="button" value="Add" onclick="displayAddUserDialog(0,0);<? /**,'_blank','width=500,height=400,scrollbars=1,resizable=1')**/ ?>">
-
-                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="button" value="Bulk Add" onclick="displayAddUserDialog(0,1);<? /**,'_blank','width=500,height=400,scrollbars=1,resizable=1')**/ ?>">
-
-
-                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="button" value="Fix all Lockouts" onclick="if(confirm('This option will reset the FAILED LOGIN ATTEMPTS number for all vicidial users, on all clusters.\nAre you sure?')){nukeAllUserLockouts();}">
-                                </th>
-
-                                <td width="150" align="center">PAGE SIZE: <select name="<?= $this->order_prepend ?>pagesizeDD" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0; loadUsers();return false">
-                                        <option value="20">20</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                        <option value="500">500</option>
-                                    </select></td>
-
-                                <td align="right">
-                                    <? /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/ ?>
-                                    <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-                                        <tr>
-                                            <td id="users_prev_td" class="page_system_prev"></td>
-                                            <td id="users_page_td" class="page_system_page"></td>
-                                            <td id="users_next_td" class="page_system_next"></td>
-                                        </tr>
-                                    </table>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <table border="0" id="usr_search_table">
-                            <tr>
-                                <td rowspan="2" width="100" align="center" style="border-right:1px solid #000">
-
-                                    <span id="total_count_div"></span>
-
-                                </td>
-                                <th class="row2">Username</th>
-                                <th class="row2">Name</th>
-                                <th class="row2">Group</th>
-                                <?/*<th class="row2">Campaign</th>*/ ?>
-                                <th class="row2">Cluster</th>
-                                <th class="row2">Access Level</th>
-                                <th class="row2">Feature Set</th>
-                                <td>
-                                    <input type="submit" value="Search" onclick="<?= $this->index_name ?> = 0;">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><input type="text" name="s_username" size="10" value="<?= htmlentities($_REQUEST['s_username']) ?>"></td>
-                                <td><input type="text" name="s_name" size="10" value="<?= htmlentities($_REQUEST['s_name']) ?>"></td>
-                                <td><?
-
-                                    echo $this->makeGroupDD('s_group_name', $_REQUEST['s_group_name'], '', "");
-
-                                    ?></td>
-                                <?/*<td><?
-
-					echo $_SESSION['campaigns']->makeDD('s_campaign_id',$_REQUEST['s_campaign_id'],'',"",'',1);
-
-
-				?></td>*/ ?>
-                                <td><?
-
-                                    echo $this->makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", 1);
-
-
-                                    ?></td>
-                                <td>
-                                    <select name="s_priv">
-                                        <option value="">[All]</option>
-                                        <option value="1">Training</option>
-                                        <option value="2">Caller</option>
-                                        <option value="4">Manager</option>
-                                        <option value="5">Admin</option>
-                                    </select>
-                                </td>
-                                <td><?
-
-                                    echo $_SESSION['feature_control']->makeDD('s_feature_id', $_REQUEST['s_feature_id'], '', "[ALL FEATURES]");
-
-                                    ?></td>
-                                <td>
-
-                                    <input type="button" value="Reset" onclick="resetUserForm(this.form);loadUsers();">
-
-                                </td>
-                            </tr>
-
-
-                        </table>
-                    </td>
-                </tr>
-
-
-        </form>
-        <tr>
-            <td colspan="2">
-                <table border="0" width="100%" id="user_table">
-                    <tr>
-                        <th class="row2">&nbsp;</th>
-                        <th class="row2"><?= $this->getOrderLink('id') ?>ID</a></th>
-                        <th class="row2" align="left"><?= $this->getOrderLink('username') ?>Username</a></th>
-                        <th class="row2" align="left"><?= $this->getOrderLink('first_name') ?>First</a></th>
-                        <th class="row2" align="left"><?= $this->getOrderLink('last_name') ?>Last</a></th>
-                        <th class="row2"><?= $this->getOrderLink('priv') ?>Privilege</a></th>
-                        <th class="row2"><?= $this->getOrderLink('last_login') ?>Last Login</a></th>
-                        <th class="row2">&nbsp;</th>
-                    </tr>
-                    <tr>
-                        <td colspan="8" align="center">
-                            <i>Loading, please wait...</i>
-                        </td>
-                    </tr>
-
-                </table>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-
-                <table border="0">
-                    <tr>
-                        <td height="30" nowrap>
-                            <a href="#" onclick="toggleAllOnScreen(1);return false">[CHECK ALL]</a>
-                            &nbsp;
-                            <a href="#" onclick="toggleAllOnScreen(0);return false">[UNCHECK ALL]</a>
-                            &nbsp;
-                            <a href="#" onclick="toggleAllOnScreen(2);return false">[TOGGLE ALL]</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><input type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)"></td>
-
-                    </tr>
-                </table>
-
-            </td>
-        </tr>
-        </table>
-
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>#usersarea" onsubmit="loadUsers();return false">
+                <! ** BEGIN BLOCK HEADER -->
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">Users</h4>
+                    <button type="button" title="Add User" class="btn btn-sm btn-primary" onclick="displayAddUserDialog(0,0)">Add</button>
+                    <button type="button" title="Bulk Add Users" class="btn btn-sm btn-warning" onclick="displayAddUserDialog(0,1)">Bulk Add</button>
+                    <button type="button" title="Fix all Lockouts" class="btn btn-sm btn-danger" onclick="if(confirm('This option will reset the FAILED LOGIN ATTEMPTS number for all vicidial users, on all clusters.\nAre you sure?')){nukeAllUserLockouts();}">Fix All Lockouts</button>
+                    <div id="users_prev_td" class="page_system_prev"></div>
+                    <div id="users_page_td" class="page_system_page"></div>
+                    <div id="users_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0;loadUsers(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                    <div class="d-inline-block ml-2">
+                        <button class="btn btn-sm btn-dark" title="Total Found">
+                            <i class="si si-list"></i>
+                            <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                        </button>
+                    </div>
+                </div>
+                <! ** END BLOCK HEADER -->
+                <! ** BEGIN BLOCK SEARCH TABLE -->
+                <div class="bg-info-light" id="user_search_table">
+                    <div class="input-group input-group-sm">
+                        <input type="hidden" name="searching_users">
+                        <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
+                        <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
+                        <input type="text" class="form-control" placeholder="Username.." name="s_username" value="<?= htmlentities($_REQUEST['s_username']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?= htmlentities($_REQUEST['s_name']) ?>"/>
+                        <?= $this->makeGroupDD('s_group_name', $_REQUEST['s_group_name'], 'form-control custom-select-sm', "", "[Select Group]"); ?>
+                        <?= $this->makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], 'form-control custom-select-sm', "", "[Select Cluster]"); ?>
+                        <select class="form-control custom-select-sm" name="s_priv">
+                            <option value="">[Select Access Level]</option>
+                            <option value="1">Training</option>
+                            <option value="2">Caller</option>
+                            <option value="4">Manager</option>
+                            <option value="5">Admin</option>
+                        </select>
+                        <?= $_SESSION['feature_control']->makeDD('s_feature_id', $_REQUEST['s_feature_id'], 'form-control custom-select-sm', "[Select Feature Set]"); ?>
+                        <button type="submit" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadUsers();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetUserForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadUsers();return false;">Reset</button>
+                    </div>
+                </div>
+                <! ** END BLOCK SEARCH TABLE -->
+                <! ** BEGIN BLOCK LIST (DATATABLE) -->
+                <div class="block-content">
+                    <table class="table table-sm table-striped" id="user_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                        <tr>
+                            <th class="row2">&nbsp;</th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('id') ?>ID</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('username') ?>Username</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('first_name') ?>First</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('last_name') ?>Last</a></th>
+                            <th class="row2"><?= $this->getOrderLink('priv') ?>Privilege</a></th>
+                            <th class="row2"><?= $this->getOrderLink('last_login') ?>Last Login</a></th>
+                            <th class="row2">&nbsp;</th>
+                        </tr>
+                    </table>
+                    <div class="input-group input-group-sm">
+                        <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(1);return false">Check All</button>
+                        <button type="button" class="btn btn-sm btn-warning" onclick="toggleAllOnScreen(0);return false">Uncheck All</button>
+                        <button type="button" class="btn btn-sm btn-info" onclick="toggleAllOnScreen(2);return false">Toggle All</button>
+                        <button type="button" class="btn btn-sm btn-danger" title="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
+                    </div>
+                </div>
+                <! ** END BLOCK LIST (DATATABLE) -->
+            </form>
+        </div>
         <script>
             $(document).ready(function () {
                 $("#dialog-modal-add-user").dialog({
@@ -999,11 +912,10 @@ class UserClass
                     resizable: true,
                     position: {my: 'center', at: 'center'},
                 });
-
-                $("#dialog-modal-add-user").dialog("widget").draggable("option","containment","#main-container");
-                $("#dialog-modal-bulk-tools").dialog("widget").draggable("option","containment","#main-container");
-
-                
+                $("#dialog-modal-add-user").closest('.ui-dialog').draggable("option", "containment", "#main-container");
+                $("#dialog-modal-bulk-tools").closest('.ui-dialog').draggable("option", "containment", "#main-container");
+                $("#dialog-modal-add-user").closest('.ui-dialog').resizable("option", "containment", "#main-container");
+                $("#dialog-modal-bulk-tools").closest('.ui-dialog').resizable("option", "containment", "#main-container");
                 loadUsers();
                 applyUniformity();
             });
@@ -1185,10 +1097,8 @@ class UserClass
         </script>
 
         <form method="POST" action="<?= stripurl() ?>" onsubmit="return checkViciAddForm(this)">
-
             <input type="hidden" name="adding_user_to_vici">
-
-            <table border="0" align="center">
+            <table class="tightTable">
                 <tr>
                     <th class="row2" align="left">Username</th>
                 </tr><?
@@ -1237,13 +1147,10 @@ class UserClass
                 <tr>
                     <td colspan="2" align="center"><input type="submit" value="Add To Vici"></td>
                 </tr>
+            </table>
         </form>
-        </table>
-
         <script>
-
             buildGroupDD($('#vici_cluster_id').val());
-
         </script><?
 
     }
@@ -1602,15 +1509,10 @@ class UserClass
 
 
             }
-
-
         </script>
-
         <form id="blkusraddformtag" method="POST" action="<?= stripurl() ?>" onsubmit="return saveBulkAdd(this);">
             <input type="hidden" id="md5sum" name="md5sum">
-
-            <table border="0" width="100%">
-
+            <table class="tightTable">
                 <input type="hidden" name="bulk_add_usernames" id="bulk_add_usernames"/>
                 <input type="hidden" name="bulk_add_firstnames" id="bulk_add_firstnames"/>
                 <tr valign="top">
@@ -1723,19 +1625,12 @@ class UserClass
                         <input type="submit" value="Add Users!">
                     </td>
                 </tr>
-
-
+            </table>
         </form>
-        </table>
         <script>
-
-
             togglePriv(getEl('priv').value);
-
             addAnotherUserInput();
-
             buildGroupDD('', $('#av_cluster_id').val(), 'av_main_group_dd')
-
         </script><?
 
     }
@@ -2574,24 +2469,24 @@ class UserClass
 
                                 ?>
                                 <tr>
-                                <th align="left">API Key:</th>
-                                <td>
-                                    <div id="api_key_text">
-                                        <?
+                                    <th align="left">API Key:</th>
+                                    <td>
+                                        <div id="api_key_text">
+                                            <?
 
-                                        if ($row['login_code']) {
+                                            if ($row['login_code']) {
 
-                                            ?><?= $row['login_code'] ?>&nbsp;&nbsp;<a href="#" onclick="toggleApiKey('generate'); return true;">[ Generate ]</a> <a href="#" onclick="toggleApiKey('disable'); return true;">[ Disable ]</a><?
+                                                ?><?= $row['login_code'] ?>&nbsp;&nbsp;<a href="#" onclick="toggleApiKey('generate'); return true;">[ Generate ]</a> <a href="#" onclick="toggleApiKey('disable'); return true;">[ Disable ]</a><?
 
-                                        } else {
+                                            } else {
 
-                                            ?><a href="#" onclick="toggleApiKey('enable'); return true;">[ Enable ]</a><?
+                                                ?><a href="#" onclick="toggleApiKey('enable'); return true;">[ Enable ]</a><?
 
-                                        }
+                                            }
 
-                                        ?></div>
-                                    <input type="hidden" name="login_api_key" id="login_api_key">
-                                </td>
+                                            ?></div>
+                                        <input type="hidden" name="login_api_key" id="login_api_key">
+                                    </td>
                                 </tr>
                                 <?
                             }
@@ -2731,9 +2626,9 @@ class UserClass
                 });
 
 
-                $("#dialog-modal-add-feature").dialog("widget").draggable("option","containment","#main-container");
-                $("#dialog-modal-vici-add").dialog("widget").draggable("option","containment","#main-container");
-                $("#dialog-modal-select_offices").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-add-feature").closest('.ui-dialog').draggable("option", "containment", "#main-container");
+                $("#dialog-modal-vici-add").closest('.ui-dialog').draggable("option", "containment", "#main-container");
+                $("#dialog-modal-select_offices").closest('.ui-dialog').draggable("option", "containment", "#main-container");
 
             </script>
         </form><?
@@ -2743,41 +2638,23 @@ class UserClass
 
     function makeClusterDD($name, $sel, $css, $onchange, $blank_option = 1)
     {
-
         $out = '<select name="' . $name . '" id="' . $name . '" ';
-
         $out .= ($css) ? ' class="' . $css . '" ' : '';
         $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
         $out .= '>';
-
-        //$out .= '<option value="">[All]</option>';
-
         if ($blank_option > 0) {
             $out .= '<option value="" ' . (($sel == '') ? ' SELECTED ' : '') . '>' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
         }
-
-
-        $res = query("SELECT id,name FROM vici_clusters WHERE `status`='enabled' ORDER BY `name` ASC", 1);
-
-
+        $res = query("SELECT `id`, `name` FROM `vici_clusters` WHERE `status`='enabled' AND LENGTH(`name`) > 1 ORDER BY `name` ASC", 1);
         while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-
-
             $out .= '<option value="' . htmlentities($row['id']) . '" ';
             $out .= ($sel == $row['id']) ? ' SELECTED ' : '';
             $out .= '>' . htmlentities($row['name']) . '</option>';
-
-
         }
-
-        if ($blank_option == -2) {
-            //'.(($sel == '')?' SELECTED ':'').'
+        if ($blank_option === -2) {
             $out .= '<option value="" >' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
         }
-
-
         $out .= '</select>';
-
         return $out;
     }
 

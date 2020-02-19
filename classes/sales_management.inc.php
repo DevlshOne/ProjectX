@@ -492,7 +492,7 @@ class SalesManagement{
                      position: {my: 'center', at: 'center'},
 				});
 
-				 $("#dialog-modal-view_sale").dialog("widget").draggable("option","containment","#main-container");
+				 $("#dialog-modal-view_sale").closest('.ui-dialog').draggable("option","containment","#main-container");
 				 
 				<?
 			if(($leadid=intval($_REQUEST['auto_open_sale'])) > 0){
