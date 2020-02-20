@@ -343,7 +343,7 @@ class ListToolsClass{
 		$out = '<select name="'.$name.'" id="'.$id.'" ';
 
 		$out.= ($onchange)?' onchange="'.$onchange.'" ':'';
-		$out.= ($size)?' size="'.$size.'" MULTIPLE ':'';
+		$out.= ($size)?' size="'.$size.'" style="height:'.($size * 20).'px" MULTIPLE ':'';
 
 		$out .= '>';
 
@@ -998,7 +998,7 @@ class ListToolsClass{
 					<td><?=makeClusterDD('target_cluster_id', '', '', "buildListDD(this.value)", "[Select Cluster]")?></td>
 					<td>
 
-						<select id="target_list" size="10" MULTIPLE >
+						<select id="target_list" size="10" MULTIPLE style="height:200px">
 
 							<option value="">[Pick a cluster first]</option>
 
@@ -1010,7 +1010,7 @@ class ListToolsClass{
 					<th style="padding-left:5px" height="30" align="left">Last Called Days:</th>
 					<td colspan="2">
 
-						<input type="text" name="last_called_days" id="last_called_days" size="5" value="90" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" />
+						<input type="text" name="last_called_days" id="last_called_days" size="5" style="width:50px;display:inline" value="90" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" />
 
 						<input type="checkbox" name="check_cross_campaign" id="check_cross_campaign" value="1" />Check across all Campaigns (Fresh leads only)
 
@@ -1238,13 +1238,20 @@ class ListToolsClass{
 		<tr>
 			<td colspan="2" align="center">
 
-				<input type="submit" value="Build List">
+
+				<input type="submit" class="btn btn-sm btn-success" value="Build List">
+
 
 			</td>
 		</tr>
 
 		</form>
 		</table>
+		<script>
+
+			applyUniformity();
+			
+		</script>
 		<?
 
 
@@ -1776,7 +1783,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="button" value="Find DNC Number" onclick="lookupDNCNumber($('#find_dnc_number').val() )" />
+						<input type="button" value="Find DNC Number" class="btn btn-sm btn-success" onclick="lookupDNCNumber($('#find_dnc_number').val() )" />
 
 					</td>
 				</tr>
@@ -1803,7 +1810,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="button" value="Add DNC Number"  onclick="addDNCNumber( $('#add_dnc_number').val() )"/>
+						<input type="button" value="Add DNC Number"  class="btn btn-sm btn-success" onclick="addDNCNumber( $('#add_dnc_number').val() )"/>
 
 					</td>
 				</tr>
@@ -1906,7 +1913,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="submit" value="Upload DNC List" />
+						<input type="submit" class="btn btn-sm btn-success" value="Upload DNC List" />
 
 					</td>
 				</tr>
@@ -1956,7 +1963,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="button" value="Find Campaign DNC" onclick="lookupCampaignDNCNumber($('#find_campaign_dnc_number').val() );" />
+						<input type="button" value="Find Campaign DNC" class="btn btn-sm btn-success" onclick="lookupCampaignDNCNumber($('#find_campaign_dnc_number').val() );" />
 
 					</td>
 				</tr>
@@ -1991,7 +1998,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="button" value="Add Campaign DNC Number"  onclick="addCampaignDNCNumber( $('#add_campaign_dnc_number').val(), $('#add_campaign_dnc_campaign').val() )"/>
+						<input type="button" value="Add Campaign DNC Number"  class="btn btn-sm btn-success" onclick="addCampaignDNCNumber( $('#add_campaign_dnc_number').val(), $('#add_campaign_dnc_campaign').val() )"/>
 
 					</td>
 				</tr>
@@ -2037,7 +2044,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="button" value="Find DNC Number" onclick="lookupDNCName($('#find_dnc_first_name').val(),$('#find_dnc_last_name').val())" />
+						<input type="button" value="Find DNC Number" class="btn btn-sm btn-success" onclick="lookupDNCName($('#find_dnc_first_name').val(),$('#find_dnc_last_name').val())" />
 
 					</td>
 				</tr>
@@ -2068,7 +2075,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="button" value="Add DNC Number" onclick="addDNCName($('#add_dnc_first_name').val(),$('#add_dnc_last_name').val())" />
+						<input type="button" value="Add DNC Number"  class="btn btn-sm btn-success" onclick="addDNCName($('#add_dnc_first_name').val(),$('#add_dnc_last_name').val())" />
 
 					</td>
 				</tr>

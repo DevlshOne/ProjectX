@@ -809,7 +809,7 @@ case 'check_user_exists':
 
 	if($id > 0){
 
-		echo "1:User Already Exists!";
+		echo "1:User Exists!";
 
 	}else{
 

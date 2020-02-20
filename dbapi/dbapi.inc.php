@@ -420,13 +420,14 @@ class DBAPI {
 		include_once($_SESSION['site_config']['basedir']."dbapi/process_tracker.db.php");
 		$this->process_tracker = new ProcessTrackerAPI();
 
-        include_once($_SESSION['site_config']['basedir']."dbapi/rousting_report.db.php");
+		include_once($_SESSION['site_config']['basedir']."dbapi/rousting_report.db.php");
 		$this->rousting_report = new RoustingReportAPI();
 		
 		include_once($_SESSION['site_config']['basedir']."dbapi/offices.db.php");
 		$this->offices = new OfficesAPI();
-		
-		
+
+		include_once($_SESSION['site_config']['basedir']."dbapi/daily_line_hour.db.php");
+		$this->daily_line_hour = new DailyLineHourAPI();
 	}
 	
 	

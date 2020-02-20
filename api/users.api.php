@@ -1052,9 +1052,18 @@ class API_Users{
 				$row = null;
 			}
 
+			if($row['enabled'] == 'no' && intval($_POST['actually_delete_user']) > 0){
+				
+				$_SESSION['dbapi']->adelete($row['id'],'users');
+				
+				$_SESSION['api']->outputEditSuccess(-404);
+				
+				exit;
+				
+			}
+			
+			
 			unset($dat);
-
-
 			$dat['username'] = $username;
 			$dat['priv'] = intval($_POST['priv']);
 
@@ -1259,11 +1268,19 @@ class API_Users{
 			##
 
 
-
+			
 
 			if(intval($_REQUEST['s_priv'])){
 
 				$dat['priv'] = intval($_REQUEST['s_priv']);
+				
+				if($dat['priv'] == -404){
+					
+					unset($dat['priv']);
+					
+					$dat['enabled'] = 'no';
+					
+				}
 
 			}
 
