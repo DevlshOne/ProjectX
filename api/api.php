@@ -699,7 +699,14 @@
 		$obj = new API_Offices();
 		$obj->handleAPI();
 
-		break;		
+		break;
+
+	case 'daily_line_hour':
+		include_once($basedir."api/daily_line_hour.api.php");
+		$obj = new API_Daily_Line_Hour();
+		$obj->handleAPI();
+
+		break;
 	}
 
 

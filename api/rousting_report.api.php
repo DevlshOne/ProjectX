@@ -23,9 +23,6 @@ class API_Rousting_Report
         }
 
         switch($_REQUEST['action']) {
-            case 'hourly':
-                $result = $_SESSION['dbapi']->rousting_report->getRoustingTotals($clusterId, $userGroup, $startTime, $endTime);
-                break;
             case 'detail':
             default:
                 $details = $_SESSION['dbapi']->rousting_report->getDetails($clusterId, $userGroup, $startTime, $endTime);
