@@ -342,7 +342,7 @@ class Scripts{
 				position: {my: 'center', at: 'center'},
 			});
 
-			$("#dialog-modal-add-script").dialog("widget").draggable("option","containment","#main-container");
+			$("#dialog-modal-add-script").closest('.ui-dialog').draggable("option","containment","#main-container");
 			
 			loadScripts();
 			togVoiceDD(getEl('<?=$this->frm_name?>'));
@@ -807,7 +807,7 @@ class Scripts{
 				}
 			});
 
-			$("#dialog-modal-edit-voicefile").dialog("widget").draggable("option","containment","#main-container");
+			$("#dialog-modal-edit-voicefile").closest('.ui-dialog').draggable("option","containment","#main-container");
 
 			</script>
 				<div class="nod">

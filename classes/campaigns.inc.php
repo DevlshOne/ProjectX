@@ -188,7 +188,7 @@ class Campaigns
                     }
                 });
 
-                $("#dialog-modal-edit-campaign").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-edit-campaign").closest('.ui-dialog').draggable("option","containment","#main-container");
                 
             });
 

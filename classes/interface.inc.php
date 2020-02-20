@@ -32,7 +32,7 @@ class InterfaceClass
                         resizable: false
                     });
 
-                    $("#change-password-expired-div").dialog("widget").draggable("option","containment","#main-container");
+                    $("#change-password-expired-div").closest('.ui-dialog').draggable("option","containment","#main-container");
 
                     function loadChangeExpiredPassword() {
                         $('#change-password-expired-div').dialog("open");
@@ -66,8 +66,8 @@ class InterfaceClass
                 resizable: true
             });
 
-            $("#change-password-div").dialog("widget").draggable("option","containment","#main-container");
-            $("#dialog-modal-view_change_history").dialog("widget").draggable("option","containment","#main-container");
+            $("#change-password-div").closest('.ui-dialog').draggable("option","containment","#main-container");
+            $("#dialog-modal-view_change_history").closest('.ui-dialog').draggable("option","containment","#main-container");
 
             
             function loadChangePassword() {

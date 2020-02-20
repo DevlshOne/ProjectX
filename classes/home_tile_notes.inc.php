@@ -265,7 +265,7 @@ class HomeTileNotesClass
                 resizable: true
             });
 
-            $("#dialog-modal-view_notes").dialog("widget").draggable("option","containment","#main-container");
+            $("#dialog-modal-view_notes").closest('.ui-dialog').draggable("option","containment","#main-container");
             
             loadNotes();
         </script>

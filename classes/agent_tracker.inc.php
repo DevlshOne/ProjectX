@@ -294,7 +294,7 @@ class AgentTracker{
 				resizable: false
 			});
 
-			$("#dialog-modal-add-tracker").dialog("widget").draggable("option","containment","#main-container");
+			$("#dialog-modal-add-tracker").closest('.ui-dialog').draggable("option","containment","#main-container");
 			
 			loadTrackers();
 

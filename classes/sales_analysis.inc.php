@@ -1185,145 +1185,145 @@ class SalesAnalysis
 
         if (!isset($_REQUEST['no_nav'])) {
             ?>
-        <div class="block">
-                    <form id="saleanal_report" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?area=sales_analysis&no_script=1" onsubmit="return genReport(this, 'sales')">
-                        <div class="block-header bg-primary-light">
-                            <h4 class="block-title">Daily Sales Analysis Report</h4>
-                        </div>
-                        <div class="block-content">
-                            <script>
-                                $(function () {
-                                    let timeFields = $('#startTimeFilter, #endTimeFilter');
-                                    let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
-                                    if (retainTime) {
-                                        $(timeFields).show();
-                                        $('#timeFilter').prop('checked', true);
-                                    } else {
-                                        $(timeFields).hide();
-                                        $('#timeFilter').prop('checked', false);
-                                    }
-                                    $('#timeFilter').on('click', function () {
-                                        $(timeFields).toggle();
-                                    });
+            <div class="block">
+                <form id="saleanal_report" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?area=sales_analysis&no_script=1" onsubmit="return genReport(this, 'sales')">
+                    <div class="block-header bg-primary-light">
+                        <h4 class="block-title">Daily Sales Analysis Report</h4>
+                    </div>
+                    <div class="block-content">
+                        <script>
+                            $(function () {
+                                let timeFields = $('#startTimeFilter, #endTimeFilter');
+                                let retainTime = '<? echo $_REQUEST['timeFilter'] === "on"; ?>';
+                                if (retainTime) {
+                                    $(timeFields).show();
+                                    $('#timeFilter').prop('checked', true);
+                                } else {
+                                    $(timeFields).hide();
+                                    $('#timeFilter').prop('checked', false);
+                                }
+                                $('#timeFilter').on('click', function () {
+                                    $(timeFields).toggle();
                                 });
-                            </script>
-            <input type="hidden" name="generate_report">
-            <table border="0" width="100%">
-                <tr>
-                    <td colspan="2">
-                        <table border="0">
+                            });
+                        </script>
+                        <input type="hidden" name="generate_report">
+                        <table border="0" width="100%">
                             <tr>
-                                <th>Date Start:</th>
-                                <td>
-                                    <?php echo makeTimebar("strt_date_", 1, null, false, $timestamp); ?>
-                                    <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?></div>
+                                <td colspan="2">
+                                    <table border="0">
+                                        <tr>
+                                            <th>Date Start:</th>
+                                            <td>
+                                                <?php echo makeTimebar("strt_date_", 1, null, false, $timestamp); ?>
+                                                <div style="float:right; padding-left:6px;" id="startTimeFilter"> <?php echo makeTimebar("strt_time_", 2, NULL, false, $timestamp); ?></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Date End:</th>
+                                            <td>
+                                                <?php echo makeTimebar("end_date_", 1, null, false, $timestamp2); ?>
+                                                <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Use Time?</th>
+                                            <td>
+                                                <input type="checkbox" name="timeFilter" id="timeFilter">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Agent Cluster:</th>
+                                            <td><?php
+
+                                                echo $this->makeClusterDD("agent_cluster_id[]", (!isset($_REQUEST['agent_cluster_id']) || count($_REQUEST['agent_cluster_id']) <= 0) ? -1 : $_REQUEST['agent_cluster_id'], 'form-control custom-select-sm', "", 7); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>PX Campaign ID:</th>
+                                            <td><?php
+
+                                                echo makeCampaignDD("campaign_id", $_REQUEST['campaign_id'], 'form-control custom-select-sm', ""); ?></td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>Campaign Code:</th>
+                                            <td><?php
+
+                                                echo $this->makeViciCampaignDD('vici_campaign_code', $_REQUEST['vici_campaign_code'], 'form-control custom-select-sm', ""); ?></td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>VICI Campaign ID:</th>
+                                            <td><input type="text" class="form-control" size="8" name="vici_campaign_id" value="<?= htmlentities($_REQUEST['vici_campaign_id']) ?>"/></td>
+                                        </tr>
+
+                                        <tr>
+                                            <th>User Group:</th>
+                                            <td><?php
+
+                                                //echo $this->makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "");
+                                                echo makeViciUserGroupDD("user_group[]", $_REQUEST['user_group'], 'form-control custom-select-sm', "", 7)
+                                                ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th>User Team:</th>
+                                            <td>
+                                                <?php echo makeTeamsDD("user_team_id", (!isset($_REQUEST['user_team_id']) || intval($_REQUEST['user_team_id']) < 0) ? -1 : $_REQUEST['user_team_id'], 'form-control custom-select-sm', ""); ?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th>Ignore User Group:</th>
+                                            <td><?php
+
+                                                //echo $this->makeViciUserGroupDD("ignore_group", $_REQUEST['ignore_group'], '', "");
+                                                echo makeViciUserGroupDD("ignore_group[]", $_REQUEST['ignore_group'], 'form-control custom-select-sm', "", 7, "[None]"); ?></td>
+                                        </tr>
+                                        <tr>
+                                            <th height="30">Ignore Users:<br/>(<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
+
+                                            <td>
+                                                <input class="form-control" type="text" size="30" name="ignore_users_list" id="ignore_users_list" value="<?= htmlentities($_REQUEST['ignore_users_list']) ?>">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>&nbsp;</td>
+                                            <td>
+                                                <input type="hidden" name="combine_users" value="<?= ($_REQUEST['combine_users'] > 0 || !isset($_REQUEST['combine_users'])) ? 1 : 0 ?>">
+                                                <input type="checkbox" id="combiner" onclick="this.form.combine_users.value = (this.checked)?1:0" <?= ($_REQUEST['combine_users'] > 0 || !isset($_REQUEST['combine_users'])) ? " CHECKED " : '' ?> >
+                                                Combine Left/Right Users
+                                            </td>
+                                        </tr>
+
+
+                                        <input type="hidden" name="include_answer_machines" value="1"/><?
+
+                                        /***
+                                         * <tr>
+                                         * <td>&nbsp;</td>
+                                         * <td>
+                                         *
+                                         * <input type="checkbox" name="include_answer_machines" value="1" <?=(!isset($_REQUEST['include_answer_machines']) || $_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
+                                         * Include Answering Machine stats
+                                         * </td>
+                                         * </tr>
+                                         ***/
+                                        ?>
+                                        <tr>
+                                            <th colspan="2">
+                                                <span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0"/> Loading, Please wait...</span>
+                                                <span id="sales_submit_report_button" class="input-group-sm">
+                                                    <button type="button" class="btn btn-sm btn-primary" value="Generate PRINTABLE" onclick="genReport(getEl('saleanal_report'), 'sales', 1)">Generate PRINTABLE</button>
+                                                    <button class="btn btn-sm btn-success" type="submit" value="Generate">Generate</button>
+                                                </span>
+                                            </th>
+                                        </tr>
+                                    </table>
                                 </td>
-                            </tr>
-                            <tr>
-                                <th>Date End:</th>
-                                <td>
-                                    <?php echo makeTimebar("end_date_", 1, null, false, $timestamp2); ?>
-                                    <div style="float:right; padding-left:6px;" id="endTimeFilter"> <?php echo makeTimebar("end_time_", 2, NULL, false, $timestamp2); ?></div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Use Time?</th>
-                                <td>
-                                    <input type="checkbox" name="timeFilter" id="timeFilter">
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Agent Cluster:</th>
-                                <td><?php
-
-                                    echo $this->makeClusterDD("agent_cluster_id[]", (!isset($_REQUEST['agent_cluster_id']) || count($_REQUEST['agent_cluster_id']) <= 0) ? -1 : $_REQUEST['agent_cluster_id'], 'form-control custom-select-sm', "", 7); ?></td>
-                            </tr>
-                            <tr>
-                                <th>PX Campaign ID:</th>
-                                <td><?php
-
-                                    echo makeCampaignDD("campaign_id", $_REQUEST['campaign_id'], 'form-control custom-select-sm', ""); ?></td>
-                            </tr>
-
-                            <tr>
-                                <th>Campaign Code:</th>
-                                <td><?php
-
-                                    echo $this->makeViciCampaignDD('vici_campaign_code', $_REQUEST['vici_campaign_code'], 'form-control custom-select-sm', ""); ?></td>
-                            </tr>
-
-                            <tr>
-                                <th>VICI Campaign ID:</th>
-                                <td><input type="text" class="form-control" size="8" name="vici_campaign_id" value="<?= htmlentities($_REQUEST['vici_campaign_id']) ?>"/></td>
-                            </tr>
-
-                            <tr>
-                                <th>User Group:</th>
-                                <td><?php
-
-                                    //echo $this->makeViciUserGroupDD("user_group", $_REQUEST['user_group'], '', "");
-                                    echo makeViciUserGroupDD("user_group[]", $_REQUEST['user_group'], 'form-control custom-select-sm', "", 7)
-                                    ?></td>
-                            </tr>
-                            <tr>
-                                <th>User Team:</th>
-                                <td>
-                                    <?php echo makeTeamsDD("user_team_id", (!isset($_REQUEST['user_team_id']) || intval($_REQUEST['user_team_id']) < 0) ? -1 : $_REQUEST['user_team_id'], 'form-control custom-select-sm', ""); ?>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Ignore User Group:</th>
-                                <td><?php
-
-                                    //echo $this->makeViciUserGroupDD("ignore_group", $_REQUEST['ignore_group'], '', "");
-                                    echo makeViciUserGroupDD("ignore_group[]", $_REQUEST['ignore_group'], 'form-control custom-select-sm', "", 7, "[None]"); ?></td>
-                            </tr>
-                            <tr>
-                                <th height="30">Ignore Users:<br/>(<a href="#" onclick="alert('Ignore users in the report, if they appear. Seperate the usernames with Commas');return false">help?</a>)</th>
-
-                                <td>
-                                    <input class="form-control" type="text" size="30" name="ignore_users_list" id="ignore_users_list" value="<?= htmlentities($_REQUEST['ignore_users_list']) ?>">
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>&nbsp;</td>
-                                <td>
-                                    <input type="hidden" name="combine_users" value="<?= ($_REQUEST['combine_users'] > 0 || !isset($_REQUEST['combine_users'])) ? 1 : 0 ?>">
-                                    <input type="checkbox" id="combiner" onclick="this.form.combine_users.value = (this.checked)?1:0" <?= ($_REQUEST['combine_users'] > 0 || !isset($_REQUEST['combine_users'])) ? " CHECKED " : '' ?> >
-                                    Combine Left/Right Users
-                                </td>
-                            </tr>
-
-
-                            <input type="hidden" name="include_answer_machines" value="1"/><?
-
-                            /***
-                             * <tr>
-                             * <td>&nbsp;</td>
-                             * <td>
-                             *
-                             * <input type="checkbox" name="include_answer_machines" value="1" <?=(!isset($_REQUEST['include_answer_machines']) || $_REQUEST['include_answer_machines'])?' CHECKED ':'' ?>/>
-                             * Include Answering Machine stats
-                             * </td>
-                             * </tr>
-                             ***/
-                            ?>
-                            <tr>
-                                <th colspan="2">
-                                    <span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0"/> Loading, Please wait...</span>
-                                    <span id="sales_submit_report_button" class="input-group-sm">
-                                        <button type="button" class="btn btn-sm btn-primary" value="Generate PRINTABLE" onclick="genReport(getEl('saleanal_report'), 'sales', 1)">Generate PRINTABLE</button>
-                                        <button class="btn btn-sm btn-success" type="submit" value="Generate">Generate</button>
-							        </span>
-                                </th>
                             </tr>
                         </table>
-                    </td>
-                </tr>
-            </table>
-                        </div>
-            </form>
-        </div>
+                    </div>
+                </form>
+            </div>
             <br/><br/><?php
         } else {
 
@@ -1417,20 +1417,13 @@ class SalesAnalysis
                 ?>
                 <script>
                     $(document).ready(function () {
-
                         $('#sales_anal_table').DataTable({
-
                             "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]],
                             buttons: [
                                 'copy'
                             ],
-
-
                         });
-
-
                         go('#anc_sales_report');
-
                     });
 
                 </script><?php

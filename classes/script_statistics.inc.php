@@ -279,6 +279,8 @@ class ScriptStatistics
                 } else {
                     $('#' + objname).dialog("option", "title", 'Adding new Script');
                 }
+                $('#' + objname).closest('.ui-dialog').draggable('option', 'containment', '#main-container');
+                $('#' + objname).closest('.ui-dialog').resizable('option', 'containment', '#main-container');
                 /*******
                  $('#'+objname).dialog("open");
 
@@ -374,7 +376,7 @@ class ScriptStatistics
                     position: {my: 'center', at: 'center'},
                     containment: '#main-container'
                 });
-                $("#dialog-modal-edit_script").dialog("widget").draggable("option", "containment", "#main-container");
+                $("#dialog-modal-edit_script").closest(".ui-dialog").draggable("option", "containment", "#main-container");
             });
             loadScripts();
         </script>

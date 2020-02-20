@@ -236,7 +236,7 @@ class Voices{
                 position: {my: 'center', at: 'center'},
             });
 
-			$("#dialog-modal-add-voice").dialog("widget").draggable("option","containment","#main-container");
+			$("#dialog-modal-add-voice").closest('.ui-dialog').draggable("option","containment","#main-container");
 			 
 			loadVoices();
 		</script><?

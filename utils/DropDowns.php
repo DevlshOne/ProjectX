@@ -39,7 +39,7 @@
     {
         $sql = "SELECT `id`, `name` FROM companies WHERE `status` = 'enabled' ORDER BY `name` ASC";
         $res = query($sql, 1);
-        $showDD = "<select name='" . $name . "' id='" . $name . "'";
+        $showDD = "<select class='form-control custom-select-sm' name='" . $name . "' id='" . $name . "'";
         if (isset($onchange)) {
             $showDD .= " onchange='" . htmlentities(trim($onchange)) . "'";
         }

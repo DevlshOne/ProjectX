@@ -516,7 +516,7 @@ class LeadManagement
                 ?>
 
 
-                $("#dialog-modal-edit_lead").dialog("widget").draggable("option","containment","#main-container");
+                $("#dialog-modal-edit_lead").closest('.ui-dialog').draggable("option","containment","#main-container");
 
             });
             $('#s_cluster_id').attr('title', 'Select Cluster');
