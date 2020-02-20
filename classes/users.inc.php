@@ -721,19 +721,19 @@ class UserClass
                     $('#' + objname).dialog("option", "title", 'Adding new User' + ((mode == 1) ? 's' : ''));
                 }
                 // RESET HEIGHT
-                $('#' + objname).dialog('option', 'height', 450);
+//                 $('#' + objname).dialog('option', 'height', 450);
                 $('#' + objname).dialog("open");
                 $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                 // MODE = 1 : BULK USER ADD MODE
                 if (mode == 1) {
                     // RESET WIDTH
-                    $('#' + objname).dialog('option', 'height', 450);
-                    $('#' + objname).dialog('option', 'width', 500);
+//                     $('#' + objname).dialog('option', 'height', 450);
+//                     $('#' + objname).dialog('option', 'width', 500);
                     $('#' + objname).load("index.php?area=users&bulk_add=" + userid + "&printable=1&no_script=1");
                     // MODE = 0 : SINGLE USER ADD MODE (normal add)
                 } else {
                     // RESET WIDTH
-                    $('#' + objname).dialog('option', 'width', 750);
+//                     $('#' + objname).dialog('option', 'width', 750);
                     $('#' + objname).load("index.php?area=users&add_user=" + userid + "&printable=1&no_script=1");
                 }
                 $('#' + objname).dialog('option', 'position', 'center');
@@ -860,6 +860,8 @@ class UserClass
                             <option value="2">Caller</option>
                             <option value="4">Manager</option>
                             <option value="5">Admin</option>
+                            
+                            <option value="-404">[DELETED USERS]</option>
                         </select>
                         <?= $_SESSION['feature_control']->makeDD('s_feature_id', $_REQUEST['s_feature_id'], 'form-control custom-select-sm', "[Select Feature Set]"); ?>
                         <button type="submit" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadUsers();return false;">Search</button>
@@ -897,7 +899,7 @@ class UserClass
                 $("#dialog-modal-add-user").dialog({
                     autoOpen: false,
                     width: 'auto',
-                    height: 450,
+                    height: 'auto',
                     modal: false,
                     draggable: true,
                     resizable: true,
@@ -906,7 +908,7 @@ class UserClass
                 $("#dialog-modal-bulk-tools").dialog({
                     autoOpen: false,
                     width: 'auto',
-                    height: 320,
+                    height: 'auto',
                     modal: false,
                     draggable: true,
                     resizable: true,
@@ -1343,7 +1345,7 @@ class UserClass
 
 
             function addAnotherUserInput() {
-                $('#blkadd_userdiv').append('<input type="text" id="bulk_username_input_' + input_cnt + '" size="10" onchange="checkUserExists(' + input_cnt + ', this.value, true);"/><input type="text" size="10" id="bulk_firstname_input_' + input_cnt + '" /><span id="bulkusr_infospan_' + input_cnt + '"></span><br />');
+                $('#blkadd_userdiv').append('<input type="text" id="bulk_username_input_' + input_cnt + '" size="10" style="width:100px;display:inline" onchange="checkUserExists(' + input_cnt + ', this.value, true);"/><input type="text" size="10" style="width:100px;display:inline" id="bulk_firstname_input_' + input_cnt + '" /><span id="bulkusr_infospan_' + input_cnt + '"></span><br />');
                 input_cnt++;
                 applyUniformity();
             }
@@ -1457,14 +1459,14 @@ class UserClass
                         // USER EXISTS
                         if (parseInt(tmparr[0]) > 0) {
 
-                            $('#bulkusr_infospan_' + idx).html("<img src=\"images/circle-red.gif\" /><span style=\"background-color:red\" >" + tmparr[1] + "</span>");
+                            $('#bulkusr_infospan_' + idx).html("<img src=\"images/circle-red.gif\" />&nbsp;<span style=\"background-color:red\" >" + tmparr[1] + "</span>");
 
                             errorcnt++;
 
                             // USER NOT FOUND
                         } else if (parseInt(tmparr[0]) == 0) {
 
-                            $('#bulkusr_infospan_' + idx).html("<img src=\"images/circle-green.gif\" title=\"" + tmparr[1] + "\" /><span style=\"background-color:green\"></span>");
+                            $('#bulkusr_infospan_' + idx).html("<img src=\"images/circle-green.gif\" title=\"" + tmparr[1] + "\" />&nbsp;<span style=\"background-color:green\">Available</span>");
 
                             // SOMETHING BAD HAPPENED
                         } else {
@@ -1519,7 +1521,7 @@ class UserClass
                     <th>Username/Name</th>
                     <td>
 
-                        <div id="blkadd_userdiv">
+                        <div id="blkadd_userdiv" style="display:inline">
 
 
                         </div>
@@ -1984,6 +1986,14 @@ class UserClass
 
                                 alert(result['message']);
 
+                                if(res == -404){
+
+                                	loadUsers();
+
+                                	$('#dialog-modal-add-user').dialog("close");
+                                      
+                                }
+
                                 return;
 
                             }
@@ -2312,7 +2322,7 @@ class UserClass
         <div id="dialog-modal-add-feature" title="Adding new Feature Set" class="nod"></div>
         <div id="dialog-modal-vici-add" title="Adding User(s) to Vici" class="nod"></div>
         <div id="dialog-modal-select_offices" title="Select Offices" class="nod"></div>
-        <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkUserFrm(this); return false">
+        <form id="addedituserfrm" method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkUserFrm(this); return false">
             <input type="hidden" id="adding_user" name="adding_user" value="<?= $id ?>">
             <table border="0" width="100%">
                 <tr>
@@ -2492,7 +2502,20 @@ class UserClass
                             }
                             ?>
                             <tr>
-                                <th colspan="2"><input type="submit" value="Save Changes"></th>
+                                <th colspan="2">
+                                
+                                	<input type="submit" class="btn btn-sm btn-success btn-primary" value="Save Changes">
+                                <?
+                                
+                                if($row['enabled'] == 'no'){
+                                
+                                	?><input type="hidden" id="actually_delete_user" name="actually_delete_user" value="0" />&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" class="btn btn-sm btn-danger btn-primary" value="REALLY DELETE USER" onclick="if(confirm('This will actually delete the users record from the system immediately.\n(This is normally done automatically/regularly)\n\nAre you sure you want to ACTUALLY delete this user for good?')){ $('#actually_delete_user').val(1);checkUserFrm(getEl('addedituserfrm'));}" /><?
+                                
+                                }
+                                
+                                
+                                ?>
+                                </th>
                             </tr>
                         </table>
                     </td>
@@ -2580,7 +2603,7 @@ class UserClass
                             ?>
                             <tr>
                                 <td colspan="4" height="42">
-                                    <input type="button" value="Add to Vici" onclick="displayViciAddDialog()">
+                                    <input type="button" value="Add to Vici" class="btn btn-sm btn-primary" onclick="displayViciAddDialog()">
                                 </td>
                             </tr>
                             </table><?
@@ -2642,8 +2665,16 @@ class UserClass
         $out .= ($css) ? ' class="' . $css . '" ' : '';
         $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
         $out .= '>';
-        if ($blank_option > 0) {
-            $out .= '<option value="" ' . (($sel == '') ? ' SELECTED ' : '') . '>' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
+        if (
+        		(is_numeric($blank_option) && $blank_option > 0) || 
+        		(!is_numeric($blank_option) && $blank_option != '')
+        		
+        		
+        	) {
+            $out .= '<option value="" ';
+            $out .= (($sel == '') ? ' SELECTED ' : '');
+            
+            $out .= '>' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
         }
         $res = query("SELECT `id`, `name` FROM `vici_clusters` WHERE `status`='enabled' AND LENGTH(`name`) > 1 ORDER BY `name` ASC", 1);
         while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
@@ -2651,6 +2682,7 @@ class UserClass
             $out .= ($sel == $row['id']) ? ' SELECTED ' : '';
             $out .= '>' . htmlentities($row['name']) . '</option>';
         }
+        
         if ($blank_option === -2) {
             $out .= '<option value="" >' . ((!is_numeric($blank_option)) ? $blank_option : "[All]") . '</option>';
         }
