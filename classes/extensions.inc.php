@@ -805,7 +805,8 @@ class Extensions
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Extensions</h4>
                     <button class="btn btn-sm btn-primary" type="button" title="Add Extension" onclick="displayAddExtensionDialog(0)">Add</button>
-                    <button class="btn btn-sm btn-warning" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
+                    <button class="btn btn-sm btn-danger" type="button" title="Bulk Add Extension" onclick="displayBulkAddExtensionDialog(0)">Bulk Add</button>
+
                     <div id="extensions_prev_td" class="page_system_prev"></div>
                     <div id="extensions_page_td" class="page_system_page"></div>
                     <div id="extensions_next_td" class="page_system_next"></div>
@@ -862,6 +863,7 @@ class Extensions
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(1);return false">Check All</button>
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(0);return false">Uncheck All</button>
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(2);return false">Toggle All</button>
+                            <button class="btn btn-sm btn-warning" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
                         </div>
                     </div>
                 </div>

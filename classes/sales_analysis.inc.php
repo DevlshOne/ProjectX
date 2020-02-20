@@ -1455,7 +1455,7 @@ class SalesAnalysis
         ob_start();
         ob_clean(); ?>
 
-        <a name="anc_sales_report">
+        <a name="anc_sales_report"></a>
         <h1><?php
 
             if ($campaign_code) {

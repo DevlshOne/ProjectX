@@ -299,7 +299,6 @@ class ListPerformance
                     <! ** BEGIN BLOCK HEADER -->
                     <div class="block-header bg-primary-light">
                         <h4 class="block-title">List Performance Report</h4>
-                        <button type="submit" title="Generate Report" class="btn btn-sm btn-success" name="the_Search_button">Generate</button>
                     </div>
                     <! ** END BLOCK HEADER -->
                     <! ** BEGIN BLOCK SEARCH TABLE -->
@@ -326,6 +325,9 @@ class ListPerformance
                         </div>
                         <div class="input-group input-group-sm" id="historical_cell">
                             <?= makeTimebar("date_", 1, null, false, $timestamp); ?>
+                        </div>
+                        <div class="input-group input-group-sm">
+                            <button type="submit" title="Generate Report" class="btn btn-sm btn-success" name="the_Search_button">Generate</button>
                         </div>
                     </div>
                     <! ** END BLOCK SEARCH TABLE -->
