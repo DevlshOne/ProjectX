@@ -65,16 +65,13 @@ $_SESSION['vici_report'] = new VicidialListReport;
 	function makeGUI(){
 
 
-		?><table border="0" width="100%" class="lb" cellspacing="0">
-		<tr class="ui-widget-header">
-			<td height="40" class="pad_left">
+		?>
+        <table border="0" width="100%" class="lb" cellspacing="0">
 
-				Vicidial List Report
-
-				&nbsp;&nbsp;&nbsp;&nbsp;
-
-				<input type="button" value="Refresh" onclick="loadSection('?area=list_tools&tool=vici_report&no_script=1')">
-
+            <tr class="ui-widget-header">
+			<td height="40" class="block-header bg-primary-light">
+                <h4 class="block-title">VICIDial List Report</h4>
+                <button type="button" class="btn btn-sm btn-info" title="Refresh" onclick="loadSection('?area=list_tools&tool=vici_report&no_script=1')">Refresh</button>
 			</td>
 		</tr>
 		<tr>

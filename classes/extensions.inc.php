@@ -9,75 +9,75 @@ $_SESSION['extensions'] = new Extensions;
 
 class Extensions
 {
-
-    var $table = 'extensions';    ## Classes main table to operate on
-    var $orderby = 'id';        ## Default Order field
-    var $orderdir = 'DESC';    ## Default order direction
-
-
-    var $max_bulk_add_size = 200;
-
-
-    ## Page  Configuration
-    var $pagesize = 20;    ## Adjusts how many items will appear on each page
-    var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
-
-    var $index_name = 'ext_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-    var $frm_name = 'extnextfrm';
-
-    var $order_prepend = 'ext_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
-
-    function Extensions()
-    {
-
-        ## REQURES DB CONNECTION!
-        $this->handlePOST();
-    }
-
-
-    function handlePOST()
-    {
-
-
-    }
-
-    function handleFLOW()
-    {
-        # Handle flow, based on query string
-
-        if (!checkAccess('extensions')) {
-
-
-            accessDenied("Extensions");
-
-            return;
-
-        } else {
-
-            if (isset($_REQUEST['add_extension'])) {
-
-                $this->makeAdd($_REQUEST['add_extension']);
-
-            } else if (isset($_REQUEST['bulk_tools'])) {
-
-                //echo "BULK TOOLZZZ EXT";
-
-                //print_r($_REQUEST);
-                $this->makeBulkTools();
-
-            } else {
-                $this->listEntrys();
-            }
-
-        }
-
-    }
-
-    function makeBulkAdd()
-    {
-
-
-        ?>
+	
+	var $table = 'extensions';    ## Classes main table to operate on
+	var $orderby = 'id';        ## Default Order field
+	var $orderdir = 'DESC';    ## Default order direction
+	
+	
+	var $max_bulk_add_size = 200;
+	
+	
+	## Page  Configuration
+	var $pagesize = 20;    ## Adjusts how many items will appear on each page
+	var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+	
+	var $index_name = 'ext_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+	var $frm_name = 'extnextfrm';
+	
+	var $order_prepend = 'ext_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+	
+	function Extensions()
+	{
+		
+		## REQURES DB CONNECTION!
+		$this->handlePOST();
+	}
+	
+	
+	function handlePOST()
+	{
+		
+		
+	}
+	
+	function handleFLOW()
+	{
+		# Handle flow, based on query string
+		
+		if (!checkAccess('extensions')) {
+			
+			
+			accessDenied("Extensions");
+			
+			return;
+			
+		} else {
+			
+			if (isset($_REQUEST['add_extension'])) {
+				
+				$this->makeAdd($_REQUEST['add_extension']);
+				
+			} else if (isset($_REQUEST['bulk_tools'])) {
+				
+				//echo "BULK TOOLZZZ EXT";
+				
+				//print_r($_REQUEST);
+				$this->makeBulkTools();
+				
+			} else {
+				$this->listEntrys();
+			}
+			
+		}
+		
+	}
+	
+	function makeBulkAdd()
+	{
+		
+		
+		?>
         <script>
             var current_ext_count = 0;
 
