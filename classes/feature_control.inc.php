@@ -94,22 +94,17 @@ class FeatureControl
 
         ?>
         <script>
-
             var feature_delmsg = 'Deleting this will cause any user using it, to lose access to the system.\nAre you sure you want to delete this feature set?';
-
             var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
             var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
-
-
             var <?=$this->index_name?> =
             0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-
             var FeaturesTableFormat = [
-                ['id', 'align_center'],
-                ['name', 'align_left'],
-                ['[get:users_assigned:id]', 'align_center'],
-                ['[delete]', 'align_center']
+                ['id', 'text-center'],
+                ['name', 'text-left'],
+                ['[get:users_assigned:id]', 'text-center'],
+                ['[delete]', 'text-center']
             ];
 
             /**
@@ -225,7 +220,7 @@ class FeatureControl
             }
 
             function resetFeatureForm(frm) {
-
+                frm.reset();
                 frm.s_id.value = '';
                 frm.s_name.value = '';
                 frm.s_status.value = 'active';
@@ -235,84 +230,63 @@ class FeatureControl
 
         </script>
         <div id="dialog-modal-add-feature" title="Adding new Feature Set" class="nod"></div>
-        <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadFeatures();return false">
-            <input type="hidden" name="searching_features">
-            <? /**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/ ?>
-
-            <table border="0" width="100%" class="lb" cellspacing="0">
-                <tr>
-                    <td height="40" class="pad_left ui-widget-header">
-
-                        <table border="0" width="100%">
-                            <tr>
-                                <td width="500">
-                                    Features
-                                    &nbsp;&nbsp;&nbsp;&nbsp;
-                                    <input type="button" value="Add" onclick="displayAddFeatureDialog(0)">
-                                </td>
-                                <td width="150" align="center">PAGE SIZE: <select name="<?= $this->order_prepend ?>pagesizeDD" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0; loadFeatures();return false">
-                                        <option value="20">20</option>
-                                        <option value="50">50</option>
-                                        <option value="100">100</option>
-                                        <option value="500">500</option>
-                                    </select></td>
-                                <td align="right"><?
-                                    /** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/ ?>
-                                    <table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-                                        <tr>
-                                            <td id="features_prev_td" class="page_system_prev"></td>
-                                            <td id="features_page_td" class="page_system_page"></td>
-                                            <td id="features_next_td" class="page_system_next"></td>
-                                        </tr>
-                                    </table>
-
-                                </td>
-                            </tr>
-                        </table>
-
-                    </td>
-
-                </tr>
-
-                <tr>
-                    <td colspan="2">
-                        <table border="0" width="100%">
-                            <tr>
-                                <th class="row2">ID</th>
-                                <th class="row2">Name</th>
-                                <th class="row2">Status</th>
-                                <td><input type="submit" value="Search" name="the_Search_button"></td>
-                            </tr>
-                            <tr>
-                                <td align="center"><input type="text" name="s_id" size="5" value="<?= htmlentities($_REQUEST['s_id']) ?>"></td>
-                                <td align="center"><input type="text" name="s_name" size="20" value="<?= htmlentities($_REQUEST['s_name']) ?>"></td>
-                                <td align="center"><select name="s_status">
-                                        <option value="active">Active</option>
-                                        <option value="disabled">Disabled</option>
-                                    </select></td>
-                                <td><input type="button" value="Reset" onclick="resetFeatureForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadFeatures();"></td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-
-        </form>
-        <tr>
-            <td colspan="2">
-                <table border="0" width="100%" id="feature_table">
-                    <tr>
-                        <th class="row2" align="center"><?= $this->getOrderLink('id') ?>ID</a></th>
-                        <th class="row2" align="left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                        <th class="row2" align="center">Users Assigned</th>
-                        <th class="row2">&nbsp;</th>
-                    </tr><?
-
-                    ?></table>
-            </td>
-        </tr></table>
-
+        <div class="block">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadFeatures();return false">
+                <! ** BEGIN BLOCK HEADER -->
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">Feature Control</h4>
+                    <button type="button" title="Add Feature" class="btn btn-sm btn-primary" onclick="displayAddFeatureDialog(0)">Add</button>
+                    <div id="features_prev_td" class="page_system_prev"></div>
+                    <div id="features_page_td" class="page_system_page"></div>
+                    <div id="features_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0;loadFeatures(); return false;">
+                        <option value="20">20</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="500">500</option>
+                    </select>
+                    <div class="d-inline-block ml-2">
+                        <button class="btn btn-sm btn-dark" title="Total Found">
+                            <i class="si si-list"></i>
+                            <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                        </button>
+                    </div>
+                </div>
+                <! ** END BLOCK HEADER -->
+                <! ** BEGIN BLOCK SEARCH TABLE -->
+                <div class="bg-info-light" id="features_search_table">
+                    <div class="input-group input-group-sm">
+                        <input type="hidden" name="searching_features">
+                        <input type="hidden" name="<?= $this->order_prepend ?>orderby" value="<?= htmlentities($this->orderby) ?>">
+                        <input type="hidden" name="<?= $this->order_prepend ?>orderdir" value="<?= htmlentities($this->orderdir) ?>">
+                        <input type="text" class="form-control" placeholder="ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?= htmlentities($_REQUEST['s_name']) ?>"/>
+                        <select class="form-control custom-select-sm" name="s_status">
+                            <option value="">[Select Status]</option>
+                            <option value="active">Active</option>
+                            <option value="disabled">Disabled</option>
+                        </select>
+                        <button type="submit" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadFeatures();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetFeatureForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadfeatures();return false;">Reset</button>
+                    </div>
+                </div>
+                <! ** END BLOCK SEARCH TABLE -->
+                <! ** BEGIN BLOCK LIST (DATATABLE) -->
+                <div class="block-content">
+                    <table class="table table-sm table-striped" id="feature_table">
+                        <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                        <tr>
+                            <th class="row2 text-center"><?= $this->getOrderLink('id') ?>ID</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                            <th class="row2 text-center">Users Assigned</th>
+                            <th class="row2 text-center">&nbsp;</th>
+                        </tr>
+                    </table>
+                </div>
+                <! ** END BLOCK LIST (DATATABLE) -->
+            </form>
+        </div>
         <script>
-
             $("#dialog-modal-add-feature").dialog({
                 autoOpen: false,
                 width: 'auto',
@@ -321,10 +295,9 @@ class FeatureControl
                 draggable: true,
                 resizable: false,
                 position: {my: 'center', at: 'center'},
+                containment: '#main-container'
             });
-
-            $("#dialog-modal-add-feature").closest('.ui-dialog').draggable("option","containment","#main-container");
-
+            $("#dialog-modal-add-feature").closest('.ui-dialog').draggable("option", "containment", "#main-container");
             // CALL FUNCTION TO POPULATE THE TABLE WITH DATA
             loadFeatures();
             applyUniformity();
