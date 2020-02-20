@@ -804,7 +804,8 @@ class Extensions
                 <input type="hidden" name="searching_quiz">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Extensions</h4>
-                    <button class="btn btn-sm btn-primary" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
+                    <button class="btn btn-sm btn-primary" type="button" title="Add Extension" onclick="displayAddExtensionDialog(0)">Add</button>
+                    <button class="btn btn-sm btn-warning" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
                     <div id="extensions_prev_td" class="page_system_prev"></div>
                     <div id="extensions_page_td" class="page_system_page"></div>
                     <div id="extensions_next_td" class="page_system_next"></div>
@@ -904,7 +905,7 @@ class Extensions
                 $("#dialog-modal-add-bulk-extension").closest('.ui-dialog').draggable("option","containment","#main-container");
                 $("#dialog-modal-bulk-tools").closest('.ui-dialog').draggable("option","containment","#main-container");
 
-                
+
                 loadExtensions();
                 applyUniformity();
             });
