@@ -288,10 +288,10 @@ class Extensions
                 </tr>
                 <tr>
                     <th align="left" height="30">Extension Start/End:</th>
-                    <td>
-                        <input name="start_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
+                    <td nowrap>
+                        <input name="start_number" type="text" size="5" style="width:50px;display:inline"  minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
                         to
-                        <input name="end_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
+                        <input name="end_number" type="text" size="5" style="width:50px;display:inline" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
 
                     </td>
                 </tr>
@@ -331,11 +331,11 @@ class Extensions
 
                 <tr>
                     <th align="left" height="30">PX Register as User</th>
-                    <td><input name="register_as" type="text" size="30" value=""><br/>(Blank means use default)</td>
+                    <td><input name="register_as" type="text" size="30" value="">(Blank means use default)</td>
                 </tr>
                 <tr>
                     <th align="left" height="30">PX Register Password</th>
-                    <td><input name="register_pass" type="text" size="30" value=""><br/>(Blank means use default)</td>
+                    <td><input name="register_pass" type="text" size="30" value="">(Blank means use default)</td>
                 </tr>
                 <tr>
                     <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
@@ -804,7 +804,14 @@ class Extensions
                 <input type="hidden" name="searching_quiz">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Extensions</h4>
-                    <button class="btn btn-sm btn-primary" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
+                    
+                    <button class="btn btn-sm btn-primary" type="button" title="Add Extension" onclick="displayAddExtensionDialog(0)">Add</button>
+                   
+                   
+                   <button class="btn btn-sm btn-warning" type="button" title="Bulk Add" onclick=" displayBulkAddExtensionDialog()">Bulk Add</button>
+                  
+                   
+                    
                     <div id="extensions_prev_td" class="page_system_prev"></div>
                     <div id="extensions_page_td" class="page_system_page"></div>
                     <div id="extensions_next_td" class="page_system_next"></div>
@@ -861,6 +868,10 @@ class Extensions
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(1);return false">Check All</button>
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(0);return false">Uncheck All</button>
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(2);return false">Toggle All</button>
+                            
+							<button class="btn btn-sm btn-warning" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
+							
+							
                         </div>
                     </div>
                 </div>
