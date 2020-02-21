@@ -446,7 +446,12 @@ class ListPerformance
                         $('#listperf_table').DataTable({
 
                             "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]],
-                            "order": [[12, "desc"]]
+                            "order": [[12, "desc"]],
+                            dom: 'Bfrtip',
+                            buttons: [
+                                {extend: 'copy', header: false, footer: false}
+                            ],
+
 
                         });
 

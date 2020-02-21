@@ -1421,7 +1421,6 @@ class SalesAnalysis
                             'lengthMenu': [[-1, 20, 50, 100, 500], ['All', 20, 50, 100, 500]],
                             dom: 'Bfrtip',
                             buttons: [
-                                'copy',
                                 {extend: 'copy', header: false, footer: false}
                             ],
                         });
