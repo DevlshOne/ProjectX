@@ -586,21 +586,36 @@ class SummaryReport
         <input type="hidden" name="generate_report">
         <div class="block-header bg-primary-light">
             <h4 class="block-title">Summary Report</h4>
-            <span id="summary_submit_report_button" class="input-group-sm">
-                    <button type="submit" class="btn btn-sm btn-success" title="Generate Report">Generate</button>
-                </span>
         </div>
         <div class="bg-info-light" id="name_search_table">
-            <div class="input-group">
+            <div class="form-group row mb-0">
                 <input type="hidden" name="searching_report"/>
-                <?= makeTimebar("stime_", 1, null, false, $timestamp); ?>&nbsp;-&nbsp;<?= makeTimebar("etime_", 1, null, false, $timestamp2); ?>
-                <select class="custom-select-sm" name="report_type">
-                    <option value=""<?= ($type == '') ? " SELECTED" : "" ?>>[Select Type]</option>
-                    <option value="cold"<?= ($type == 'cold') ? " SELECTED" : "" ?>>Cold</option>
-                    <option value="taps"<?= ($type == 'taps') ? " SELECTED" : "" ?>>Taps</option>
-                    <option value="verifier"<?= ($type == 'verifier') ? " SELECTED" : "" ?>>Verifier</option>
-                    <option value="company"<?= ($type == 'company') ? " SELECTED" : "" ?>>Sub-Company and Group</option>
-                </select>
+                <label class="col-3 col-form-label" for="stime">Start Date</label>
+                <div class="col-5">
+                    <?= makeTimebar("stime_", 1, null, false, $timestamp); ?>
+                </div>
+            </div>
+            <div class="form-group row mb-0">
+                <label class="col-3 col-form-label" for="etime">End Date</label>
+                <div class="col-5">
+                    <?= makeTimebar("etime_", 1, null, false, $timestamp2); ?>
+                </div>
+            </div>
+            <div class="form-group row mb-0">
+                <label class="col-3 col-form-label" for="report_type">Report Type</label>
+                <div class="col-5">
+                    <select class="custom-select-sm" name="report_type">
+                        <option value="cold"<?= ($type == 'cold') ? " SELECTED" : "" ?>>Cold</option>
+                        <option value="taps"<?= ($type == 'taps') ? " SELECTED" : "" ?>>Taps</option>
+                        <option value="verifier"<?= ($type == 'verifier') ? " SELECTED" : "" ?>>Verifier</option>
+                        <option value="company"<?= ($type == 'company') ? " SELECTED" : "" ?>>Sub-Company and Group</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row mb-0">
+                <div id="summary_submit_report_button">
+                    <button type="submit" class="btn btn-sm btn-success" title="Generate Report">Generate</button>
+                </div>
             </div>
         </div>
         <div class="block-content">
@@ -1485,7 +1500,7 @@ class SummaryReport
             ob_start();
             ob_clean();
             echo "<h1>Summary Report - ";
-            if(date("m-d-Y", $stime) === date("m-d-Y", $etime)) {
+            if (date("m-d-Y", $stime) === date("m-d-Y", $etime)) {
                 echo date("m-d-Y", $stime);
             } else {
                 echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);

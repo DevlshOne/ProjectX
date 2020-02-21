@@ -111,9 +111,6 @@
             <input type="hidden" name="generate_report">
             <div class="block-header bg-primary-light">
                 <h4 class="block-title">Area Code Sales by Dialer</h4>
-                <button type="button" class="btn btn-sm btn-primary" title="Generate PRINTABLE" onclick="genReport(getEl('dialersales_report'), 'sales', 1)">Generate PRINTABLE</button>
-                <button type="button" class="btn btn-sm btn-secondary" id="btnGenCSV" title="Download CSV" onclick="genCSV(getEl('dialer_sales_table'))">Download CSV</button>
-                <button type="submit" class="btn btn-sm btn-success" title="Generate Report">Generate</button>
             </div>
             <div class="block-content">
                 <form id="dialersales_report" method="POST"
@@ -256,7 +253,10 @@
                         </tr>
                     </table>
                 </form>
-                </div>
+                <button type="button" class="btn btn-sm btn-primary" title="Generate PRINTABLE" onclick="genReport(getEl('dialersales_report'), 'sales', 1)">Generate PRINTABLE</button>
+                <button type="button" class="btn btn-sm btn-secondary" id="btnGenCSV" title="Download CSV" onclick="genCSV(getEl('dialer_sales_table'))">Download CSV</button>
+                <button type="submit" class="btn btn-sm btn-success" title="Generate Report">Generate</button>
+            </div>
         </div>
                 <?php
             } else {

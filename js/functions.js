@@ -395,18 +395,11 @@ function getSelectValues(select){
 
 
 function ieDisplay(objid,way){
-
-
 	var obj = document.getElementById(objid);
-
 	try{
-
 		obj.style.display = (way)?'inline':'none';
-
 	}catch(e){
-
 		window.status='JS Exception ('+e+')';
-
 	}
 }
 
