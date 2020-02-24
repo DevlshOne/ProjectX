@@ -9,75 +9,75 @@ $_SESSION['extensions'] = new Extensions;
 
 class Extensions
 {
-	
-	var $table = 'extensions';    ## Classes main table to operate on
-	var $orderby = 'id';        ## Default Order field
-	var $orderdir = 'DESC';    ## Default order direction
-	
-	
-	var $max_bulk_add_size = 200;
-	
-	
-	## Page  Configuration
-	var $pagesize = 20;    ## Adjusts how many items will appear on each page
-	var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
-	
-	var $index_name = 'ext_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-	var $frm_name = 'extnextfrm';
-	
-	var $order_prepend = 'ext_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
-	
-	function Extensions()
-	{
-		
-		## REQURES DB CONNECTION!
-		$this->handlePOST();
-	}
-	
-	
-	function handlePOST()
-	{
-		
-		
-	}
-	
-	function handleFLOW()
-	{
-		# Handle flow, based on query string
-		
-		if (!checkAccess('extensions')) {
-			
-			
-			accessDenied("Extensions");
-			
-			return;
-			
-		} else {
-			
-			if (isset($_REQUEST['add_extension'])) {
-				
-				$this->makeAdd($_REQUEST['add_extension']);
-				
-			} else if (isset($_REQUEST['bulk_tools'])) {
-				
-				//echo "BULK TOOLZZZ EXT";
-				
-				//print_r($_REQUEST);
-				$this->makeBulkTools();
-				
-			} else {
-				$this->listEntrys();
-			}
-			
-		}
-		
-	}
-	
-	function makeBulkAdd()
-	{
-		
-		
-		?>
+
+    var $table = 'extensions';    ## Classes main table to operate on
+    var $orderby = 'id';        ## Default Order field
+    var $orderdir = 'DESC';    ## Default order direction
+
+
+    var $max_bulk_add_size = 200;
+
+
+    ## Page  Configuration
+    var $pagesize = 20;    ## Adjusts how many items will appear on each page
+    var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+
+    var $index_name = 'ext_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+    var $frm_name = 'extnextfrm';
+
+    var $order_prepend = 'ext_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+
+    function Extensions()
+    {
+
+        ## REQURES DB CONNECTION!
+        $this->handlePOST();
+    }
+
+
+    function handlePOST()
+    {
+
+
+    }
+
+    function handleFLOW()
+    {
+        # Handle flow, based on query string
+
+        if (!checkAccess('extensions')) {
+
+
+            accessDenied("Extensions");
+
+            return;
+
+        } else {
+
+            if (isset($_REQUEST['add_extension'])) {
+
+                $this->makeAdd($_REQUEST['add_extension']);
+
+            } else if (isset($_REQUEST['bulk_tools'])) {
+
+                //echo "BULK TOOLZZZ EXT";
+
+                //print_r($_REQUEST);
+                $this->makeBulkTools();
+
+            } else {
+                $this->listEntrys();
+            }
+
+        }
+
+    }
+
+    function makeBulkAdd()
+    {
+
+
+        ?>
         <script>
             var current_ext_count = 0;
 
@@ -288,10 +288,10 @@ class Extensions
                 </tr>
                 <tr>
                     <th align="left" height="30">Extension Start/End:</th>
-                    <td nowrap>
-                        <input name="start_number" type="text" size="5" style="width:50px;display:inline"  minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
+                    <td>
+                        <input name="start_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
                         to
-                        <input name="end_number" type="text" size="5" style="width:50px;display:inline" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
+                        <input name="end_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
 
                     </td>
                 </tr>
@@ -331,11 +331,11 @@ class Extensions
 
                 <tr>
                     <th align="left" height="30">PX Register as User</th>
-                    <td><input name="register_as" type="text" size="30" value="">(Blank means use default)</td>
+                    <td><input name="register_as" type="text" size="30" value=""><br/>(Blank means use default)</td>
                 </tr>
                 <tr>
                     <th align="left" height="30">PX Register Password</th>
-                    <td><input name="register_pass" type="text" size="30" value="">(Blank means use default)</td>
+                    <td><input name="register_pass" type="text" size="30" value=""><br/>(Blank means use default)</td>
                 </tr>
                 <tr>
                     <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
@@ -804,14 +804,9 @@ class Extensions
                 <input type="hidden" name="searching_quiz">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Extensions</h4>
-                    
                     <button class="btn btn-sm btn-primary" type="button" title="Add Extension" onclick="displayAddExtensionDialog(0)">Add</button>
-                   
-                   
-                   <button class="btn btn-sm btn-warning" type="button" title="Bulk Add" onclick=" displayBulkAddExtensionDialog()">Bulk Add</button>
-                  
-                   
-                    
+                    <button class="btn btn-sm btn-danger" type="button" title="Bulk Add Extension" onclick="displayBulkAddExtensionDialog(0)">Bulk Add</button>
+
                     <div id="extensions_prev_td" class="page_system_prev"></div>
                     <div id="extensions_page_td" class="page_system_page"></div>
                     <div id="extensions_next_td" class="page_system_next"></div>
@@ -868,10 +863,7 @@ class Extensions
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(1);return false">Check All</button>
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(0);return false">Uncheck All</button>
                             <button type="button" class="btn btn-sm btn-success" onclick="toggleAllOnScreen(2);return false">Toggle All</button>
-                            
-							<button class="btn btn-sm btn-warning" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
-							
-							
+                            <button class="btn btn-sm btn-warning" type="button" value="Bulk Tools" onclick="displayBulkToolsDialog(this.form)">Bulk Tools</button>
                         </div>
                     </div>
                 </div>
@@ -915,7 +907,7 @@ class Extensions
                 $("#dialog-modal-add-bulk-extension").closest('.ui-dialog').draggable("option","containment","#main-container");
                 $("#dialog-modal-bulk-tools").closest('.ui-dialog').draggable("option","containment","#main-container");
 
-                
+
                 loadExtensions();
                 applyUniformity();
             });

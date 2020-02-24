@@ -1491,7 +1491,12 @@ class RousterReport
                         <script>
                             $(document).ready(function () {
                                 $('#verifier_report_table').DataTable({
-                                    "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]]
+                                    "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]],
+                                    dom: 'Bfrtip',
+                                    buttons: [
+                                        {extend: 'copy', header: false, footer: false}
+                                    ],
+
                                 });
                                 go('#anc_rouster_report');
                             });

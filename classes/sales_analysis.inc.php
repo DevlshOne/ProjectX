@@ -1418,15 +1418,17 @@ class SalesAnalysis
                 <script>
                     $(document).ready(function () {
                         $('#sales_anal_table').DataTable({
-                            "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]],
+                            'lengthMenu': [[-1, 20, 50, 100, 500], ['All', 20, 50, 100, 500]],
+                            dom: 'Bfrtip',
                             buttons: [
-                                'copy'
+                                {extend: 'copy', header: false, footer: false}
                             ],
                         });
                         go('#anc_sales_report');
                     });
 
-                </script><?php
+                </script>
+                <?php
             }
         }
     }
@@ -1456,293 +1458,290 @@ class SalesAnalysis
         ob_clean(); ?>
 
         <a name="anc_sales_report">
-        <h1><?php
-
-            if ($campaign_code) {
-                echo $campaign_code . ' ';
-            }
-
-            echo "Sales Analysis - ";
-
-            if (!is_array($agent_cluster_id) && $agent_cluster_id >= 0) {
-                //				echo getClusterName($agent_cluster_id);//$_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
-                echo $_SESSION['site_config']['db'][$agent_cluster_id]['name'] . ' - ';
-            } else if (is_array($agent_cluster_id)) {
-                foreach ($agent_cluster_id as $aci) {
-
-                    echo (($aci == -1) ? '[ALL]' : $_SESSION['site_config']['db'][$aci]['name']) . ' - ';
-
-                    // ALL MEANS ALL
-                    if ($aci == -1) break;
-                }
-            }
-
-            //			if($user_group){
-            //
-            //				if(is_array($user_group)){
-            //
-            //					if(trim($user_group[0]) != ''){
-            //
-            //						echo implode($user_group,' | ');
-            //						echo " - ";
-            //					}
-            //
-            //
-            //				}else{
-            //					echo $user_group.' - ';
-            //				}
-            //			}
-
-
-            if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
-
-                echo date("m-d-Y", $stime);
-
-            } else {
-                echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
-            } ?></h1>
-        <h3><?php
-
-            if ($user_group) {
-                if (is_array($user_group)) {
-                    if (trim($user_group[0]) != '') {
-                        echo '<b>User Groups:</b>' . implode($user_group, ' | ');
-                        echo "<br />";
-                    }
-                } else {
-                    echo '<b>User Group:</b>' . $user_group . "<br />";
-                }
-            }
-
-
-            if ($ignore_group) {
-                if (is_array($ignore_group)) {
-                    if (trim($ignore_group[0]) != '') {
-                        echo '<b>Ignoring Groups:</b> ' . implode($ignore_group, ' | ');
-                        echo "<br />";
-                    }
-                } else {
-                    echo '<b>Ignoring Group:</b> ' . $ignore_group . '<br />';
-                }
-            }
-
-
-            ?></h3>
-
-        <script>
-
-            function addUserToIgnore(username) {
-
-                var str = $('#ignore_users_list').val();
-
-                if (str.length > 0 && !str.endsWith(",")) str += ",";
-
-                str += username;
-
-                $('#ignore_users_list').val(str);
-            }
-
-        </script>
-
-        <table id="sales_anal_table" style="width:100%" border="0" cellspacing="1" class="table table-bordered table-striped table-vcenter js-dataTable-full" style="color:#000">
-            <thead>
-            <tr><?
-
-                // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
-                if ($_SESSION['user']['priv'] > 3) {
-
-                    ?>
-                    <th nowrap align="left">&nbsp;</th><?
-                }
-
-
-                ?>
-                <th align="left">Agent</th>
-                <th title="Number of hours being Paid for">PD HRS</th>
-                <th title="Number of hours of Activity tracked">WRKD HRS</th>
-                <th title="Total number of calls for the day">Total Calls</th>
-                <th title="Number of Calls that were NOT INTERESTED">NI</th>
-                <th title="Number of Transfers">XFERS</th>
+            <h1>
                 <?php
 
-                if ($this->skip_answeringmachines == false) {
-                    ?>
-                    <th title="Number of Answering Machine calls">A</th>
-                    <th title="Percentage of calls that are Answering Machines">%ANS</th><?php
-                }
-                ?>
-                <th title="Contacts per Worked hour, and Calls per Worked hour">Con&amp;Calls/hr</th>
-
-
-                <th>TOTAL SALES</th>
-                <th>PAID SALES #</th>
-                <th>PAID SALES $</th>
-
-                <th title="The percentage of deal counts that were paid, vs the total count sent">PAID %</th>
-                <th title="Percentage of paid deals, by the dollar amount, instead of count">$PAID %</th>
-                <th>UNPAID SALES</th>
-                <th>UNPAID %</th>
-
-                <th align="right" title="Closing Percentage">CLOSE %</th>
-                <th align="right" title="Conversion Percentage">CON%</th>
-                <th align="right">YES 2 ALL %</th>
-                <th align="right">TOTAL SALES</th>
-                <th align="right">AVG SALE</th>
-                <th align="right">PD $/HR</th>
-                <th align="right">WRKD $/HR</th>
-            </tr>
-            </thead>
-            <tbody><?
-
-
-            foreach ($agent_data_arr as $agent_data) {
-
-                $paid_sale_percent = ($agent_data['sale_cnt'] <= 0) ? 0 : round(((float)$agent_data['paid_sale_cnt'] / $agent_data['sale_cnt']) * 100, 2);
-                $unpaid_sale_percent = 100 - $paid_sale_percent;
-
-                $paid_sale_amount_percent = ($agent_data['sales_total'] <= 0) ? 0 : round(((float)$agent_data['paid_sales_total'] / $agent_data['sales_total']) * 100, 2);
-
-                $ans_percent = round((($agent_data['num_AnswerMachines'] / $agent_data['calls_today']) * 100), 2);
-
-
-                ?>
-                <tr style="color:#000"><?
-
-                // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
-                if ($_SESSION['user']['priv'] > 3) {
-
-                    ?>
-                    <td style="border-right:1px dotted #CCC;padding-right:3px">
-
-                    <a href="#" onclick="addUserToIgnore('<?= htmlentities(strtoupper($agent_data['agent_username'])) ?>');return false;">[Ignore]</a>
-
-                    </td><?
+                if ($campaign_code) {
+                    echo $campaign_code . ' ';
                 }
 
-                ?>
-                <td><?= htmlentities(strtoupper($agent_data['agent_username'])) ?></td>
-                <td align="center"><?= number_format($agent_data['activity_paid'], 2) ?></td>
-                <td align="center"><?= number_format($agent_data['activity_wrkd'], 2) ?></td>
-                <td align="center"><?= number_format($agent_data['calls_today']) ?></td>
-                <td align="center"><?= number_format($agent_data['num_NI']) ?></td>
-                <td align="center"><?= number_format($agent_data['num_XFER']) ?></td><?
+                echo "Sales Analysis - ";
 
-                if ($this->skip_answeringmachines == false) {
-                    ?>
-                    <td align="center"><?= number_format($agent_data['num_AnswerMachines']) ?></td>
-                    <? /** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/ ?>
+                if (!is_array($agent_cluster_id) && $agent_cluster_id >= 0) {
+                    //				echo getClusterName($agent_cluster_id);//$_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
+                    echo $_SESSION['site_config']['db'][$agent_cluster_id]['name'] . ' - ';
+                } else if (is_array($agent_cluster_id)) {
+                    foreach ($agent_cluster_id as $aci) {
 
-                    <td align="center"><?= $ans_percent ?>%</td><?
+                        echo (($aci == -1) ? '[ALL]' : $_SESSION['site_config']['db'][$aci]['name']) . ' - ';
+
+                        // ALL MEANS ALL
+                        if ($aci == -1) break;
+                    }
                 }
-                ?>
 
-                <td align="center"><?= number_format($agent_data['contacts_per_worked_hour'], 2) ?>&nbsp;/&nbsp;<?= number_format($agent_data['calls_per_worked_hour'], 2) ?></td>
-
-
-                <td align="center"><?= number_format($agent_data['sale_cnt']) ?></td>
-
-                <td align="left">
-
-                    <?= number_format($agent_data['paid_sale_cnt']) ?>
-
-                </td>
-                <td align="left">
-
-                    $<?= number_format($agent_data['paid_sales_total']) ?>
-
-                </td>
-
-                <td align="right"><?= number_format($paid_sale_percent, 2) ?>%</td>
-                <td align="right"><?= number_format($paid_sale_amount_percent, 2) ?>%</td>
+                //			if($user_group){
+                //
+                //				if(is_array($user_group)){
+                //
+                //					if(trim($user_group[0]) != ''){
+                //
+                //						echo implode($user_group,' | ');
+                //						echo " - ";
+                //					}
+                //
+                //
+                //				}else{
+                //					echo $user_group.' - ';
+                //				}
+                //			}
 
 
-                <td align="center"><?= number_format(($agent_data['sale_cnt'] - $agent_data['paid_sale_cnt'])) ?></td>
-                <td align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</td>
+                if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
 
-
-                <td align="right"><?= number_format($agent_data['closing_percent'], 2) ?>%</td>
-                <td align="right"><?= number_format($agent_data['conversion_percent'], 2) ?>%</td>
-                <td align="right"><?= number_format($agent_data['yes2all_percent'], 2) ?>%</td>
-                <td align="right">$<?= number_format($agent_data['sales_total']) ?></td>
-                <td align="right">$<?= number_format($agent_data['avg_sale'], 2) ?></td>
-                <td align="right">$<?= number_format($agent_data['paid_hr'], 2) ?></td>
-                <td align="right">$<?= number_format($agent_data['wrkd_hr'], 2) ?></td>
-                </tr><?
-
-            }
-
-            ?></tbody><?
-
-
-            $paid_sale_percent = round(((float)$totals['total_paid_sale_cnt'] / $totals['total_sale_cnt']) * 100, 2);
-            $unpaid_sale_percent = 100 - $paid_sale_percent;
-
-            $paid_sale_amount_percent = ($totals['total_sales'] <= 0) ? 0 : round(((float)$totals['total_paid_sales'] / $totals['total_sales']) * 100, 2);
-
-            $t_ans_percent = round((($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2);
-
-            ?>
-            <tfoot>
-            <tr><?
-                // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
-
-                if ($_SESSION['user']['priv'] > 3) {
-
-                    ?>
-                    <th colspan="2" style="border-top:1px solid #000" align="left">Total Agents: <?= count($agent_data_arr) ?></th><?
+                    echo date("m-d-Y", $stime);
 
                 } else {
+                    echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
+                } ?></h1>
+            <h3><?php
 
-                    ?>
-                    <th style="border-top:1px solid #000" align="left">Total Agents: <?= count($agent_data_arr) ?></th><?
-
+                if ($user_group) {
+                    if (is_array($user_group)) {
+                        if (trim($user_group[0]) != '') {
+                            echo '<b>User Groups:</b>' . implode($user_group, ' | ');
+                            echo "<br />";
+                        }
+                    } else {
+                        echo '<b>User Group:</b>' . $user_group . "<br />";
+                    }
                 }
 
 
-                ?>
-                <th style="border-top:1px solid #000"><?= number_format($totals['total_activity_paid_hrs'], 2) ?></th>
-                <th style="border-top:1px solid #000"><?= number_format($totals['total_activity_wrkd_hrs'], 2) ?></th>
-                <th style="border-top:1px solid #000"><?= number_format($totals['total_calls']) ?></th>
-                <th style="border-top:1px solid #000"><?= number_format($totals['total_NI']) ?></th>
-                <th style="border-top:1px solid #000"><?= number_format($totals['total_XFER']) ?></th>
-                <?
-
-                if ($this->skip_answeringmachines == false) {
-                    ?>
-                    <th style="border-top:1px solid #000"><?= number_format($totals['total_AnswerMachines']) ?></th>
-                    <th style="border-top:1px solid #000"><?= $t_ans_percent ?>%</th><?
+                if ($ignore_group) {
+                    if (is_array($ignore_group)) {
+                        if (trim($ignore_group[0]) != '') {
+                            echo '<b>Ignoring Groups:</b> ' . implode($ignore_group, ' | ');
+                            echo "<br />";
+                        }
+                    } else {
+                        echo '<b>Ignoring Group:</b> ' . $ignore_group . '<br />';
+                    }
                 }
-                ?>
-                <th style="border-top:1px solid #000"><?= number_format($totals['total_contacts_per_worked_hour'], 2) . ' - ' . number_format($totals['total_calls_per_worked_hour'], 2) ?></th>
 
 
-                <th style="border-top:1px solid #000"><?= number_format($totals['total_sale_cnt']) ?></th>
+                ?></h3>
 
-                <th style="border-top:1px solid #000" align="left"><?= number_format($totals['total_paid_sale_cnt']) ?></th>
-                <th style="border-top:1px solid #000" align="left">$<?= number_format($totals['total_paid_sales']) ?></th>
+            <script>
+                function addUserToIgnore(username) {
+                    var str = $('#ignore_users_list').val();
+                    if (str.length > 0 && !str.endsWith(",")) str += ",";
+                    str += username;
+                    $('#ignore_users_list').val(str);
+                }
+            </script>
+                <table id="sales_anal_table" style="width:100%" border="0" cellspacing="1" class="table table-bordered table-striped table-vcenter js-dataTable-full" style="color:#000">
+                    <thead>
+                    <tr>
+                        <?
 
-                <th style="border-top:1px solid #000" align="right"><?= number_format($paid_sale_percent, 2) ?>%</th>
-                <th style="border-top:1px solid #000" align="right"><?= number_format($paid_sale_amount_percent, 2) ?>%</th>
+                        // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
+                        if ($_SESSION['user']['priv'] > 3) {
+
+                            ?>
+                            <th nowrap align="left">&nbsp;</th><?
+                        }
 
 
-                <th style="border-top:1px solid #000" align="center"><?= number_format(($totals['total_sale_cnt'] - $totals['total_paid_sale_cnt'])) ?></th>
-                <th style="border-top:1px solid #000" align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
+                        ?>
+                        <th align="left">Agent</th>
+                        <th title="Number of hours being Paid for">PD HRS</th>
+                        <th title="Number of hours of Activity tracked">WRKD HRS</th>
+                        <th title="Total number of calls for the day">Total Calls</th>
+                        <th title="Number of Calls that were NOT INTERESTED">NI</th>
+                        <th title="Number of Transfers">XFERS</th>
+                        <?php
+
+                        if ($this->skip_answeringmachines == false) {
+                            ?>
+                            <th title="Number of Answering Machine calls">A</th>
+                            <th title="Percentage of calls that are Answering Machines">%ANS</th><?php
+                        }
+                        ?>
+                        <th title="Contacts per Worked hour, and Calls per Worked hour">Con&amp;Calls/hr</th>
 
 
-                <th style="border-top:1px solid #000" align="right"><?= number_format($totals['total_closing'], 2) ?>%</th>
-                <th style="border-top:1px solid #000" align="right"><?= number_format($totals['total_conversion'], 2) ?>%</th>
-                <th style="border-top:1px solid #000" align="right"><?= number_format($totals['total_yes2all'], 2) ?>%</th>
+                        <th>TOTAL SALES</th>
+                        <th>PAID SALES #</th>
+                        <th>PAID SALES $</th>
 
-                <th style="border-top:1px solid #000" align="right">$<?= number_format($totals['total_sales']) ?></th>
+                        <th title="The percentage of deal counts that were paid, vs the total count sent">PAID %</th>
+                        <th title="Percentage of paid deals, by the dollar amount, instead of count">$PAID %</th>
+                        <th>UNPAID SALES</th>
+                        <th>UNPAID %</th>
 
-                <th style="border-top:1px solid #000" align="right">$<?= number_format($totals['total_avg'], 2) ?></th>
-                <th style="border-top:1px solid #000" align="right">$<?= number_format($totals['total_paid_hr'], 2) ?></th>
-                <th style="border-top:1px solid #000" align="right">$<?= number_format($totals['total_wrkd_hr'], 2) ?></th>
+                        <th align="right" title="Closing Percentage">CLOSE %</th>
+                        <th align="right" title="Conversion Percentage">CON%</th>
+                        <th align="right">YES 2 ALL %</th>
+                        <th align="right">TOTAL SALES</th>
+                        <th align="right">AVG SALE</th>
+                        <th align="right">PD $/HR</th>
+                        <th align="right">WRKD $/HR</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <?
 
-            </tr>
-            </tfoot>
-        </table>
-        </a><?php
+
+                    foreach ($agent_data_arr as $agent_data) {
+
+                        $paid_sale_percent = ($agent_data['sale_cnt'] <= 0) ? 0 : round(((float)$agent_data['paid_sale_cnt'] / $agent_data['sale_cnt']) * 100, 2);
+                        $unpaid_sale_percent = 100 - $paid_sale_percent;
+
+                        $paid_sale_amount_percent = ($agent_data['sales_total'] <= 0) ? 0 : round(((float)$agent_data['paid_sales_total'] / $agent_data['sales_total']) * 100, 2);
+
+                        $ans_percent = round((($agent_data['num_AnswerMachines'] / $agent_data['calls_today']) * 100), 2);
+
+
+                        ?>
+                        <tr style="color:#000"><?
+
+                        // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
+                        if ($_SESSION['user']['priv'] > 3) {
+
+                            ?>
+                            <td style="border-right:1px dotted #CCC;padding-right:3px">
+
+                            <a href="#" onclick="addUserToIgnore('<?= htmlentities(strtoupper($agent_data['agent_username'])) ?>');return false;">[Ignore]</a>
+
+                            </td><?
+                        }
+
+                        ?>
+                        <td><?= htmlentities(strtoupper($agent_data['agent_username'])) ?></td>
+                        <td align="center"><?= number_format($agent_data['activity_paid'], 2) ?></td>
+                        <td align="center"><?= number_format($agent_data['activity_wrkd'], 2) ?></td>
+                        <td align="center"><?= number_format($agent_data['calls_today']) ?></td>
+                        <td align="center"><?= number_format($agent_data['num_NI']) ?></td>
+                        <td align="center"><?= number_format($agent_data['num_XFER']) ?></td><?
+
+                        if ($this->skip_answeringmachines == false) {
+                            ?>
+                            <td align="center"><?= number_format($agent_data['num_AnswerMachines']) ?></td>
+                            <? /** PER PAID HOUR <td align="center"><?=number_format($agent_data['contacts_per_paid_hour'], 2)?>&nbsp;/&nbsp;<?=number_format($agent_data['calls_per_paid_hour'], 2)?></td> **/ ?>
+
+                            <td align="center"><?= $ans_percent ?>%</td><?
+                        }
+                        ?>
+
+                        <td align="center"><?= number_format($agent_data['contacts_per_worked_hour'], 2) ?>&nbsp;/&nbsp;<?= number_format($agent_data['calls_per_worked_hour'], 2) ?></td>
+
+
+                        <td align="center"><?= number_format($agent_data['sale_cnt']) ?></td>
+
+                        <td align="left">
+
+                            <?= number_format($agent_data['paid_sale_cnt']) ?>
+
+                        </td>
+                        <td align="left">
+
+                            $<?= number_format($agent_data['paid_sales_total']) ?>
+
+                        </td>
+
+                        <td align="right"><?= number_format($paid_sale_percent, 2) ?>%</td>
+                        <td align="right"><?= number_format($paid_sale_amount_percent, 2) ?>%</td>
+
+
+                        <td align="center"><?= number_format(($agent_data['sale_cnt'] - $agent_data['paid_sale_cnt'])) ?></td>
+                        <td align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</td>
+
+
+                        <td align="right"><?= number_format($agent_data['closing_percent'], 2) ?>%</td>
+                        <td align="right"><?= number_format($agent_data['conversion_percent'], 2) ?>%</td>
+                        <td align="right"><?= number_format($agent_data['yes2all_percent'], 2) ?>%</td>
+                        <td align="right">$<?= number_format($agent_data['sales_total']) ?></td>
+                        <td align="right">$<?= number_format($agent_data['avg_sale'], 2) ?></td>
+                        <td align="right">$<?= number_format($agent_data['paid_hr'], 2) ?></td>
+                        <td align="right">$<?= number_format($agent_data['wrkd_hr'], 2) ?></td>
+                        </tr><?
+
+                    }
+
+                    ?></tbody><?
+
+
+                    $paid_sale_percent = round(((float)$totals['total_paid_sale_cnt'] / $totals['total_sale_cnt']) * 100, 2);
+                    $unpaid_sale_percent = 100 - $paid_sale_percent;
+
+                    $paid_sale_amount_percent = ($totals['total_sales'] <= 0) ? 0 : round(((float)$totals['total_paid_sales'] / $totals['total_sales']) * 100, 2);
+
+                    $t_ans_percent = round((($totals['total_AnswerMachines'] / $totals['total_calls']) * 100), 2);
+
+                    ?>
+                    <tfoot>
+                    <tr><?
+                        // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
+
+                        if ($_SESSION['user']['priv'] > 3) {
+
+                            ?>
+                            <th colspan="2" style="border-top:1px solid #000" align="left">Total Agents: <?= count($agent_data_arr) ?></th><?
+
+                        } else {
+
+                            ?>
+                            <th style="border-top:1px solid #000" align="left">Total Agents: <?= count($agent_data_arr) ?></th><?
+
+                        }
+
+
+                        ?>
+                        <th style="border-top:1px solid #000"><?= number_format($totals['total_activity_paid_hrs'], 2) ?></th>
+                        <th style="border-top:1px solid #000"><?= number_format($totals['total_activity_wrkd_hrs'], 2) ?></th>
+                        <th style="border-top:1px solid #000"><?= number_format($totals['total_calls']) ?></th>
+                        <th style="border-top:1px solid #000"><?= number_format($totals['total_NI']) ?></th>
+                        <th style="border-top:1px solid #000"><?= number_format($totals['total_XFER']) ?></th>
+                        <?
+
+                        if ($this->skip_answeringmachines == false) {
+                            ?>
+                            <th style="border-top:1px solid #000"><?= number_format($totals['total_AnswerMachines']) ?></th>
+                            <th style="border-top:1px solid #000"><?= $t_ans_percent ?>%</th><?
+                        }
+                        ?>
+                        <th style="border-top:1px solid #000"><?= number_format($totals['total_contacts_per_worked_hour'], 2) . ' - ' . number_format($totals['total_calls_per_worked_hour'], 2) ?></th>
+
+
+                        <th style="border-top:1px solid #000"><?= number_format($totals['total_sale_cnt']) ?></th>
+
+                        <th style="border-top:1px solid #000" align="left"><?= number_format($totals['total_paid_sale_cnt']) ?></th>
+                        <th style="border-top:1px solid #000" align="left">$<?= number_format($totals['total_paid_sales']) ?></th>
+
+                        <th style="border-top:1px solid #000" align="right"><?= number_format($paid_sale_percent, 2) ?>%</th>
+                        <th style="border-top:1px solid #000" align="right"><?= number_format($paid_sale_amount_percent, 2) ?>%</th>
+
+
+                        <th style="border-top:1px solid #000" align="center"><?= number_format(($totals['total_sale_cnt'] - $totals['total_paid_sale_cnt'])) ?></th>
+                        <th style="border-top:1px solid #000" align="right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
+
+
+                        <th style="border-top:1px solid #000" align="right"><?= number_format($totals['total_closing'], 2) ?>%</th>
+                        <th style="border-top:1px solid #000" align="right"><?= number_format($totals['total_conversion'], 2) ?>%</th>
+                        <th style="border-top:1px solid #000" align="right"><?= number_format($totals['total_yes2all'], 2) ?>%</th>
+
+                        <th style="border-top:1px solid #000" align="right">$<?= number_format($totals['total_sales']) ?></th>
+
+                        <th style="border-top:1px solid #000" align="right">$<?= number_format($totals['total_avg'], 2) ?></th>
+                        <th style="border-top:1px solid #000" align="right">$<?= number_format($totals['total_paid_hr'], 2) ?></th>
+                        <th style="border-top:1px solid #000" align="right">$<?= number_format($totals['total_wrkd_hr'], 2) ?></th>
+
+                    </tr>
+                    </tfoot>
+                </table>
+        </a>
+        <?php
 
         // GRAB DATA FROM BUFFER
         $data = ob_get_contents();

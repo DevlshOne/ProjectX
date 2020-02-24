@@ -293,39 +293,56 @@ class ListPerformance
                     }
                     //report_time_mode
                 }
+
+                togHistSearch(null);
             </script>
             <div class="block">
                 <form id="listperf_report" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?area=list_tools&tool=performance_reports&no_script=1" onsubmit="return genReport(this, 'list_performance')">
                     <! ** BEGIN BLOCK HEADER -->
                     <div class="block-header bg-primary-light">
                         <h4 class="block-title">List Performance Report</h4>
-                        <button type="submit" title="Generate Report" class="btn btn-sm btn-success" name="the_Search_button">Generate</button>
                     </div>
                     <! ** END BLOCK HEADER -->
                     <! ** BEGIN BLOCK SEARCH TABLE -->
-                    <div class="bg-info-light">
-                        <div class="input-group input-group-sm">
+                    <div>
+                        <div class="form-group row mb-0">
                             <input type="hidden" name="generate_report"/>
-                            <?= $this->makeClusterDD("agent_cluster_idx", (!isset($_REQUEST['agent_cluster_idx']) || intval($_REQUEST['agent_cluster_idx']) < 0) ? -1 : $_REQUEST['agent_cluster_idx'], 'custom-select-sm', ""); ?>
+                            <label class="col-3 col-form-label" for="agent_cluster_idx">Select Cluster</label>
+                            <div class="col-7">
+                                <?= $this->makeClusterDD("agent_cluster_idx", (!isset($_REQUEST['agent_cluster_idx']) || intval($_REQUEST['agent_cluster_idx']) < 0) ? -1 : $_REQUEST['agent_cluster_idx'], 'custom-select-sm', ""); ?>
+                            </div>
                         </div>
-                        <div class="input-group input-group-sm">
-                            <div class="form-check form-check-inline">
+                        <div class="form-group row mb-0">
+                            <label class="col-3 col-form-label" for="rtm1">Today / Current</label>
+                            <div class="col-7">
                                 <input class="form-check-input" type="radio" name="report_time_mode" id="rtm1" value="current" <?= ($_REQUEST['report_time_mode'] !== 'history') ? ' CHECKED ' : '' ?> onclick="togHistSearch(this.value)"/>
-                                <label class="form-check-label" for="rtm1">Today / Current</label>
                             </div>
-                            <div class="form-check form-check-inline">
+                        </div>
+                        <div class="form-group row mb-0">
+                            <label class="col-3 col-form-label" for="rtm2">Historical</label>
+                            <div class="col-7">
                                 <input class="form-check-input" type="radio" name="report_time_mode" id="rtm2" value="history" <?= ($_REQUEST['report_time_mode'] === 'history') ? ' CHECKED ' : '' ?> onclick="togHistSearch(this.value)"/>
-                                <label class="form-check-label" for="rtm2">Historical</label>
                             </div>
-                            <div class="input-group input-group-sm" id="most_recent_cell">
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="checkbox" name="force_fresh_pull" id="ffp" value="1"/>
-                                    <label class="form-check-label text-danger" for="ffp">Force Fresh Data Pull [Slower]</label>
+                        </div>
+                        <div class="form-group row mb-0" id="most_recent_cell">
+                            <div class="col">
+                            <label for="ffp">Force Fresh Data Pull [Slower]</label>
+                                <input type="checkbox" name="force_fresh_pull" id="ffp" value="1"/>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-0" id="historical_cell">
+                            <div class="col">
+                            <label class="col-form-label">Select Date</label>
+                                <?= makeTimebar("date_", 1, null, false, $timestamp); ?>
+                            </div>
+                        </div>
+                        <div class="form-group row mb-0">
+                            <div class="col-3"></div>
+                            <div class="col-7">
+                                <div class="input-group input-group-sm">
+                                    <button type="submit" class="btn btn-sm btn-success" title="Generate Report">Generate</button>
                                 </div>
                             </div>
-                        </div>
-                        <div class="input-group input-group-sm" id="historical_cell">
-                            <?= makeTimebar("date_", 1, null, false, $timestamp); ?>
                         </div>
                     </div>
                     <! ** END BLOCK SEARCH TABLE -->
@@ -429,7 +446,12 @@ class ListPerformance
                         $('#listperf_table').DataTable({
 
                             "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]],
-                            "order": [[12, "desc"]]
+                            "order": [[12, "desc"]],
+                            dom: 'Bfrtip',
+                            buttons: [
+                                {extend: 'copy', header: false, footer: false}
+                            ],
+
 
                         });
 

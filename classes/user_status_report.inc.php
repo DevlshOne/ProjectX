@@ -115,7 +115,7 @@ class UserStatusReport
         $out .= ($css) ? ' class="' . $css . '" ' : '';
         $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
         $out .= '>';
-        $out .= '<option value="-1" ' . (($selected == '-1') ? ' SELECTED ' : '') . '>[Select Agent Cluster]</option>';
+//        $out .= '<option value="-1" ' . (($selected == '-1') ? ' SELECTED ' : '') . '>[Select Agent Cluster]</option>';
         foreach ($_SESSION['site_config']['db'] as $dbidx => $db) {
 
             $out .= '<option value="' . $dbidx . '" ';
@@ -200,21 +200,30 @@ class UserStatusReport
     }
 
 
-    function makeUserStatusReport() {
+    function makeUserStatusReport()
+    {
         ## CREATE SEARCH FORM
         ?>
         <div class="block">
             <form id="user_status_report" method="POST" action="<?= $_SERVER['PHP_SELF'] ?>?area=user_status_report&no_script=1" onsubmit="return genReport(this, 'user_status_report')">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">User Status Report</h4>
-                    <button type="submit" value="Search" title="Generate Report" class="btn btn-sm btn-success" name="the_Search_button">Generate</button>
                 </div>
                 <div class="bg-info-light" id="report_search_table">
-                    <div class="input-group input-group-sm">
-                        <input type="hidden" name="generate_report"/>
-                        <?= $this->makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0) ? -1 : $_REQUEST['agent_cluster_id'], 'form-control custom-select-sm', ""); ?>
-                        <?= makeViciUserGroupDD("user_group[]", $_REQUEST['user_group'], 'form-control custom-select-sm', "", 7, "[Select User Group(s)]"); ?>
+                    <input type="hidden" name="generate_report"/>
+                    <div class="form-group row mb-0">
+                        <label class="col-3 col-form-label" for="agent_cluster_id">Select Agent Cluster</label>
+                        <div class="col-7">
+                            <?= $this->makeClusterDD("agent_cluster_id", (!isset($_REQUEST['agent_cluster_id']) || intval($_REQUEST['agent_cluster_id']) < 0) ? -1 : $_REQUEST['agent_cluster_id'], 'custom-select-sm', ""); ?>
+                        </div>
                     </div>
+                    <div class="form-group row mb-0">
+                        <label class="col-3 col-form-label" for="user_group[]">Select User Group(s)</label>
+                        <div class="col-7">
+                            <?= makeViciUserGroupDD("user_group[]", $_REQUEST['user_group'], 'custom-select-sm', "", 7, ""); ?>
+                        </div>
+                    </div>
+                    <button type="submit" title="Generate Report" class="btn btn-sm btn-success" name="the_Search_button">Generate</button>
                 </div>
             </form>
         </div>
@@ -353,7 +362,12 @@ class UserStatusReport
 
                         $('#user_status_report_table').DataTable({
 
-                            "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]]
+                            "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]],
+                            dom: 'Bfrtip',
+                            buttons: [
+                                {extend: 'copy', header: false, footer: false}
+                            ],
+
 
 
                         });
