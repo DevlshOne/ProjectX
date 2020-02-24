@@ -522,8 +522,21 @@
 
         if ($mode == 0 || $mode == 2) {
             /// makeNumberDD($name,$sel,$start,$end,$inc,$zeropad,$tag_inject)
-            echo makeNumberDD($basename . 'hour', (($selarr[0] % 12 == 0) ? 12 : ($selarr[0] % 12)), 1, 12, 1, 0, $extra_attr) . ' : ';    # Hours
-            echo makeNumberDD($basename . 'min', $selarr[1], 0, 59, 1, 1, 0, $extra_attr);        # minutes
+        	//makeNumberDD($name, $sel, $start, $end, $inc, $zeropad=false, $tag_inject='', $blankfield=false) :
+            echo makeNumberDD(	$basename . 'hour', 
+            					(($selarr[0] % 12 == 0) ? 12 : ($selarr[0] % 12)), 
+			            		1, 
+			            		12, 
+			            		1, 
+			            		0, 
+			            		$extra_attr) . ' : ';    # Hours
+            echo makeNumberDD($basename . 'min',
+            				$selarr[1], 					
+            				0, 
+            				59, 
+            				1, 
+            				1, 
+            				$extra_attr);        # minutes
             echo '<select class="custom-select-sm" name="' . $basename . 'timemode' . '" ' . $extra_attr . ' id="' . $basename . 'timemode' . '"><option value="am"' . (($selarr[0] < 12) ? ' SELECTED' : '') . '>AM<option value="pm"' . (($selarr[0] >= 12 && $selarr[0] < 24) ? ' SELECTED' : '') . '>PM</select>';
         }
         if ($mode != 2) {

@@ -490,7 +490,7 @@ class ProcessTrackerSchedules
                     <th align="left" height="30">Day Of Month:</th>
                     <td><?
 
-                        echo getDayDD("time_dayofmonth", $row['time_dayofmonth'], " onchange=\"\" ");
+                        echo getDayDD("time_dayofmonth", $row['time_dayofmonth'], " onchange=\"\" style=\"width:80px;display:inline\" ");
 
                         ?></td>
                 </tr>
@@ -501,11 +501,11 @@ class ProcessTrackerSchedules
                         if (isset($row['time_start'])) {
 
                             $time_start_sel = explode(":", $row['time_start']);
-                            echo makeTimebar("time_start", 2, $time_start_sel, false, 0, " onchange=\"\" ");
+                            echo makeTimebar("time_start", 2, $time_start_sel, false, 0, " onchange=\"\" style=\"width:80px;display:inline\" ");
 
                         } else {
 
-                            echo makeTimebar("time_start", 2, null, false, time(), " onchange=\"\" ");
+                            echo makeTimebar("time_start", 2, null, false, time(), " onchange=\"\" style=\"width:80px;display:inline\" ");
 
                         }
 
@@ -518,11 +518,11 @@ class ProcessTrackerSchedules
                         if (isset($row['time_end'])) {
 
                             $time_end_sel = explode(":", $row['time_end']);
-                            echo makeTimebar("time_end", 2, $time_end_sel, false, 0, " onchange=\"\" ");
+                            echo makeTimebar("time_end", 2, $time_end_sel, false, 0, " onchange=\"\" style=\"width:80px;display:inline\" ");
 
                         } else {
 
-                            echo makeTimebar("time_end", 2, null, false, time() + 3600, " onchange=\"\" ");
+                            echo makeTimebar("time_end", 2, null, false, time() + 3600, " onchange=\"\" style=\"width:80px;display:inline\" ");
 
                         }
 
