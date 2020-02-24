@@ -15,36 +15,63 @@ class DailyLineHourAPI
 
     }
 
-    public function getRoustingTotals($clusterId, $userGroup, $startTime, $endTime)
+    public function getRoustingTotals($startTime, $endTime)
     {
-        $users = "'".implode("','", $this->getUsers($clusterId, $userGroup, $startTime, $endTime))."'";
-
-
         $hourlySql = <<<SQL
-            SELECT
-                 '{$userGroup}' as `user_group`,
-                 sum(agent_sales.paid_sales_amount) as `paid_cc`,
-                 round(sum(agent_sales.paid_sales_amount)/(sum(activity_log.paid_time)/60),2) as `paid_per_hour`
-            FROM `activity_log` 
-                LEFT JOIN (
-                    SELECT
-                        agent_username,
-                        sum(if(is_paid IN('yes','roustedcc'), 1, 0)) as paid_sales_cnt,
-                        sum(if(is_paid IN('yes','roustedcc'), amount, 0)) as paid_sales_amount
-                    FROM sales
-                        WHERE `sale_time` BETWEEN {$startTime} AND {$endTime}
-                        AND ( agent_cluster_id = {$clusterId})
-                        AND agent_username IN ( {$users} )
-                        AND call_group = '{$userGroup}'
-                    GROUP BY agent_username
-                ) `agent_sales` ON `activity_log`.`username` = `agent_sales`.`agent_username`
-            WHERE
-              `time_started` BETWEEN {$startTime} AND {$endTime}
-            AND `vici_cluster_id` = {$clusterId}
-            AND `username` IN ( {$users} )
+SELECT
+	call_group,
+    sum(agent_paid_sales_cnt) as group_paid_sales_cnt,
+    sum(agent_paid_sales_amount) as group_paid_sales_amount,
+    sum(agent_activity_time) as group_activity_time
+FROM ( 
+	SELECT
+		if(RIGHT(username,1) = 2, LEFT(username, length(username) -1), username) as `agent_id`,
+        call_group,
+		sum(paid_sales_cnt) as agent_paid_sales_cnt,
+		sum(paid_sales_amount) as agent_paid_sales_amount,
+		sum(activity_time)/count(1) as agent_activity_time,
+		count(1) as hands
+		FROM (
+			 SELECT 
+				sales.call_group,
+				logins.username,
+				activity_time,
+				paid_sales_cnt,
+				paid_sales_amount
+			 FROM 
+				(
+					SELECT
+						DISTINCT username as `username`
+						FROM logins
+					WHERE result='success' AND section IN('rouster','roustersys')
+						AND `time` BETWEEN {$startTime} AND {$endTime}
+					GROUP BY 1
+					ORDER BY 1
+				) logins
+			 JOIN (
+					SELECT 
+					   username,
+					   activity_time
+					from activity_log
+					WHERE time_started BETWEEN {$startTime} AND {$endTime}
+				) activity ON logins.username = activity.username
+			 JOIN (
+					SELECT
+						agent_username,
+						call_group,
+						sum(if(is_paid IN('yes','roustedcc'), 1, 0)) as paid_sales_cnt,
+						sum(if(is_paid IN('yes','roustedcc'), amount, 0)) as paid_sales_amount
+					FROM sales
+						WHERE `sale_time` BETWEEN {$startTime} AND {$endTime}
+					GROUP BY agent_username
+			 ) sales on logins.username = sales.agent_username
+		) login_totals
+	GROUP BY 1
+) agent_totals
+GROUP BY 1;
 SQL;
 
-        if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 2) { var_dump($hourlySql); die(); }
+        if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) { var_dump($hourlySql); die(); }
 
         $result = $_SESSION['dbapi']->ROquerySQL($hourlySql);
 
@@ -89,22 +116,59 @@ SQL;
         return $result;
     }
 
-    public function getUsers($clusterId, $userGroup, $startTime, $endTime)
+    public function getVerifierStats($startUnixTime, $endUnixTime)
     {
         $sql = <<<SQL
-          SELECT DISTINCT(username) FROM `logins` 
-            WHERE result='success' AND section IN('rouster','roustersys')
-            AND `time` BETWEEN '{$startTime}' AND '{$endTime}' 
-            AND cluster_id='{$clusterId}'
-            AND `user_group` IN ('{$userGroup}')
+SELECT
+	-- call_group,
+    sum(agent_paid_sales_cnt) as group_paid_sales_cnt,
+    sum(agent_paid_sales_amount) as group_paid_sales_amount,
+    sum(agent_activity_time) as group_activity_time
+FROM ( 
+	SELECT
+		if(RIGHT(username,1) = 2, LEFT(username, length(username) -1), username) as `agent_id`,
+        call_group,
+		sum(paid_sales_cnt) as agent_paid_sales_cnt,
+		sum(paid_sales_amount) as agent_paid_sales_amount,
+		sum(activity_time)/count(1) as agent_activity_time,
+		count(1) as hands
+		FROM (
+			 SELECT 
+				sales.call_group,
+				activity.username,
+				activity_time,
+				paid_sales_cnt,
+				paid_sales_amount
+			 FROM 
+				 (
+					SELECT 
+					   username,
+					   activity_time
+					from activity_log
+					WHERE time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
+				) activity 
+			 LEFT JOIN (
+					SELECT
+						verifier_username as `agent_username`,
+						call_group,
+						sum(if(is_paid = 'yes', 1, 0)) as paid_sales_cnt,
+						sum(if(is_paid = 'yes', amount, 0)) as paid_sales_amount
+					FROM sales
+						WHERE `sale_time` BETWEEN {$startUnixTime} AND {$endUnixTime}
+					GROUP BY verifier_username
+			 ) sales on activity.username = sales.agent_username
+		) login_totals
+	GROUP BY 1
+) agent_totals
 SQL;
 
         if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) { var_dump($sql); die(); }
 
-        foreach ($_SESSION['dbapi']->getResult($sql) as $result) {
-            $users[] = $result['username'];
-        }
+        $result = $_SESSION['dbapi']->ROfetchAllAssoc($sql);
 
-        return $users;
+        return $result;
     }
+
+
+
 }
