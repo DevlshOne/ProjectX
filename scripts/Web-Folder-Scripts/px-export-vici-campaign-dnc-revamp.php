@@ -9,6 +9,9 @@
 	$max_insert_count = 1000; // HOW MANY RECORDS AT A TIME TO INSERT
 
 
+	$truncate_first = true; // EMPTY THE CAMPAIGN DNC table in vicidial before rebuilding, to avoid "missing unique indexes causing records to stack issue", on some clusters
+	
+	
 	include_once($base_dir."site_config.php");
 	include_once($base_dir."db.inc.php");
 
@@ -169,6 +172,14 @@
 
 		echo date("H:i:s m/d/Y")." - Connected to CLUSTER ID#".$cluster_id." - ".$vicidb['ip_address']."\n";
 
+		
+		if($truncate_first){
+			
+			echo date("H:i:s m/d/Y")." - TRUNCATING existing campaign DNC records, before rebuilding.\n";
+			
+			execSQL("TRUNCATE TABLE `vicidial_campaign_dnc`;");
+		}
+		
 
 // GRAB ARRAY OF DISINCT CAMPAIGNS (FOR THE _ALL_ CAMPAIGNS OPTION (NULL CAMPAIGN SETTING)
 		// POPULATE $all_campaigns WITH THE CAMPAIGNS ON TEH CLUSTER (FOR THE GLOBAL/ALL CAMPAIGN DNCs)
