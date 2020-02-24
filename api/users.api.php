@@ -1141,7 +1141,10 @@ class API_Users{
 
 				$dat['createdby_time'] = time();
 				$dat['createdby_userid'] = $_SESSION['user']['id'];
-
+				
+				$dat['modifiedby_time'] = time();
+				$dat['modifiedby_userid'] = $_SESSION['user']['id'];
+				
 				// IF WE'RE NOT FORCING A PASSWORD RESET
 				if(!$_REQUEST['force_change_password']){
 					## SET CHANGED PW TIME ON USER CREATION
