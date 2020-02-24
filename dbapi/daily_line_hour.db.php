@@ -15,7 +15,7 @@ class DailyLineHourAPI
 
     }
 
-    public function getRoustingTotals($startTime, $endTime)
+    public function getRoustingGroupStats($startTime, $endTime)
     {
         $hourlySql = <<<SQL
 SELECT
@@ -78,7 +78,7 @@ SQL;
         return $result;
     }
 
-    public function getSalesAnalysis($startUnixTime, $endUnixTime)
+    public function getSalesGroupStats($startUnixTime, $endUnixTime)
     {
         $sql = <<<SQL
 SELECT
@@ -116,11 +116,11 @@ SQL;
         return $result;
     }
 
-    public function getVerifierStats($startUnixTime, $endUnixTime)
+    public function getVerifierGroupStats($startUnixTime, $endUnixTime)
     {
         $sql = <<<SQL
 SELECT
-	-- call_group,
+	call_group,
     sum(agent_paid_sales_cnt) as group_paid_sales_cnt,
     sum(agent_paid_sales_amount) as group_paid_sales_amount,
     sum(agent_activity_time) as group_activity_time
@@ -148,18 +148,19 @@ FROM (
 					WHERE time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
 				) activity 
 			 LEFT JOIN (
-					SELECT
-						verifier_username as `agent_username`,
-						call_group,
-						sum(if(is_paid = 'yes', 1, 0)) as paid_sales_cnt,
-						sum(if(is_paid = 'yes', amount, 0)) as paid_sales_amount
-					FROM sales
-						WHERE `sale_time` BETWEEN {$startUnixTime} AND {$endUnixTime}
-					GROUP BY verifier_username
+                 SELECT
+                     verifier_username as `agent_username`,
+                     call_group,
+                     sum(if(is_paid = 'yes', 1, 0)) as paid_sales_cnt,
+                     sum(if(is_paid = 'yes', amount, 0)) as paid_sales_amount
+                 FROM sales
+                     WHERE `sale_time` BETWEEN {$startUnixTime} AND {$endUnixTime}
+                 GROUP BY verifier_username
 			 ) sales on activity.username = sales.agent_username
 		) login_totals
 	GROUP BY 1
 ) agent_totals
+GROUP BY 1
 SQL;
 
         if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) { var_dump($sql); die(); }
