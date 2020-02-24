@@ -397,18 +397,20 @@ case 'dnc':
 
 		$num = trim(preg_replace("/[^0-9]/",'',$_REQUEST['value']));
 		$camp = trim($_REQUEST['campaign']);
+		
+		$purgenumber = ($_REQUEST['dnc_purge_numer'])?true:false;
 
 		$type="DNC";
 
 		//echo "1:TEST SUCCESS";
 		//echo "0:TEST FAILURE";
 
-		$cnt = $_SESSION['list_tools']->addCampaignNumber($num,$camp, $type);
+		list($cnt, $purgecnts, $purge_results) = $_SESSION['list_tools']->addCampaignNumber($num,$camp, $type, $purgenumber);
 
 		if($cnt > 0){
-			echo "1:Successfully Added";
+			echo "1:Successfully Added:".$purge_results;
 		}else{
-			echo "0:Number already exists";
+			echo "0:Number already exists:".$purge_results;
 		}
 
 //		$cnt = $_SESSION['list_tools']->addNumber();

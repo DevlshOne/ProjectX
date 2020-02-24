@@ -150,16 +150,64 @@ class ListToolsClass{
 	}
 
 
-	function addCampaignNumber($num,$campaign='', $type="DNC"){
+	function addCampaignNumber($num,$campaign='', $type="DNC", $purgenumber = false){
 
 		$campaign = strtoupper($campaign);
 
 		connectPXDB();
 
-		return execSQL("INSERT IGNORE INTO `dnc_campaign_list`(`phone`,`campaign_code`,`dnc_type`,`time_added`) VALUES ".
+		$cnt = execSQL("INSERT IGNORE INTO `dnc_campaign_list`(`phone`,`campaign_code`,`dnc_type`,`time_added`) VALUES ".
 					"('".mysqli_real_escape_string($_SESSION['db'],$num)."','".mysqli_real_escape_string($_SESSION['db'],$campaign)."',".
 					"'".mysqli_real_escape_string($_SESSION['db'],$type)."',".
 					"UNIX_TIMESTAMP())");
+		
+		$purge_results = '';
+		$purgecnts = array();
+		$clusters = array();
+		
+		if($purgenumber){
+			
+			// LOOP THROUGH EACH DIALER
+			$res = query("SELECT * FROM vici_clusters WHERE status='enabled' ORDER BY `name` ASC",1);
+			
+			while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+				
+				$clusters[$row['id']] = $row;
+				
+			}
+			
+			foreach($clusters as $cluster_id => $crow){
+			
+				// CONNECT TO THE CLUSTER
+				$vidx = getClusterIndex($cluster_id);
+				if($vidx < 0){
+					echo "Skipping Cluster $cluster_id : site config record not found.";
+					continue;
+				}
+				
+				connectViciDB($vidx);
+				
+				// DELETE THE NUMBER
+				$purgecnts[$cluster_id] = execSQL("DELETE FROM `vicidial_list` WHERE `phone_number`='".mysqli_real_escape_string($_SESSION['db'],$num)."'");
+				
+				
+				$purge_results .= $crow['name'].' - '.$purgecnts[$cluster_id].' deleted.<br />';
+				
+			}
+			
+			
+			connectListDB();
+			
+			// DELETE FROM LIST TOOL
+			
+			$purgecnts[0] = execSQL("DELETE FROM `leads` WHERE `phone`='".mysqli_real_escape_string($_SESSION['db'],$num)."'");
+			
+			$purge_results .= 'List Tool - '.$purgecnts[0].' deleted.';
+			
+		}
+		
+		
+		return array($cnt, $purgecnts, $purge_results);
 	}
 
 
@@ -1461,7 +1509,7 @@ class ListToolsClass{
 			$.post("ajax.php?mode=dnc&action=add_number&value="+escape(num),null,handleDNCNumberAdd);
 		}
 
-		function addCampaignDNCNumber(num, campaign){
+		function addCampaignDNCNumber(num, campaign, purgenumber){
 
 			if(num.length < 10 || num.length > 10){
 				alert("ERROR: Phone number must be 10 digits long");
@@ -1481,7 +1529,7 @@ class ListToolsClass{
 
 			$('#add_campaign_dnc_number_results').html('<img src="images/ajax-loader.gif" width="30" /> Adding');
 
-			$.post("ajax.php?mode=dnc&action=add_campaign_number&value="+escape(num)+"&campaign="+escape(campaign),null,handleCampaignDNCNumberAdd);
+			$.post("ajax.php?mode=dnc&action=add_campaign_number&value="+escape(num)+"&campaign="+escape(campaign)+"&dnc_purge_numer="+purgenumber,null,handleCampaignDNCNumberAdd);
 		}
 
 
@@ -1606,6 +1654,13 @@ class ListToolsClass{
 				html = '<span style="background-color:#ff0000">'+tmparr[1]+'</span>';
 
 			}
+
+
+			if(tmparr.length > 2 && tmparr[2].trim() != ''){
+
+				html += '<br />'+tmparr[2];
+			}
+			
 
 			$('#add_campaign_dnc_number_results').html(html);
 		}
@@ -1972,6 +2027,23 @@ class ListToolsClass{
 
 				<br />
 
+<script>
+
+	function toggleCampaignDD(way){
+
+		if(way){
+			
+			$('#add_campaign_dnc_campaign').hide();
+			$('#all_campaign_spn').show();
+		}else{
+
+			$('#add_campaign_dnc_campaign').show();
+			$('#all_campaign_spn').hide();
+		}
+	}
+
+</script>
+
 				<table border="0" width="350" height="120" class="lb">
 				<tr>
 					<td colspan="2" style="padding-left:5px;font-size:16px;border-bottom:1px solid #000" height="25">
@@ -1986,8 +2058,23 @@ class ListToolsClass{
 					<th valign="top" style="padding-left:5px" align="left">Campaign:</th>
 					<td>
 						<input type="text" id="add_campaign_dnc_campaign" name="add_campaign_dnc_campaign" size="14" maxlength="20" onkeyup="this.value = this.value.replace(/[^a-zA-Z0-9_-]/g, '');">
+		
+						<span id="all_campaign_spn" class="nod">
+						
+							[ALL CAMPAIGNS]
+						
+						</span>
+						
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" align="center">
+					
+						<input type="checkbox" id="add_campaign_dnc_all" name="add_campaign_dnc_all" value="[ALL]" onclick="toggleCampaignDD(this.checked);" />ALL Campaigns (Permanent)
 						<br />
-						<input type="checkbox" id="add_campaign_dnc_all" name="add_campaign_dnc_all" value="[ALL]" onclick="if(this.checked){$('#add_campaign_dnc_campaign').hide();}else{$('#add_campaign_dnc_campaign').show();}" />ALL Campaigns (Permanent)
+						<span title="Delete the phone number from all Lists, on all dialers, and from list tool and leads data.">
+							<input type="checkbox" id="dnc_purge_phone" name="dnc_purge_phone" value="[ALL]" onclick="" />PURGE PHONE EVERYWHERE
+						</span>
 					</td>
 				</tr>
 				<tr>
@@ -1998,7 +2085,7 @@ class ListToolsClass{
 				<tr>
 					<td colspan="2" align="center">
 
-						<input type="button" value="Add Campaign DNC Number"  class="btn btn-sm btn-success" onclick="addCampaignDNCNumber( $('#add_campaign_dnc_number').val(), $('#add_campaign_dnc_campaign').val() )"/>
+						<input type="button" value="Add Campaign DNC Number"  class="btn btn-sm btn-success" onclick="addCampaignDNCNumber( $('#add_campaign_dnc_number').val(), $('#add_campaign_dnc_campaign').val(), $('#dnc_purge_phone').is(':checked') )"/>
 
 					</td>
 				</tr>
