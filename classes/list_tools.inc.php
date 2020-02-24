@@ -1516,6 +1516,8 @@ class ListToolsClass{
 				return;
 			}
 
+
+			
 			campaign = (campaign != null && campaign.length > 0)?campaign:'';
 
 			if((campaign == '' || campaign.length < 3) && !$('#add_campaign_dnc_all').is(':checked')){
@@ -1529,7 +1531,7 @@ class ListToolsClass{
 
 			$('#add_campaign_dnc_number_results').html('<img src="images/ajax-loader.gif" width="30" /> Adding');
 
-			$.post("ajax.php?mode=dnc&action=add_campaign_number&value="+escape(num)+"&campaign="+escape(campaign)+"&dnc_purge_numer="+purgenumber,null,handleCampaignDNCNumberAdd);
+			$.post("ajax.php?mode=dnc&action=add_campaign_number&value="+escape(num)+"&campaign="+escape(campaign)+"&dnc_purge_numer="+((purgenumber)?1:0),null,handleCampaignDNCNumberAdd);
 		}
 
 
@@ -2072,8 +2074,8 @@ class ListToolsClass{
 					
 						<input type="checkbox" id="add_campaign_dnc_all" name="add_campaign_dnc_all" value="[ALL]" onclick="toggleCampaignDD(this.checked);" />ALL Campaigns (Permanent)
 						<br />
-						<span title="Delete the phone number from all Lists, on all dialers, and from list tool and leads data.">
-							<input type="checkbox" id="dnc_purge_phone" name="dnc_purge_phone" value="[ALL]" onclick="" />PURGE PHONE EVERYWHERE
+						<span title="Delete the phone number from all Lists, on all dialers, and from list tool.">
+							<input type="checkbox" id="dnc_purge_phone" name="dnc_purge_phone" value="1" onclick="" />PURGE PHONE FROM DIALERS
 						</span>
 					</td>
 				</tr>
