@@ -3334,7 +3334,7 @@ class ListToolsClass{
 			</td>
 			<td>
 
-				&nbp;
+				&nbsp;
 
 			</td>
 		</tr>
