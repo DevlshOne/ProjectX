@@ -19,13 +19,14 @@ class API_Daily_Line_Hour
 
             switch ($_REQUEST['action']) {
                 case 'rouster_group_stats':
-                    $details = $_SESSION['dbapi']->daily_line_hour->getRoustingStats($startUnixTime, $endUnixTime);
+                    $details = $_SESSION['dbapi']->daily_line_hour->getRoustingGroupStats($startUnixTime, $endUnixTime);
                     break;
                 case 'sales_group_stats':
-                    $details = $_SESSION['dbapi']->daily_line_hour->getSalesStats($startUnixTime, $endUnixTime);
+                    $details = $_SESSION['dbapi']->daily_line_hour->getSalesGroupStats($startUnixTime, $endUnixTime);
                     break;
                 case 'verifier_group_stats':
-                    $details = $_SESSION['dbpai']->daily_line_hour->getVerifierStats($startUnixTime, $endUnixTime);
+                    $details = $_SESSION['dbpai']->daily_line_hour->getVerifierGroupStats($startUnixTime, $endUnixTime);
+                    break;
                 default:
                     throw new \Exception('action parameter required');
             }
