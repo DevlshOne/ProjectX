@@ -18,18 +18,14 @@ class API_Daily_Line_Hour
             $endUnixTime = (@$_REQUEST['end_time']) ?: strtotime(date('Y-m-d 23:59:59'));
 
             switch ($_REQUEST['action']) {
-                case 'rouster_totals':
-                    if (!($clusterId = @$_REQUEST['cluster_id'])) {
-                        throw new \Exception('cluster_id parameter required');
-                    }
-                    if (!($userGroup = @$_REQUEST['user_group'])) {
-                        throw new \Exception('user_group parameter required');
-                    }
-                    $details = $_SESSION['dbapi']->daily_line_hour->getRoustingTotals($clusterId, $userGroup, $startUnixTime, $endUnixTime);
+                case 'rouster_group_stats':
+                    $details = $_SESSION['dbapi']->daily_line_hour->getRoustingStats($startUnixTime, $endUnixTime);
                     break;
-                case 'sales_analysis':
-                    $details = $_SESSION['dbapi']->daily_line_hour->getSalesAnalysis($startUnixTime, $endUnixTime);
+                case 'sales_group_stats':
+                    $details = $_SESSION['dbapi']->daily_line_hour->getSalesStats($startUnixTime, $endUnixTime);
                     break;
+                case 'verifier_group_stats':
+                    $details = $_SESSION['dbpai']->daily_line_hour->getVerifierStats($startUnixTime, $endUnixTime);
                 default:
                     throw new \Exception('action parameter required');
             }
