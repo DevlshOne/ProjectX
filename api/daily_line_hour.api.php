@@ -25,7 +25,7 @@ class API_Daily_Line_Hour
                     $details = $_SESSION['dbapi']->daily_line_hour->getSalesGroupStats($startUnixTime, $endUnixTime);
                     break;
                 case 'verifier_group_stats':
-                    $details = $_SESSION['dbpai']->daily_line_hour->getVerifierGroupStats($startUnixTime, $endUnixTime);
+                    $details = $_SESSION['dbapi']->daily_line_hour->getVerifierGroupStats($startUnixTime, $endUnixTime);
                     break;
                 default:
                     throw new \Exception('action parameter required');
