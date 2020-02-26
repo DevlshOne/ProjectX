@@ -455,20 +455,20 @@ class LeadManagement
                             <option value="daterange"<?= ($_REQUEST['s_date_mode'] == 'daterange') ? ' SELECTED ' : '' ?>>Date Range Mode</option>
                             <option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range Mode</option>
                             <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
-                        </select>&nbsp;
-                        <span id="date1_span">
+                        </select>
+                        <div id="date1_span">
                             <?= makeTimebar("stime_", 1, null, false, time()); ?>
-                                <span id="time1_span" class="nod">
+                            </div>
+                        <div id="time1_span" class="nod">
                                     <?= makeTimebar("stime_", 2, null, false, (time() - 3600)); ?>
-                                </span>
-                            </span>
-                        <span id="date2_span" class="nod">
-                                THRU<?= makeTimebar("etime_", 1, null, false, time()); ?>
-                                <span id="time2_span" class="nod">
-                                    <?= makeTimebar("etime_", 2, null, false, time()); ?>
-                                </span>
-                            </span>
-                        <span id="nodate_span" class="nod">ANY/ALL DATES</span>
+                                </div>
+                        <div id="date2_span" class="nod">
+                                &nbsp-&nbsp;<?= makeTimebar("etime_", 1, null, false, time()); ?>
+                            </div>
+                        <div id="time2_span" class="nod">
+                            <?= makeTimebar("etime_", 2, null, false, time()); ?>
+                        </div>
+                        <div id="nodate_span" class="text-sm-center px-2 nod">All Dates</div>
                     </div>
                 </div>
                 <div class="block-content">
@@ -665,13 +665,13 @@ class LeadManagement
             <td align="center"><?
                 if ($rec['location']) {
                     ?><a href="<?= htmlentities($rec['location']) ?>" target="_blank" onclick="return false">
-                    <input type="button" value="Download" onclick="window.open('<?= htmlentities($rec['location']) ?>')">
+                    <button type="button" title="Download" class="btn btn-sm btn-success text-sm-center" onclick="window.open('<?= htmlentities($rec['location']) ?>')">Download</button>
                     </a><?
                 } else {
                     echo "-processing-";
                 }
                 ?></td>
-            <td align="center"><input type="button" value="PLAY" onclick="playAudio('<?= htmlentities($rec['location']) ?>')"></td>
+            <td align="center"><button class="btn btn-sm btn-outline-dark" type="button" title="Play Audio" onclick="playAudio('<?= htmlentities($rec['location']) ?>')"><i class="si si-control-play"></i></button></td>
             </tr><?
 
         }
@@ -1180,15 +1180,7 @@ class LeadManagement
                 </tr>
         </form>
         </table>
-        <script>
-
-            //$('#change_dispo_table').hide();
-
-            //toggleMode($('#mode').val());
-
-            applyUniformity();
-
-        </script><?
+        <?
 
 
     }
@@ -1312,15 +1304,7 @@ class LeadManagement
                 </tr>
         </form>
         </table>
-        <script>
-
-            //$('#change_dispo_table').hide();
-
-            //toggleMode($('#mode').val());
-
-            applyUniformity();
-
-        </script><?
+<?
 
 
     }
@@ -1501,10 +1485,10 @@ class LeadManagement
             <center><?
 
             if ($change_dispo_allowed) {
-                ?><input type="button" value="Change Dispo" onclick="loadDispoSection()"><?
+                ?><button type="button" class="btn btn-sm btn-warning" title="Change Dispo" onclick="loadDispoSection()">Change Dispo</button><?
             }
             if ($create_sale_allowed) {
-                ?><input type="button" value="Create new XFER and Sale" onclick="loadSaleSection(0)"><?
+                ?><button type="button" class="btn btn-sm btn-danger" title="Create new XFER and Sale" onclick="loadSaleSection(0)">Create New XFER / Sale</button><?
 
             }
 
@@ -1523,12 +1507,7 @@ class LeadManagement
         <a name="look_at_me"></a>
 
 
-        <script>
-
-
-            applyUniformity();
-
-        </script><?
+<?
 
     }
 
@@ -1766,34 +1745,33 @@ class LeadManagement
 
     if (intval($_REQUEST['no_script']) < 2){
         ?>
-            <div class="list-group list-group-horizontal" id="client_tabs" role="tablist">
-                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a>
-                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a>
-                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a>
-                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a>
+        <script>
+            $(function() {
+                loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');
+                $('#client_tabs a:first').addClass('active');
+            });
+        </script>
+        <div class="w-100 border-bottom border-3x border-info bg-gray">
+            <div class="list-group list-group-horizontal w-50" id="client_tabs" role="tablist">
+                <a class="list-group-item list-group-item-action list-group-item-info text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a>
+                <a class="list-group-item list-group-item-action list-group-item-info text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a>
+                <a class="list-group-item list-group-item-action list-group-item-info text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a>
+                <a class="list-group-item list-group-item-action list-group-item-info text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a>
             </div>
+        </div>
         <div id="dg-tab-content"></div>
         <?
 
-    }else{
-
+    } else {
     switch ($_REQUEST['sub']){
         default:
         case 'general':
-
             $vici_url = getEditLeadURL($row['vici_cluster_id'], $row['lead_id']);
-
             $vici_prod_search_url = getSearchLeadURL($row['vici_cluster_id'], $row['phone_num']);
-
-
             if ($row['verifier_vici_cluster_id'] > 0 && $row['verifier_vici_cluster_id'] != $row['vici_cluster_id']) {
-
                 $vici_verifier_url = getEditLeadURL($row['verifier_vici_cluster_id'], $row['verifier_lead_id']);
-
                 $vici_ver_search_url = getSearchLeadURL($row['verifier_vici_cluster_id'], $row['phone_num']);
             }
-
-
             if (checkAccess('lmt_edit_lead')) {
 
                 ?>
@@ -1985,19 +1963,17 @@ class LeadManagement
 
                                     <tr>
                                         <th align="left" height="25">Dispo:</th>
-                                        <td><?= ($row['dispo']) ? htmlentities($row['dispo']) . ((checkAccess('lmt_change_dispo')) ? '&nbsp;&nbsp;<input type="button" value="Change" onclick="$(\'#client_tabs\').tabs( \'option\', \'active\', 1 );">' : '') : '-In Call-' ?> </td>
+                                        <td><?= ($row['dispo']) ? htmlentities($row['dispo']) . ((checkAccess('lmt_change_dispo')) ? '&nbsp;&nbsp;<button type="button" class="btn btn-sm btn-secondary" title="Change" onclick="$(\'#client_tabs a:eq(1)\').click();loadTab(\'#dg-tab-content\', \'?area=lead_management&edit_lead=' . $id . '&sub=sales&printable=1&no_script=2\');">Change</button>' : '') : '-In Call-' ?></td>
                                     </tr><?
 
                                     if ($id > 0 && checkAccess('action_log')) {
                                         ?>
                                         <tr>
-                                        <td colspan="2" align="center" style="padding-top:10px">
-
-                                            <input type="button" value="View Change History" style="font-size:10px" onclick="viewChangeHistory('lead_management', <?= $row['id'] ?>)"/>
-
-
+                                        <td colspan="2" class="text-center pt-2">
+                                            <button class="btn btn-sm btn-dark text-sm-center" type="button" title="View Change History" onclick="viewChangeHistory('lead_management', <?= $row['id'] ?>)">View Change History</button>
                                         </td>
-                                        </tr><?
+                                        </tr>
+                                        <?
                                     }
 
                                     ?></table>
@@ -2006,7 +1982,7 @@ class LeadManagement
                             </td>
                         </tr>
                         <tr>
-                            <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
+                            <th colspan="2" align="center"><button type="submit" class="btn btn-sm btn-primary" title="Save Changes">Save Changes</button></th>
                         </tr>
                 </form>
                 </table><?
@@ -2138,7 +2114,7 @@ class LeadManagement
                                 <tr>
                                 <td colspan="2" align="center" style="padding-top:10px">
 
-                                    <input type="button" value="View Change History" style="font-size:10px" onclick="viewChangeHistory('lead_management', <?= $row['id'] ?>)"/>
+                                    <button type="button" title="View Change History" class="btn btn-sm btn-dark text-sm-center" onclick="viewChangeHistory('lead_management', <?= $row['id'] ?>)">View Change History</button>
 
 
                                 </td>

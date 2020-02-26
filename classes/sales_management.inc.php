@@ -269,8 +269,6 @@ class SalesManagement
                     $('#' + objname).load("index.php?area=sales_management&view_sale=" + id + "&printable=1&no_script=1");
                 }
 
-                $('#' + objname).dialog('option', 'position', 'center');
-
             }
 
             function resetSaleForm(frm) {
@@ -493,7 +491,8 @@ class SalesManagement
                 <?
                 if(($leadid = intval($_REQUEST['auto_open_sale'])) > 0){
 
-                ?>displaySaleDialog(<?=$leadid?>, 'general');<?
+                ?>
+                displaySaleDialog(<?=$leadid?>, 'general');<?
                 }
 
                 ?>
@@ -548,7 +547,7 @@ class SalesManagement
     if (intval($_REQUEST['no_script']) < 2){
         ?>
         <div class="list-group list-group-horizontal" role="tablist" id="sale_tabs">
-            <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a>
+            <a class="list-group-item list-group-item-action flex-fill" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a>
         </div>
         <div id="dg-tab-content"></div>
         <?
