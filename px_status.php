@@ -24,9 +24,9 @@
 	include_once("site_config.php");
 	include_once($_SESSION['site_config']['basedir']."dbapi/dbapi.inc.php");
 
-	
+
 	$_SESSION['dbapi']->users->updateLastActionTime();
-		
+
 
 
 
@@ -52,7 +52,7 @@
 		$(function() {
 			$( "#tabs" ).tabs();
 		});
-</script>
+    </script>
 </head>
 <body><?
 
