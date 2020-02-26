@@ -1766,19 +1766,14 @@ class LeadManagement
 
     if (intval($_REQUEST['no_script']) < 2){
         ?>
-        <script>
-            $(function () {
-                $("#client_tabs").tabs();
-            });
-        </script>
-        <div id="client_tabs">
-            <ul>
-                <li><a href="?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2">General</a></li>
-                <li><a href="?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2">Xfers/Sales</a></li>
-                <li><a href="?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2">Recent Calls</a></li>
-                <li><a href="?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2">Recordings</a></li>
-            </ul>
-        </div><?
+            <div class="list-group list-group-horizontal" id="client_tabs" role="tablist">
+                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a>
+                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a>
+                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a>
+                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a>
+            </div>
+        <div id="dg-tab-content"></div>
+        <?
 
     }else{
 

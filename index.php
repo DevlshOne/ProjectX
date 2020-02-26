@@ -161,6 +161,10 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             applyUniformity();
         }
 
+        function loadTab(target, url) {
+            $(target).empty().load(url);
+        }
+
         function viewChangeHistory(area, areaid) {
             var objname = 'dialog-modal-view_change_history';
             $('#' + objname).dialog("open");
@@ -186,6 +190,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         <script type="text/javascript" src="src/assets/js/oneui.core.min.js"></script>
         <script type="text/javascript" src="src/assets/js/oneui.app.min.js"></script>
         <script type="text/javascript" src="src/assets/js/core/jquery.min.js"></script>
+        <script type="text/javascript" src="src/assets/js/core/bootstrap.bundle.min.js"></script>
         <script type="text/javascript" src="src/assets/js/plugins/jquery-ui/jquery-ui.min.js"></script>
         <script type="text/javascript" src="src/assets/js/plugins/datatables/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="src/assets/js/plugins/datatables/dataTables.bootstrap4.min.js"></script>
@@ -193,7 +198,9 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         <script type="text/javascript" src="src/assets/js/plugins/datatables/buttons-bs4/buttons.bootstrap4.js"></script>
         <script type="text/javascript" src="src/assets/js/plugins/datatables/buttons/buttons.print.min.js"></script>
         <script type="text/javascript" src="src/assets/js/plugins/datatables/buttons/buttons.html5.min.js"></script>
-		<script src="src/assets/js/pages/be_tables_datatables.min.js"></script>
+        <script type="text/javascript" src="src/assets/js/plugins/datatables/buttons/buttons.colVis.min.js"></script>
+        <script type="text/javascript" src="src/assets/js/plugins/datatables/buttons/buttons.flash.min.js"></script>
+        <script src="src/assets/js/pages/be_tables_datatables.min.js"></script>
 
         <?
     }
