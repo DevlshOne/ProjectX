@@ -646,3 +646,6 @@ td.countsRow {
 .user-count-content {
     padding: 0 0 0 0;
 }
+.tab-list-border {
+    border-bottom: 3px #43a3e5 solid;
+}

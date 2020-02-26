@@ -163,6 +163,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
 
         function loadTab(target, url) {
             $(target).empty().load(url);
+            applyUniformity();
         }
 
         function viewChangeHistory(area, areaid) {
