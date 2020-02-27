@@ -498,7 +498,7 @@ class LeadManagement
             $(function () {
                 $("#dialog-modal-edit_lead").dialog({
                     autoOpen: false,
-                    width: 'auto',
+                    width: 735,
                     height: 420,
                     modal: false,
                     draggable: true,
@@ -978,11 +978,8 @@ class LeadManagement
 
                 <tr>
                     <td colspan="4" align="center">
-                        <input type="submit" value="Update">
-
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-
-                        <input type="button" value="Cancel" onclick="clearSection()">
+                        <button class="btn btn-sm btn-success" type="submit" title="Update">Update</button>
+                        <button class="btn btn-sm btn-secondary pl-2" type="button" title="Cancel" onclick="clearSection()">Clear</button>
                     </td>
                 </tr>
         </form>
@@ -1171,11 +1168,8 @@ class LeadManagement
 
                 <tr>
                     <td colspan="2" align="center">
-                        <input type="submit" value="Save Change">
-
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-
-                        <input type="button" value="Cancel" onclick="clearSection()">
+                        <button class="btn btn-sm btn-success" type="submit" title="Save Change">Save</button>
+                        <button class="btn btn-sm btn-danger pl-2" type="button" title="Cancel" onclick="clearSection()">Cancel</button>
                     </td>
                 </tr>
         </form>
@@ -1295,11 +1289,8 @@ class LeadManagement
 
                 <tr>
                     <td colspan="2" align="center">
-                        <input type="submit" value="Save Change" onclick="return checkChangeDispoForm(this.form)">
-
-                        &nbsp;&nbsp;&nbsp;&nbsp;
-
-                        <input type="button" value="Cancel" onclick="clearSection()">
+                        <button class="btn btn-sm btn-success" type="submit" title="Save Change" onclick="return checkChangeDispoForm(this.form);">Save Change</button>
+                        <button class="btn btn-sm btn-danger pl-2" type="button" title="Cancel" onclick="clearSection()">Cancel</button>
                     </td>
                 </tr>
         </form>
@@ -1380,7 +1371,9 @@ class LeadManagement
                 <td align="center">
                     <?
                     if ($create_sale_allowed) {
-                        ?><input type="button" value="Change" onclick="loadSaleSection(<?= $xfer['id'] ?>)"><?
+                        ?>
+                        <button type="button" class="btn btn-sm btn-info" title="Change" onclick="loadSaleSection(<?= $xfer['id'] ?>)">Change</button>
+                        <?
                     } else {
                         ?>&nbsp;<?
                     }
@@ -1449,7 +1442,9 @@ class LeadManagement
 
                     if ($saledate != $curdate && $create_sale_allowed) {
 
-                        ?><input type="button" value="Resend Sale" onclick="loadSaleResendSection(<?= intval($sale['id']) ?>)"><?
+                        ?>
+                        <button class="btn btn-sm btn-secondary" type="button" title="Resend Sale" onclick="loadSaleResendSection(<?= intval($sale['id']) ?>)">Re-Send Sale</button>
+                        <?
 
                     } else {
 
@@ -1748,18 +1743,19 @@ class LeadManagement
         <script>
             $(function() {
                 loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');
-                $('#client_tabs a:first').addClass('active');
+
             });
         </script>
-        <div class="w-100 border-bottom border-3x border-info bg-gray">
-            <div class="list-group list-group-horizontal w-50" id="client_tabs" role="tablist">
-                <a class="list-group-item list-group-item-action list-group-item-info text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a>
-                <a class="list-group-item list-group-item-action list-group-item-info text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a>
-                <a class="list-group-item list-group-item-action list-group-item-info text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a>
-                <a class="list-group-item list-group-item-action list-group-item-info text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a>
+        <div class="block">
+            <ul class="nav nav-tabs nav-justified bg-gray-darker js-tabs-enabled w-100" data-toggle="tabs" role="tablist" id="lm-edit-tabs">
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap bg-info hand active" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a></li>
+            </ul>
             </div>
         </div>
-        <div id="dg-tab-content"></div>
+        <div class="block-content tab-content" id="dg-tab-content"></div>
         <?
 
     } else {
@@ -1963,7 +1959,7 @@ class LeadManagement
 
                                     <tr>
                                         <th align="left" height="25">Dispo:</th>
-                                        <td><?= ($row['dispo']) ? htmlentities($row['dispo']) . ((checkAccess('lmt_change_dispo')) ? '&nbsp;&nbsp;<button type="button" class="btn btn-sm btn-secondary" title="Change" onclick="$(\'#client_tabs a:eq(1)\').click();loadTab(\'#dg-tab-content\', \'?area=lead_management&edit_lead=' . $id . '&sub=sales&printable=1&no_script=2\');">Change</button>' : '') : '-In Call-' ?></td>
+                                        <td><?= ($row['dispo']) ? htmlentities($row['dispo']) . ((checkAccess('lmt_change_dispo')) ? '&nbsp;&nbsp;<button type="button" class="btn btn-sm btn-secondary" title="Change" onclick="$(\'ul#lm-edit-tabs li:first a\').click();loadTab(\'#dg-tab-content\', \'?area=lead_management&edit_lead=' . $id . '&sub=sales&printable=1&no_script=2\');">Change</button>' : '') : '-In Call-' ?></td>
                                     </tr><?
 
                                     if ($id > 0 && checkAccess('action_log')) {
@@ -2106,7 +2102,7 @@ class LeadManagement
 
                             <tr>
                                 <th align="left" height="25">Dispo:</th>
-                                <td><?= ($row['dispo']) ? htmlentities($row['dispo']) . ((checkAccess('lmt_change_dispo')) ? '&nbsp;&nbsp;<input type="button" value="Change" onclick="$(\'#client_tabs\').tabs( \'option\', \'active\', 1 );">' : '') : '-In Call-' ?> </td>
+                                <td><?= ($row['dispo']) ? htmlentities($row['dispo']) . ((checkAccess('lmt_change_dispo')) ? '&nbsp;&nbsp;<button type="button" class="btn btn-sm btn-danger" title="Change" onclick="$(\'#client_tabs\').tabs( \'option\', \'active\', 1 );">Change</button>' : '') : '-In Call-' ?> </td>
                             </tr><?
 
                             if ($id > 0 && checkAccess('action_log')) {
