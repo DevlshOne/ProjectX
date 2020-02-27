@@ -17,7 +17,7 @@ class DailyLineHourAPI
 
     public function getRoustingGroupStats($startTime, $endTime)
     {
-        $hourlySql = <<<SQL
+        $sql = <<<SQL
 SELECT
 	call_group,
     sum(agent_paid_sales_cnt) as group_paid_sales_cnt,
@@ -71,9 +71,9 @@ FROM (
 GROUP BY 1;
 SQL;
 
-        if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) { var_dump($hourlySql); die(); }
+        if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) { var_dump($sql); die(); }
 
-        $result = $_SESSION['dbapi']->ROquerySQL($hourlySql);
+        $result = $_SESSION['dbapi']->ROfetchAllAssoc($sql);
 
         return $result;
     }
