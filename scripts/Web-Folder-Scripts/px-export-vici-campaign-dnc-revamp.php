@@ -9,7 +9,31 @@
 	$max_insert_count = 1000; // HOW MANY RECORDS AT A TIME TO INSERT
 
 
-	$truncate_first = true; // EMPTY THE CAMPAIGN DNC table in vicidial before rebuilding, to avoid "missing unique indexes causing records to stack issue", on some clusters
+	
+	$force_cluster_id = 0; 
+	$truncate_first = false; // EMPTY THE CAMPAIGN DNC table in vicidial before rebuilding, to avoid "missing unique indexes causing records to stack issue", on some clusters
+	
+	
+	// FIRST ARGUMENT (FORCE CLUSTER ID) - One cluster at a time
+	if(count($argv) > 1 && intval($argv[1]) > 0){
+		
+		$force_cluster_id = intval($argv[1]);
+		
+	}
+	
+	
+	
+	// SECOND ARGUMENT (TRUNCATE TABLE) - 0 or 1
+	if(count($argv) > 2 && trim($argv[2]) == "1"){
+		
+		$truncate_first = true; // EMPTY THE CAMPAIGN DNC table in vicidial before rebuilding, to avoid "missing unique indexes causing records to stack issue", on some clusters
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 	include_once($base_dir."site_config.php");
@@ -31,18 +55,14 @@
 	
 	// CONNECT PX DB FIRST
 	connectPXDB();
+	$PX_DB = $_SESSION['db']; // SAVE TEH CONNECTION FOR EASY SWITCHING
+	
+	
 
-
-	$PX_DB = $_SESSION['db'];
 	
 	
 	
-	if(count($argv) > 1){
-		$force_cluster_id = intval($argv[1]);
-		
-	}else{
-		$force_cluster_id = 0;
-	}
+	
 	
 	
 	
