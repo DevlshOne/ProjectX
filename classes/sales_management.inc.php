@@ -435,21 +435,19 @@ class SalesManagement
                             <option value="datetimerange"<?= ($_REQUEST['s_date_mode'] == 'datetimerange') ? ' SELECTED ' : '' ?>>Date/Time Range Mode</option>
                             <option value="any"<?= ($_REQUEST['s_date_mode'] == 'any') ? ' SELECTED ' : '' ?>>ANY</option>
                         </select>
-                        &nbsp;
-                        <span id="date1_span">
+                        <div id="date1_span">
                             <?= makeTimebar("stime_", 1, null, false, time()); ?>
-                                <span id="time1_span" class="nod">
-                                    <?= makeTimebar("stime_", 2, null, false, (time() - 3600)); ?>
-                                </span>
-                            </span>
-                        <span id="date2_span" class="nod">
-                                THRU<?= makeTimebar("etime_", 1, null, false, time()); ?>
-                                <span id="time2_span" class="nod">
-                                    <?= makeTimebar("etime_", 2, null, false, time()); ?>
-                                </span>
-                            </span>
-                        <span id="nodate_span" class="nod">ANY/ALL DATES</span>
-
+                        </div>
+                        <div id="time1_span" class="nod">
+                            <?= makeTimebar("stime_", 2, null, false, (time() - 3600)); ?>
+                        </div>
+                        <div id="date2_span" class="nod">
+                            &nbsp-&nbsp;<?= makeTimebar("etime_", 1, null, false, time()); ?>
+                        </div>
+                        <div id="time2_span" class="nod">
+                            <?= makeTimebar("etime_", 2, null, false, time()); ?>
+                        </div>
+                        <div id="nodate_span" class="text-sm-center px-2 nod">All Dates</div>
                     </div>
                 </div>
                 <div class="block-content block-content-full">
@@ -547,7 +545,7 @@ class SalesManagement
     if (intval($_REQUEST['no_script']) < 2){
         ?>
         <script>
-            $(function() {
+            $(function () {
                 loadTab('#dg-tab-content', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');
             });
         </script>
@@ -720,7 +718,7 @@ class SalesManagement
                         <tr>
                         <td colspan="2" align="center" style="padding-top:10px">
 
-                            <button type="button" title="View Change History" class="btn btn-sm text-sm-center btn-secondary" onclick="viewChangeHistory('lead_management', <?= $row['lead_tracking_id'] ?>)">View Change History</button>
+                            <button type="button" title="View Change History" class="btn btn-sm text-sm-center btn-dark" onclick="viewChangeHistory('lead_management', <?= $row['lead_tracking_id'] ?>)">View Change History</button>
 
 
                         </td>
