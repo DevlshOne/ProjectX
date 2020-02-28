@@ -137,9 +137,9 @@ class ListPerformance
      *
      *
      *
-     * @param unknown $stime
-     * @param unknown $etime
-     * @param unknown $vici_cluster_id
+     * @param int $stime
+     * @param int $etime
+     * @param int $vici_cluster_id
      * @return array[]|array
      */
     function generateData($stime, $etime, $vici_cluster_id)
@@ -551,7 +551,9 @@ class ListPerformance
         ob_clean();
 
 
-        ?><h1><?php
+        ?><div class="block">
+        
+        <h1><?php
 
         if ($campaign_code) {
             echo $campaign_code . ' ';
@@ -590,22 +592,22 @@ class ListPerformance
             echo '<h2 align="center">(as of ' . date("h:i:s T, m/d/Y", $report_stime) . ')</h2>';
         }
         ?>
-        <table id="listperf_table" class="tightTable">
+        <table id="listperf_table" class="tightTable" width="100%">
             <thead>
             <tr>
-                <th title="The LIST ID in Vicidial.">LIST ID</th>
-                <th title="The name of the list, in the dialer.">LIST Name</th>
-                <th title="The campaign ID of the list, in the dialer.">Campaign ID</th>
-                <th title="Total number of calls taken for the specified date(s)">Total calls</th>
-                <th title="Number of calls Not Intereseted">Not Interested</th>
-                <th title="Number of Answering machines">Answering Machines</th>
-                <th title="Percentage of Answering machines to Total Calls">AnsMach %</th>
-                <th title="Total number of SALES for the specified date(s)">Total Sales</th>
+                <th title="The LIST ID in Vicidial.">LISTID</th>
+                <th title="The name of the list, in the dialer.">Name</th>
+                <th title="The campaign ID of the list, in the dialer.">CampID</th>
+                <th title="Total number of calls taken for the specified date(s)">Calls</th>
+                <th title="Number of calls Not Intereseted">NI</th>
+                <th title="Number of Answering machines">AnsMach</th>
+                <th title="Percentage of Answering machines to Total Calls">Ans%</th>
+                <th title="Total number of SALES for the specified date(s)">Sales</th>
                 <th title="Contacts per hour, and Calls per Worked hour">Contacts</th>
-                <th title="The maximum unique/distinct agents that touched this list today"># Agents</th>
-                <th title="In Hours - Approx. How long the list ran for, based on first and last lead for today." align="right">List Run Time</th>
-                <th title="The Number of contacts per agent, per hour, using the approx list run time, and total distinct agents that touched it today.">Contacts/agent/hr</th>
-                <th align="right" title="Conversion Percentage">CONV %</th>
+                <th title="The maximum unique/distinct agents that touched this list today">Agents</th>
+                <th title="In Hours - Approx. How long the list ran for, based on first and last lead for today." align="right">Run Time</th>
+                <th title="The Number of contacts per agent, per hour, using the approx list run time, and total distinct agents that touched it today.">Contact/hr</th>
+                <th align="right" title="Conversion Percentage">CONV%</th>
                 <th align="right" title="The last time we called this list.">Last Call Date</th>
             </tr>
             </thead>
@@ -706,6 +708,7 @@ class ListPerformance
 
             ?>
         </table>
+        </div>
         <?php
 
         // GRAB DATA FROM BUFFER

@@ -187,8 +187,18 @@ class ListToolsClass{
 				
 				connectViciDB($vidx);
 				
-				// DELETE THE NUMBER
-				$purgecnts[$cluster_id] = execSQL("DELETE FROM `vicidial_list` WHERE `phone_number`='".mysqli_real_escape_string($_SESSION['db'],$num)."'");
+				
+				// COLD 1 IS ROUSTERS, HARDCODING FOR NOW
+				// NEED A BETTER DETECTION HERE
+				if($cluster_id == 1){
+					
+					$purgecnts[$cluster_id] = execSQL("UPDATE `vicidial_list` SET `status` = 'VDNC', last_local_call_time = NOW() WHERE `phone_number`='".mysqli_real_escape_string($_SESSION['db'],$num)."'");
+					
+					
+				}else{
+					// DELETE THE NUMBER
+					$purgecnts[$cluster_id] = execSQL("DELETE FROM `vicidial_list` WHERE `phone_number`='".mysqli_real_escape_string($_SESSION['db'],$num)."'");
+				}
 				
 				
 				$purge_results .= $crow['name'].' - '.$purgecnts[$cluster_id].' deleted.<br />';
@@ -3334,7 +3344,7 @@ class ListToolsClass{
 			</td>
 			<td>
 
-				&nbp;
+				&nbsp;
 
 			</td>
 		</tr>

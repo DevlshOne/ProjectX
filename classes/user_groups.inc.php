@@ -113,25 +113,23 @@ class UserGroupsClass
     {
 
         ?>
-        <div id="grouptabs" style="position: absolute">
-
-            <ul>
-                <li><a href="<?= stripurl('group_sub') ?>group_sub=master">Master Group List</a></li>
-                <li><a href="<?= stripurl('group_sub') ?>group_sub=cluster">Group Cluster Assignment</a></li>
-            </ul>
-
+        <div class="list-group list-group-horizontal" id="grouptabs" style="position: absolute;">
+                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#tab-content', '<?= stripurl('group_sub') ?>group_sub=master');">Master Group List</a>
+                <a class="list-group-item list-group-item-action" data-toggle="list" role="tab" onclick="loadTab('#tab-content', '<?= stripurl('group_sub') ?>group_sub=cluster');">Group Cluster Assignment</a>
         </div>
-        <script>
-            $(function () {
-                $("#grouptabs").tabs({
-                    beforeLoad: function (event, ui) {
-                        ui.jqXHR.fail(function () {
-                            ui.panel.html("Couldn't load this tab. We'll try to fix this as soon as possible. ");
-                        });
-                    }
-                });
-            });
-        </script><?
+        <div id="tab-content"></div>
+<!--        <script>-->
+<!--            $(function () {-->
+<!--                $("#grouptabs").tabs({-->
+<!--                    beforeLoad: function (event, ui) {-->
+<!--                        ui.jqXHR.fail(function () {-->
+<!--                            ui.panel.html("Couldn't load this tab. We'll try to fix this as soon as possible. ");-->
+<!--                        });-->
+<!--                    }-->
+<!--                });-->
+<!--            });-->
+<!--        </script>-->
+        <?
     }
 
     /**

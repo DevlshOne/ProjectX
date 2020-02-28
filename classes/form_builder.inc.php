@@ -565,12 +565,6 @@
                 }
 
                 $(function () {
-                    $('#screenTabs').tabs({
-                        heightStyle: 'content'
-                    }).css({
-                        'min-height': '400px',
-                        'overflow': 'auto'
-                    });
                     changeScreen(formID, 0);
                 });
             </script>
@@ -584,14 +578,14 @@
                     </div>
                 </div>
                 <div class="block-content">
-                    <ul class="nav nav-tabs nav-tabs-alt" data-toggle="tabs" role="tablist">
-                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 0); return false;">All Screens</a></li>
-                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 1); return false;">Screen 1</a></li>
-                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 2); return false;">Screen 2</a></li>
-                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 3); return false;">Screen 3</a></li>
-                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 4); return false;">Screen 4</a></li>
-                        <li class="nav-item"><a href="#mainPanel" class="nav-link loadScreen" onclick="changeScreen(formID, 5); return false;">Screen 5</a></li>
-                    </ul>
+                    <div class="list-group list-group-horizontal" data-toggle="tabs" role="tablist">
+                        <a href="#mainPanel" class="list-group-item flex-fill list-group-item-action" data-toggle="list" role="tab" onclick="changeScreen(formID, 0); return false;">All Screens</a>
+                        <a href="#mainPanel" class="list-group-item flex-fill list-group-item-action" data-toggle="list" role="tab" onclick="changeScreen(formID, 1); return false;">Screen 1</a>
+                        <a href="#mainPanel" class="list-group-item flex-fill list-group-item-action" data-toggle="list" role="tab" onclick="changeScreen(formID, 2); return false;">Screen 2</a>
+                        <a href="#mainPanel" class="list-group-item flex-fill list-group-item-action" data-toggle="list" role="tab" onclick="changeScreen(formID, 3); return false;">Screen 3</a>
+                        <a href="#mainPanel" class="list-group-item flex-fill list-group-item-action" data-toggle="list" role="tab" onclick="changeScreen(formID, 4); return false;">Screen 4</a>
+                        <a href="#mainPanel" class="list-group-item flex-fill list-group-item-action" data-toggle="list" role="tab" onclick="changeScreen(formID, 5); return false;">Screen 5</a>
+                    </div>
                     <div id="mainPanel" class="pct100">
                         <div class="ht40 block-options" style="margin-bottom:10px;">
                             <button type="button" class="btn btn-sm btn-primary" title="Add" value="Add Field" onclick="addField(formID, currentScreen); return false;" style="float:left;" class="frmActionButton">Add</button>
