@@ -1743,17 +1743,15 @@ class LeadManagement
         <script>
             $(function() {
                 loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');
-
             });
         </script>
         <div class="block">
-            <ul class="nav nav-tabs nav-justified bg-gray-darker js-tabs-enabled w-100" data-toggle="tabs" role="tablist" id="lm-edit-tabs">
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap bg-info hand active" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a></li>
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a></li>
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a></li>
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap bg-info hand" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a></li>
+            <ul class="nav nav-tabs w-100" data-toggle="tabs" role="tablist" id="lm-edit-tabs">
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand active" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a></li>
             </ul>
-            </div>
         </div>
         <div class="block-content tab-content" id="dg-tab-content"></div>
         <?

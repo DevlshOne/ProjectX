@@ -546,10 +546,17 @@ class SalesManagement
 
     if (intval($_REQUEST['no_script']) < 2){
         ?>
-        <div class="list-group list-group-horizontal" role="tablist" id="sale_tabs">
-            <a class="list-group-item list-group-item-action flex-fill" data-toggle="list" role="tab" onclick="loadTab('#dg-tab-content', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a>
+        <script>
+            $(function() {
+                loadTab('#dg-tab-content', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');
+            });
+        </script>
+        <div class="block">
+            <ul class="nav nav-tabs w-100" data-toggle="tabs" role="tablist" id="sale_tabs">
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand active" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a></li>
+            </ul>
         </div>
-        <div id="dg-tab-content"></div>
+        <div class="block-content tab-content" id="dg-tab-content"></div>
         <?
 
     }else{
@@ -713,7 +720,7 @@ class SalesManagement
                         <tr>
                         <td colspan="2" align="center" style="padding-top:10px">
 
-                            <input type="button" value="View Change History" style="font-size:10px" onclick="viewChangeHistory('lead_management', <?= $row['lead_tracking_id'] ?>)"/>
+                            <button type="button" title="View Change History" class="btn btn-sm text-sm-center btn-secondary" onclick="viewChangeHistory('lead_management', <?= $row['lead_tracking_id'] ?>)">View Change History</button>
 
 
                         </td>
