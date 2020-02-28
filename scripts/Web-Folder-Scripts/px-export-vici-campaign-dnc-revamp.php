@@ -158,7 +158,7 @@
 	// LOOP THROUGH STACK OF VICIDIAL SERVERS
 	foreach($clusters as $cluster_id => $vicidb ){
 
-		$all_campaigns = array();
+		
 
 
 
@@ -203,98 +203,123 @@
 
 // GRAB ARRAY OF DISINCT CAMPAIGNS (FOR THE _ALL_ CAMPAIGNS OPTION (NULL CAMPAIGN SETTING)
 		// POPULATE $all_campaigns WITH THE CAMPAIGNS ON TEH CLUSTER (FOR THE GLOBAL/ALL CAMPAIGN DNCs)
-		$res = query("SELECT campaign_id FROM `vicidial_campaigns` WHERE active='Y'", 1); // WHERE active='Y' ??
+		
+		if($vicidb['campaigns_dnc_sync'] == 'all'){
+			
+			$res = query("SELECT campaign_id FROM `vicidial_campaigns` WHERE 1", 1); // WHERE active='Y' ??
+			
+		}else if($vicidb['campaigns_dnc_sync'] == 'active'){
+			
+			$res = query("SELECT campaign_id FROM `vicidial_campaigns` WHERE active='Y'", 1); // WHERE active='Y' ??
+			
+		}else{
+			$res = null;
+		}
+		
+		
+		$all_campaigns = array();
+		
 		$campaign_in_str = '';
 		$t=0;
-		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+		if($res){
 			
-			$campaign_in_str .= ($t++ > 0)?',':'';
-			
-			$campaign_in_str .= "'".addslashes($row['campaign_id'])."'";
-			
-			$all_campaigns[] = $row['campaign_id'];
-
-		}
-
-
-		// ADD THE GLOBAL DNC TO EVERY CAMPAIGN THAT THE CLUSTER HAS
-		foreach($all_campaigns as $campaign){
-
-			
-			// PUSH (OR OVERWRITE) THE CAMPAIGN CODE ONTO THE STACK
-			foreach($dnc_all_campaigns as $idx=>$row){
-				//[]['phone_number']
-				$dnc_all_campaigns[$idx]['campaign_id'] = $campaign;
-			}
-
-
-			
-			$cluster_total += bulkAddChunks($dnc_all_campaigns, 'vicidial_campaign_dnc', $max_insert_count, true);
-
-			echo "Pushing batch of ALL DNC's for ($campaign), Processed: ".count($dnc_all_campaigns).", total added ".number_format($cluster_total)."\n";
-			//$dnc_all_campaigns
-		}
-		
-		
-		$VICI_DB = $_SESSION['db'];
-		
-		
-		$_SESSION['db'] = $PX_DB;
-		
-		
-		
-		// THEN ADD THE CAMPAIGN SPECIFIC DNCS
-		$sql = "SELECT `campaign_code`, `phone` FROM `dnc_campaign_list` WHERE `campaign_code` IN ($campaign_in_str) ";
+			while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+				
+				$campaign_in_str .= ($t++ > 0)?',':'';
+				
+				$campaign_in_str .= "'".addslashes($row['campaign_id'])."'";
+				
+				$all_campaigns[] = $row['campaign_id'];
 	
-		//echo $sql;
-		$res = query($sql, 1);
-		$x=0;
-		$dnc_by_campaign = array();
-		
-		echo date("H:i:s m/d/Y")." - Processing ".number_format(mysqli_num_rows($res))." Campaign DNC records for '".$vicidb['name']."'\n";
-		
-		while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
-			$dnc_by_campaign[$x] = array();
-			$dnc_by_campaign[$x]['phone_number'] = $row['phone'];
-			$dnc_by_campaign[$x]['campaign_id'] = $row['campaign_code'];
-			
-			$x++;
-			
-			
-			if($x >= $max_insert_count){
+			}
+		}
 
+		echo "CLUSTER ID#".$cluster_id." - Current Campaigns:".$campaign_in_str."\n";
+
+		
+		if(count($all_campaigns) > 0){
+			
+			// ADD THE GLOBAL DNC TO EVERY CAMPAIGN THAT THE CLUSTER HAS
+			foreach($all_campaigns as $campaign){
+	
+				
+				// PUSH (OR OVERWRITE) THE CAMPAIGN CODE ONTO THE STACK
+				foreach($dnc_all_campaigns as $idx=>$row){
+					//[]['phone_number']
+					$dnc_all_campaigns[$idx]['campaign_id'] = $campaign;
+				}
+	
+	
+				
+				$cluster_total += bulkAddChunks($dnc_all_campaigns, 'vicidial_campaign_dnc', $max_insert_count, true);
+	
+				echo "Pushing batch of ALL DNC's for ($campaign), Processed: ".count($dnc_all_campaigns).", total added ".number_format($cluster_total)."\n";
+				//$dnc_all_campaigns
+			}
+			
+			
+			$VICI_DB = $_SESSION['db'];
+			
+			
+			$_SESSION['db'] = $PX_DB;
+		
+		
+		
+			// THEN ADD THE CAMPAIGN SPECIFIC DNCS
+			$sql = "SELECT `campaign_code`, `phone` FROM `dnc_campaign_list` WHERE `campaign_code` IN ($campaign_in_str) ";
+		
+			//echo $sql;
+			$res = query($sql, 1);
+			$x=0;
+			$dnc_by_campaign = array();
+			
+			echo date("H:i:s m/d/Y")." - Processing ".number_format(mysqli_num_rows($res))." Campaign DNC records for '".$vicidb['name']."'\n";
+			
+			while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+				$dnc_by_campaign[$x] = array();
+				$dnc_by_campaign[$x]['phone_number'] = $row['phone'];
+				$dnc_by_campaign[$x]['campaign_id'] = $row['campaign_code'];
+				
+				$x++;
+				
+				
+				if($x >= $max_insert_count){
+	
+					$_SESSION['db'] = $VICI_DB;
+					
+					
+					
+					$cluster_total += bulkAddChunks($dnc_by_campaign, 'vicidial_campaign_dnc', $max_insert_count, true);
+					
+					//echo date("H:i:s m/d/Y")." - Pushing batch of Campaign DNC's, Processed: ".count($dnc_by_campaign).", total added ".number_format($cluster_total)."\n";
+					
+					echo '.';
+					
+					$_SESSION['db'] = $PX_DB;
+					
+					$dnc_by_campaign = array();
+					$x=0;
+				}
+			}
+			
+			// HANDFUL OF REMAINING RECORDS
+			if($x > 0){
+				
 				$_SESSION['db'] = $VICI_DB;
-				
-				
 				
 				$cluster_total += bulkAddChunks($dnc_by_campaign, 'vicidial_campaign_dnc', $max_insert_count, true);
 				
-				//echo date("H:i:s m/d/Y")." - Pushing batch of Campaign DNC's, Processed: ".count($dnc_by_campaign).", total added ".number_format($cluster_total)."\n";
+			//	echo date("H:i:s m/d/Y")." - Pushing last batch of Campaign DNC's, Processed: ".count($dnc_by_campaign).", total added ".number_format($cluster_total)."\n";
 				
-				echo '.';
 				
 				$_SESSION['db'] = $PX_DB;
 				
 				$dnc_by_campaign = array();
 				$x=0;
 			}
-		}
-		
-		// HANDFUL OF REMAINING RECORDS
-		if($x > 0){
-			
-			$_SESSION['db'] = $VICI_DB;
-			
-			$cluster_total += bulkAddChunks($dnc_by_campaign, 'vicidial_campaign_dnc', $max_insert_count, true);
-			
-		//	echo date("H:i:s m/d/Y")." - Pushing last batch of Campaign DNC's, Processed: ".count($dnc_by_campaign).", total added ".number_format($cluster_total)."\n";
 			
 			
-			$_SESSION['db'] = $PX_DB;
-			
-			$dnc_by_campaign = array();
-			$x=0;
-		}
+		} // END IF(there are any campaigns to work with)
 		
 		echo "\n";
 
