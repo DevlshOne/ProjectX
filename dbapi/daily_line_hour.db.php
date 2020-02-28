@@ -51,9 +51,10 @@ FROM (
 			 JOIN (
 					SELECT 
 					   username,
-					   activity_time
+					   sum(activity_time) as `activity_time`
 					from activity_log
 					WHERE time_started BETWEEN {$startTime} AND {$endTime}
+			        GROUP BY username
 				) activity ON logins.username = activity.username
 			 JOIN (
 					SELECT
@@ -143,9 +144,10 @@ FROM (
 				 (
 					SELECT 
 					   username,
-					   activity_time
+					   sum(activity_time) as `activity_time`
 					from activity_log
 					WHERE time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
+				    GROUP BY username
 				) activity 
 			 LEFT JOIN (
                  SELECT
