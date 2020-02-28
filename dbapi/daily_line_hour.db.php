@@ -59,8 +59,8 @@ FROM (
 					SELECT
 						agent_username,
 						call_group,
-						sum(if(is_paid IN('yes','roustedcc'), 1, 0)) as paid_sales_cnt,
-						sum(if(is_paid IN('yes','roustedcc'), amount, 0)) as paid_sales_amount
+						sum(if(is_paid IN('roustedcc'), 1, 0)) as paid_sales_cnt,
+						sum(if(is_paid IN('roustedcc'), amount, 0)) as paid_sales_amount
 					FROM sales
 						WHERE `sale_time` BETWEEN {$startTime} AND {$endTime}
 					GROUP BY agent_username
