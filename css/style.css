@@ -646,6 +646,13 @@ td.countsRow {
 .user-count-content {
     padding: 0 0 0 0;
 }
-.tab-list-border {
-    border-bottom: 3px #43a3e5 solid;
+.nav-link.active {
+    background-color: #98aee2!important;
+    color: ghostwhite!important;
+}
+.nav-tabs {
+    border-bottom: darkgrey!important;
+}
+.nav-tabs .nav-link {
+    border-color: darkgrey!important;
 }

@@ -546,15 +546,15 @@ class SalesManagement
         ?>
         <script>
             $(function () {
-                loadTab('#dg-tab-content', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');
+                loadTab('#sm_edit_dialog', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');
             });
         </script>
         <div class="block">
             <ul class="nav nav-tabs w-100" data-toggle="tabs" role="tablist" id="sale_tabs">
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand active" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand active" data-toggle="tab" role="tab" onclick="loadTab('#sm_edit_dialog', '?area=sales_management&view_sale=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a></li>
             </ul>
         </div>
-        <div class="block-content tab-content" id="dg-tab-content"></div>
+        <div class="block-content tab-content" id="sm_edit_dialog"></div>
         <?
 
     }else{

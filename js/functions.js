@@ -458,3 +458,18 @@ function makePageSizeDD(pfx, pgsz, ldScr) {
 	debugger;
 	return '';
 }
+
+function LMTtabs() {
+
+}
+LMTtabs.prototype = {
+	setTabList: function(tablist) {
+		this.tabListID = tablist;
+	},
+	setTargetArea: function(area) {
+		this.targetPanel = area;
+	},
+	setDefaultTab: function(tabindex) {
+		this.defaultTab = tabindex;
+	}
+};

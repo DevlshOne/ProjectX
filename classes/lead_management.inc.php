@@ -302,7 +302,7 @@ class LeadManagement
 
                 $('#' + objname).dialog("open");
 
-                $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td class="text-center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
 
 
                 if (sub) {
@@ -313,7 +313,6 @@ class LeadManagement
                     $('#' + objname).load("index.php?area=lead_management&edit_lead=" + id + "&printable=1&no_script=1");
                 }
 
-                $('#' + objname).dialog('option', 'position', 'center');
 
             }
 
@@ -643,35 +642,34 @@ class LeadManagement
 
 
         ?>
-        <table border="0" width="100%">
+        <table class="tightTable">
         <tr>
-            <th class="ui-widget-header row2 padleft" height="40" colspan="4" align="left"><?= $_SESSION['site_config']['db'][$dbidx]['name'] ?> Recording logs - lead#<?= $lead_id ?></th>
+            <th class="ui-widget-header row2 padleft" height="40" colspan="5" align="left"><?= $_SESSION['site_config']['db'][$dbidx]['name'] ?> Recording logs - lead#<?= $lead_id ?></th>
         </tr>
         <tr>
-            <th class="row2">Time</th>
-            <th class="row2">Duration</th>
-            <th class="row2">Agent</th>
-            <th class="row2">Recording</th>
-            <th class="row2">&nbsp;</th>
+            <th class="row2 text-left">Time</th>
+            <th class="row2 text-left">Duration</th>
+            <th class="row2 text-left">Agent</th>
+            <th class="row2 text-center" colspan="2">Recording</th>
         </tr><?
 
         foreach ($rowarr as $rec) {
 
             ?>
             <tr>
-            <td align="center"><?= date("g:i:sa m/d/Y", $rec['start_epoch']) ?></td>
-            <td align="center"><?= renderTimeFormattedSTD($rec['length_in_sec']) ?></td>
-            <td align="center"><?= htmlentities($rec['user']) ?></td>
-            <td align="center"><?
+            <td class="text-center"><?= date("g:i:sa m/d/Y", $rec['start_epoch']) ?></td>
+            <td class="text-center"><?= renderTimeFormattedSTD($rec['length_in_sec']) ?></td>
+            <td class="text-center"><?= htmlentities($rec['user']) ?></td>
+            <td class="text-center pb-1"><?
                 if ($rec['location']) {
                     ?><a href="<?= htmlentities($rec['location']) ?>" target="_blank" onclick="return false">
-                    <button type="button" title="Download" class="btn btn-sm btn-success text-sm-center" onclick="window.open('<?= htmlentities($rec['location']) ?>')">Download</button>
+                    <button type="button" title="Download" class="btn btn-sm btn-success text-sm-center " onclick="window.open('<?= htmlentities($rec['location']) ?>')">Download</button>
                     </a><?
                 } else {
                     echo "-processing-";
                 }
                 ?></td>
-            <td align="center"><button class="btn btn-sm btn-outline-dark" type="button" title="Play Audio" onclick="playAudio('<?= htmlentities($rec['location']) ?>')"><i class="si si-control-play"></i></button></td>
+            <td class="text-center"><button class="btn btn-sm btn-outline-dark" type="button" title="Play Audio" onclick="playAudio('<?= htmlentities($rec['location']) ?>')"><i class="si si-control-play"></i></button></td>
             </tr><?
 
         }
@@ -859,7 +857,7 @@ class LeadManagement
 
             <input type="hidden" name="creating_sale" value="<?= $row['id'] ?>">
 
-            <table border="0" align="center">
+            <table border="0" class="text-center">
                 <tr>
                     <th colspan="4" height="30" class="ui-widget-header">
 
@@ -977,7 +975,7 @@ class LeadManagement
 
 
                 <tr>
-                    <td colspan="4" align="center">
+                    <td colspan="4" class="text-center">
                         <button class="btn btn-sm btn-success" type="submit" title="Update">Update</button>
                         <button class="btn btn-sm btn-secondary pl-2" type="button" title="Cancel" onclick="clearSection()">Clear</button>
                     </td>
@@ -1021,7 +1019,7 @@ class LeadManagement
 
             ?>
             <tr>
-            <td colspan="<?= $colspan ?>" align="center"><i>No records found</i></tr><?
+            <td colspan="<?= $colspan ?>" class="text-center"><i>No records found</i></tr><?
         }
 
         $total = 0;
@@ -1032,12 +1030,12 @@ class LeadManagement
             $class = ($row['id'] == $leadrow['id']) ? ' class="greenbg" ' : "";
             ?>
             <tr>
-            <td align="center" <?= $class ?>><?= date("g:i:sa m/d/Y", $row['time']) ?></td>
-            <td align="center" <?= $class ?>><?= renderTimeFormatted($row['agent_duration']) ?></td>
-            <td align="center" <?= $class ?>><?= htmlentities($row['campaign'] . '/' . $row['campaign_code']) ?></td>
-            <td align="center" <?= $class ?>><?= htmlentities($row['dispo']) ?></td>
-            <td align="center" <?= $class ?>><?= htmlentities($row['outbound_phone_num']) ?></td>
-            <td align="center"><a href="#" onclick="displayEditLeadDialog(<?= $row['id'] ?>, 'general');return false">[View Lead]</a></td>
+            <td class="text-center" <?= $class ?>><?= date("g:i:sa m/d/Y", $row['time']) ?></td>
+            <td class="text-center" <?= $class ?>><?= renderTimeFormatted($row['agent_duration']) ?></td>
+            <td class="text-center" <?= $class ?>><?= htmlentities($row['campaign'] . '/' . $row['campaign_code']) ?></td>
+            <td class="text-center" <?= $class ?>><?= htmlentities($row['dispo']) ?></td>
+            <td class="text-center" <?= $class ?>><?= htmlentities($row['outbound_phone_num']) ?></td>
+            <td class="text-center"><a href="#" onclick="displayEditLeadDialog(<?= $row['id'] ?>, 'general');return false">[View Lead]</a></td>
             </tr><?
 
         }
@@ -1138,7 +1136,7 @@ class LeadManagement
             <input type="hidden" id="editing_lead" name="editing_lead" value="<?= $leadrow['id'] ?>">
             <input type="hidden" id="editing_lead" name="editing_sale_id" value="<?= $sale_id ?>">
 
-            <table id="change_dispo_table" border="0" align="center">
+            <table id="change_dispo_table" border="0" class="text-center">
                 <tr>
                     <th class="ui-widget-header" height="30" colspan="2">Resend Sale</th>
                 </tr><?
@@ -1147,7 +1145,7 @@ class LeadManagement
 
                     ?>
                     <tr>
-                        <td colspan="2" align="center" style="font-size:14px;color:#ff0000">
+                        <td colspan="2" class="text-center" style="font-size:14px;color:#ff0000">
 
                             WARNING: Resubmitting Credit card sales is not supported.
 
@@ -1167,7 +1165,7 @@ class LeadManagement
 
 
                 <tr>
-                    <td colspan="2" align="center">
+                    <td colspan="2" class="text-center">
                         <button class="btn btn-sm btn-success" type="submit" title="Save Change">Save</button>
                         <button class="btn btn-sm btn-danger pl-2" type="button" title="Cancel" onclick="clearSection()">Cancel</button>
                     </td>
@@ -1267,7 +1265,7 @@ class LeadManagement
 
             <input type="hidden" name="change_dispo" id="change_dispo" value="<?= $leadrow['dispo'] ?>">
 
-            <table id="change_dispo_table" border="0" align="center">
+            <table id="change_dispo_table" border="0" class="text-center">
                 <tr>
                     <th class="ui-widget-header" height="30" colspan="2">Change Dispo Status</th>
                 </tr>
@@ -1288,7 +1286,7 @@ class LeadManagement
 
 
                 <tr>
-                    <td colspan="2" align="center">
+                    <td colspan="2" class="text-center">
                         <button class="btn btn-sm btn-success" type="submit" title="Save Change" onclick="return checkChangeDispoForm(this.form);">Save Change</button>
                         <button class="btn btn-sm btn-danger pl-2" type="button" title="Cancel" onclick="clearSection()">Cancel</button>
                     </td>
@@ -1349,7 +1347,7 @@ class LeadManagement
 
                 ?>
                 <tr>
-                <td colspan="<?= $colspan ?>" align="center"><i>No transfer records found</i></tr><?
+                <td colspan="<?= $colspan ?>" class="text-center"><i>No transfer records found</i></tr><?
             }
 
             $total = 0;
@@ -1363,12 +1361,12 @@ class LeadManagement
 
                 ?>
                 <tr>
-                <td align="center"><?= date("g:i:sa m/d/Y", $xfer['xfer_time']) ?></td>
-                <td align="center"><?= ($xfer['sale_time'] > 0) ? date("g:i:sa m/d/Y", $xfer['sale_time']) : '-' ?></td>
-                <td align="center"><?= htmlentities($xfer['agent_username']) ?> @ $<?= number_format($xfer['agent_amount']) ?></td>
-                <td align="center"><?= htmlentities($xfer['verifier_username']) ?> @ $<?= number_format($xfer['verifier_amount']) ?></td>
-                <td align="center"><?= htmlentities($xfer['verifier_dispo']) ?></td>
-                <td align="center">
+                <td class="text-center"><?= date("g:i:sa m/d/Y", $xfer['xfer_time']) ?></td>
+                <td class="text-center"><?= ($xfer['sale_time'] > 0) ? date("g:i:sa m/d/Y", $xfer['sale_time']) : '-' ?></td>
+                <td class="text-center"><?= htmlentities($xfer['agent_username']) ?> @ $<?= number_format($xfer['agent_amount']) ?></td>
+                <td class="text-center"><?= htmlentities($xfer['verifier_username']) ?> @ $<?= number_format($xfer['verifier_amount']) ?></td>
+                <td class="text-center"><?= htmlentities($xfer['verifier_dispo']) ?></td>
+                <td class="text-center">
                     <?
                     if ($create_sale_allowed) {
                         ?>
@@ -1418,7 +1416,7 @@ class LeadManagement
             if (count($sale_rowarr) == 0) {
                 ?>
                 <tr>
-                <th align="center" colspan="<?= $colspan ?>"><i>No Sales records found.</i></th>
+                <th class="text-center" colspan="<?= $colspan ?>"><i>No Sales records found.</i></th>
                 </tr><?
             }
 
@@ -1427,11 +1425,11 @@ class LeadManagement
 
                 ?>
                 <tr>
-                <td align="center"><?= $sale['id'] ?></td>
-                <td align="center"><?= $sale['vici_last_call_time'] ?></td>
-                <td align="center"><?= date("g:i:sa m/d/Y", $sale['sale_time']) ?></td>
-                <td align="center"><?= $sale['office'] ?></td>
-                <td align="center"><?= $sale['call_group'] ?></td>
+                <td class="text-center"><?= $sale['id'] ?></td>
+                <td class="text-center"><?= $sale['vici_last_call_time'] ?></td>
+                <td class="text-center"><?= date("g:i:sa m/d/Y", $sale['sale_time']) ?></td>
+                <td class="text-center"><?= $sale['office'] ?></td>
+                <td class="text-center"><?= $sale['call_group'] ?></td>
 
                 <td align="right">$<?= $sale['amount'] ?></td>
                 <td align="right"><?= $sale['is_paid'] ?></td>
@@ -1459,7 +1457,7 @@ class LeadManagement
 
                     ?>
                     <tr>
-                    <th align="center" colspan="<?= $colspan ?>">
+                    <th class="text-center" colspan="<?= $colspan ?>">
                         <i>
                             Resubmitting sale, Reason: <?= $sale['resend_reason'] ?>
                         </i>
@@ -1742,18 +1740,18 @@ class LeadManagement
         ?>
         <script>
             $(function() {
-                loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');
+                loadTab('#lm_edit_dialog', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');
             });
         </script>
         <div class="block">
             <ul class="nav nav-tabs w-100" data-toggle="tabs" role="tablist" id="lm-edit-tabs">
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand active" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a></li>
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a></li>
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a></li>
-                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#dg-tab-content', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand active" data-toggle="tab" role="tab" onclick="loadTab('#lm_edit_dialog', '?area=lead_management&edit_lead=<?= $id ?>&sub=general&printable=1&no_script=2');">General</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#lm_edit_dialog', '?area=lead_management&edit_lead=<?= $id ?>&sub=sales&printable=1&no_script=2');">Xfers/Sales</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#lm_edit_dialog', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a></li>
+                <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#lm_edit_dialog', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a></li>
             </ul>
         </div>
-        <div class="block-content tab-content" id="dg-tab-content"></div>
+        <div class="block-content tab-content" id="lm_edit_dialog"></div>
         <?
 
     } else {
@@ -1776,7 +1774,7 @@ class LeadManagement
                         <tr valign="top">
                             <td>
 
-                                <table border="0" align="center">
+                                <table border="0" class="text-center">
                                     <tr>
                                         <th align="left" height="25">First Name:</th>
                                         <td><input name="first_name" type="text" size="30" value="<?= htmlentities($row['first_name']) ?>"></td>
@@ -1821,7 +1819,7 @@ class LeadManagement
                             </td>
                             <td>
 
-                                <table border="0" align="center">
+                                <table border="0" class="text-center">
                                     <tr>
                                         <th align="left" height="25">Phone Number:</th>
                                         <td><?
@@ -1976,7 +1974,7 @@ class LeadManagement
                             </td>
                         </tr>
                         <tr>
-                            <th colspan="2" align="center"><button type="submit" class="btn btn-sm btn-primary" title="Save Changes">Save Changes</button></th>
+                            <th colspan="2" class="text-center"><button type="submit" class="btn btn-sm btn-primary" title="Save Changes">Save Changes</button></th>
                         </tr>
                 </form>
                 </table><?
@@ -1989,7 +1987,7 @@ class LeadManagement
                 <tr valign="top">
                     <td>
 
-                        <table border="0" align="center">
+                        <table border="0" class="text-center">
                             <tr>
                                 <th align="left" height="25">First Name:</th>
                                 <td><?= htmlentities($row['first_name']) ?></td>
@@ -2029,7 +2027,7 @@ class LeadManagement
                     </td>
                     <td>
 
-                        <table border="0" align="center">
+                        <table border="0" class="text-center">
                             <tr>
                                 <th align="left" height="25">Phone Number:</th>
                                 <td><?= format_phone($row['phone_num']) ?></td>
@@ -2106,7 +2104,7 @@ class LeadManagement
                             if ($id > 0 && checkAccess('action_log')) {
                                 ?>
                                 <tr>
-                                <td colspan="2" align="center" style="padding-top:10px">
+                                <td colspan="2" class="text-center pt-10">
 
                                     <button type="button" title="View Change History" class="btn btn-sm btn-dark text-sm-center" onclick="viewChangeHistory('lead_management', <?= $row['id'] ?>)">View Change History</button>
 
