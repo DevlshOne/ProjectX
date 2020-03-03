@@ -1955,7 +1955,7 @@ class LeadManagement
 
                                     <tr>
                                         <th align="left" height="25">Dispo:</th>
-                                        <td><?= ($row['dispo']) ? htmlentities($row['dispo']) . ((checkAccess('lmt_change_dispo')) ? '&nbsp;&nbsp;<button type="button" class="btn btn-sm btn-secondary" title="Change" onclick="$(\'ul#lm-edit-tabs li:first a\').click();loadTab(\'#dg-tab-content\', \'?area=lead_management&edit_lead=' . $id . '&sub=sales&printable=1&no_script=2\');">Change</button>' : '') : '-In Call-' ?></td>
+                                        <td><?= ($row['dispo']) ? htmlentities($row['dispo']) . ((checkAccess('lmt_change_dispo')) ? '&nbsp;&nbsp;<button type="button" class="btn btn-sm btn-secondary" title="Change" onclick="$(\'ul#lm-edit-tabs li:nth(1) a\').click();">Change Dispo</button>' : '') : '-In Call-' ?></td>
                                     </tr><?
 
                                     if ($id > 0 && checkAccess('action_log')) {
