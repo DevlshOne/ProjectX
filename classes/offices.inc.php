@@ -294,7 +294,7 @@ class OfficesClass{
 
 			function submitOfficeFrm(frm){
 
-				var params = getFormValues(frm,'');
+				var params = getFormValues(frm);
 
 				$.ajax({
 					type: "POST",
@@ -377,7 +377,7 @@ class OfficesClass{
 					<table border="0" align="center" id="newcmpytrrow" class="nod">
 					<tr>
 						<th align="left" height="30">New Company Name:</th>
-						<td><input id="new_company_name" name="new_company_name" type="text" size="25" value="" required placeholder="Add new company name here"></td>
+						<td><input type="text" id="new_company_name" name="new_company_name" size="25" value="" placeholder="Add new company name here"></td>
 					</tr>
 					</table>
 				</td>
