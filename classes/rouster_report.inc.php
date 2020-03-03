@@ -1497,6 +1497,10 @@ class RousterReport
                     <?
 
                     if (!isset($_REQUEST['no_nav'])) {
+                    	
+                    	$page_title ='Rouster Call Status Report - '.date("m/d/Y", $timestamp).' - '.htmlentities(($_REQUEST['s_user_group'] == NULL || $_REQUEST['s_user_group'][0] == '') ? "All Groups" : "Selected Group" . ((count($_REQUEST['s_user_group']) > 1) ? "s" : " : " . ((is_array($_REQUEST['s_user_group'])) ? $_REQUEST['s_user_group'][0] : $_REQUEST['s_user_group'])));
+                    
+                    	
                     ?>
                         <script>
                             $(document).ready(function () {
@@ -1504,6 +1508,10 @@ class RousterReport
                                     "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]],
                                     dom: 'Bfrtip',
                                     buttons: [
+                                    	{
+                                        	extend: 'print',
+                                        	messageTop: '<?=addslashes($page_title)?>'
+                                    	},
                                         {extend: 'copy', header: false, footer: false}
                                     ],
 

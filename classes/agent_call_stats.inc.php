@@ -305,9 +305,14 @@ class AgentCallStats
         if (is_array($user_group)) {
             $user_group_str = "Group" . ((count($user_group) > 1) ? "s" : "") . ": ";
             $x = 0;
-            foreach ($user_group as $grp) {
-                if ($x++ > 0) $user_group_str .= ",";
-                $user_group_str .= $grp;
+            
+            if($user_group[0] == ''){
+            	$user_group_str .= 'ALL';
+            }else{
+	            foreach ($user_group as $grp) {
+	                if ($x++ > 0) $user_group_str .= ",";
+	                $user_group_str .= $grp;
+	            }
             }
         } else {
             $user_group_str = $user_group;
@@ -826,7 +831,7 @@ class AgentCallStats
                             <td colspan="2" align="right">
                                 <span id="callstats_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0"/> Loading, Please wait...</span>
                                 <span id="callstats_submit_report_button" class="input-group-sm">
-                                    <button type="button" class="btn btn-sm btn-primary" value="Generate PRINTABLE" onclick="genReport(getEl('agentstatfrm'),'callstats',1)">Generate PRINTABLE</button>
+                                  <button type="button" class="btn btn-sm btn-primary" value="Generate PRINTABLE" onclick="genReport(getEl('agentstatfrm'),'callstats',1)">Generate PRINTABLE</button>
                                     <button type="submit" class="btn btn-sm btn-success" value="Generate Now" onclick="this.form.target='';">Generate</button>
 						        </span>
                             </td>
@@ -854,6 +859,11 @@ class AgentCallStats
             </div>
         <?
         if (!isset($_REQUEST['no_nav'])) {
+        	
+        	
+        	$page_title = '<h1>Verifier Call Status Report - '.date("m/d/Y", $timestamp).'</h1> - '.htmlentities(($_REQUEST['s_user_group'] == NULL || $_REQUEST['s_user_group'][0] == '') ? "All Groups" : "Selected Group" . ((count($_REQUEST['s_user_group']) > 1) ? "s" : " : " . ((is_array($_REQUEST['s_user_group'])) ? $_REQUEST['s_user_group'][0] : $_REQUEST['s_user_group'])));
+        	
+        	
         ?>
             <script>
                 $(document).ready(function () {
@@ -861,6 +871,11 @@ class AgentCallStats
                         "lengthMenu": [[-1, 20, 50, 100, 500], ["All", 20, 50, 100, 500]],
                         dom: 'Bfrtip',
                         buttons: [
+                            {
+                                extend:'print',
+                                messageTop: '<?=addslashes($page_title)?>'
+                            },
+                                
                             {extend: 'copy', header: false, footer: false}
                         ],
                     });

@@ -1312,7 +1312,7 @@ class SalesAnalysis
                                             <th colspan="2">
                                                 <span id="sales_loading_plx_wait_span" class="nod"><img src="images/ajax-loader.gif" border="0"/> Loading, Please wait...</span>
                                                 <span id="sales_submit_report_button" class="input-group-sm">
-                                                    <button type="button" class="btn btn-sm btn-primary" value="Generate PRINTABLE" onclick="genReport(getEl('saleanal_report'), 'sales', 1)">Generate PRINTABLE</button>
+                                                  <button type="button" class="btn btn-sm btn-primary" value="Generate PRINTABLE" onclick="genReport(getEl('saleanal_report'), 'sales', 1)">Generate PRINTABLE</button>
                                                     <button class="btn btn-sm btn-success" type="submit" value="Generate">Generate</button>
                                                 </span>
                                             </th>
@@ -1413,6 +1413,67 @@ class SalesAnalysis
 
             echo '<br /><span style="float:bottom;color:#fff">Load time: ' . $time_taken . '</span>';
 
+            $page_title = '<h1>';
+            
+            if ($campaign_code) {
+            	$page_title .= $campaign_code . ' ';
+            }
+            
+            $page_title .= "Sales Analysis - ";
+            
+            if (!is_array($_REQUEST['agent_cluster_id']) && $_REQUEST['agent_cluster_id'] >= 0) {
+            	//				echo getClusterName($agent_cluster_id);//$_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
+            	$page_title.= $_SESSION['site_config']['db'][$_REQUEST['agent_cluster_id']]['name'] . ' - ';
+            } else if (is_array($_REQUEST['agent_cluster_id'])) {
+            	foreach ($_REQUEST['agent_cluster_id'] as $aci) {
+            		$aci = intval($aci);
+            		$page_title .= (($aci == -1) ? '[ALL]' : $_SESSION['site_config']['db'][$aci]['name']) . ' - ';
+            		
+            		// ALL MEANS ALL
+            		if ($aci == -1) break;
+            	}
+            }
+            
+
+            	
+            	if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
+            		
+            		$page_title.= date("m-d-Y", $stime);
+            		
+            	} else {
+            		$page_title.= date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
+            	}
+           	$page_title.= '</h1>';
+           	$page_title.= '<h3>';
+
+           	if ($_REQUEST['user_group']) {
+           		if (is_array($_REQUEST['user_group'])) {
+           			if (trim($_REQUEST['user_group'][0]) != '') {
+           				$page_title .=  '<b>User Groups:</b>' . implode($_REQUEST['user_group'], ' | ');
+           				$page_title .=  "<br />";
+                        }
+                    } else {
+                    	$page_title .=  '<b>User Group:</b>' . $_REQUEST['user_group'] . "<br />";
+                    }
+                }
+
+
+                if ($_REQUEST['ignore_group']) {
+                	if (is_array($_REQUEST['ignore_group'])) {
+                		if (trim($_REQUEST['ignore_group'][0]) != '') {
+                			$page_title .=  '<b>Ignoring Groups:</b> ' . implode($_REQUEST['ignore_group'], ' | ');
+                			$page_title .=  "<br />";
+                        }
+                    } else {
+                    	$page_title .=  '<b>Ignoring Group:</b> ' . $_REQUEST['ignore_group'] . '<br />';
+                    }
+                }
+
+
+                $page_title .= '</h3>';
+                
+                
+            
             if (!isset($_REQUEST['no_nav'])) {
                 ?>
                 <script>
@@ -1421,7 +1482,13 @@ class SalesAnalysis
                             'lengthMenu': [[-1, 20, 50, 100, 500], ['All', 20, 50, 100, 500]],
                             dom: 'Bfrtip',
                             buttons: [
-                                {extend: 'copy', header: false, footer: false}
+                            	{
+                                	extend:'print',
+									messageTop: '<?=addslashes($page_title)?>'
+
+                            	},
+                                {extend: 'copy', header: false, footer: false},
+                                
                             ],
                         });
                         go('#anc_sales_report');
