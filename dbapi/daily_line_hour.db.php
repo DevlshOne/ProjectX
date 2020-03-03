@@ -87,31 +87,55 @@ SQL;
     public function getSalesGroupStats($startUnixTime, $endUnixTime)
     {
         $sql = <<<SQL
-SELECT
-	agent_activity.call_group,
-    sum(agent_sales) as `group_total_sales`,
-    sum(agent_sales)/(sum(paid_minutes)/60) as `group_worked_hours`,
-    sum(paid_sales_amount) as `group_cc_paid`
-FROM (  SELECT
-			if(RIGHT(username,1) = 2, LEFT(username, length(username) -1), username) as `agent_id`,
+SELECT 
+	call_group,
+    sum(_wrkd_hrs) as group_wrkd_hours,
+    sum(_total_calls) as group_total_calls,
+    sum(_agent_total_sales) as group_total_sales,
+    sum(_agent_total_sales_amount) as group_total_sales_amount,
+    sum(_agent_paid_sales) as group_paid_sales,
+    sum(_agent_paid_sales_amount) as group_paid_sales_amount,
+    sum(_agent_unpaid_sales) as group_unpaid_sales
+FROM (
+	SELECT -- AGENT LEVEL
+		username,
+        call_group,
+		_wrkd_hrs,
+		_total_calls,
+		_agent_total_sales,
+        _agent_total_sales_amount,
+		_agent_paid_sales,
+		_agent_paid_sales_amount,
+		(_agent_paid_sales/_agent_total_sales) * 100 as _paid_sales_perc,
+		(_agent_paid_sales_amount/_agent_total_sales_amount) * 100 as _paid_sales_perc_money,
+		_agent_unpaid_sales,
+		(1-(_agent_paid_sales/_agent_total_sales))*100 as _unpaid_sales_perc
+	FROM (
+		SELECT
+			username,
 			call_group,
 			count(1) as `hands`,
-			sum(activity_time,)/60 as agent_activity_minutes,
-			(sum(activity_time,)/60)/count(1) as paid_minutes
-		  FROM activity_log
-		WHERE  time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
-		GROUP BY 1) agent_activity
-LEFT JOIN (
-		SELECT
-			if(RIGHT(agent_username,1) = 2, LEFT(agent_username, length(agent_username) -1), agent_username) as `agent_id`,
-			sales.call_group,
-			count(1) as `paid_sales_cnt`,
-			sum(amount) as `agent_sales`,
-			sum(if(is_paid != 'NO', amount, 0)) as `paid_sales_amount`
-		FROM sales
-			WHERE `sale_time` BETWEEN {$startUnixTime} AND {$endUnixTime}
+			sum(activity_time)/60 as agent_activity_minutes,
+			sec_to_time((max(activity_time)/60)) as paid_minutes,
+			sec_to_time((max(activity_time)/60)) as _wrkd_hrs,
+			calls_today as `_total_calls`
+		FROM activity_log
+		WHERE  time_startedBETWEEN {$startTime} AND {$endTime}
 		GROUP BY 1
-) as agent_sales ON agent_activity.agent_id = agent_sales.agent_id
+		) activity_log
+	LEFT JOIN (        
+		SELECT
+			agent_username,
+			count(1) as `_agent_total_sales`,
+			sum(amount) as `_agent_total_sales_amount`,
+			sum(if(is_paid = 'NO', 1, 0)) as `_agent_unpaid_sales`,
+			sum(if(is_paid != 'NO', 1, 0)) as `_agent_paid_sales`,
+			sum(if(is_paid != 'NO', amount, 0)) as `_agent_paid_sales_amount`
+		FROM sales
+			WHERE `sale_time` BETWEEN {$startTime} AND {$endTime}
+		GROUP BY 1
+	) sales on activity_log.username = sales.agent_username
+) agent_values
 GROUP BY 1
 SQL;
 
