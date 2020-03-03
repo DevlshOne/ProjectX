@@ -477,7 +477,7 @@ class ListToolImports
                     <td><textarea name="description" rows="3" cols="30"><?= htmlentities($row['description']) ?></textarea></td>
                 </tr>
                 <tr>
-                    <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
+                    <th colspan="2" align="center"><input type="submit" class="btn btn-sm btn-primary" value="Save Changes"></th>
                 </tr>
         </form>
         </table><?
@@ -725,10 +725,8 @@ class ListToolImports
                                 </td>
                             </tr>
                             <tr>
-                                <td colspan="2" align="center">
-
-                                    <input type="submit" value="Move Leads!"/>
-
+                                <td colspan="2" class="text-center">
+                                    <button type="submit" class="btn btn-sm btn-info" title="Move Leads!">Move Leads</button>
                                 </td>
                             </tr>
                         </table>
@@ -742,13 +740,17 @@ class ListToolImports
                     </td>
                 </tr>
                 <tr>
-                    <td align="center"><input type="button" value="MURDER Import" style="color:#ff0000" onclick="if(confirm('Deleting an import will also delete all the leads for the import.\nAre you SURE you want to DELETE this import and its leads?')){deleteImport();}" title="Delete all leads in the import AND delete the import record itself"></td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-danger" title="MURDER Import" onclick="if(confirm('Deleting an import will also delete all the leads for the import.\nAre you SURE you want to DELETE this import and its leads?')){deleteImport();}" title="Delete all leads in the import AND delete the import record itself">Murder Import</button>
+                    </td>
                     <td align="center">
                         <? /**<input type="button" value="Move Leads/Combine">**/ ?>
                         &nbsp;
 
                     </td>
-                    <td align="center"><input type="button" value="Empty Leads" style="color:#ff0000" onclick="if(confirm('Are you sure you want to PURGE ALL LEADS for this import?')){purgeImport();}" title="This will remove all leads for the import, but leave the import intact"></td>
+                    <td class="text-center">
+                        <button type="button" title="Empty Leads" class="btn btn-sm btn-warning" onclick="if(confirm('Are you sure you want to PURGE ALL LEADS for this import?')){purgeImport();}" title="This will remove all leads for the import, but leave the import intact">Empty Leads</button>
+                    </td>
                 </tr>
 
         </form>
@@ -1300,9 +1302,7 @@ class ListToolImports
                 </tr>
                 <tr>
                     <td colspan="2" align="center">
-
-                        <input type="submit" value="Generate!"/>
-
+                        <button type="submit" class="btn btn-sm btn-secondary" title="Generate Report">Generate</button>
                     </td>
                 </tr>
         </form>
