@@ -596,12 +596,24 @@ class AgentCallStats
                         <tr><?
                             // CHECK FOR THIS, TO MAKE SURE ITS NOT THE EMAIL REPORT RUNNING
                             if ($_SESSION['user']['priv'] > 3) {
-                                ?>
-                                <td>&nbsp;</td>
-                                <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th><?
+                                ?><th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th>
+                                <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right" title="Total number of agents">Agents:<?
+                                	
+                                echo number_format($tcount);
+                                	
+                                	
+                                ?></th><?
+                                
                             } else {
-                                ?>
-                                <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th><?
+                            	
+                            	?><th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right" title="Total number of agents">Agents:<?
+                                	
+                            	echo number_format($tcount);
+                                	
+                                	
+                                	?></th><?
+                               /* ?>
+                                <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th><?*/
                             }
                             ?>
                             <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_calls) ?></td>
