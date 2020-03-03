@@ -120,7 +120,7 @@ FROM (
 			sec_to_time((max(activity_time)/60)) as _wrkd_hrs,
 			calls_today as `_total_calls`
 		FROM activity_log
-		WHERE  time_startedBETWEEN {$startUnixTime} AND {$endUnixTime}
+		WHERE  time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
 		GROUP BY 1
 		) activity_log
 	LEFT JOIN (        
