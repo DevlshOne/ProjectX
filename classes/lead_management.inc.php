@@ -583,11 +583,7 @@ class LeadManagement
          * <?***/
 
 
-        ?>
-        <div id="media_player" title="Playing Call Recording">
-
-
-        </div><?
+        
 
 
         $this->listRecordings($row, false);
@@ -1732,9 +1728,9 @@ class LeadManagement
             $('#dialog-modal-edit-lead').dialog("option", "title", '<?=($id) ? 'Editing Lead #' . $id . ' - ' . addslashes(htmlentities($row['first_name'] . ' ' . $row['last_name'])) : 'Adding new Lead'?>');
 
 
-        </script>
-
-        <?
+        </script><?
+        
+        
 
     if (intval($_REQUEST['no_script']) < 2){
         ?>
@@ -1750,6 +1746,10 @@ class LeadManagement
                 <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#lm_edit_dialog', '?area=lead_management&edit_lead=<?= $id ?>&sub=calls&printable=1&no_script=2');">Recent Calls</a></li>
                 <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#lm_edit_dialog', '?area=lead_management&edit_lead=<?= $id ?>&sub=recordings&printable=1&no_script=2');">Recordings</a></li>
             </ul>
+        </div>
+        <div id="media_player" title="Playing Call Recording">
+
+
         </div>
         <div class="block-content tab-content" id="lm_edit_dialog"></div>
         <?
