@@ -633,10 +633,6 @@ td.countsRow {
 .dataTables_wrapper {
     position: relative !important;
 }
-.btn {
-    margin-left: 1em;
-    margin-right: 1em;
-}
 .user-count-tile {
     position: relative;
     min-width: 296px !important;
@@ -645,6 +641,13 @@ td.countsRow {
 }
 .user-count-content {
     padding: 0 0 0 0;
+}
+
+/* BOOTSTRAP / ONEUI OVERRIDES */
+
+.btn {
+    margin-left: 1em;
+    margin-right: 1em;
 }
 .nav-link.active {
     background-color: #98aee2!important;
