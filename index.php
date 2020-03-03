@@ -736,33 +736,24 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             <div class="d-flex align-items-center">
                 <!-- User Dropdown -->
                 <div class="dropdown d-inline-block ml-2">
-                    <button type="button" class="btn btn-sm btn-dual" id="page-header-user-dropdown"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" class="btn btn-sm btn-secondary dropdown-toggle" id="page-header-user-dropdown"
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="$('#page-header-user-dropdown').dropdown('toggle');">
                         <span class="d-none d-sm-inline-block ml-1"><?= $_SESSION["user"]["username"]; ?></span>
-                        <i class="fa fa-fw fa-angle-down d-none d-sm-inline-block"></i>
                     </button>
-                    <div class="dropdown-menu dropdown-menu-right p-0 border-0 font-size-sm"
-                         aria-labelledby="page-header-user-dropdown">
+                    <div class="dropdown-menu dropdown-menu-right p-0 border-0 font-size-sm" aria-labelledby="page-header-user-dropdown">
                         <div class="p-2">
                             <h5 class="dropdown-header text-uppercase">Actions</h5>
-                            <a class="dropdown-item d-flex align-items-center justify-content-between"
-                               id="change_password" href="#">
-                                <span>Change Password</span>
-                                <i class="si si-lock ml-1"></i>
-                            </a>
-                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="?o">
-                                <span>Log Out</span>
-                                <i class="si si-logout ml-1"></i>
-                            </a>
+                            <a class="dropdown-item d-flex align-items-center justify-content-between" id="change_password" href="#">Change Password<i class="si si-lock ml-1"></i></a>
+                            <a class="dropdown-item d-flex align-items-center justify-content-between" href="?o">Log Out<i class="si si-logout ml-1"></i></a>
                         </div>
                     </div>
+                    <!-- END User Dropdown -->
                 </div>
-                <!-- END User Dropdown -->
 
                 <!-- Notifications Dropdown -->
                 <div class="dropdown d-inline-block ml-2">
                     <button type="button" class="btn btn-sm btn-dual" id="page-header-notifications-dropdown"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onclick="$('#page-header-notifications-dropdown').dropdown('toggle');">
                         <i class="si si-bell"></i>
                         <span class="badge badge-primary badge-pill">0</span>
                     </button>
