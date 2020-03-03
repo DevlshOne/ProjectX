@@ -602,7 +602,7 @@ class LeadManagement
 
     /**
      * List the recordings that the vici cluster has for this lead
-     * @param $row    A database assoc-array containing the lead_tracking record for the lead.
+     * @param array $row    A database assoc-array containing the lead_tracking record for the lead.
      */
     function listRecordings($leadrow, $verifier_mode = false)
     {
