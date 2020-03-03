@@ -15,7 +15,7 @@ class DailyLineHourAPI
 
     }
 
-    public function getRoustingGroupStats($startTime, $endTime)
+    public function getRoustingGroupStats($startUnixTime, $endUnixTime)
     {
         $sql = <<<SQL
 SELECT
@@ -49,7 +49,7 @@ FROM (
 						DISTINCT username as `username`
 						FROM logins
 					WHERE result='success' AND section IN('rouster','roustersys')
-						AND `time` BETWEEN {$startTime} AND {$endTime}
+						AND `time` BETWEEN {$startUnixTime} AND {$endUnixTime}
 					GROUP BY 1
 					ORDER BY 1
 				) logins
@@ -58,7 +58,7 @@ FROM (
 					   username,
 					   max(seconds_INCALL+seconds_READY+seconds_QUEUE+seconds_PAUSED)/60 as `activity_time`
 					from activity_log
-					WHERE time_started BETWEEN {$startTime} AND {$endTime}
+					WHERE time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
 			        GROUP BY username
 				) activity ON logins.username = activity.username
 			 JOIN (
@@ -68,7 +68,7 @@ FROM (
 						sum(if(is_paid IN('roustedcc'), 1, 0)) as paid_sales_cnt,
 						sum(if(is_paid IN('roustedcc'), amount, 0)) as paid_sales_amount
 					FROM sales
-						WHERE `sale_time` BETWEEN {$startTime} AND {$endTime}
+						WHERE `sale_time` BETWEEN {$startUnixTime} AND {$endUnixTime}
 					GROUP BY agent_username
 			 ) sales on logins.username = sales.agent_username
 		) login_totals
@@ -120,7 +120,7 @@ FROM (
 			sec_to_time((max(activity_time)/60)) as _wrkd_hrs,
 			calls_today as `_total_calls`
 		FROM activity_log
-		WHERE  time_startedBETWEEN {$startTime} AND {$endTime}
+		WHERE  time_startedBETWEEN {$startUnixTime} AND {$endUnixTime}
 		GROUP BY 1
 		) activity_log
 	LEFT JOIN (        
@@ -132,7 +132,7 @@ FROM (
 			sum(if(is_paid != 'NO', 1, 0)) as `_agent_paid_sales`,
 			sum(if(is_paid != 'NO', amount, 0)) as `_agent_paid_sales_amount`
 		FROM sales
-			WHERE `sale_time` BETWEEN {$startTime} AND {$endTime}
+			WHERE `sale_time` BETWEEN {$startUnixTime} AND {$endUnixTime}
 		GROUP BY 1
 	) sales on activity_log.username = sales.agent_username
 ) agent_values
