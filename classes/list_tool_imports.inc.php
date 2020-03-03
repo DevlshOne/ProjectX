@@ -1,48 +1,51 @@
-<?	/***************************************************************
-	 *	List Tool - Imports
-	 *	Written By: Jonathan Will
-	 ***************************************************************/
+<? /***************************************************************
+ *    List Tool - Imports
+ *    Written By: Jonathan Will
+ ***************************************************************/
 
 $_SESSION['imports'] = new ListToolImports;
 
 
-class ListToolImports{
+class ListToolImports
+{
 
-	var $table	= 'imports';			## Classes main table to operate on
-	var $orderby	= 'time';		## Default Order field
-	var $orderdir	= 'DESC';	## Default order direction
-
-
-	## Page  Configuration
-	var $pagesize	= 20;	## Adjusts how many items will appear on each page
-	var $index	= 0;		## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
-
-	var $index_name = 'import_list';	## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-	var $frm_name = 'importnextfrm';
-
-	var $order_prepend = 'import_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
-
-	function ListToolImports(){
+    var $table = 'imports';            ## Classes main table to operate on
+    var $orderby = 'time';        ## Default Order field
+    var $orderdir = 'DESC';    ## Default order direction
 
 
-		## REQURES DB CONNECTION!
+    ## Page  Configuration
+    var $pagesize = 20;    ## Adjusts how many items will appear on each page
+    var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
+
+    var $index_name = 'import_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+    var $frm_name = 'importnextfrm';
+
+    var $order_prepend = 'import_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+
+    function ListToolImports()
+    {
 
 
-
-		$this->handlePOST();
-	}
+        ## REQURES DB CONNECTION!
 
 
-	function handlePOST(){
+        $this->handlePOST();
+    }
 
-		// THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
-		// SEE api/names.api.php FOR POST HANDLING!
-		// <3 <3 -Jon
 
-	}
+    function handlePOST()
+    {
 
-	function handleFLOW(){
-		# Handle flow, based on query string
+        // THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
+        // SEE api/names.api.php FOR POST HANDLING!
+        // <3 <3 -Jon
+
+    }
+
+    function handleFLOW()
+    {
+        # Handle flow, based on query string
 //
 //		if(!checkAccess('names')){
 //
@@ -54,953 +57,840 @@ class ListToolImports{
 //		}else{
 
 
-		if(!checkAccess('list_tools')){
+        if (!checkAccess('list_tools')) {
 
-			accessDenied("List Tools");
-			return;
+            accessDenied("List Tools");
+            return;
 
-		}
+        }
 
 
+        if (isset($_REQUEST['view_import'])) {
 
+            $this->makeView($_REQUEST['view_import']);
 
-		if(isset($_REQUEST['view_import'])){
+        } else {
 
-			$this->makeView($_REQUEST['view_import']);
+            $this->listEntrys();
 
-		}else{
+        }
 
-			$this->listEntrys();
 
-		}
+    }
 
 
+    function listEntrys()
+    {
 
 
+        ?>
+        <script>
 
-	}
+            var import_delmsg = 'Are you sure you want to delete this import and all of its leads?';
 
+            var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
+            var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
 
 
+            var <?=$this->index_name?> =
+            0;
+            var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
 
+            var ImportsTableFormat = [
+                ['id', 'align_center'],
+                ['phone_type', 'align_center'],
+                ['[date:time]', 'align_center'],
+                ['name', 'align_left'],
 
-	function listEntrys(){
+                ['[render:number:current_lead_count]', 'align_right'],
 
+                ['[call_function:manualRecount:Manual Recount:id]', 'align_center']
 
-		?><script>
+                <?/**    ['[get:lead_count:id]','align_right'],
+             *
+             * ['[delete]','align_center']**/?>
+            ];
 
-			var import_delmsg = 'Are you sure you want to delete this import and all of its leads?';
+            /**
+             * Build the URL for AJAX to hit, to build the list
+             */
+            function getImportsURL() {
 
-			var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
-			var <?=$this->order_prepend?>orderdir= "<?=$this->orderdir?>";
+                var frm = getEl('<?=$this->frm_name?>');
 
+                return 'api/api.php' +
+                    "?get=imports&" +
+                    "mode=xml&" +
+                    "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
+            )
+                +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
+                "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+            }
 
-			var <?=$this->index_name?> = 0;
-			var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
 
-			var ImportsTableFormat = [
-				['id','align_center'],
-				['phone_type','align_center'],
-				['[date:time]','align_center'],
-				['name','align_left'],
+            var imports_loading_flag = false;
 
-				['[render:number:current_lead_count]','align_right'],
+            /**
+             * Load the import - make the ajax call, callback to the parse function
+             */
+            function loadImports() {
 
-				['[call_function:manualRecount:Manual Recount:id]', 'align_center']
+                // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
+                var val = null;
+                eval('val = imports_loading_flag');
 
-			<?/**	['[get:lead_count:id]','align_right'],
 
-				['[delete]','align_center']**/?>
-			];
+                // CHECK IF WE ARE ALREADY LOADING THIS DATA
+                if (val == true) {
 
-			/**
-			* Build the URL for AJAX to hit, to build the list
-			*/
-			function getImportsURL(){
+                    //console.log("NAMES ALREADY LOADING (BYPASSED) \n");
+                    return;
+                } else {
 
-				var frm = getEl('<?=$this->frm_name?>');
+                    eval('imports_loading_flag = true');
+                }
 
-				return 'api/api.php'+
-								"?get=imports&"+
-								"mode=xml&"+
+                <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
 
-//								's_id='+escape(frm.s_id.value)+"&"+
-//								's_name='+escape(frm.s_name.value)+"&"+
-//								's_filename='+escape(frm.s_filename.value)+"&"+
+                loadAjaxData(getImportsURL(), 'parseImports');
 
-								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
-								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
-			}
+            }
 
 
-			var imports_loading_flag = false;
+            /**
+             * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
+             */
+            var <?=$this->order_prepend?>totalcount = 0;
+
+            function parseImports(xmldoc) {
+
+                <?=$this->order_prepend?>totalcount = parseXMLData('import', ImportsTableFormat, xmldoc);
+
+
+                // ACTIVATE PAGE SYSTEM!
+                if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
+
+
+                    makePageSystem('imports',
+                        '<?=$this->index_name?>',
+                        <?=$this->order_prepend?>totalcount,
+                        <?=$this->index_name?>,
+                        <?=$this->order_prepend?>pagesize,
+                        'loadImports()'
+                    );
+
+                } else {
+
+                    hidePageSystem('imports');
+
+                }
+
+                eval('imports_loading_flag = false');
+            }
+
+
+            function handleImportListClick(id) {
+
+                displayImportDialog(id);
+
+            }
+
+
+            function displayImportDialog(id) {
+                var objname = 'dialog-modal-view-import';
+                $('#' + objname).dialog("option", "title", 'Viewing Import #' + id);
+                $('#' + objname).dialog("open");
+                $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                $('#' + objname).load("index.php?area=list_tools&tool=view_imports&view_import=" + id + "&printable=1&no_script=1");
+            }
+
+            function resetImportForm(frm) {
+                frm.reset();
+            }
+
+            function manualRecount(import_id) {
+                $('#import_loading_cell').html('<img src="images/ajax-loader.gif" border="0" /> Counting Leads...');
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: 'api/api.php?get=imports&mode=xml&action=recount&import_id=' + import_id,
+                    error: function () {
+                        alert("Error submitting recounting request. Please contact an admin.");
+                        $('#import_loading_cell').html('');
+                    },
+                    success: function (msg) {
+                        // REFRESH LIST WHEN FINISHED
+                        loadImports();
+                        $('#import_loading_cell').html('');
+                    }
+                });
+            }
+        </script>
+        <div id="dialog-modal-view-import" title="View Import" class="nod"></div>
+        <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadImports();return false">
+            <input type="hidden" name="searching_import">
+            <! ** BEGIN BLOCK HEADER -->
+            <div class="block-header bg-primary-light">
+                <h4 class="block-title">Imports / Counts</h4>
+                <button type="button" title="Refresh List" class="btn btn-sm btn-success" onclick="loadImports()">Refresh</button>
+                <div id="imports_prev_td" class="page_system_prev"></div>
+                <div id="imports_page_td" class="page_system_page"></div>
+                <div id="imports_next_td" class="page_system_next"></div>
+                <select title="Rows Per Page" class="custom-select-sm" name="<?= $this->order_prepend ?>pagesize" id="<?= $this->order_prepend ?>pagesizeDD" onchange="<?= $this->index_name ?>=0;loadImports(); return false;">
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="500">500</option>
+                </select>
+                <div class="d-inline-block ml-2">
+                    <button class="btn btn-sm btn-dark" title="Total Found">
+                        <i class="si si-list"></i>
+                        <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
+                    </button>
+                </div>
+            </div>
+            <! ** END BLOCK HEADER -->
+            <! ** BEGIN BLOCK LIST (DATATABLE) -->
+            <div class="block-content">
+                <table class="table table-sm table-striped" id="import_table">
+                    <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                    <tr>
+                        <th class="row2 text-center"><?= $this->getOrderLink('id') ?>ID</a></th>
+                        <th class="row2 text-center"><?= $this->getOrderLink('phone_type') ?>Phone Type</a></th>
+                        <th class="row2 text-center"><?= $this->getOrderLink('time') ?>Import Date</a></th>
+                        <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
+                        <th class="row2 text-right"><?= $this->getOrderLink('current_lead_count') ?>Lead Count</a></th>
+                        <th class="row2 text-right">&nbsp;</th>
+                    </tr>
+                </table>
+        </form>
+        </div>
+        <script>
+            $("#dialog-modal-view-import").dialog({
+                autoOpen: false,
+                width: 650,
+                height: 'auto',
+                modal: false,
+                draggable: true,
+                resizable: true,
+                position: {my: 'center', at: 'center'},
+            });
+            loadImports();
+        </script>
+        <?
 
-			/**
-			* Load the import - make the ajax call, callback to the parse function
-			*/
-			function loadImports(){
+    }
 
-				// ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
-				var val = null;
-				eval('val = imports_loading_flag');
 
+    function makeView($id)
+    {
 
-				// CHECK IF WE ARE ALREADY LOADING THIS DATA
-				if(val == true){
+        $id = intval($id);
 
-					//console.log("NAMES ALREADY LOADING (BYPASSED) \n");
-					return;
-				}else{
 
-					eval('imports_loading_flag = true');
-				}
+        if ($id) {
 
-				<?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
+            $row = $_SESSION['dbapi']->imports->getByID($id);
 
-				loadAjaxData(getImportsURL(),'parseImports');
 
-			}
+        }
 
 
-			/**
-			* CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
-			*/
-			var <?=$this->order_prepend?>totalcount = 0;
-			function parseImports(xmldoc){
+        if (!$_REQUEST['section']) {
+            ?>
+            <script>
+                $(function() {
+                    loadTab('#imports_counts_dialog', '?area=list_tools&tool=view_imports&view_import=<?= $id ?>&section=general&printable=1&no_script=1');
+                });
+            </script>
+            <div class="block">
+                <ul class="nav nav-tabs w-100" data-toggle="tabs" role="tablist" id="imports-counts-tabs">
+                    <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand active" data-toggle="tab" role="tab" onclick="loadTab('#imports_counts_dialog', '?area=list_tools&tool=view_imports&view_import=<?= $id ?>&section=general&printable=1&no_script=1');">General</a></li>
+                    <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#imports_counts_dialog', '?area=list_tools&tool=view_imports&view_import=<?= $id ?>&section=tools&printable=1&no_script=1');">Tools</a></li>
+                    <li class="nav-item"><a class="nav-link text-sm-center text-nowrap hand" data-toggle="tab" role="tab" onclick="loadTab('#imports_counts_dialog', '?area=list_tools&tool=view_imports&view_import=<?= $id ?>&section=reports&printable=1&no_script=1');">Reports</a></li>
+                </ul>
+            </div>
+            <div class="block-content tab-content" id="imports_counts_dialog"></div>
+            <?
+        }
 
-				<?=$this->order_prepend?>totalcount = parseXMLData('import',ImportsTableFormat,xmldoc);
+        switch ($_REQUEST['section']) {
+            case 'general':
 
+                $this->makeGeneralGUI($row);
 
-				// ACTIVATE PAGE SYSTEM!
-				if(<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize){
+                break;
+            case 'tools':
 
+                $this->makeToolsGUI($row);
 
-					makePageSystem('imports',
-									'<?=$this->index_name?>',
-									<?=$this->order_prepend?>totalcount,
-									<?=$this->index_name?>,
-									<?=$this->order_prepend?>pagesize,
-									'loadImports()'
-								);
+                break;
+            case 'reports':
 
-				}else{
+                if ($_REQUEST['import_reports']) {
 
-					hidePageSystem('imports');
+                    $this->generateReport($row);
 
-				}
+                } else {
 
-				eval('imports_loading_flag = false');
-			}
+                    $this->makeReportGUI($row);
 
+                }
 
-			function handleImportListClick(id){
+                break;
+        }
+    }
 
-				displayImportDialog(id);
 
-			}
+    function makeGeneralGUI($row)
+    {
 
+        ?>
+        <script>
 
-			function displayImportDialog(id){
+            function validateNameField(name, value, frm) {
 
-				var objname = 'dialog-modal-view-import';
+                //alert(name+","+value);
 
 
-				$('#'+objname).dialog( "option", "title", 'Viewing Import #'+id );
+                switch (name) {
+                    default:
 
+                        // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
+                        return true;
+                        break;
 
+                    case 'name':
 
-				$('#'+objname).dialog("open");
 
-				$('#'+objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
+                        if (!value) return false;
 
-				$('#'+objname).load("index.php?area=list_tools&tool=view_imports&view_import="+id+"&printable=1&no_script=1");
+                        return true;
 
-				$('#'+objname).dialog('option', 'position', 'center');
-			}
 
-			function resetImportForm(frm){
+                        break;
 
-//				frm.s_id.value = '';
-//				frm.s_name.value = '';
-//				frm.s_filename.value='';
+                }
+                return true;
+            }
 
-			}
 
+            function checkGeneralFrm(frm) {
 
-//			var importsrchtog = false;
-//
-//			function toggleNameSearch(){
-//				namesrchtog = !namesrchtog;
-//				ieDisplay('name_search_table', namesrchtog);
-//			}
 
+                var params = getFormValues(frm, 'validateNameField');
 
 
-			function manualRecount(import_id){
+                // FORM VALIDATION FAILED!
+                // param[0] == field name
+                // param[1] == field value
+                if (typeof params == "object") {
 
-				$('#import_loading_cell').html('<img src="images/ajax-loader.gif" border="0" /> Counting Leads...');
+                    switch (params[0]) {
+                        default:
 
-				$.ajax({
-					type: "POST",
-					cache: false,
-					url: 'api/api.php?get=imports&mode=xml&action=recount&import_id='+import_id,
-					error: function(){
-						alert("Error submitting recounting request. Please contact an admin.");
-						$('#import_loading_cell').html('');
-					},
-					success: function(msg){
+                            alert("Error submitting form. Check your values");
 
-						// REFRESH LIST WHEN FINISHED
-						loadImports();
+                            break;
 
+                        case 'name':
 
-						$('#import_loading_cell').html('');
+                            alert("Please enter a name for this Import!");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
 
+                    }
 
-					}
-				});
+                    // SUCCESS - POST AJAX TO SERVER
+                } else {
 
 
-			}
+                    //alert("Form validated, posting");
 
-		</script>
-		<div id="dialog-modal-view-import" title="View Import" class="nod">
-		<?
-
-		?>
-		</div><?
-
-
-
-		?><form name="<?=$this->frm_name?>" id="<?=$this->frm_name?>" method="POST" action="<?=$_SERVER['REQUEST_URI']?>" onsubmit="loadImports();return false">
-			<input type="hidden" name="searching_import">
-		<?/**<table border="0" width="100%" cellspacing="0" class="ui-widget" class="lb">**/?>
-
-		<table border="0" width="100%" class="lb" cellspacing="0">
-		<tr>
-			<td height="40" class="pad_left ui-widget-header">
-
-				<table border="0" width="100%" >
-				<tr>
-					<td width="300">
-						Imports
-
-
-
-					</td>
-					<td id="import_loading_cell" nowrap>
-
-					</td>
-					<td>
-						<input type="button" value="Refresh List" onclick="loadImports()" />
-					</td>
-					<td width="150" align="center">PAGE SIZE: <select name="<?=$this->order_prepend?>pagesizeDD" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0; loadImports();return false">
-						<option value="20">20</option>
-						<option value="50">50</option>
-						<option value="100">100</option>
-						<option value="500">500</option>
-					</select></td>
-
-					<td align="right"><?
-						/** PAGE SYSTEM CELLS -- INJECTED INTO, BY JAVASCRIPT AFTER AJAX CALL **/?>
-						<table border="0" cellpadding="0" cellspacing="0" class="page_system_container">
-						<tr>
-							<td id="imports_prev_td" class="page_system_prev"></td>
-							<td id="imports_page_td" class="page_system_page"></td>
-							<td id="imports_next_td" class="page_system_next"></td>
-						</tr>
-						</table>
-
-					</td>
-				</tr>
-				</table>
-
-			</td>
-
-		</tr>
-<?/*
-		<tr>
-			<td colspan="2"><table border="0" width="100%" id="import_search_table" class="nod">
-			<tr>
-				<td rowspan="2"><font size="+1">SEARCH</font></td>
-				<th class="row2">ID</th>
-				<th class="row2">Name</th>
-				<th class="row2">Filename</th>
-				<td><input type="submit" value="Search" name="the_Search_button"></td>
-			</tr>
-			<tr>
-				<td align="center"><input type="text" name="s_id" size="5" value="<?=htmlentities($_REQUEST['s_id'])?>"></td>
-				<td align="center"><input type="text" name="s_name" size="20" value="<?=htmlentities($_REQUEST['s_name'])?>"></td>
-				<td align="center"><input type="text" name="s_filename" size="20" value="<?=htmlentities($_REQUEST['s_filename'])?>"></td>
-				<td><input type="button" value="Reset" onclick="resetNameForm(this.form);resetPageSystem('<?=$this->index_name?>');loadNames();"></td>
-			</tr>
-			</table></td>
-		</tr>
-
-				['id','align_center'],
-				['type','align_center'],
-				['[date:time]','align_center'],
-				['name','align_left'],
-
-				['[get:lead_count:id]','align_right'],
-
-
-	***/?>
-		</form>
-		<tr>
-			<td colspan="2"><table border="0" width="100%" id="import_table">
-			<tr>
-
-				<th class="row2" align="center"><?=$this->getOrderLink('id')?>ID</a></th>
-				<th class="row2" align="center"><?=$this->getOrderLink('phone_type')?>Phone Type</a></th>
-				<th class="row2" align="center"><?=$this->getOrderLink('time')?>Import Date</a></th>
-				<th class="row2" align="left"><?=$this->getOrderLink('name')?>Name</a></th>
-				<th class="row2" align="right"><?=$this->getOrderLink('current_lead_count')?>Lead Count</a></th>
-				<th class="row2" align="right">&nbsp;</th>
-			</tr><?
-
-			?></table></td>
-		</tr></table>
-
-		<script>
-
-			$("#dialog-modal-view-import").dialog({
-				autoOpen: false,
-				width: 500,
-				height: 300,
-				modal: false,
-				draggable:true,
-				resizable: true
-			});
-
-			loadImports();
-
-		</script><?
-
-	}
-
-
-	function makeView($id){
-
-		$id=intval($id);
-
-
-		if($id){
-
-			$row = $_SESSION['dbapi']->imports->getByID($id);
-
-
-		}
-
-
-
-		if(!$_REQUEST['section']){
-
-			?><div id="importtabs">
-
-				<ul>
-					<li><a href="index.php?area=list_tools&tool=view_imports&view_import=<?=$id?>&section=general&printable=1&no_script=1">General</a></li>
-					<li><a href="index.php?area=list_tools&tool=view_imports&view_import=<?=$id?>&section=tools&printable=1&no_script=1">Tools</a></li>
-					<li><a href="index.php?area=list_tools&tool=view_imports&view_import=<?=$id?>&section=reports&printable=1&no_script=1">Reports</a></li>
-
-				</ul>
-			</div><?
-		}
-
-		switch($_REQUEST['section']){
-		case 'general':
-
-			$this->makeGeneralGUI($row);
-
-			break;
-		case 'tools':
-
-			$this->makeToolsGUI($row);
-
-			break;
-		case 'reports':
-
-			if($_REQUEST['import_reports']){
-
-				$this->generateReport($row);
-
-			}else{
-
-				$this->makeReportGUI($row);
-
-			}
-
-			break;
-
-		}
-
-
-
-		?><script>
-
-		  $(function() {
-
-		    $( "#importtabs" ).tabs({
-		    				heightStyle: "fill"
-		    			 });
-
-		  });
-
-		</script><?
-
-
-	}
-
-
-	function makeGeneralGUI($row){
-
-		?><script>
-
-		function validateNameField(name,value,frm){
-
-				//alert(name+","+value);
-
-
-				switch(name){
-				default:
-
-					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-					return true;
-					break;
-
-				case 'name':
-
-
-					if(!value)return false;
-
-					return true;
-
-
-					break;
-
-				}
-				return true;
-			}
-
-
-
-			function checkGeneralFrm(frm){
-
-
-				var params = getFormValues(frm,'validateNameField');
-
-
-				// FORM VALIDATION FAILED!
-				// param[0] == field name
-				// param[1] == field value
-				if(typeof params == "object"){
-
-					switch(params[0]){
-					default:
-
-						alert("Error submitting form. Check your values");
-
-						break;
-
-					case 'name':
-
-						alert("Please enter a name for this Import!");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
-
-					}
-
-				// SUCCESS - POST AJAX TO SERVER
-				}else{
-
-
-					//alert("Form validated, posting");
-
-					$.ajax({
-						type: "POST",
-						cache: false,
-						url: 'api/api.php?get=imports&mode=xml&action=edit',
-						data: params,
-						error: function(){
-							alert("Error saving user form. Please contact an admin.");
-						},
-						success: function(msg){
+                    $.ajax({
+                        type: "POST",
+                        cache: false,
+                        url: 'api/api.php?get=imports&mode=xml&action=edit',
+                        data: params,
+                        error: function () {
+                            alert("Error saving user form. Please contact an admin.");
+                        },
+                        success: function (msg) {
 
 //alert(msg);
 
-							var result = handleEditXML(msg);
-							var res = result['result'];
+                            var result = handleEditXML(msg);
+                            var res = result['result'];
 
-							if(res <= 0){
+                            if (res <= 0) {
 
-								alert(result['message']);
+                                alert(result['message']);
 
-								return;
+                                return;
 
-							}
+                            }
 
 
-							loadImports();
+                            loadImports();
 
 
-							displayImportDialog(res);
+                            displayImportDialog(res);
 
-							alert(result['message']);
+                            alert(result['message']);
 
-						}
+                        }
 
 
-					});
+                    });
 
-				}
+                }
 
-				return false;
+                return false;
 
-			}
+            }
 
-		</script>
+        </script>
 
 
-		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="return checkGeneralFrm(this)">
-			<input type="hidden" id="import_general" name="import_general" value="<?=$row['id']?>" >
+        <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="return checkGeneralFrm(this)">
+            <input type="hidden" id="import_general" name="import_general" value="<?= $row['id'] ?>">
 
-		<table border="0" align="center">
-		<tr>
-			<th align="left" height="20">Import Name:</th>
-			<td><input name="name" type="text" size="50" value="<?=htmlentities($row['name'])?>"></td>
-		</tr>
-		<tr>
-			<th align="left" height="20">Import Date:</th>
-			<td><?=date("m/d/Y", $row['time'])?></td>
-		</tr>
-		<tr>
-			<th align="left" height="20">Type:</th>
-			<td><?=ucfirst($row['phone_type'])?></td>
-		</tr>
-		<tr>
-			<th align="left" height="20">Lead Count:</th>
-			<td><?=number_format($row['current_lead_count'])?></td>
-		</tr>
-		<tr>
-			<th align="left">Description:</th>
-			<td><textarea name="description" rows="3" cols="30"><?=htmlentities($row['description'])?></textarea></td>
-		</tr>
-		<tr>
-			<th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
-		</tr>
-		</form>
-		</table><?
-	}
+            <table border="0" align="center">
+                <tr>
+                    <th align="left" height="20">Import Name:</th>
+                    <td><input name="name" type="text" size="50" value="<?= htmlentities($row['name']) ?>"></td>
+                </tr>
+                <tr>
+                    <th align="left" height="20">Import Date:</th>
+                    <td><?= date("m/d/Y", $row['time']) ?></td>
+                </tr>
+                <tr>
+                    <th align="left" height="20">Type:</th>
+                    <td><?= ucfirst($row['phone_type']) ?></td>
+                </tr>
+                <tr>
+                    <th align="left" height="20">Lead Count:</th>
+                    <td><?= number_format($row['current_lead_count']) ?></td>
+                </tr>
+                <tr>
+                    <th align="left">Description:</th>
+                    <td><textarea name="description" rows="3" cols="30"><?= htmlentities($row['description']) ?></textarea></td>
+                </tr>
+                <tr>
+                    <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
+                </tr>
+        </form>
+        </table><?
+    }
 
-	function makeToolsGUI($row){
-		?><script>
+    function makeToolsGUI($row)
+    {
+        ?>
+        <script>
 
 
-			function validateMoveImportField(name,value,frm){
+            function validateMoveImportField(name, value, frm) {
 
-				//alert(name+","+value);
+                //alert(name+","+value);
 
 
-				switch(name){
-				default:
+                switch (name) {
+                    default:
 
-					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-					return true;
-					break;
+                        // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
+                        return true;
+                        break;
 
-				case 'move_to_import_id':
+                    case 'move_to_import_id':
 
 
-					if(!value)return false;
+                        if (!value) return false;
 
-					return true;
+                        return true;
 
 
-					break;
-				}
-				return true;
-			}
+                        break;
+                }
+                return true;
+            }
 
 
+            function checkMoveImportForm(frm) {
 
-			function checkMoveImportForm(frm){
 
+                var params = getFormValues(frm, 'validateMoveImportField');
 
 
-				var params = getFormValues(frm,'validateMoveImportField');
+                // FORM VALIDATION FAILED!
+                // param[0] == field name
+                // param[1] == field value
+                if (typeof params == "object") {
 
+                    switch (params[0]) {
+                        default:
 
-				// FORM VALIDATION FAILED!
-				// param[0] == field name
-				// param[1] == field value
-				if(typeof params == "object"){
+                            alert("Error submitting form. Check your values");
 
-					switch(params[0]){
-					default:
+                            break;
 
-						alert("Error submitting form. Check your values");
+                        case 'move_to_import_id':
 
-						break;
+                            alert("Please select an Import to move the leads to.");
+                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
+                            break;
 
-					case 'move_to_import_id':
+                    }
 
-						alert("Please select an Import to move the leads to.");
-						eval('try{frm.'+params[0]+'.select();}catch(e){}');
-						break;
+                    // SUCCESS - POST AJAX TO SERVER
+                } else {
 
-					}
+                    generateMoveLeadAuthKey();
 
-				// SUCCESS - POST AJAX TO SERVER
-				}else{
+                }
 
-					generateMoveLeadAuthKey();
 
-				}
+                return false;
+            }
 
+            function generateMoveLeadAuthKey() {
 
-				return false;
-			}
+                $.post("ajax.php?mode=generate_auth_key&type=move_import", null, ninjaPostMoveForm);
 
-		function generateMoveLeadAuthKey(){
+            }
 
-			$.post("ajax.php?mode=generate_auth_key&type=move_import",null,ninjaPostMoveForm);
 
-		}
+            function ninjaPostMoveForm(authcode) {
 
+                var frm = getEl('ninjamoveform');
+                frm.auth_code.value = authcode;
 
-		function ninjaPostMoveForm(authcode){
+                var params = getFormValues(frm);
 
-				var frm = getEl('ninjamoveform');
-				frm.auth_code.value = authcode;
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: frm.action,
+                    data: params,
+                    error: function () {
+                        alert("Error saving form. Please contact an admin.");
+                    },
 
-				var params = getFormValues(frm);
+                    success: function (msg) {
 
-				$.ajax({
-						type: "POST",
-						cache: false,
-						url: frm.action,
-						data: params,
-						error: function(){
-							alert("Error saving form. Please contact an admin.");
-						},
+                        //alert(msg);
 
-						success: function(msg){
+                        var taskid = parseInt(msg);
 
-							//alert(msg);
+                        window.parent.displayViewTaskDialog(taskid);
 
-							var taskid = parseInt(msg);
+                        //$('#build_result_cell').html(msg);
 
-							window.parent.displayViewTaskDialog(taskid);
+                    }
+                });
+            }
 
-							//$('#build_result_cell').html(msg);
+            //			function moveListSuccess(url, warning_messages){
+            //
+            //				warning_messages = $.trim(warning_messages);
+            //
+            //				$('#upload_dnc_status_cell').html('Success');
+            //
+            //				if(warning_messages){
+            //					alert("Successfully uploaded file"+ ((warning_messages)?". However warnings were issued:\n"+warning_messages:".") );
+            //				}
+            //
+            //				//displayAddScriptDialog
+            //			}
 
-						}
-					});
-			}
 
-//			function moveListSuccess(url, warning_messages){
-//
-//				warning_messages = $.trim(warning_messages);
-//
-//				$('#upload_dnc_status_cell').html('Success');
-//
-//				if(warning_messages){
-//					alert("Successfully uploaded file"+ ((warning_messages)?". However warnings were issued:\n"+warning_messages:".") );
-//				}
-//
-//				//displayAddScriptDialog
-//			}
+            function deleteImport() {
 
+                $.post("ajax.php?mode=generate_auth_key&type=delete_import", null, ninjaDeleteImport);
+            }
 
-			function deleteImport(){
+            function ninjaDeleteImport(code) {
 
-				$.post("ajax.php?mode=generate_auth_key&type=delete_import",null,ninjaDeleteImport);
-			}
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: '<?=$_SESSION['list_tools']->upload_api_script . '?mode=delete_import'?>&import_id=<?=$row['id']?>&auth_code=' + code,
+                    error: function () {
+                        alert("Error saving form. Please contact an admin.");
+                    },
 
-			function ninjaDeleteImport(code){
+                    success: function (msg) {
 
-				$.ajax({
-						type: "POST",
-						cache: false,
-						url: '<?=$_SESSION['list_tools']->upload_api_script.'?mode=delete_import'?>&import_id=<?=$row['id']?>&auth_code='+code,
-						error: function(){
-							alert("Error saving form. Please contact an admin.");
-						},
+                        var taskid = parseInt(msg);
 
-						success: function(msg){
+                        window.parent.displayViewTaskDialog(taskid);
 
-							var taskid = parseInt(msg);
+                        //$('#build_result_cell').html(msg);
 
-							window.parent.displayViewTaskDialog(taskid);
+                    }
+                });
 
-							//$('#build_result_cell').html(msg);
+            }
 
-						}
-					});
 
-			}
+            function purgeImport() {
 
+                $.post("ajax.php?mode=generate_auth_key&type=purge_import", null, ninjaPurgeImport);
+            }
 
-			function purgeImport(){
+            function ninjaPurgeImport(code) {
 
-				$.post("ajax.php?mode=generate_auth_key&type=purge_import",null,ninjaPurgeImport);
-			}
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: '<?=$_SESSION['list_tools']->upload_api_script . '?mode=purge_import'?>&import_id=<?=$row['id']?>&auth_code=' + code,
+                    error: function () {
+                        alert("Error saving form. Please contact an admin.");
+                    },
 
-			function ninjaPurgeImport(code){
+                    success: function (msg) {
 
-				$.ajax({
-						type: "POST",
-						cache: false,
-						url: '<?=$_SESSION['list_tools']->upload_api_script.'?mode=purge_import'?>&import_id=<?=$row['id']?>&auth_code='+code,
-						error: function(){
-							alert("Error saving form. Please contact an admin.");
-						},
+                        var taskid = parseInt(msg);
 
-						success: function(msg){
+                        window.parent.displayViewTaskDialog(taskid);
 
-							var taskid = parseInt(msg);
+                        //$('#build_result_cell').html(msg);
 
-							window.parent.displayViewTaskDialog(taskid);
+                    }
+                });
 
-							//$('#build_result_cell').html(msg);
+            }
 
-						}
-					});
+        </script>
+        <?
 
-			}
 
-		</script>
-		<?
+        $_SESSION['list_tools']->makeViewTaskGUI();
 
 
+        ?>
+        <form id="ninjamoveform" method="POST" action="<?= $_SESSION['list_tools']->upload_api_script . '?mode=move_import_leads' ?>" autocomplete="off" onsubmit="return checkMoveImportForm(this)">
 
+            <input type="hidden" id="import_tools" name="import_tools" value="<?= $row['id'] ?>">
 
-			$_SESSION['list_tools']->makeViewTaskGUI();
+            <input type="hidden" name="auth_code" id="auth_code">
 
+            <table border="0" width="100%" align="center">
+                <tr>
+                    <td colspan="3" class="big bl">
 
+                        Move Leads - <?= htmlentities($row['name']) ?>
 
-		?>
-		<form id="ninjamoveform" method="POST" action="<?=$_SESSION['list_tools']->upload_api_script.'?mode=move_import_leads'?>" autocomplete="off" onsubmit="return checkMoveImportForm(this)">
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
 
-			<input type="hidden" id="import_tools" name="import_tools" value="<?=$row['id']?>" >
+                        <table border="0" width="100%">
+                            <tr>
+                                <th>Destination Import:</th>
+                                <td><?
 
-			<input type="hidden" name="auth_code" id="auth_code">
+                                    echo $_SESSION['list_tools']->makeImportDD($row['phone_type'], 'move_to_import_id', 'move_to_import_id', '', "", null, "");
 
-		<table border="0" width="100%" align="center">
-		<tr>
-			<td colspan="3" class="big bl">
+                                    ?></td>
+                            </tr>
+                            <tr>
+                                <th># of leads:<br>(0 is ALL)</th>
+                                <td>
+                                    <input type="text" id="num_leads" name="num_leads" size="5" value="0"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>
+                                    Last Called Days:<br/>
+                                    (0 is ALL)
+                                </th>
+                                <td>
 
-				Move Leads - <?=htmlentities($row['name'])?>
+                                    <input type="text" name="last_called_days" id="last_called_days" size="5" value="0" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');"/>
 
-			</td>
-		</tr>
-		<tr>
-			<td colspan="3">
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Timezone:</th>
+                                <td>
 
-				<table border="0" width="100%">
-				<tr>
-					<th>Destination Import:</th>
-					<td><?
+                                    <select name="timezone">
+                                        <option value="">[All Timezones]</option>
+                                        <option value="-5.0">Eastern</option>
+                                        <option value="-6.0">Central</option>
+                                        <option value="-7.0">Mountain</option>
+                                        <option value="-8.0">Pacific</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" align="center">
 
-						echo $_SESSION['list_tools']->makeImportDD($row['phone_type'],'move_to_import_id','move_to_import_id','',"",null,"");
+                                    <input type="submit" value="Move Leads!"/>
 
-					?></td>
-				</tr>
-				<tr>
-					<th># of leads:<br>(0 is ALL)</th>
-					<td>
-						<input type="text" id="num_leads" name="num_leads" size="5" value="0" />
-					</td>
-				</tr>
-				<tr>
-					<th>
-						Last Called Days:<br />
-						(0 is ALL)
-					</th>
-					<td>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
 
-						<input type="text" name="last_called_days" id="last_called_days" size="5" value="0" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" />
 
-					</td>
-				</tr>
-				<tr>
-					<th>Timezone:</th>
-					<td>
+                <tr valign="bottom">
+                    <td colspan="3" height="20">
+                        <hr/>
+                    </td>
+                </tr>
+                <tr>
+                    <td align="center"><input type="button" value="MURDER Import" style="color:#ff0000" onclick="if(confirm('Deleting an import will also delete all the leads for the import.\nAre you SURE you want to DELETE this import and its leads?')){deleteImport();}" title="Delete all leads in the import AND delete the import record itself"></td>
+                    <td align="center">
+                        <? /**<input type="button" value="Move Leads/Combine">**/ ?>
+                        &nbsp;
 
-						<select name="timezone">
-							<option value="">[All Timezones]</option>
-							<option value="-5.0">Eastern</option>
-							<option value="-6.0">Central</option>
-							<option value="-7.0">Mountain</option>
-							<option value="-8.0">Pacific</option>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" align="center">
+                    </td>
+                    <td align="center"><input type="button" value="Empty Leads" style="color:#ff0000" onclick="if(confirm('Are you sure you want to PURGE ALL LEADS for this import?')){purgeImport();}" title="This will remove all leads for the import, but leave the import intact"></td>
+                </tr>
 
-						<input type="submit" value="Move Leads!" />
+        </form>
+        </table><?
 
-					</td>
-				</tr>
-				</table>
-			</td>
-		</tr>
+    }
 
 
-		<tr valign="bottom">
-			<td colspan="3" height="20"><hr /></td>
-		</td>
-		<tr>
-			<td  align="center"><input type="button" value="MURDER Import" style="color:#ff0000" onclick="if(confirm('Deleting an import will also delete all the leads for the import.\nAre you SURE you want to DELETE this import and its leads?')){deleteImport();}" title="Delete all leads in the import AND delete the import record itself"></td>
-			<td  align="center">
-				<?/**<input type="button" value="Move Leads/Combine">**/?>
-				&nbsp;
+    function generateReport($row)
+    {
 
-			</td>
-			<td  align="center"><input type="button" value="Empty Leads" style="color:#ff0000" onclick="if(confirm('Are you sure you want to PURGE ALL LEADS for this import?')){purgeImport();}" title="This will remove all leads for the import, but leave the import intact"></td>
-		</tr>
+        $last_called = intval($_REQUEST['last_called_days']);
 
-		</form>
-		</table><?
+        $tz = trim($_REQUEST['timezone']);
 
-	}
+        $state = trim($_REQUEST['state']);
 
 
-	function generateReport($row){
+        switch ($_REQUEST['report_type']) {
+            default:
+            case 'total':
+                $report_name = "Total Report";
+                break;
+            case 'state_breakdown':
 
-		$last_called = intval($_REQUEST['last_called_days']);
+                $report_name = "State Breakdown";
 
-		$tz = trim($_REQUEST['timezone']);
+                break;
+            case 'tz_breakdown':
 
-		$state = trim($_REQUEST['state']);
 
+                $report_name = "Timezone Breakdown";
 
-		switch($_REQUEST['report_type']){
-		default:
-		case 'total':
-			$report_name = "Total Report";
-			break;
-		case 'state_breakdown':
+                break;
+        }
 
-			$report_name = "State Breakdown";
 
-			break;
-		case 'tz_breakdown':
+        ?>
+        <table border="0" width="100%" height="100%">
+        <tr>
+            <td align="center">
+                <table border="0" align="center">
+                    <tr>
+                        <td colspan="2" height="30" class="big bl">Import #<?= $row['id'] . ' - ' . $row['name'] . ' : ' . $report_name ?></td>
+                    </tr><?
 
+                    //if($last_called > 0){
+                    ?>
+                    <tr>
+                        <th align="left">Last Called Days:</th>
+                        <td><?
 
-			$report_name = "Timezone Breakdown";
+                            if ($last_called > 0) echo $last_called;
+                            else                    echo '[All]';
 
-			break;
-		}
+                            ?></td>
+                    </tr><?
+                    //}
 
 
+                    ?>
+                    <tr>
+                        <th align="left">Timezone:</th>
+                        <td><?
 
+                            if ($tz) echo $this->getTZName($tz);
+                            else    echo "[All]";
 
+                            ?></td>
+                    </tr><?
 
+                    //if($state){
+                    ?>
+                    <tr>
+                        <th align="left">State:</th>
+                        <td><?
 
-		?><table border="0" width="100%" height="100%">
-		<tr>
-			<td align="center"><table border="0" align="center">
-			<tr>
-				<td colspan="2" height="30" class="big bl">Import #<?=$row['id'].' - '.$row['name'].' : '.$report_name?></td>
-			</tr><?
+                            if ($state) echo $state;
+                            else        echo '[All]';
 
-			//if($last_called > 0){
-				?><tr>
-					<th align="left">Last Called Days:</th>
-					<td><?
+                            ?></td>
+                    </tr><?
+                    //}
 
-						if($last_called > 0)	echo $last_called;
-						else					echo '[All]';
 
-					?></td>
-				</tr><?
-			//}
+                    $where = "WHERE leads.`import_id`='" . $row['id'] . "' ";
 
+                    if ($tz) {
 
-			?><tr>
-				<th align="left">Timezone:</th>
-				<td><?
+                        $where .= " AND leads.`GMT_offset`='" . mysqli_real_escape_string($_SESSION['db'], $tz) . "' ";
 
-					if($tz)	echo $this->getTZName($tz);
-					else	echo "[All]";
+                    }
 
-				?></td>
-			</tr><?
+                    if ($state) {
 
-			//if($state){
-				?><tr>
-					<th align="left">State:</th>
-					<td><?
+                        $where .= " AND leads.`state`='" . mysqli_real_escape_string($_SESSION['db'], $state) . "' ";
 
-						if($state)	echo $state;
-						else		echo '[All]';
+                    }
 
-					?></td>
-				</tr><?
-			//}
 
+                    switch ($_REQUEST['report_type']) {
+                        default:
+                        case 'total':
+                            // GENERATE REPORT
 
-			$where = "WHERE leads.`import_id`='".$row['id']."' ";
+                            if ($last_called > 0) {
 
-			if($tz){
+                                $days_offset_time = time() - ($last_called * 86400);
 
-				$where .= " AND leads.`GMT_offset`='".mysqli_real_escape_string($_SESSION['db'],$tz)."' ";
-
-			}
-
-			if($state){
-
-				$where .= " AND leads.`state`='".mysqli_real_escape_string($_SESSION['db'],$state)."' ";
-
-			}
-
-
-
-			switch($_REQUEST['report_type']){
-			default:
-			case 'total':
-				// GENERATE REPORT
-
-				if($last_called > 0){
-
-					$days_offset_time = time() - ($last_called * 86400);
-
-					$sql = "SELECT COUNT(DISTINCT(`leads`.`phone`)) FROM `leads` ".
-										" LEFT JOIN `leads_pulls` ON `leads`.phone=`leads_pulls`.phone ".
-										$where .
-										"AND (`leads_pulls`.`time` IS NULL OR `leads_pulls`.`time` < '".$days_offset_time."')";
+                                $sql = "SELECT COUNT(DISTINCT(`leads`.`phone`)) FROM `leads` " .
+                                    " LEFT JOIN `leads_pulls` ON `leads`.phone=`leads_pulls`.phone " .
+                                    $where .
+                                    "AND (`leads_pulls`.`time` IS NULL OR `leads_pulls`.`time` < '" . $days_offset_time . "')";
 
 //	echo $sql;
 
-					list($total) = queryROW($sql
-									//" AND (`leads_pulls`.phone IS NULL) "
+                                list($total) = queryROW($sql
+                                //" AND (`leads_pulls`.phone IS NULL) "
 
-									);
+                                );
 
-				}else{
+                            } else {
 
-					$sql = "SELECT COUNT(`leads`.`phone`) FROM `leads` ".$where;
+                                $sql = "SELECT COUNT(`leads`.`phone`) FROM `leads` " . $where;
 
 //	echo $sql;
-					list($total) = queryROW($sql);
-				}
+                                list($total) = queryROW($sql);
+                            }
 
 
-				?><tr>
-					<td class="big" colspan="2" width="200" height="50" align="center">
+                            ?>
+                            <tr>
+                            <td class="big" colspan="2" width="200" height="50" align="center">
 
-						Count: <?=number_format($total)?>
+                                Count: <?= number_format($total) ?>
 
-					</td>
-				</tr><?
-
-
+                            </td>
+                            </tr><?
 
 
-				break;
-			case 'state_breakdown':
+                            break;
+                        case 'state_breakdown':
 
 //				if($last_called > 0){
 //
@@ -1022,409 +912,413 @@ class ListToolImports{
 //				}
 
 
-				$state_stack = array();
-				$multi_stack = array();
+                            $state_stack = array();
+                            $multi_stack = array();
 
-				if($state){
+                            if ($state) {
 
-					$tmpstack = array();
-					$re2 = query("SELECT state_short,timezone FROM state_timezones WHERE `enabled`='yes' AND `state_short`='".mysqli_real_escape_string($_SESSION['db'],$state)."' ORDER BY `state_short` ASC");
-					while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
+                                $tmpstack = array();
+                                $re2 = query("SELECT state_short,timezone FROM state_timezones WHERE `enabled`='yes' AND `state_short`='" . mysqli_real_escape_string($_SESSION['db'], $state) . "' ORDER BY `state_short` ASC");
+                                while ($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)) {
 
-						if(in_array($r2['state_short'], $tmpstack)){
+                                    if (in_array($r2['state_short'], $tmpstack)) {
 
-							$state_stack[] = array('state'=>$r2['state_short'], 'timezone'=>$r2['timezone']);
+                                        $state_stack[] = array('state' => $r2['state_short'], 'timezone' => $r2['timezone']);
 
-							$multi_stack[] = $r2['state_short'];
+                                        $multi_stack[] = $r2['state_short'];
 
-						}else{
-							$tmpstack[] = $r2['state_short'];
-							$state_stack[] = array('state'=>$r2['state_short'], 'timezone'=>$r2['timezone']);
-						}
-					}
+                                    } else {
+                                        $tmpstack[] = $r2['state_short'];
+                                        $state_stack[] = array('state' => $r2['state_short'], 'timezone' => $r2['timezone']);
+                                    }
+                                }
 
 
+                            } else if ($tz) {
 
+                                $tzstr = 'GMT' . ((strpos($tz, "-") > -1) ? "" : "+") . str_replace(".", ":", $tz) . '0';
 
+                                $re2 = query("SELECT state_short,timezone FROM state_timezones WHERE `timezone`='" . mysqli_real_escape_string($_SESSION['db'], $tzstr) . "'AND `enabled`='yes' ORDER BY `state_short` ASC ");
+                                while ($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)) {
+                                    $state_stack[] = array('state' => $r2['state_short'], 'timezone' => $r2['timezone']);
+                                }
+                            } else {
+                                $tmpstack = array();
+                                $re2 = query("SELECT state_short,timezone FROM state_timezones WHERE `enabled`='yes' ORDER BY `state_short` ASC");
+                                while ($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)) {
 
-				}else if($tz){
+                                    if (in_array($r2['state_short'], $tmpstack)) {
 
-					$tzstr = 'GMT'.(  (strpos($tz, "-") > -1)?"":"+" ) .str_replace(".", ":", $tz).'0';
+                                        $state_stack[] = array('state' => $r2['state_short'], 'timezone' => $r2['timezone']);
 
-					$re2 = query("SELECT state_short,timezone FROM state_timezones WHERE `timezone`='".mysqli_real_escape_string($_SESSION['db'],$tzstr)."'AND `enabled`='yes' ORDER BY `state_short` ASC ");
-					while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
-						$state_stack[] = array('state'=>$r2['state_short'], 'timezone'=>$r2['timezone']);
-					}
-				}else{
-					$tmpstack = array();
-					$re2 = query("SELECT state_short,timezone FROM state_timezones WHERE `enabled`='yes' ORDER BY `state_short` ASC");
-					while($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)){
+                                        $multi_stack[] = $r2['state_short'];
 
-						if(in_array($r2['state_short'], $tmpstack)){
+                                    } else {
+                                        $tmpstack[] = $r2['state_short'];
+                                        $state_stack[] = array('state' => $r2['state_short'], 'timezone' => $r2['timezone']);
+                                    }
+                                }
+                            }
 
-							$state_stack[] = array('state'=>$r2['state_short'], 'timezone'=>$r2['timezone']);
 
-							$multi_stack[] = $r2['state_short'];
+                            ?>
+                            <tr>
+                            <td colspan="2">
 
-						}else{
-							$tmpstack[] = $r2['state_short'];
-							$state_stack[] = array('state'=>$r2['state_short'], 'timezone'=>$r2['timezone']);
-						}
-					}
-				}
+                                <table width="100%" border="0">
+                                    <tr>
+                                        <th class="row2">State</th>
+                                        <th class="row2" align="right">Count</th>
+                                    </tr><?
 
+                                    $color = 0;
+                                    $totalcnt = 0;
+                                    foreach ($state_stack as $curstate) {
+                                        $class = 'row' . ($color++ % 2);
+                                        ?>
+                                        <tr>
+                                        <th class="<?= $class ?>"><?
 
+                                            $tzstuff = "";
 
-				?><tr>
-					<td colspan="2">
+                                            if (is_array($multi_stack) && in_array($curstate['state'], $multi_stack)) {
 
-						<table width="100%" border="0">
-						<tr>
-							<th class="row2">State</th>
-							<th class="row2" align="right">Count</th>
-						</tr><?
+                                                echo $curstate['state'] . ' (' . $curstate['timezone'] . ')';
 
-						$color = 0;
-						$totalcnt = 0;
-						foreach($state_stack as $curstate){
-							$class = 'row'.($color++%2);
-							?><tr>
-								<th class="<?=$class?>"><?
+                                                $tmptz = str_replace(":", ".", $curstate['timezone']);
+                                                $tmptz = str_replace("GMT", "", $tmptz);
+                                                $tmptz = str_replace("+", "", $tmptz);
 
-								$tzstuff = "";
+                                                $tmptz = substr($tmptz, 0, strlen($tmptz) - 1);
 
-								if(is_array($multi_stack) && in_array($curstate['state'], $multi_stack)){
+                                                //$tmptz = floatval($tmptz);
 
-									echo $curstate['state'].' ('.$curstate['timezone'].')';
+                                                $tzstuff = " AND l.GMT_offset='" . mysqli_real_escape_string($_SESSION['db'], $tmptz) . "' ";
 
-									$tmptz = str_replace(":",".",$curstate['timezone']);
-									$tmptz = str_replace("GMT","",$tmptz);
-									$tmptz = str_replace("+","",$tmptz);
+                                            } else {
+                                                echo $curstate['state'];
+                                            }
 
-									$tmptz = substr($tmptz,0,strlen($tmptz) - 1);
+                                            ?></th>
+                                        <td class="<?= $class ?>" align="right"><?
 
-									//$tmptz = floatval($tmptz);
+                                            if ($last_called > 0) {
 
-									$tzstuff = " AND l.GMT_offset='".mysqli_real_escape_string($_SESSION['db'],$tmptz)."' ";
+                                                $days_offset_time = time() - ($last_called * 86400);
 
-								}else{
-									echo $curstate['state'];
-								}
+                                                $sql = "SELECT COUNT(DISTINCT(l.`phone`)) FROM `leads` l " .
+                                                    " LEFT JOIN `leads_pulls` r ON l.phone=r.phone " .
+                                                    $where .
+                                                    $tzstuff .
+                                                    " AND (r.`time` IS NULL OR r.`time` < '" . $days_offset_time . "') " .
+                                                    " AND l.`state`='" . mysqli_real_escape_string($_SESSION['db'], $curstate['state']) . "' ";
 
-								?></th>
-								<td class="<?=$class?>" align="right"><?
+                                                //echo $sql;
 
-									if($last_called > 0){
+                                                list($total) = queryROW($sql);
 
-										$days_offset_time = time() - ($last_called * 86400);
+                                            } else {
 
-										$sql = "SELECT COUNT(DISTINCT(l.`phone`)) FROM `leads` l ".
-													" LEFT JOIN `leads_pulls` r ON l.phone=r.phone ".
-													$where .
-													$tzstuff.
-													" AND (r.`time` IS NULL OR r.`time` < '".$days_offset_time."') ".
-													" AND l.`state`='".mysqli_real_escape_string($_SESSION['db'],$curstate['state'])."' ";
+                                                $sql = "SELECT COUNT(l.`phone`) FROM `leads` l " . $where .
+                                                    $tzstuff .
+                                                    " AND l.`state`='" . mysqli_real_escape_string($_SESSION['db'], $curstate['state']) . "' ";
 
-						//echo $sql;
+                                                //echo $sql;
+                                                list($total) = queryROW($sql);
+                                            }
 
-										list($total) = queryROW($sql);
+                                            $totalcnt += $total;
 
-									}else{
+                                            echo number_format($total);
 
-										$sql = "SELECT COUNT(l.`phone`) FROM `leads` l ".$where.
-												$tzstuff.
-												" AND l.`state`='".mysqli_real_escape_string($_SESSION['db'],$curstate['state'])."' ";
+                                            ?></td>
+                                        </tr><?
 
-						//echo $sql;
-										list($total) = queryROW($sql);
-									}
+                                    }
 
-									$totalcnt += $total;
+                                    ?>
+                                    <tr>
+                                        <th class="big" style="border-top:1px solid #000">States Total:<br/>(Enabled only)</th>
+                                        <td class="big" style="border-top:1px solid #000" align="right"><?
 
-									echo number_format($total);
+                                            echo number_format($totalcnt);
 
-								?></td>
-							</tr><?
+                                            ?></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            </tr><?
 
-						}
 
-						?><tr>
-							<th class="big" style="border-top:1px solid #000">States Total:<br />(Enabled only)</th>
-							<td class="big" style="border-top:1px solid #000" align="right"><?
+                            break;
+                        case 'tz_breakdown':
 
-								echo number_format($totalcnt);
+                            $tz_arr = array(
+                                array(
+                                    'name' => 'Eastern',
+                                    'offset' => '-5.0'
+                                ),
+                                array(
+                                    'name' => 'Central',
+                                    'offset' => '-6.0'
+                                ),
+                                array(
+                                    'name' => 'Mountain',
+                                    'offset' => '-7.0'
+                                ),
+                                array(
+                                    'name' => 'Pacific',
+                                    'offset' => '-8.0'
+                                ),
+                            );
 
-							?></td>
-						</tr>
-						</table>
-					</td>
-				</tr><?
 
+                            ?>
+                            <tr>
+                            <td colspan="2">
 
+                                <table width="100%" border="0">
+                                    <tr>
+                                        <th class="row2">Timezone:</th>
+                                        <th class="row2" align="right">Count</th>
+                                    </tr><?
 
-				break;
-			case 'tz_breakdown':
+                                    $totalcnt = 0;
 
-				$tz_arr = array(
-					array(
-						'name'=>'Eastern',
-						'offset'=>'-5.0'
-						),
-					array(
-						'name'=>'Central',
-						'offset'=>'-6.0'
-						),
-					array(
-						'name'=>'Mountain',
-						'offset'=>'-7.0'
-						),
-					array(
-						'name'=>'Pacific',
-						'offset'=>'-8.0'
-						),
-				);
+                                    foreach ($tz_arr as $tmptz) {
 
+                                        ?>
+                                        <tr>
+                                        <th align="left"><?= $tmptz['name'] ?></th>
+                                        <td align="right"><?
 
+                                            if ($last_called > 0) {
 
-				?><tr>
-					<td colspan="2">
+                                                $days_offset_time = time() - ($last_called * 86400);
 
-						<table width="100%" border="0">
-						<tr>
-							<th class="row2">Timezone:</th>
-							<th class="row2" align="right">Count</th>
-						</tr><?
+                                                $sql = "SELECT COUNT(DISTINCT(`leads`.`phone`)) FROM `leads` " .
+                                                    " LEFT JOIN `leads_pulls` ON `leads`.`phone`=`leads_pulls`.`phone` " .
+                                                    $where .
+                                                    " AND (`leads_pulls`.`time` IS NULL OR `leads_pulls`.`time` < '" . $days_offset_time . "') " .
+                                                    " AND `leads`.`GMT_offset`='" . mysqli_real_escape_string($_SESSION['db'], $tmptz['offset']) . "' ";
 
-						$totalcnt = 0;
+                                                echo "Last CALL: " . $sql;
 
-						foreach($tz_arr as $tmptz){
+                                                list($total) = queryROW($sql);
 
-							?><tr>
-								<th align="left"><?=$tmptz['name']?></th>
-								<td align="right"><?
+                                            } else {
 
-									if($last_called > 0){
+                                                $sql = "SELECT COUNT(`leads`.`phone`) FROM `leads` " . $where .
+                                                    " AND `leads`.`GMT_offset`='" . mysqli_real_escape_string($_SESSION['db'], $tmptz['offset']) . "' ";
 
-										$days_offset_time = time() - ($last_called * 86400);
+                                                echo "ALL: " . $sql;
+                                                list($total) = queryROW($sql);
+                                            }
 
-										$sql = "SELECT COUNT(DISTINCT(`leads`.`phone`)) FROM `leads` ".
-													" LEFT JOIN `leads_pulls` ON `leads`.`phone`=`leads_pulls`.`phone` ".
-													$where .
-													" AND (`leads_pulls`.`time` IS NULL OR `leads_pulls`.`time` < '".$days_offset_time."') ".
-													" AND `leads`.`GMT_offset`='".mysqli_real_escape_string($_SESSION['db'],$tmptz['offset'])."' ";
+                                            $totalcnt += $total;
 
-						echo "Last CALL: ".$sql;
+                                            echo number_format($total);
 
-										list($total) = queryROW($sql);
 
-									}else{
+                                            ?></td>
+                                        </tr><?
 
-										$sql = "SELECT COUNT(`leads`.`phone`) FROM `leads` ".$where.
-												" AND `leads`.`GMT_offset`='".mysqli_real_escape_string($_SESSION['db'],$tmptz['offset'])."' ";
+                                    }
 
-						echo "ALL: ".$sql;
-										list($total) = queryROW($sql);
-									}
+                                    ?>
+                                    <tr>
+                                        <th class="big" style="border-top:1px solid #000">Timezones Total:</th>
+                                        <td class="big" style="border-top:1px solid #000" align="right"><?
 
-									$totalcnt += $total;
+                                            echo number_format($totalcnt);
 
-									echo number_format($total);
+                                            ?></td>
+                                    </tr>
+                                </table>
+                            </td>
+                            </tr><?
 
 
-								?></td>
-							</tr><?
+                            break;
+                    }
 
-						}
 
-						?><tr>
-							<th class="big" style="border-top:1px solid #000">Timezones Total:</th>
-							<td class="big" style="border-top:1px solid #000" align="right"><?
+                    ?></table>
+            </td>
+        </tr>
+        </table><?
 
-								echo number_format($totalcnt);
+    }
 
-							?></td>
-						</tr>
-						</table>
-					</td>
-				</tr><?
 
+    function getTZName($tz)
+    {
 
+        switch ($tz) {
+            default:
+                return $tz;
+            case "-5.0":
+                return 'Eastern';
+            case "-6.0":
+                return 'Central';
+            case "-7.0":
+                return 'Mountain';
+            case "-8.0":
+                return 'Pacific';
+        }
+    }
 
-				break;
-			}
 
+    function makeReportGUI($row)
+    {
 
-			?></table></td>
-		</tr>
-		</table><?
 
-	}
+        ?>
+        <script>
 
-
-
-	function getTZName($tz){
-
-		switch($tz){
-		default:
-			return $tz;
-		case "-5.0": return 'Eastern';
-		case "-6.0": return 'Central';
-		case "-7.0": return 'Mountain';
-		case "-8.0": return 'Pacific';
-		}
-	}
-
-
-
-
-	function makeReportGUI($row){
-
-
-		?><script>
-
-		function generateCountReport(frm){
-
-			//var type = frm.report_type.value;//$('#report_type').val();
-
-			var win = window.open("about:blank", 'ImportReportWin<?=$row['id']?>'); //
-
-			frm.submit();
-		}
-
-		</script>
-
-		<form method="POST" action="index.php?area=list_tools&tool=view_imports&view_import=<?=$row['id']?>&section=reports&printable=1&no_script=1&force_scripts=1" autocomplete="off" target="ImportReportWin<?=$row['id']?>" onsubmit="generateCountReport(this);return false">
-
-			<input type="hidden" id="import_reports" name="import_reports" value="<?=$row['id']?>" >
-
-
-		<table border="0" width="100%" align="center">
-		<tr>
-			<td colspan="2" class="big bl">
-
-				Count Leads - <?=number_format($row['current_lead_count'])?> Leads
-
-			</td>
-		</tr>
-		<tr>
-			<th height="30">Report Type:</th>
-			<td>
-				<select name="report_type" id="report_type">
-
-					<option value="total">Total Count</option>
-					<option value="state_breakdown">Breakdown By State</option>
-					<option value="tz_breakdown">Breakdown By Timezone</option>
-				</select>
-
-			</td>
-		</tr>
-		<tr>
-			<th>
-				Last Called Days:<br />
-				(0 is ALL)
-			</th>
-			<td>
-
-				<input type="text" name="last_called_days" id="last_called_days" size="5" value="0" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');" />
-
-			</td>
-		</tr>
-		<tr>
-			<th>Timezone:</th>
-			<td>
-				<select name="timezone">
-					<option value="">[All Timezones]</option>
-					<option value="-5.0">Eastern</option>
-					<option value="-6.0">Central</option>
-					<option value="-7.0">Mountain</option>
-					<option value="-8.0">Pacific</option>
-				</select>
-			</td>
-		</tr>
-		<tr>
-			<th>State:</th>
-			<td>
-				<select name="state" id="state">
-
-					<OPTION value="">[All States]</OPTION>
-
-					<OPTION value="AL"<?=( $row['state'] == 'AL')?" SELECTED ":""?>>Alabama</OPTION>
-					<OPTION value="AK"<?=( $row['state'] == 'AK')?" SELECTED ":""?>>Alaska</OPTION>
-					<OPTION value="AZ"<?=( $row['state'] == 'AZ')?" SELECTED ":""?>>Arizona</OPTION>
-					<OPTION value="AR"<?=( $row['state'] == 'AR')?" SELECTED ":""?>>Arkansas</OPTION>
-					<OPTION value="CA"<?=( $row['state'] == 'CA')?" SELECTED ":""?>>California</OPTION>
-					<OPTION value="CO"<?=( $row['state'] == 'CO')?" SELECTED ":""?>>Colorado</OPTION>
-					<OPTION value="CT"<?=( $row['state'] == 'CT')?" SELECTED ":""?>>Connecticut</OPTION>
-					<OPTION value="DE"<?=( $row['state'] == 'DE')?" SELECTED ":""?>>Delaware</OPTION>
-					<OPTION value="FL"<?=( $row['state'] == 'FL')?" SELECTED ":""?>>Florida</OPTION>
-					<OPTION value="GA"<?=( $row['state'] == 'GA')?" SELECTED ":""?>>Georgia</OPTION>
-					<OPTION value="HI"<?=( $row['state'] == 'HI')?" SELECTED ":""?>>Hawaii</OPTION>
-					<OPTION value="ID"<?=( $row['state'] == 'ID')?" SELECTED ":""?>>Idaho</OPTION>
-					<OPTION value="IL"<?=( $row['state'] == 'IL')?" SELECTED ":""?>>Illinois</OPTION>
-					<OPTION value="IN"<?=( $row['state'] == 'IN')?" SELECTED ":""?>>Indiana</OPTION>
-					<OPTION value="IA"<?=( $row['state'] == 'IA')?" SELECTED ":""?>>Iowa</OPTION>
-					<OPTION value="KS"<?=( $row['state'] == 'KS')?" SELECTED ":""?>>Kansas</OPTION>
-					<OPTION value="KY"<?=( $row['state'] == 'KY')?" SELECTED ":""?>>Kentucky</OPTION>
-					<OPTION value="LA"<?=( $row['state'] == 'LA')?" SELECTED ":""?>>Louisiana</OPTION>
-					<OPTION value="ME"<?=( $row['state'] == 'ME')?" SELECTED ":""?>>Maine</OPTION>
-					<OPTION value="MD"<?=( $row['state'] == 'MD')?" SELECTED ":""?>>Maryland</OPTION>
-					<OPTION value="MA"<?=( $row['state'] == 'MA')?" SELECTED ":""?>>Massachusetts</OPTION>
-					<OPTION value="MI"<?=( $row['state'] == 'MI')?" SELECTED ":""?>>Michigan</OPTION>
-					<OPTION value="MN"<?=( $row['state'] == 'MN')?" SELECTED ":""?>>Minnesota</OPTION>
-					<OPTION value="MS"<?=( $row['state'] == 'MS')?" SELECTED ":""?>>Mississippi</OPTION>
-					<OPTION value="MO"<?=( $row['state'] == 'MO')?" SELECTED ":""?>>Missouri</OPTION>
-					<OPTION value="MT"<?=( $row['state'] == 'MT')?" SELECTED ":""?>>Montana</OPTION>
-					<OPTION value="NE"<?=( $row['state'] == 'NE')?" SELECTED ":""?>>Nebraska</OPTION>
-					<OPTION value="NV"<?=( $row['state'] == 'NV')?" SELECTED ":""?>>Nevada</OPTION>
-					<OPTION value="NH"<?=( $row['state'] == 'NH')?" SELECTED ":""?>>New Hampshire</OPTION>
-					<OPTION value="NJ"<?=( $row['state'] == 'NJ')?" SELECTED ":""?>>New Jersey</OPTION>
-					<OPTION value="NM"<?=( $row['state'] == 'NM')?" SELECTED ":""?>>New Mexico</OPTION>
-					<OPTION value="NY"<?=( $row['state'] == 'NY')?" SELECTED ":""?>>New York</OPTION>
-					<OPTION value="NC"<?=( $row['state'] == 'NC')?" SELECTED ":""?>>North Carolina</OPTION>
-					<OPTION value="ND"<?=( $row['state'] == 'ND')?" SELECTED ":""?>>North Dakota</OPTION>
-					<OPTION value="OH"<?=( $row['state'] == 'OH')?" SELECTED ":""?>>Ohio</OPTION>
-					<OPTION value="OK"<?=( $row['state'] == 'OK')?" SELECTED ":""?>>Oklahoma</OPTION>
-					<OPTION value="OR"<?=( $row['state'] == 'OR')?" SELECTED ":""?>>Oregon</OPTION>
-					<OPTION value="PA"<?=( $row['state'] == 'PA')?" SELECTED ":""?>>Pennsylvania</OPTION>
-					<OPTION value="RI"<?=( $row['state'] == 'RI')?" SELECTED ":""?>>Rhode Island</OPTION>
-					<OPTION value="SC"<?=( $row['state'] == 'SC')?" SELECTED ":""?>>South Carolina</OPTION>
-					<OPTION value="SD"<?=( $row['state'] == 'SD')?" SELECTED ":""?>>South Dakota</OPTION>
-					<OPTION value="TN"<?=( $row['state'] == 'TN')?" SELECTED ":""?>>Tennessee</OPTION>
-					<OPTION value="TX"<?=( $row['state'] == 'TX')?" SELECTED ":""?>>Texas</OPTION>
-					<OPTION value="UT"<?=( $row['state'] == 'UT')?" SELECTED ":""?>>Utah</OPTION>
-					<OPTION value="VT"<?=( $row['state'] == 'VT')?" SELECTED ":""?>>Vermont</OPTION>
-					<OPTION value="VA"<?=( $row['state'] == 'VA')?" SELECTED ":""?>>Virginia</OPTION>
-					<OPTION value="WA"<?=( $row['state'] == 'WA')?" SELECTED ":""?>>Washington</OPTION>
-					<OPTION value="DC"<?=( $row['state'] == 'DC')?" SELECTED ":""?>>Washington, DC</OPTION>
-					<OPTION value="WV"<?=( $row['state'] == 'WV')?" SELECTED ":""?>>West Virginia</OPTION>
-					<OPTION value="WI"<?=( $row['state'] == 'WI')?" SELECTED ":""?>>Wisconsin</OPTION>
-					<OPTION value="WY"<?=( $row['state'] == 'WY')?" SELECTED ":""?>>Wyoming</OPTION>
-
-				</select>
-
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" align="center">
-
-				<input type="submit" value="Generate!" />
-
-			</td>
-		</tr>
-		</form>
-		</table><?
-	}
-
-
-
-	function getOrderLink($field){
-
-		$var = '<a href="#" onclick="setOrder(\''.addslashes($this->order_prepend).'\',\''.addslashes($field).'\',';
-
-		$var .= "((".$this->order_prepend."orderdir == 'DESC')?'ASC':'DESC')";
-
-		$var.= ");loadImports();return false;\">";
-
-		return $var;
-	}
+            function generateCountReport(frm) {
+
+                //var type = frm.report_type.value;//$('#report_type').val();
+
+                var win = window.open("about:blank", 'ImportReportWin<?=$row['id']?>'); //
+
+                frm.submit();
+            }
+
+        </script>
+
+        <form method="POST" action="index.php?area=list_tools&tool=view_imports&view_import=<?= $row['id'] ?>&section=reports&printable=1&no_script=1&force_scripts=1" autocomplete="off" target="ImportReportWin<?= $row['id'] ?>" onsubmit="generateCountReport(this);return false">
+
+            <input type="hidden" id="import_reports" name="import_reports" value="<?= $row['id'] ?>">
+
+
+            <table border="0" width="100%" align="center">
+                <tr>
+                    <td colspan="2" class="big bl">
+
+                        Count Leads - <?= number_format($row['current_lead_count']) ?> Leads
+
+                    </td>
+                </tr>
+                <tr>
+                    <th height="30">Report Type:</th>
+                    <td>
+                        <select name="report_type" id="report_type">
+
+                            <option value="total">Total Count</option>
+                            <option value="state_breakdown">Breakdown By State</option>
+                            <option value="tz_breakdown">Breakdown By Timezone</option>
+                        </select>
+
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        Last Called Days:<br/>
+                        (0 is ALL)
+                    </th>
+                    <td>
+
+                        <input type="text" name="last_called_days" id="last_called_days" size="5" value="0" onkeyup="this.value = this.value.replace(/[^0-9]/g, '');"/>
+
+                    </td>
+                </tr>
+                <tr>
+                    <th>Timezone:</th>
+                    <td>
+                        <select name="timezone">
+                            <option value="">[All Timezones]</option>
+                            <option value="-5.0">Eastern</option>
+                            <option value="-6.0">Central</option>
+                            <option value="-7.0">Mountain</option>
+                            <option value="-8.0">Pacific</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>State:</th>
+                    <td>
+                        <select name="state" id="state">
+
+                            <OPTION value="">[All States]</OPTION>
+
+                            <OPTION value="AL"<?= ($row['state'] == 'AL') ? " SELECTED " : "" ?>>Alabama</OPTION>
+                            <OPTION value="AK"<?= ($row['state'] == 'AK') ? " SELECTED " : "" ?>>Alaska</OPTION>
+                            <OPTION value="AZ"<?= ($row['state'] == 'AZ') ? " SELECTED " : "" ?>>Arizona</OPTION>
+                            <OPTION value="AR"<?= ($row['state'] == 'AR') ? " SELECTED " : "" ?>>Arkansas</OPTION>
+                            <OPTION value="CA"<?= ($row['state'] == 'CA') ? " SELECTED " : "" ?>>California</OPTION>
+                            <OPTION value="CO"<?= ($row['state'] == 'CO') ? " SELECTED " : "" ?>>Colorado</OPTION>
+                            <OPTION value="CT"<?= ($row['state'] == 'CT') ? " SELECTED " : "" ?>>Connecticut</OPTION>
+                            <OPTION value="DE"<?= ($row['state'] == 'DE') ? " SELECTED " : "" ?>>Delaware</OPTION>
+                            <OPTION value="FL"<?= ($row['state'] == 'FL') ? " SELECTED " : "" ?>>Florida</OPTION>
+                            <OPTION value="GA"<?= ($row['state'] == 'GA') ? " SELECTED " : "" ?>>Georgia</OPTION>
+                            <OPTION value="HI"<?= ($row['state'] == 'HI') ? " SELECTED " : "" ?>>Hawaii</OPTION>
+                            <OPTION value="ID"<?= ($row['state'] == 'ID') ? " SELECTED " : "" ?>>Idaho</OPTION>
+                            <OPTION value="IL"<?= ($row['state'] == 'IL') ? " SELECTED " : "" ?>>Illinois</OPTION>
+                            <OPTION value="IN"<?= ($row['state'] == 'IN') ? " SELECTED " : "" ?>>Indiana</OPTION>
+                            <OPTION value="IA"<?= ($row['state'] == 'IA') ? " SELECTED " : "" ?>>Iowa</OPTION>
+                            <OPTION value="KS"<?= ($row['state'] == 'KS') ? " SELECTED " : "" ?>>Kansas</OPTION>
+                            <OPTION value="KY"<?= ($row['state'] == 'KY') ? " SELECTED " : "" ?>>Kentucky</OPTION>
+                            <OPTION value="LA"<?= ($row['state'] == 'LA') ? " SELECTED " : "" ?>>Louisiana</OPTION>
+                            <OPTION value="ME"<?= ($row['state'] == 'ME') ? " SELECTED " : "" ?>>Maine</OPTION>
+                            <OPTION value="MD"<?= ($row['state'] == 'MD') ? " SELECTED " : "" ?>>Maryland</OPTION>
+                            <OPTION value="MA"<?= ($row['state'] == 'MA') ? " SELECTED " : "" ?>>Massachusetts</OPTION>
+                            <OPTION value="MI"<?= ($row['state'] == 'MI') ? " SELECTED " : "" ?>>Michigan</OPTION>
+                            <OPTION value="MN"<?= ($row['state'] == 'MN') ? " SELECTED " : "" ?>>Minnesota</OPTION>
+                            <OPTION value="MS"<?= ($row['state'] == 'MS') ? " SELECTED " : "" ?>>Mississippi</OPTION>
+                            <OPTION value="MO"<?= ($row['state'] == 'MO') ? " SELECTED " : "" ?>>Missouri</OPTION>
+                            <OPTION value="MT"<?= ($row['state'] == 'MT') ? " SELECTED " : "" ?>>Montana</OPTION>
+                            <OPTION value="NE"<?= ($row['state'] == 'NE') ? " SELECTED " : "" ?>>Nebraska</OPTION>
+                            <OPTION value="NV"<?= ($row['state'] == 'NV') ? " SELECTED " : "" ?>>Nevada</OPTION>
+                            <OPTION value="NH"<?= ($row['state'] == 'NH') ? " SELECTED " : "" ?>>New Hampshire</OPTION>
+                            <OPTION value="NJ"<?= ($row['state'] == 'NJ') ? " SELECTED " : "" ?>>New Jersey</OPTION>
+                            <OPTION value="NM"<?= ($row['state'] == 'NM') ? " SELECTED " : "" ?>>New Mexico</OPTION>
+                            <OPTION value="NY"<?= ($row['state'] == 'NY') ? " SELECTED " : "" ?>>New York</OPTION>
+                            <OPTION value="NC"<?= ($row['state'] == 'NC') ? " SELECTED " : "" ?>>North Carolina</OPTION>
+                            <OPTION value="ND"<?= ($row['state'] == 'ND') ? " SELECTED " : "" ?>>North Dakota</OPTION>
+                            <OPTION value="OH"<?= ($row['state'] == 'OH') ? " SELECTED " : "" ?>>Ohio</OPTION>
+                            <OPTION value="OK"<?= ($row['state'] == 'OK') ? " SELECTED " : "" ?>>Oklahoma</OPTION>
+                            <OPTION value="OR"<?= ($row['state'] == 'OR') ? " SELECTED " : "" ?>>Oregon</OPTION>
+                            <OPTION value="PA"<?= ($row['state'] == 'PA') ? " SELECTED " : "" ?>>Pennsylvania</OPTION>
+                            <OPTION value="RI"<?= ($row['state'] == 'RI') ? " SELECTED " : "" ?>>Rhode Island</OPTION>
+                            <OPTION value="SC"<?= ($row['state'] == 'SC') ? " SELECTED " : "" ?>>South Carolina</OPTION>
+                            <OPTION value="SD"<?= ($row['state'] == 'SD') ? " SELECTED " : "" ?>>South Dakota</OPTION>
+                            <OPTION value="TN"<?= ($row['state'] == 'TN') ? " SELECTED " : "" ?>>Tennessee</OPTION>
+                            <OPTION value="TX"<?= ($row['state'] == 'TX') ? " SELECTED " : "" ?>>Texas</OPTION>
+                            <OPTION value="UT"<?= ($row['state'] == 'UT') ? " SELECTED " : "" ?>>Utah</OPTION>
+                            <OPTION value="VT"<?= ($row['state'] == 'VT') ? " SELECTED " : "" ?>>Vermont</OPTION>
+                            <OPTION value="VA"<?= ($row['state'] == 'VA') ? " SELECTED " : "" ?>>Virginia</OPTION>
+                            <OPTION value="WA"<?= ($row['state'] == 'WA') ? " SELECTED " : "" ?>>Washington</OPTION>
+                            <OPTION value="DC"<?= ($row['state'] == 'DC') ? " SELECTED " : "" ?>>Washington, DC</OPTION>
+                            <OPTION value="WV"<?= ($row['state'] == 'WV') ? " SELECTED " : "" ?>>West Virginia</OPTION>
+                            <OPTION value="WI"<?= ($row['state'] == 'WI') ? " SELECTED " : "" ?>>Wisconsin</OPTION>
+                            <OPTION value="WY"<?= ($row['state'] == 'WY') ? " SELECTED " : "" ?>>Wyoming</OPTION>
+
+                        </select>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+
+                        <input type="submit" value="Generate!"/>
+
+                    </td>
+                </tr>
+        </form>
+        </table><?
+    }
+
+
+    function getOrderLink($field)
+    {
+
+        $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
+
+        $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
+
+        $var .= ");loadImports();return false;\">";
+
+        return $var;
+    }
 }
