@@ -1215,14 +1215,24 @@ class RousterReport
 
                                 if ($_SESSION['user']['priv'] > 3) {
 
-                                    ?>
-                                    <td>&nbsp;</td>
-                                    <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th><?
+                                    ?><th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th>
+                                    <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right" title="Total number of agents">Agents:<?
+                                    
+                                   		echo number_format(count($report_data));
+                                    
+                                    
+                                    ?></th><?
 
                                 } else {
 
-                                    ?>
-                                    <th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th><?
+                                    /**?><th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="left">Totals:</th><?**/
+                                	
+                                	?><th style="border-right:1px dotted #CCC;border-top:1px solid #000" align="right" title="Total number of agents">Agents:<?
+                                	
+                                	echo number_format(count($report_data));
+                                	
+                                	
+                                	?></th><?
 
                                 }
 
