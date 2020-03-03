@@ -232,6 +232,8 @@ class ListToolImports
             <! ** BEGIN BLOCK HEADER -->
             <div class="block-header bg-primary-light">
                 <h4 class="block-title">Imports / Counts</h4>
+                
+                
                 <button type="button" title="Refresh List" class="btn btn-sm btn-success" onclick="loadImports()">Refresh</button>
                 <div id="imports_prev_td" class="page_system_prev"></div>
                 <div id="imports_page_td" class="page_system_page"></div>
@@ -250,6 +252,9 @@ class ListToolImports
                 </div>
             </div>
             <! ** END BLOCK HEADER -->
+            
+            <div id="import_loading_cell"></div>
+            
             <! ** BEGIN BLOCK LIST (DATATABLE) -->
             <div class="block-content">
                 <table class="table table-sm table-striped" id="import_table">
