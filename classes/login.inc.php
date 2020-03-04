@@ -38,40 +38,97 @@ class LoginClass
                 // LOAD AND CHECK ACCOUNT STATUS
                 $_SESSION['account'] = $_SESSION['dbapi']->accounts->getByID($row['account_id']);
                 if (!$_SESSION['account']['id']) {
+                	
                     $_SESSION['dbapi']->users->tracklogin(0, $user, $pass, 'Failure', 'Account ' . intval($row['account_id']) . ' not found.');
+                    
                     jsAlert("ERROR: Account ID#" . intval($row['account_id']) . " was not found.", 0);
+                    
+                    unset($_SESSION['account']);
+                    
                     jsRedirect(stripurl(''));
                     exit;
                 }
                 if ($_SESSION['account']['status'] != 'active') {
+                	
                     $_SESSION['dbapi']->users->tracklogin(0, $user, $pass, 'Failure', 'Account ' . intval($row['account_id']) . ' status is ' . $_SESSION['account']['status']);
+                    
                     jsAlert("ERROR: Account ID#" . intval($row['account_id']) . " is listed as '" . $_SESSION['account']['status'] . "'", 0);
+                    
+                    unset($_SESSION['account']);
+                    
                     jsRedirect(stripurl(''));
                     exit;
                 }
+                
+                
+                
+                $action_time_range = time() - 3600;
+                
                 // CHECK FOR OTHER USERS FROM DIFFERENT IP ADDRESS LOGGED IN
-                $last_login = $_SESSION['dbapi']->querySQL("SELECT * FROM `logins` " .
-                    " WHERE `username`='" . mysqli_real_escape_string($_SESSION['dbapi']->db, $row['username']) . "' " .
-                    // THEY SUCCESSFULLY LOGGED INTO THE ADMIN
-                    " AND `result`='success' AND `section`='admin' " .
-                    // AND THEY HAVEN'T LOGGED OUT PROPERLY
-                    " AND `time_out`=0 " .
-                    " ORDER BY id DESC LIMIT 1");
+                $last_login_res = $_SESSION['dbapi']->query(
+                		
+                		"SELECT * FROM `logins` " .
+	                    " WHERE `username`='" . mysqli_real_escape_string($_SESSION['dbapi']->db, $row['username']) . "' " .
+	                    // THEY SUCCESSFULLY LOGGED INTO THE ADMIN
+	                    " AND `result`='success' AND `section`='admin' " .
+	                    // AND THEY HAVEN'T LOGGED OUT PROPERLY
+	                    " AND `time_out`=0 " .
+                		" AND `time_last_action` > '$action_time_range' ".
+	                    " ORDER BY id DESC", 1);
 // 				print_r($last_login);
 // 				exit;
-                // IF THEY HAVEN'T LOGGED OUT PROPERLY, AND ARE COMING FROM ANOTHER IP ADDRESS
-                // AND THERE LAST ACTION WAS SOONER THAN 15 MINUTES AGO
-                if ($last_login['time_out'] == 0 &&
-                    ($_SERVER['REMOTE_ADDR'] != $last_login['ip']) &&
-                    ($last_login['time_last_action'] > (time() - 900))
-                ) {
-                    unset($_SESSION['account']);
-                    // REJECT LOGIN!
-                    $_SESSION['dbapi']->users->tracklogin(0, $user, $pass, 'Failure', 'User is logged in another station (' . $last_login['ip'] . ').');
-                    jsAlert('ERROR: User is logged in another station (' . $last_login['ip'] . ')\nLast Action: ' . date("H:i:s", $last_login['time_last_action']), 1);
-                    jsRedirect(stripurl(''));
-                    exit;
+
+                $login_instances = 0;
+                
+                $oldest_record = null;
+                while($last_login = mysqli_fetch_array($last_login_res, MYSQLI_ASSOC) ){
+                	
+                
+                
+	                
+	                // IF THEY HAVEN'T LOGGED OUT PROPERLY, AND ARE COMING FROM ANOTHER IP ADDRESS
+	                // AND THERE LAST ACTION WAS SOONER THAN 15 MINUTES AGO
+	                if ($last_login['time_out'] == 0 &&
+	                    ($_SERVER['REMOTE_ADDR'] != $last_login['ip']) &&
+	                    ($last_login['time_last_action'] > (time() - 900))
+	                ) {
+	                	
+	                	$login_instances++;
+	                	
+	                	$oldest_record = $last_login;
+	                	
+	                } // END IF
+                
+                } // END WHILE
+                
+                
+                
+                if($login_instances >= $row['max_login_instances']){
+                
+                	
+                	// KICK THE OLDEST ONE
+                	jsAlert('WARNING: User ('.$row['username'].') was logged into another station('.$oldest_record['ip'].'), and will be kicked.\nLast Action: ' . date("H:i:s T", $oldest_record['time_last_action']), 1);
+                	
+                	$_SESSION['dbapi']->users->kickUserByLogin($oldest_record, 'User '.$row['username'].' has logged in from another station ('.$_SERVER['REMOTE_ADDR'].')');
+                	
+  /** HARD BLOCK MODE - DONT ALLOW ANOTHER USER
+   *              	unset($_SESSION['account']);
+                	// REJECT LOGIN!
+                	$_SESSION['dbapi']->users->tracklogin(0, $user, $pass, 'Failure', 'User is logged in another station (' . $last_login['ip'] . ').');
+                	jsAlert('ERROR: User is logged in another station (' . $last_login['ip'] . ')\nLast Action: ' . date("H:i:s", $last_login['time_last_action']), 1);
+                	jsRedirect(stripurl(''));
+                	exit;
+                	
+   **/
                 }
+                
+                
+                
+              ## FINALLY IN FOR REAL, ALL TESTS PASSED  
+                
+                
+                
+                
                 $login_id = $_SESSION['dbapi']->users->tracklogin($row['id'], $user, $pass, 'Success');
                 ## STORE USER RECORD IN SESSION!
                 $_SESSION['user'] = $row;

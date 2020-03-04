@@ -341,14 +341,36 @@ class UsersAPI{
 	}
 
 
+	
+	
+	function kickUserByLogin($login_row, $reason){
+		
+		
+		$dat = array('time_out' => time(), 'details' => $reason);
+	
+		$_SESSION['dbapi']->aedit($login_row['id'], $dat, 'logins');
+
+		
+		
+		
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Track a users login attempt
-	 * @param $uid			The user ID, or 0 if login failed
-	 * @param $username		The Username attempted
-	 * @param $password		The password attempt
-	 * @param $res			String of login result: "Success" / "Failure"
+	 * @param Integer $uid			The user ID, or 0 if login failed
+	 * @param String $username		The Username attempted
+	 * @param String $password		The password attempt
+	 * @param String $res			String of login result: "Success" / "Failure"
 	 *
-	 * @return	The login ID of the record created
+	 * @return	Integer				The login ID of the record created
 	 */
 	function tracklogin($uid,$username,$password,$res, $details=''){
 
@@ -471,8 +493,14 @@ class UsersAPI{
 		// THEY'VE BEEN FORCE LOGGED OUT
 		if($logins['id'] > 0 && $logins['time_out'] > 0){
 			
+			// BYE FELISHA
 			session_unset();
 			
+			if(trim($logins['details'])){
+				
+				jsAlert('You have been kicked: '.$logins['details']);
+				
+			}
 			
 			jsRedirect("index.php");
 			exit;
