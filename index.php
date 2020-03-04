@@ -150,7 +150,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
 
         function loadSection(url) {
-            One.block('state_loading', '#main-container');
+            // One.block('state_loading', '#main-container');
             $('#main-container').empty().load(url);
             // $('#main-container').empty().html('<table class="tightTable"><tr><td class="align-center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load(url);
             if (dispTimer) {
@@ -241,17 +241,17 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('campaigns')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=campaigns&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=campaigns&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Campaign Setup</span>
                                 </a>
                             </li>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=campaign_parents&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=campaign_parents&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Campaign Parents</span>
                                 </a>
                             </li>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=form_builder&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=form_builder&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Form Builder</span>
                                 </a>
                             </li>
@@ -260,7 +260,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('voices')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=voices&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=voices&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Voices</span>
                                 </a>
                             </li>
@@ -269,7 +269,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('names')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=names&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=names&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Names</span>
                                 </a>
                             </li>
@@ -278,7 +278,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('scripts')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=scripts&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=scripts&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Scripts</span>
                                 </a>
                             </li>
@@ -287,7 +287,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('quiz_questions')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Quiz Questions</span>
                                 </a>
                             </li>
@@ -311,7 +311,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('lead_management')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=lead_management&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=lead_management&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Lead Management</span>
                                 </a>
                             </li>
@@ -320,7 +320,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('sales_management')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=sales_management&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=sales_management&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Sales Management</span>
                                 </a>
                             </li>
@@ -329,7 +329,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('employee_hours')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=employee_hours&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=employee_hours&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Employee Hours</span>
                                 </a>
                             </li>
@@ -338,7 +338,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('phone_lookup')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=phone_lookup&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=phone_lookup&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">DRIPP Lookup</span>
                                 </a>
                             </li>
@@ -347,7 +347,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('quiz_results')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=quiz_results&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=quiz_results&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Quiz Results</span>
                                 </a>
                             </li>
@@ -374,7 +374,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('dialer_status')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=dialer_status&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=dialer_status&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Dialer Status</span>
                                 </a>
                             </li>
@@ -383,7 +383,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('server_status')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=server_status&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=server_status&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Server Status</span>
                                 </a>
                             </li>
@@ -392,7 +392,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('extensions')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=extensions&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=extensions&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Extensions</span>
                                 </a>
                             </li>
@@ -401,7 +401,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('offices')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=offices&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=offices&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Offices</span>
                                 </a>
                             </li>
@@ -413,7 +413,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('process_tracker_schedules')) {
                         	?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=process_tracker_schedules&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=process_tracker_schedules&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Process Tracker</span>
                                 </a>
                             </li>
@@ -434,42 +434,42 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     </a>
                     <ul class="nav-main-submenu">
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=list_tools&tool=build_list&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=list_tools&tool=build_list&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">List Builder</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=list_tools&tool=dnc_tools&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=list_tools&tool=dnc_tools&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">DNC Management</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=list_tools&tool=manage_lists&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=list_tools&tool=manage_lists&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">VICI List Management</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=list_tools&tool=tasks&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=list_tools&tool=tasks&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">Task / Status Management</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=list_tools&tool=load_list&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=list_tools&tool=load_list&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">Import Leads</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=list_tools&tool=view_imports&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=list_tools&tool=view_imports&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">List Imports / Counts</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=list_tools&tool=performance_reports&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=list_tools&tool=performance_reports&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">List Performance Report</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=list_tools&tool=vici_report&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=list_tools&tool=vici_report&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">VICIDIAL List Count</span>
                             </a>
                         </li>
@@ -489,7 +489,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('fronter_closer')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=fronter_closer&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=fronter_closer&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Fronter / Closer</span>
                                 </a>
                             </li>
@@ -498,7 +498,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('sales_analysis')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=sales_analysis&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=sales_analysis&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Sales Analysis</span>
                                 </a>
                             </li>
@@ -507,7 +507,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('agent_call_stats')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=agent_call_stats&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=agent_call_stats&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Verifier Call Stats</span>
                                 </a>
                             </li>
@@ -516,7 +516,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('rouster_report')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=rouster_report&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=rouster_report&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Rouster Call Stats</span>
                                 </a>
                             </li>
@@ -525,7 +525,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('summary_report')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=summary_report&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=summary_report&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Summary Report</span>
                                 </a>
                             </li>
@@ -534,7 +534,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('dialer_sales')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=dialer_sales&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=dialer_sales&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">AC Sales By Dialer</span>
                                 </a>
                             </li>
@@ -543,7 +543,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('user_charts')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=user_charts&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=user_charts&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">User Charts</span>
                                 </a>
                             </li>
@@ -552,7 +552,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('recent_hangups')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=recent_hangups&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=recent_hangups&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Recent Hangups</span>
                                 </a>
                             </li>
@@ -561,7 +561,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('dispo_log')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=dispo_log&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=dispo_log&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Disposition Logs</span>
                                 </a>
                             </li>
@@ -570,7 +570,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('capacity_report')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=capacity_report&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=capacity_report&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Capacity Reports</span>
                                 </a>
                             </li>
@@ -579,7 +579,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('report_emails')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=report_emails&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=report_emails&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Report Email Setup</span>
                                 </a>
                             </li>
@@ -588,7 +588,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('user_status_report')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=user_status_report&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=user_status_report&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">User Status Report</span>
                                 </a>
                             </li>
@@ -599,7 +599,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('script_statistics')) {
                         	?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=script_statistics&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=script_statistics&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Script Statistics</span>
                                 </a>
                             </li>
@@ -626,7 +626,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('pac_reports')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=pac_reports&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=pac_reports&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Web Donations</span>
                                 </a>
                             </li>
@@ -647,12 +647,12 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     </a>
                     <ul class="nav-main-submenu">
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=users&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=users&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">Search / List Users</span>
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=user_groups&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=user_groups&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">Group Manager</span>
                             </a>
                         </li>
@@ -662,7 +662,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             </a>
                         </li>
                         <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=user_groups_master&no_script=1" onclick="loadSection(this.href);return false">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=user_groups_master&no_script=1" onclick="loadSection(this.href);return false">
                                 <span class="nav-main-link-name">Master Groups Manager</span>
                             </a>
                         </li>
@@ -670,7 +670,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('feature_control')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=feature_control&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=feature_control&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Feature Control</span>
                                 </a>
                             </li>
@@ -679,7 +679,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('login_tracker')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=login_tracker&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=login_tracker&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Login Tracker</span>
                                 </a>
                             </li>
@@ -688,7 +688,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         if (checkAccess('action_log')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" href="?area=action_log&no_script=1" onclick="loadSection(this.href);return false">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_toggle" href="?area=action_log&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Action Logs</span>
                                 </a>
                             </li>
@@ -722,13 +722,6 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                 </button>
                 <!-- END Toggle Mini Sidebar -->
 
-                <!-- Apps Modal -->
-                <!-- Opens the Apps modal found at the bottom of the page, after footer’s markup -->
-                <button type="button" class="btn btn-sm btn-dual mr-2" data-toggle="modal"
-                        data-target="#one-modal-apps">
-                    <i class="si si-grid"></i>
-                </button>
-                <!-- END Apps Modal -->
             </div>
             <!-- END Left Section -->
 
