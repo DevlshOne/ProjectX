@@ -650,14 +650,14 @@ td.countsRow {
     border-color: darkgrey!important;
 }
 #sidebar {
-    max-width: 22%!important;
+    max-width: 300px!important;
 }
 .nav-main-heading {
     padding: 0.15em !important;
     padding-right: 0px !important;
 }
 #main-container {
-    padding-left: 1em;
+    padding-left: 2em;
 }
 #sidebar {
     padding-left: 1em;
