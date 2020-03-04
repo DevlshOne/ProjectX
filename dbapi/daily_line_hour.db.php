@@ -87,59 +87,65 @@ SQL;
     public function getSalesGroupStats($startUnixTime, $endUnixTime)
     {
         $sql = <<<SQL
-SELECT 
+-- GROUP LEVEL
+SELECT
 	call_group,
-    sum(_wrkd_hrs) as group_wrkd_hours,
-    sum(_total_calls) as group_total_calls,
-    sum(_agent_total_sales) as group_total_sales,
-    sum(_agent_total_sales_amount) as group_total_sales_amount,
-    sum(_agent_paid_sales) as group_paid_sales,
-    sum(_agent_paid_sales_amount) as group_paid_sales_amount,
-    sum(_agent_unpaid_sales) as group_unpaid_sales
+	sum(agent_total_sales_amount) as group_total_sales_amount,
+    sum(agent_total_sales_amount)/(sum(_agent_wrkd_minutes)/60) as group_wrkd_hour_amount,
+    sum(agent_paid_sales_amount) as group_paid_sales_amount
 FROM (
-	SELECT -- AGENT LEVEL
-		username,
-        call_group,
-		_wrkd_hrs,
-		_total_calls,
-		_agent_total_sales,
-        _agent_total_sales_amount,
-		_agent_paid_sales,
-		_agent_paid_sales_amount,
-		(_agent_paid_sales/_agent_total_sales) * 100 as _paid_sales_perc,
-		(_agent_paid_sales_amount/_agent_total_sales_amount) * 100 as _paid_sales_perc_money,
-		_agent_unpaid_sales,
-		(1-(_agent_paid_sales/_agent_total_sales))*100 as _unpaid_sales_perc
+    -- AGENT LEVEL
+	SELECT 
+		if(RIGHT(username,1) = 2, LEFT(username, length(username) -1), username) as `agent_id`,
+		call_group,
+		count(1) as _hands,
+        max(hand_paid_minutes) as _agent_paid_minutes,
+        max(hand_wrkd_minutes) as _agent_wrkd_minutes,
+		max(hand_wrkd_minutes)/60 as agent_wrkd_hrs, -- correct
+		sum(hand_total_calls) as agent_total_calls,
+		sum(hand_total_sales) as agent_total_sales,
+		sum(hand_paid_sales) as agent_paid_sales,
+		sum(hand_paid_sales_amount) as agent_paid_sales_amount,
+		(sum(hand_paid_sales)/sum(hand_total_sales)) * 100 as _paid_sales_perc,
+		(sum(hand_paid_sales_amount))/sum(hand_total_sales_amount) * 100 as _paid_amount_sales_perc,
+		sum(hand_unpaid_sales) as agent_unpaid_sales,
+		sum(hand_unpaid_sales)/sum(hand_total_sales) * 100 as agent_unpaid_sales_perc,
+		sum(hand_total_sales_amount) as agent_total_sales_amount,
+		sum(hand_total_sales_amount)/sum(hand_total_sales) as agent_avg_sale,
+		sum(hand_total_sales_amount)/max(hand_paid_minutes/60) as agent_paid_hour_amount,
+		sum(hand_total_sales_amount)/max(hand_wrkd_minutes/60) as agent_wrkd_hour_amount
 	FROM (
-		SELECT
-			username,
-			call_group,
-			count(1) as `hands`,
-			sum(activity_time)/60 as agent_activity_minutes,
-			sec_to_time((max(activity_time)/60)) as paid_minutes,
-			sec_to_time((max(activity_time)/60)) as _wrkd_hrs,
-			calls_today as `_total_calls`
-		FROM activity_log
-		WHERE  time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
-		GROUP BY 1
+	        -- HAND LEVEL
+            SELECT 
+                username,
+                call_group,
+                sum(activity_time) as hand_activity_minutes,
+                -- sec_to_time(max(activity_time)) as _hand_paid_minutes,
+                max(activity_time) as hand_wrkd_minutes,
+                calls_today as hand_total_calls,
+                max(paid_time) as hand_paid_minutes
+            FROM activity_log
+            WHERE  time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
+            GROUP BY 1
 		) activity_log
-	LEFT JOIN (        
-		SELECT
-			agent_username,
-			count(1) as `_agent_total_sales`,
-			sum(amount) as `_agent_total_sales_amount`,
-			sum(if(is_paid = 'NO', 1, 0)) as `_agent_unpaid_sales`,
-			sum(if(is_paid != 'NO', 1, 0)) as `_agent_paid_sales`,
-			sum(if(is_paid != 'NO', amount, 0)) as `_agent_paid_sales_amount`
-		FROM sales
-			WHERE `sale_time` BETWEEN {$startUnixTime} AND {$endUnixTime}
-		GROUP BY 1
-	) sales on activity_log.username = sales.agent_username
-) agent_values
+		LEFT JOIN (        
+			SELECT
+				agent_username,
+				count(1) as `hand_total_sales`,
+				sum(amount) as `hand_total_sales_amount`,
+				sum(if(is_paid = 'NO', 1, 0)) as `hand_unpaid_sales`,
+				sum(if(is_paid != 'NO', 1, 0)) as `hand_paid_sales`,
+				sum(if(is_paid != 'NO', amount, 0)) as `hand_paid_sales_amount`
+			FROM sales
+				WHERE `sale_time` BETWEEN {$startUnixTime} AND {$endUnixTime}
+			GROUP BY 1
+		) sales on activity_log.username = sales.agent_username
+	GROUP BY 1
+) call_group_stats
 GROUP BY 1
 SQL;
 
-        if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) { var_dump($sql); die(); }
+        if( isset($_REQUEST['debug']) && $_REQUEST['debug'] == 1) { echo ($sql); die(); }
 
         $result = $_SESSION['dbapi']->ROfetchAllAssoc($sql);
 
