@@ -534,17 +534,18 @@ class PhoneLookupTool
                     }
                     if ($('#search_area_pxdb').is(":checked")) {
                         $('#px_lookup_results_div').show();
+
                         $.ajax({
                             type: 'POST',
                             dataType: 'json',
                             url: <?=$this->px_lookup_api;?> + phone_num,
                             success: function (data) {
-                                let $dlgObj = $('#dialog-modal-edit-campaign');
                             },
                             error: function () {
 
                             }
-                        });                    } else {
+                        });
+                    } else {
                         $('#px_lookup_results_div').hide();
                     }
                 }
