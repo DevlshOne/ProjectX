@@ -10,6 +10,7 @@ class PhoneLookupTool
 {
     var $lookup_api = "https://dripp.advancedtci.com/dripp/tools/phone_lookup_api.php";
     var $vici_lookup_api = "http://atst.advancedtci.com/phone_lookup/server_query"; //?phone_number=7025551212&cluster=cold-1
+    var $px_lookup_api = "api/api.php?get=phone_lookup&action=deep&mode=json&phone_number=";
     function PhoneLookupTool()
     {
         ## REQURES DB CONNECTION!
@@ -533,7 +534,17 @@ class PhoneLookupTool
                     }
                     if ($('#search_area_pxdb').is(":checked")) {
                         $('#px_lookup_results_div').show();
-                    } else {
+                        $.ajax({
+                            type: 'POST',
+                            dataType: 'json',
+                            url: <?=$this->px_lookup_api;?> + phone_num,
+                            success: function (data) {
+                                let $dlgObj = $('#dialog-modal-edit-campaign');
+                            },
+                            error: function () {
+
+                            }
+                        });                    } else {
                         $('#px_lookup_results_div').hide();
                     }
                 }
