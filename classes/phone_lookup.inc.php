@@ -8,30 +8,19 @@ $_SESSION['phone_lookup'] = new PhoneLookupTool;
 
 class PhoneLookupTool
 {
-
     var $lookup_api = "https://dripp.advancedtci.com/dripp/tools/phone_lookup_api.php";
-
-
     var $vici_lookup_api = "http://atst.advancedtci.com/phone_lookup/server_query"; //?phone_number=7025551212&cluster=cold-1
-
     function PhoneLookupTool()
     {
-
-
         ## REQURES DB CONNECTION!
-
-
         $this->handlePOST();
     }
 
-
     function handlePOST()
     {
-
         // THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
         // SEE api/names.api.php FOR POST HANDLING!
         // <3 <3 -Jon
-
     }
 
     function handleFLOW()
@@ -98,87 +87,53 @@ class PhoneLookupTool
 
 
             function validatePhoneField(name, value, frm) {
-
                 //alert(name+","+value);
-
-
                 switch (name) {
                     default:
-
                         // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
                         return true;
                         break;
-
                     case 'phone_num':
-
-
                         if (!value) return false;
-
                         if (value.length < 10 || value.length > 10) return false;
-
                         return true;
-
-
                         break;
-
                 }
                 return true;
             }
 
             function lookup_phone(frm) {
-
                 // call function to lookup the phone number
-
                 var params = getFormValues(frm, 'validatePhoneField');
-
                 // FORM VALIDATION FAILED!
                 // param[0] == field name
                 // param[1] == field value
                 if (typeof params == "object") {
-
                     switch (params[0]) {
                         default:
-
                             alert("Error submitting form. Check your values");
-
                             break;
-
                         case 'phone_num':
-
                             alert("Please enter a proper 10 digit phone number to lookup.");
                             eval('try{frm.' + params[0] + '.select();}catch(e){}');
                             break;
-
                     }
-
                     // SUCCESS - POST AJAX TO SERVER
                 } else {
 
 //alert('<?=$this->lookup_api?>');
-
                     var phone_num = frm.phone_num.value;
-
                     let totalrecordscount = 0;
-
-
                     var total_clusters_to_process = cluster_array.length;
                     var total_clusters_processed = 0;
-
                     var cluster_total_count_arr = new Array();
-
                     cluster_total_count_arr['logs'] = new Array();
                     cluster_total_count_arr['lists'] = new Array();
                     cluster_total_count_arr['did'] = new Array();
                     cluster_total_count_arr['diallog'] = new Array();
-
-
                     if ($('#search_area_dripp').is(":checked")) {
-
-
                         $('#dripp_lookup_results_div').html('<img src="images/ajax-loader.gif" border="0" />DRIPP Results Loading');
-
                         $('#dripp_lookup_results_div').show();
-
                         // DRIPP API POST
                         $.ajax({
                             type: "POST",
@@ -186,7 +141,6 @@ class PhoneLookupTool
                             url: '<?=$this->lookup_api?>',
                             data: params,
                             error: function (jqXHR, exception) {
-
                                 var msg = '';
                                 if (jqXHR.status === 0) {
                                     msg = 'Not connect.\n Verify Network.';
@@ -270,19 +224,11 @@ class PhoneLookupTool
                             }
 
                         });  // END AJAX TO DRIPP
-
-
                         // IF DRIPP NOT CHECKED, HIDE IT
                     } else {
-
                         $('#dripp_lookup_results_div').hide();
-
                     }
-
-
                     if ($('#search_area_clusters').is(":checked")) {
-
-
                         $('#cluster_lookup_results_div').show();
 
                         $('#tbl_vici_results_logs > tbody').html('');
@@ -583,12 +529,13 @@ class PhoneLookupTool
 
 
                     } else { // END IF (SEARCH CLUSTERS CHECKED
-
                         $('#cluster_lookup_results_div').hide();
-
                     }
-
-
+                    if ($('#search_area_pxdb').is(":checked")) {
+                        $('#px_lookup_results_div').show();
+                    } else {
+                        $('#px_lookup_results_div').hide();
+                    }
                 }
 
 
@@ -629,20 +576,20 @@ class PhoneLookupTool
                             <input class="form-check-input" type="checkbox" id="search_area_clusters" name="search_areas[]" value="vici"/>Search All Clusters
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="search_area_px" name="search_areas[]" value="px"/>Search PX/LMT
+                            <input class="form-check-input" type="checkbox" id="search_area_pxdb" name="search_areas[]" value="px"/>Search PX/LMT
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="search_area_listtool" name="search_areas[]" value="listtool"/>Search List Tool
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="search_area_transfers" name="search_areas[]" value="transfers"/>Search Transfers
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="search_area_sales" name="search_areas[]" value="sales"/>Search Sales
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" id="search_area_dnc" name="search_areas[]" value="dnc"/>Search DNC
-                        </div>
+<!--                        <div class="form-check form-check-inline">-->
+<!--                            <input class="form-check-input" type="checkbox" id="search_area_listtool" name="search_areas[]" value="listtool"/>Search List Tool-->
+<!--                        </div>-->
+<!--                        <div class="form-check form-check-inline">-->
+<!--                            <input class="form-check-input" type="checkbox" id="search_area_transfers" name="search_areas[]" value="transfers"/>Search Transfers-->
+<!--                        </div>-->
+<!--                        <div class="form-check form-check-inline">-->
+<!--                            <input class="form-check-input" type="checkbox" id="search_area_sales" name="search_areas[]" value="sales"/>Search Sales-->
+<!--                        </div>-->
+<!--                        <div class="form-check form-check-inline">-->
+<!--                            <input class="form-check-input" type="checkbox" id="search_area_dnc" name="search_areas[]" value="dnc"/>Search DNC-->
+<!--                        </div>-->
                     </div>
                 </form>
                 <div id="dripp_lookup_results_div" class="nod"></div>
