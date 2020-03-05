@@ -18,7 +18,7 @@ class DailyLineHourAPI
     public function getRoustingGroupStats($startUnixTime, $endUnixTime)
     {
         $sql = <<<SQL
-SELECT
+SELECT SQL_NO_CACHE
 	call_group,
     sum(agent_paid_sales_cnt) as group_paid_sales_cnt,
     sum(agent_paid_sales_amount) as group_paid_sales_amount,
@@ -88,7 +88,7 @@ SQL;
     {
         $sql = <<<SQL
 -- GROUP LEVEL
-SELECT
+SELECT SQL_NO_CACHE
 	call_group,
 	sum(agent_total_sales_amount) as group_total_sales_amount,
     sum(agent_total_sales_amount)/(sum(_agent_wrkd_minutes)/60) as group_wrkd_hour_amount,
@@ -155,7 +155,7 @@ SQL;
     public function getVerifierGroupStats($startUnixTime, $endUnixTime)
     {
         $sql = <<<SQL
-SELECT
+SELECT SQL_NO_CACHE
 	call_group,
     sum(agent_paid_sales_cnt) as group_paid_sales_cnt,
     sum(agent_paid_sales_amount) as group_paid_sales_amount,
