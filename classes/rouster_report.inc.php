@@ -775,6 +775,8 @@ class RousterReport
                             $running_total_paid_avg_per_hour = 0;
                             $running_total_worked_avg_per_hour = 0;
 
+                            $running_total_calls_per_hour = 0;
+                            
                             $tcount = 0;
                             $x1 = 0;
 
@@ -850,7 +852,9 @@ class RousterReport
                                 ## CONTACT %
                                 $contact_percent = ($row['call_cnt'] <= 0) ? 0 : number_format(round((($row['contact_cnt']) / ($row['call_cnt'])) * 100, 2), 2);
                                 $running_total_contacts += $row['contact_cnt'];
-
+                                
+                                $running_total_calls_per_hour += $row['worked_calls_hr'];
+                                
                                 ## ADD AGENT REPORT DATA TO REPORT DATA ARRAY
                                 $report_data[$x1]['agent_username'] = $row['username'];
                                 $report_data[$x1]['call_cnt'] = $row['call_cnt'];
@@ -1240,7 +1244,7 @@ class RousterReport
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_calls) ?></td>
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_ans) ?></td>
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= $total_ans_percent ?>%</td>
-                                <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"></td>
+                                <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format($running_total_calls_per_hour)?></td>
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= $total_contact_percent ?>%</td>
                                 <?/*<td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?=number_format(($running_total_sales-$running_total_paid_sales))?></td>*/ ?>
                                 <td style="border-right:1px dotted #CCC;border-top:1px solid #000;padding-right:3px" align="right"><?= number_format($running_total_paid_sales) ?></td>
