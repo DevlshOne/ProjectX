@@ -483,6 +483,8 @@ function stampToTime(s, mode) {
 	let hr = dt.getHours();
 	let mi = dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes();
 	let se = dt.getSeconds() < 10 ? '0' + dt.getSeconds() : dt.getSeconds();
+	// mode 0 returns "MM/DD/YYYY HH:MM:SS"
+	// mode 1 returns "YYYY-MM-DD HH:MM:SS"
 	switch(mode) {
 		default:
 		case 0:
@@ -494,7 +496,7 @@ function stampToTime(s, mode) {
 	}
 }
 
-function intToCurr(i) {
+function toCurrency(i) {
 	let f = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'});
 	return f.format(i);
 }

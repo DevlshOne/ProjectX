@@ -513,7 +513,6 @@ class PhoneLookupTool
                     }
                     if ($('#search_area_pxdb').is(":checked")) {
                         $('#px_lookup_results_div').show();
-
                         $.ajax({
                             type: 'POST',
                             dataType: 'json',
@@ -538,10 +537,10 @@ class PhoneLookupTool
                                 $('#tbl_px_results_transfers tbody').html(out);
                                 if (data.sales !== undefined && data.sales.length) {
                                     $.each(data.sales, function (i, v) {
-                                        out = '<tr><td class="text-left">' + v[i].lead_tracking_id + '</td><td class="text-left">' + stampToTime(v[i].sale_time,1) + '</td><td class="text-left">' + v[i].agent_username + '</td><td class="text-left">' + v[i].verifier_username + '</td><td class="text-left">' + v[i].first_name + '</td><td class="text-left">' + v[i].last_name + '</td><td class="text-right">' + intToCurr(v[i].amount) + '</td></tr>';
+                                        out = '<tr><td class="text-left">' + v[i].lead_tracking_id + '</td><td class="text-left">' + stampToTime(v[i].sale_time,1) + '</td><td class="text-left">' + v[i].agent_username + '</td><td class="text-left">' + v[i].verifier_username + '</td><td class="text-left">' + v[i].first_name + '</td><td class="text-left">' + v[i].last_name + '</td><td class="text-right">' + toCurrency(v[i].amount) + '</td></tr>';
                                     });
                                 } else {
-                                    out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
+                                    out = '<tr><td colspan="7" class="text-left">NO RESULTS FOUND</td></tr>';
                                 }
                                 $('#tbl_px_results_sales tbody').html(out);
                                 if (data.dnc_list !== undefined && data.dnc_list.length) {
@@ -554,7 +553,7 @@ class PhoneLookupTool
                                 $('#tbl_px_results_dnclists tbody').html(out);
                                 if (data.dnc_campaign_list !== undefined && data.dnc_campaign_list.length) {
                                     $.each(data.dnc_campaign_list, function (i, v) {
-                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + stampToTime(v[i].time_added,0) + '</td><td class="text-left">' + stampToTime(v[i].time_expires,0) + '</td></tr>';
+                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + stampToTime(v[i].time_added,1) + '</td><td class="text-left">' + stampToTime(v[i].time_expires,1) + '</td></tr>';
                                     });
                                 } else {
                                     out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
@@ -584,12 +583,6 @@ class PhoneLookupTool
         <div class="block">
             <div class="block-header bg-primary-light">
                 <h4 class="block-title">Phone Lookup Tool</h4>
-                <div class="d-inline-block ml-2">
-                    <button class="btn btn-sm btn-dark" title="Total Found">
-                        <i class="si si-list"></i>
-                        <span class="badge badge-light badge-pill"><div id="total_count_div"></div></span>
-                    </button>
-                </div>
             </div>
             <div class="block-content">
                 <form class="d-none d-sm-inline-block" method="POST" action="<?= stripurl('') ?>" onsubmit="return lookup_phone(this);">
