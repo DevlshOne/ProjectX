@@ -473,3 +473,28 @@ LMTtabs.prototype = {
 		this.defaultTab = tabindex;
 	}
 };
+
+function stampToTime(s, mode) {
+	if(s == null) return '&nbsp;';
+	let dt = new Date(s * 1000);
+	let yr = dt.getFullYear();
+	let mo = dt.getMonth();
+	let da = dt.getDate();
+	let hr = dt.getHours();
+	let mi = dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes();
+	let se = dt.getSeconds() < 10 ? '0' + dt.getSeconds() : dt.getSeconds();
+	switch(mode) {
+		default:
+		case 0:
+			return mo + '/' + da + '/' + yr + '&nbsp;' + hr + ':' + mi + ':' + se;
+		break;
+		case 1:
+			return yr + '-' + mo + '-' + da + '&nbsp;' + hr + ':' + mi + ':' + se;
+		break;
+	}
+}
+
+function intToCurr(i) {
+	let f = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'});
+	return f.format(i);
+}

@@ -10,7 +10,7 @@ class PhoneLookupTool
 {
     var $lookup_api = "https://dripp.advancedtci.com/dripp/tools/phone_lookup_api.php";
     var $vici_lookup_api = "http://atst.advancedtci.com/phone_lookup/server_query"; //?phone_number=7025551212&cluster=cold-1
-    var $px_lookup_api = "api/api.php?get=phone_lookup&action=deep&mode=json&phone_number=";
+
     function PhoneLookupTool()
     {
         ## REQURES DB CONNECTION!
@@ -106,6 +106,8 @@ class PhoneLookupTool
             function lookup_phone(frm) {
                 // call function to lookup the phone number
                 var params = getFormValues(frm, 'validatePhoneField');
+                var loadSuccess = '<span style="color:lightgreen;"><i class="far fa-check-circle"></i></span>';
+                var loadFailure = '<span style="color:darkred;"><i class="far fa-exclamation-circle"></i></span>';
                 // FORM VALIDATION FAILED!
                 // param[0] == field name
                 // param[1] == field value
@@ -183,17 +185,13 @@ class PhoneLookupTool
                                     '<tr><th colspan="6" height="30" align="left" class="pad_left ui-widget-header">DRIPP Lookup Results</th></tr>';
 
                                 html += '<tr>' +
-
                                     '<th class="row2">Time</th>' +
                                     '<th class="row2" align="left">Customer</th>' +
                                     '<th class="row2" align="right">Amount</th>' +
-
                                     '<th class="row2" align="center">Project</th>' +
                                     '<th class="row2" align="center">Processor</th>' +
                                     '<th class="row2" align="center">Transaction ID</th>' +
                                     '</tr>';
-
-
                                 var color = 0;
                                 var clss = '';
                                 for (var x = 0; x < dataarr.length; x++) {
@@ -218,7 +216,6 @@ class PhoneLookupTool
                                 totalrecordscount += totalcount;
 
                                 html += '</table>';
-
                                 $('#dripp_lookup_results_div').html(html);
 
                                 applyUniformity();
@@ -231,19 +228,10 @@ class PhoneLookupTool
                     }
                     if ($('#search_area_clusters').is(":checked")) {
                         $('#cluster_lookup_results_div').show();
-
                         $('#tbl_vici_results_logs > tbody').html('');
                         $('#tbl_vici_results_lists > tbody').html('');
                         $('#tbl_vici_results_did > tbody').html('');
                         $('#tbl_vici_results_dialog > tbody').html('');
-
-                        $('#area_loading_flag_logs').html('<img src="images/ajax-loader.gif" height="25" border="0" />');
-                        $('#area_loading_flag_lists').html('<img src="images/ajax-loader.gif" height="25" border="0" />');
-                        $('#area_loading_flag_did').html('<img src="images/ajax-loader.gif" height="25" border="0" />');
-                        $('#area_loading_flag_diallog').html('<img src="images/ajax-loader.gif" height="25" border="0" />');
-
-
-                        ////// $('#cluster_lookup_results_div').html('<img src="images/ajax-loader.gif" border="0" />Loading');
                         total_clusters_processed = 0;
 
                         for (let z = 0; z < cluster_array.length; z++) {
@@ -339,6 +327,7 @@ class PhoneLookupTool
 
                                     cluster_total_count_arr['logs'][z] = obj['vici_logs'].length;
 
+                                    $('#area_loading_flag_logs').empty();
 
                                     $('#tbl_vici_results_logs > tbody:last-child').after(html);
 
@@ -403,14 +392,10 @@ class PhoneLookupTool
                                     totalrecordscount += obj['vici_lists'].length;
 
                                     cluster_total_count_arr['lists'][z] = obj['vici_lists'].length;
-
+                                    $('#area_loading_flag_lists').empty();
                                     $('#tbl_vici_results_lists > tbody:last-child').after(html);
-
                                     applyUniformity();
-
-
                                     /******/
-
                                     html = '';
                                     color = 0;
                                     clss = '';
@@ -440,6 +425,7 @@ class PhoneLookupTool
 
                                     cluster_total_count_arr['did'][z] = obj['did_logs'].length;
 
+                                    $('#area_loading_flag_did').empty();
 
                                     $('#tbl_vici_results_did > tbody:last-child').after(html);
 
@@ -477,22 +463,15 @@ class PhoneLookupTool
 
                                     cluster_total_count_arr['diallog'][z] = obj['dial_logs'].length;
 
+                                    $('#area_loading_flag_diallog').empty();
                                     $('#tbl_vici_results_diallogs > tbody:last-child').after(html);
-
-                                    applyUniformity();
-
-
+                                    // applyUniformity();
                                     total_clusters_processed++;
-
-
                                     if (total_clusters_processed >= total_clusters_to_process) {
-
                                         $("#area_loading_flag_logs").html('<img src="images/circle-green.gif" height="25" border="0" />');
                                         $("#area_loading_flag_lists").html('<img src="images/circle-green.gif" height="25" border="0" />');
                                         $("#area_loading_flag_did").html('<img src="images/circle-green.gif" height="25" border="0" />');
                                         $("#area_loading_flag_diallog").html('<img src="images/circle-green.gif" height="25" border="0" />');
-
-
                                         if (cluster_total_count_arr['logs'][z] <= 0) {
                                             $('#tbl_vici_results_logs > tbody:last-child').after('<tr><td colspan="11" align="center">No results found here.</td></tr>');
                                         }
@@ -538,11 +517,53 @@ class PhoneLookupTool
                         $.ajax({
                             type: 'POST',
                             dataType: 'json',
-                            url: <?=$this->px_lookup_api;?> + phone_num,
+                            url: 'api/api.php?get=phone_lookup&action=deep&mode=json&phone_number=' + phone_num,
                             success: function (data) {
+                                var out = '';
+                                if (data.lead_tracking !== undefined && data.lead_tracking.length) {
+                                    $.each(data.lead_tracking, function (i, v) {
+                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + v[i].time_added + '</td><td class="text-left">' + v[i].time_expires + '</td></tr>';
+                                    });
+                                } else {
+                                    out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
+                                }
+                                $('#tbl_px_results_leads tbody').html(out);
+                                if (data.transfers !== undefined && data.transfers.length) {
+                                    $.each(data.transfers, function (i, v) {
+                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + v[i].time_added + '</td><td class="text-left">' + v[i].time_expires + '</td></tr>';
+                                    });
+                                } else {
+                                    out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
+                                }
+                                $('#tbl_px_results_transfers tbody').html(out);
+                                if (data.sales !== undefined && data.sales.length) {
+                                    $.each(data.sales, function (i, v) {
+                                        out = '<tr><td class="text-left">' + v[i].lead_tracking_id + '</td><td class="text-left">' + stampToTime(v[i].sale_time,1) + '</td><td class="text-left">' + v[i].agent_username + '</td><td class="text-left">' + v[i].verifier_username + '</td><td class="text-left">' + v[i].first_name + '</td><td class="text-left">' + v[i].last_name + '</td><td class="text-right">' + intToCurr(v[i].amount) + '</td></tr>';
+                                    });
+                                } else {
+                                    out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
+                                }
+                                $('#tbl_px_results_sales tbody').html(out);
+                                if (data.dnc_list !== undefined && data.dnc_list.length) {
+                                    $.each(data.dnc_list, function (i, v) {
+                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + stampToTime(v[i].time_added) + '</td><td class="text-left">' + v[i].time_expires + '</td></tr>';
+                                    });
+                                } else {
+                                    out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
+                                }
+                                $('#tbl_px_results_dnclists tbody').html(out);
+                                if (data.dnc_campaign_list !== undefined && data.dnc_campaign_list.length) {
+                                    $.each(data.dnc_campaign_list, function (i, v) {
+                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + stampToTime(v[i].time_added,0) + '</td><td class="text-left">' + stampToTime(v[i].time_expires,0) + '</td></tr>';
+                                    });
+                                } else {
+                                    out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
+                                }
+                                $('#tbl_px_results_dnccamplists tbody').html(out);
+                                $('#area_loading_flag_pxdnccamplists, #area_loading_flag_pxdnclists, #area_loading_flag_pxleads, #area_loading_flag_pxsales, #area_loading_flag_pxtransfers').html(loadSuccess);
                             },
                             error: function () {
-
+                                $('#area_loading_flag_pxdnccamplists, #area_loading_flag_pxdnclists, #area_loading_flag_pxleads, #area_loading_flag_pxsales, #area_loading_flag_pxtransfers').html(loadFailure);
                             }
                         });
                     } else {
@@ -553,8 +574,9 @@ class PhoneLookupTool
 
                 return false;
             }
+
             function toggleSearchChecks(checkStatus) {
-                $('#search_boxes').find(':checkbox').each(function() {
+                $('#search_boxes').find(':checkbox').each(function () {
                     $(this).prop('checked', checkStatus);
                 });
             }
@@ -579,7 +601,8 @@ class PhoneLookupTool
                     </div>
                     <div class="input-group input-group-sm" id="search_boxes">
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="checkbox" onclick="toggleSearchChecks(this.checked);"/><div class="text-black text-uppercase">Search All</div>
+                            <input class="form-check-input" type="checkbox" onclick="toggleSearchChecks(this.checked);"/>
+                            <div class="text-black text-uppercase">Search All</div>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" id="search_area_dripp" name="search_areas[]" value="dripp"/>Search Dripp
@@ -590,123 +613,179 @@ class PhoneLookupTool
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" id="search_area_pxdb" name="search_areas[]" value="px"/>Search PX/LMT
                         </div>
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="checkbox" id="search_area_listtool" name="search_areas[]" value="listtool"/>Search List Tool-->
-<!--                        </div>-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="checkbox" id="search_area_transfers" name="search_areas[]" value="transfers"/>Search Transfers-->
-<!--                        </div>-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="checkbox" id="search_area_sales" name="search_areas[]" value="sales"/>Search Sales-->
-<!--                        </div>-->
-<!--                        <div class="form-check form-check-inline">-->
-<!--                            <input class="form-check-input" type="checkbox" id="search_area_dnc" name="search_areas[]" value="dnc"/>Search DNC-->
-<!--                        </div>-->
                     </div>
                 </form>
-                <div id="dripp_lookup_results_div" class="nod"></div>
-                <br/>
-                <div id="cluster_lookup_results_div" class="nod">
-                    <table border="0" width="950" id="tbl_vici_results_logs">
-                        <thead>
-                        <tr>
-                            <th colspan="10" height="30" align="left" class="pad_left ui-widget-header">Vicidial Lookup Results - Logs</th>
-                            <td nowrap align="right" class="ui-widget-header"><span id="area_loading_flag_logs"><img src="images/ajax-loader.gif" height="25" border="0"/></span></td>
-                        </tr>
-                        <tr>
-                            <th class="row2">Cluster</th>
-                            <th class="row2" align="left">Location</th>
-                            <th class="row2" align="center">Status</th>
-                            <th class="row2" align="left">Lead ID</th>
-                            <th class="row2" align="left">Campaign ID</th>
-                            <th class="row2" align="left">Call Date</th>
-                            <th class="row2" align="left">User</th>
-                            <th class="row2" align="left">List ID</th>
-                            <th class="row2" align="left">Duration</th>
-                            <th class="row2" align="left">Alt Dial</th>
-                            <th class="row2" align="left">&nbsp;</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-
-                    <br/>
-
-                    <table border="0" width="950" id="tbl_vici_results_lists">
-                        <thead>
-                        <tr>
-                            <th colspan="12" height="30" align="left" class="pad_left ui-widget-header">Vicidial Lookup Results - Lists</th>
-                            <td nowrap align="right" class="ui-widget-header"><span id="area_loading_flag_lists"><img src="images/ajax-loader.gif" height="25" border="0"/></span></td>
-                        </tr>
-                        <tr>
-                            <th class="row2">Cluster</th>
-                            <th class="row2" align="left">Lead ID</th>
-                            <th class="row2" align="left">Entry Date</th>
-                            <th class="row2" align="left">Modify Date</th>
-                            <th class="row2" align="left">Status</th>
-                            <th class="row2" align="left">User</th>
-                            <th class="row2" align="left">Vendor Lead Code</th>
-                            <th class="row2" align="left">Source ID</th>
-                            <th class="row2" align="left">List ID</th>
-                            <th class="row2" align="left">Phone Code</th>
-                            <th class="row2" align="left">First Name</th>
-                            <th class="row2" align="left">Last Name</th>
-                            <th class="row2" align="left">&nbsp;</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-
-
-                    <br/>
-
-
-                    <table border="0" width="950" id="tbl_vici_results_did">
-                        <thead>
-                        <tr>
-                            <th colspan="3" height="30" align="left" class="pad_left ui-widget-header">Vicidial Lookup Results - DID Logs</th>
-                            <td nowrap align="right" class="ui-widget-header"><span id="area_loading_flag_did"><img src="images/ajax-loader.gif" height="25" border="0"/></span></td>
-                        </tr>
-                        <tr>
-                            <th class="row2">Cluster</th>
-                            <th class="row2" align="left">Extension</th>
-                            <th class="row2" align="left">DID ID</th>
-                            <th class="row2" align="left">Call Date</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-
-
-                    <br/>
-
-
-                    <table border="0" width="950" id="tbl_vici_results_diallogs">
-                        <thead>
-                        <tr>
-                            <th colspan="3" height="30" align="left" class="pad_left ui-widget-header">Vicidial Lookup Results - Dial Logs</th>
-                            <td nowrap align="right" class="ui-widget-header"><span id="area_loading_flag_diallog"><img src="images/ajax-loader.gif" height="25" border="0"/></span></td>
-                        </tr>
-                        <tr>
-                            <th class="row2">Cluster</th>
-                            <th class="row2" align="left">Number Called</th>
-                            <th class="row2" align="left">Call ID</th>
-                            <th class="row2" align="left">Call Date</th>
-                        </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-
-
-                </div>
-                <div id="px_lookup_results_div" class="nod"></div>
-                <div id="listtool_lookup_results_div" class="nod"></div>
-                <div id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></div>
             </div>
+            <div id="dripp_lookup_results_div" class="block-content nod">
+                <div class="block-header bg-primary-light">
+                    <h4 class="block-title">DRIPP Results</h4>
+                </div>
+            </div>
+            <div id="cluster_lookup_results_div" class="block-content nod">
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">Vicidial Lookup Results - Logs</h4>
+                    <div id="area_loading_flag_logs"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_vici_results_logs">
+                    <thead>
+                    <tr>
+                        <th class="row2">Cluster</th>
+                        <th class="row2 text-left">Location</th>
+                        <th class="row2 text-center">Status</th>
+                        <th class="row2 text-left">Lead ID</th>
+                        <th class="row2 text-left">Campaign ID</th>
+                        <th class="row2 text-left">Call Date</th>
+                        <th class="row2 text-left">User</th>
+                        <th class="row2 text-left">List ID</th>
+                        <th class="row2 text-left">Duration</th>
+                        <th class="row2 text-left">Alt Dial</th>
+                        <th class="row2 text-left">&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">Vicidial Lookup Results - Lists</h4>
+                    <div id="area_loading_flag_lists"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_vici_results_lists">
+                    <thead>
+                    <tr>
+                        <th class="row2">Cluster</th>
+                        <th class="row2 text-left">Lead ID</th>
+                        <th class="row2 text-left">Entry Date</th>
+                        <th class="row2 text-left">Modify Date</th>
+                        <th class="row2 text-left">Status</th>
+                        <th class="row2 text-left">User</th>
+                        <th class="row2 text-left">Vendor Lead Code</th>
+                        <th class="row2 text-left">Source ID</th>
+                        <th class="row2 text-left">List ID</th>
+                        <th class="row2 text-left">Phone Code</th>
+                        <th class="row2 text-left">First Name</th>
+                        <th class="row2 text-left">Last Name</th>
+                        <th class="row2 text-left">&nbsp;</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">Vicidial Lookup Results - DID Logs</h4>
+                    <div id="area_loading_flag_did"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_vici_results_did">
+                    <thead>
+                    <tr>
+                        <th class="row2">Cluster</th>
+                        <th class="row2 text-left">Extension</th>
+                        <th class="row2 text-left">DID ID</th>
+                        <th class="row2 text-left">Call Date</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">Vicidial Lookup Results - Dial Logs</h4>
+                    <div id="area_loading_flag_diallog"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_vici_results_diallogs">
+                    <thead>
+                    <tr>
+                        <th class="row2">Cluster</th>
+                        <th class="row2 text-left">Number Called</th>
+                        <th class="row2 text-left">Call ID</th>
+                        <th class="row2 text-left">Call Date</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="px_lookup_results_div" class="block-content nod">
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">PX Lookup Results - Lead Tracking</h4>
+                    <div id="area_loading_flag_pxleads"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_px_results_leads">
+                    <thead>
+                    <tr>
+                        <th class="row2">Cluster</th>
+                        <th class="row2 text-left">Number Called</th>
+                        <th class="row2 text-left">Call ID</th>
+                        <th class="row2 text-left">Call Date</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">PX Lookup Results - Transfers</h4>
+                    <div id="area_loading_flag_pxtransfers"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_px_results_transfers">
+                    <thead>
+                    <tr>
+                        <th class="row2">Cluster</th>
+                        <th class="row2 text-left">Number Called</th>
+                        <th class="row2 text-left">Call ID</th>
+                        <th class="row2 text-left">Call Date</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">PX Lookup Results - Sales</h4>
+                    <div id="area_loading_flag_pxsales"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_px_results_sales">
+                    <thead>
+                    <tr>
+                        <th class="row2">Lead ID</th>
+                        <th class="row2 text-left">Sale Date</th>
+                        <th class="row2 text-left">Agent</th>
+                        <th class="row2 text-left">Verifier</th>
+                        <th class="row2 text-left">First Name</th>
+                        <th class="row2 text-left">Last Name</th>
+                        <th class="row2 text-right">Amount</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">PX Lookup Results - DNC Lists</h4>
+                    <div id="area_loading_flag_pxdnclists"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_px_results_dnclists">
+                    <thead>
+                    <tr>
+                        <th class="row2">Cluster</th>
+                        <th class="row2 text-left">Number Called</th>
+                        <th class="row2 text-left">Call ID</th>
+                        <th class="row2 text-left">Call Date</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+                <div class="block-header bg-secondary">
+                    <h4 class="block-title text-white">PX Lookup Results - DNC Campaign Lists</h4>
+                    <div id="area_loading_flag_pxdnccamplists"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
+                </div>
+                <table class="table table-sm table-striped" id="tbl_px_results_dnccamplists">
+                    <thead>
+                    <tr>
+                        <th class="row2 text-left">Campaign</th>
+                        <th class="row2 text-left">Type</th>
+                        <th class="row2 text-left">Added</th>
+                        <th class="row2 text-left">Expires</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <span id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></span>
         </div>
         <script>
             applyUniformity();
-        </script><?
+        </script>
+        <?
 
     }
 }

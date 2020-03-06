@@ -76,7 +76,20 @@ class PhoneLookupAPI{
 		return $output;
 	}
     function deepSearchPhone($phone) {
-
+	    $out = [];
+        $tableFieldArray['lead_tracking'] = array('table' => 'lead_tracking', 'field' => 'phone_num');
+//        $tableFieldArray['transfers'] = array('table' => 'transfers', 'field' => 'phone_num');
+        $tableFieldArray['sales'] = array('table' => 'sales', 'field' => 'phone');
+        $tableFieldArray['dnc_list'] = array('table' => 'dnc_list', 'field' => 'phone_number');
+        $tableFieldArray['dnc_campaign_list'] = array('table' => 'dnc_campaign_list', 'field' => 'phone');
+        foreach($tableFieldArray as $key => $val) {
+            $sql = "SELECT * FROM " . $val['table'] . " WHERE `" . $val['field'] . "` = '" . $phone . "'";
+            $res = fetchAllAssoc($sql);
+            if ($res) {
+                $out[$key][] = $res;
+            }
+        }
+        echo json_encode($out);
     }
 
 
