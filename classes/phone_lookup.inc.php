@@ -519,47 +519,66 @@ class PhoneLookupTool
                             url: 'api/api.php?get=phone_lookup&action=deep&mode=json&phone_number=' + phone_num,
                             success: function (data) {
                                 var out = '';
+                                var sectionTotal = 0;
+                                /* ADD POST PROCESSING HERE */
                                 if (data.lead_tracking !== undefined && data.lead_tracking.length) {
-                                    $.each(data.lead_tracking, function (i, v) {
-                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + v[i].time_added + '</td><td class="text-left">' + v[i].time_expires + '</td></tr>';
+                                    sectionTotal = data.lead_tracking[0].length;
+                                    $.each(data.lead_tracking[0], function (i, v) {
+                                        out += '<tr><td class="text-left">' + v.campaign_id + '</td><td class="text-left">' + stampToTime(v.time,1) + '</td><td class="text-left">' + v.agent_username + '</td><td class="text-left">' + v.verifier_username + '</td></tr>';
                                     });
                                 } else {
                                     out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
                                 }
                                 $('#tbl_px_results_leads tbody').html(out);
-                                if (data.transfers !== undefined && data.transfers.length) {
-                                    $.each(data.transfers, function (i, v) {
-                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + v[i].time_added + '</td><td class="text-left">' + v[i].time_expires + '</td></tr>';
-                                    });
-                                } else {
-                                    out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
-                                }
+                                $('#area_loading_flag_pxleads').html('<div class="d-inline-block ml-2"><span title="Total Found" class="badge badge-success badge-pill">' + sectionTotal + '</span></button></div>');
+                                // out = '';
+                                // sectionTotal = 0;
+                                // if (data.transfers !== undefined && data.transfers.length) {
+                                //     sectionTotal = data.transfers[0].length;
+                                //     $.each(data.transfers[0], function (i, v) {
+                                //         out += '<tr><td class="text-left">' + v.campaign_code + '</td><td class="text-left">' + v.dnc_type + '</td><td class="text-left">' + v.time_added + '</td><td class="text-left">' + v.time_expires + '</td></tr>';
+                                //     });
+                                // } else {
+                                //     out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
+                                // }
+                                $('#area_loading_flag_pxtransfers').html('<div class="d-inline-block ml-2"><span title="Total Found" class="badge badge-success badge-pill">' + sectionTotal + '</span></button></div>');
                                 $('#tbl_px_results_transfers tbody').html(out);
+                                out = '';
+                                sectionTotal = 0;
                                 if (data.sales !== undefined && data.sales.length) {
-                                    $.each(data.sales, function (i, v) {
-                                        out = '<tr><td class="text-left">' + v[i].lead_tracking_id + '</td><td class="text-left">' + stampToTime(v[i].sale_time,1) + '</td><td class="text-left">' + v[i].agent_username + '</td><td class="text-left">' + v[i].verifier_username + '</td><td class="text-left">' + v[i].first_name + '</td><td class="text-left">' + v[i].last_name + '</td><td class="text-right">' + toCurrency(v[i].amount) + '</td></tr>';
+                                    sectionTotal = data.sales[0].length;
+                                    $.each(data.sales[0], function (i, v) {
+                                        out += '<tr><td class="text-left">' + v.lead_tracking_id + '</td><td class="text-left">' + stampToTime(v.sale_time,1) + '</td><td class="text-left">' + v.agent_username + '</td><td class="text-left">' + v.verifier_username + '</td><td class="text-left">' + v.first_name + '</td><td class="text-left">' + v.last_name + '</td><td class="text-right">' + toCurrency(v.amount) + '</td></tr>';
                                     });
                                 } else {
                                     out = '<tr><td colspan="7" class="text-left">NO RESULTS FOUND</td></tr>';
                                 }
+                                $('#area_loading_flag_pxsales').html('<div class="d-inline-block ml-2"><span title="Total Found" class="badge badge-success badge-pill">' + sectionTotal + '</span></button></div>');
                                 $('#tbl_px_results_sales tbody').html(out);
+                                out = '';
+                                sectionTotal = 0;
                                 if (data.dnc_list !== undefined && data.dnc_list.length) {
-                                    $.each(data.dnc_list, function (i, v) {
-                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + stampToTime(v[i].time_added) + '</td><td class="text-left">' + v[i].time_expires + '</td></tr>';
+                                    sectionTotal = data.dnc_list[0].length;
+                                    $.each(data.dnc_list[0], function (i, v) {
+                                        out += '<tr><td class="text-right">' + v.phone_number + '</td></tr>';
                                     });
                                 } else {
                                     out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
                                 }
+                                $('#area_loading_flag_pxdnclists').html('<div class="d-inline-block ml-2"><span title="Total Found" class="badge badge-success badge-pill">' + sectionTotal + '</span></button></div>');
                                 $('#tbl_px_results_dnclists tbody').html(out);
+                                out = '';
+                                sectionTotal = 0;
                                 if (data.dnc_campaign_list !== undefined && data.dnc_campaign_list.length) {
-                                    $.each(data.dnc_campaign_list, function (i, v) {
-                                        out = '<tr><td class="text-left">' + v[i].campaign_code + '</td><td class="text-left">' + v[i].dnc_type + '</td><td class="text-left">' + stampToTime(v[i].time_added,1) + '</td><td class="text-left">' + stampToTime(v[i].time_expires,1) + '</td></tr>';
+                                    sectionTotal = data.dnc_campaign_list[0].length;
+                                    $.each(data.dnc_campaign_list[0], function (i, v) {
+                                        out += '<tr><td class="text-left">' + v.campaign_code + '</td><td class="text-left">' + v.dnc_type + '</td><td class="text-left">' + stampToTime(v.time_added,1) + '</td><td class="text-left">' + stampToTime(v.time_expires,1) + '</td></tr>';
                                     });
                                 } else {
                                     out = '<tr><td colspan="4" class="text-left">NO RESULTS FOUND</td></tr>';
                                 }
+                                $('#area_loading_flag_pxdnccamplists').html('<div class="d-inline-block ml-2"><span title="Total Found" class="badge badge-success badge-pill">' + sectionTotal + '</span></button></div>');
                                 $('#tbl_px_results_dnccamplists tbody').html(out);
-                                $('#area_loading_flag_pxdnccamplists, #area_loading_flag_pxdnclists, #area_loading_flag_pxleads, #area_loading_flag_pxsales, #area_loading_flag_pxtransfers').html(loadSuccess);
                             },
                             error: function () {
                                 $('#area_loading_flag_pxdnccamplists, #area_loading_flag_pxdnclists, #area_loading_flag_pxleads, #area_loading_flag_pxsales, #area_loading_flag_pxtransfers').html(loadFailure);
@@ -700,29 +719,29 @@ class PhoneLookupTool
                 <table class="table table-sm table-striped" id="tbl_px_results_leads">
                     <thead>
                     <tr>
-                        <th class="row2">Cluster</th>
-                        <th class="row2 text-left">Number Called</th>
-                        <th class="row2 text-left">Call ID</th>
-                        <th class="row2 text-left">Call Date</th>
+                        <th class="row2">Campaign ID</th>
+                        <th class="row2 text-left">Called</th>
+                        <th class="row2 text-left">Agent</th>
+                        <th class="row2 text-left">Verifier</th>
                     </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
-                <div class="block-header bg-secondary">
-                    <h4 class="block-title text-white">PX Lookup Results - Transfers</h4>
-                    <div id="area_loading_flag_pxtransfers"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
-                </div>
-                <table class="table table-sm table-striped" id="tbl_px_results_transfers">
-                    <thead>
-                    <tr>
-                        <th class="row2">Cluster</th>
-                        <th class="row2 text-left">Number Called</th>
-                        <th class="row2 text-left">Call ID</th>
-                        <th class="row2 text-left">Call Date</th>
-                    </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
+<!--                <div class="block-header bg-secondary">-->
+<!--                    <h4 class="block-title text-white">PX Lookup Results - Transfers</h4>-->
+<!--                    <div id="area_loading_flag_pxtransfers"><img src="images/ajax-loader.gif" height="25" border="0"/></div>-->
+<!--                </div>-->
+<!--                <table class="table table-sm table-striped" id="tbl_px_results_transfers">-->
+<!--                    <thead>-->
+<!--                    <tr>-->
+<!--                        <th class="row2">Cluster</th>-->
+<!--                        <th class="row2 text-left">Number Called</th>-->
+<!--                        <th class="row2 text-left">Call ID</th>-->
+<!--                        <th class="row2 text-left">Call Date</th>-->
+<!--                    </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody></tbody>-->
+<!--                </table>-->
                 <div class="block-header bg-secondary">
                     <h4 class="block-title text-white">PX Lookup Results - Sales</h4>
                     <div id="area_loading_flag_pxsales"><img src="images/ajax-loader.gif" height="25" border="0"/></div>
@@ -748,10 +767,7 @@ class PhoneLookupTool
                 <table class="table table-sm table-striped" id="tbl_px_results_dnclists">
                     <thead>
                     <tr>
-                        <th class="row2">Cluster</th>
-                        <th class="row2 text-left">Number Called</th>
-                        <th class="row2 text-left">Call ID</th>
-                        <th class="row2 text-left">Call Date</th>
+                        <th class="row2 text-right">Phone Number</th>
                     </tr>
                     </thead>
                     <tbody></tbody>

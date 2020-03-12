@@ -77,8 +77,9 @@ class PhoneLookupAPI{
 	}
     function deepSearchPhone($phone) {
 	    $out = [];
-        $tableFieldArray['lead_tracking'] = array('table' => 'lead_tracking', 'field' => 'phone_num');
+	    /* ADD TO THIS ARRAY FOR MORE TABLES $tableFieldArray[xxtablexx] = array('table' => 'xxtablexx', 'field' => 'xxphonexx'} */
 //        $tableFieldArray['transfers'] = array('table' => 'transfers', 'field' => 'phone_num');
+        $tableFieldArray['lead_tracking'] = array('table' => 'lead_tracking', 'field' => 'phone_num');
         $tableFieldArray['sales'] = array('table' => 'sales', 'field' => 'phone');
         $tableFieldArray['dnc_list'] = array('table' => 'dnc_list', 'field' => 'phone_number');
         $tableFieldArray['dnc_campaign_list'] = array('table' => 'dnc_campaign_list', 'field' => 'phone');
