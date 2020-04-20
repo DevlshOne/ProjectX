@@ -154,7 +154,7 @@
 //		" AND ((verifier_cluster_id=9 AND `is_paid`='no') OR (agent_cluster_id=3 AND office='11'))  ";
 
 	$where = " WHERE sale_time BETWEEN '$stime' AND '$etime' ".
-		" AND ((verifier_cluster_id IN (9,999999) AND `is_paid`='no') OR (agent_cluster_id=3 AND office='11'))  ";
+		" AND ((verifier_cluster_id IN (9,999999) AND `is_paid`='no') OR (agent_cluster_id=3 AND office='11') OR (agent_cluster_id=3 AND verifier_cluster_id IN (0,3,999999) AND `is_paid`='no'))  ";
 
 
 
