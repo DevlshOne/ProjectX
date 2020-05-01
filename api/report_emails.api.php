@@ -376,7 +376,7 @@ class API_ReportEmails{
 				// APPLY TIME OFFSET
 				$tmptime += $dat['trigger_time'];
 
-				$calculated_last_ran_time = $tmptime - 604800;
+				$calculated_last_ran_time = $tmptime;// - 604800;
 
 
 
