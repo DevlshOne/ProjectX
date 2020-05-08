@@ -427,8 +427,8 @@ class ListToolTasks{
 
 			$("#dialog-modal-view-task").dialog({
 				autoOpen: false,
-				width: 700,
-				height: 300,
+				width: 800,
+				height: 400,
 				modal: false,
 				draggable:true,
 				resizable: true
@@ -597,10 +597,14 @@ class ListToolTasks{
 
 			}
 
+
+			$('#dialog-modal-view-task').dialog( "option", "title", "Viewing Task #<?=$id?> - <?=addslashes($this->command_options[$row['command']])?>" );
+			
 		</script><?
 
+		
 
-		echo '<span class="big">'.$this->command_options[$row['command']].'</span>';
+		//echo '<span class="big">'.$this->command_options[$row['command']].'</span>';
 
 
 //print_r($config);exit;
@@ -615,7 +619,7 @@ class ListToolTasks{
 			?><table border="0" width="100%" class="lb" cellspacing="0">
 			<tr>
 				<th class="row2">ID</th>
-				<th class="row2" align="left">Source List(s)</th>
+				<th class="row2" align="left">Source</th>
 				<th class="row2" align="center">Campaign</th>
 				<th class="row2" align="left">Destination</th>
 				<th class="row2" align="left">Timezone/States</th>
@@ -698,7 +702,9 @@ class ListToolTasks{
 					echo '<img src="percent.php?percent='.$row['progress'].'" width="100" height="10" border="0" />';
 
 				?></td>
-				<td class="row0" align="left"><?
+				<td class="row0" align="left">
+				
+					<div style="width:200px;height:200px;overflow:auto;"><?
 
 					// LOGS
 					echo nl2br($row['result_log']);
@@ -710,7 +716,8 @@ class ListToolTasks{
 						echo 'Run time: '.rendertime( 	$duration );
 					}
 
-				?></td>
+					?></div>
+				</td>
 			</tr><?
 			?></table><?
 
@@ -720,10 +727,12 @@ class ListToolTasks{
 
 			if(count($related_tasks) > 0){
 
-				?><table border="0" width="100%" class="lb" cellspacing="0">
+				?><table border="0" width="70%" align="center" class="lb" cellspacing="0">
 				<tr>
-					<th class="row2">ID</th>
-					<th class="row2" align="center">Progress</th>
+					<th class="row2" align="center">Related Task ID</th>
+					<th class="row2" align="left">Timezone</th>
+					<th class="row2" align="center">Status</th>
+					<th class="row2" align="left">Progress</th>
 					<th class="row2" align="left">&nbsp;</th>
 				</tr><?
 
@@ -732,14 +741,24 @@ class ListToolTasks{
 
 					$has_unstarted = ($has_unstarted)?$has_unstarted:(($r2['status'] == 'new' || $r2['status'] == 'running')?true:false);
 
+					$subconfig = $_SESSION['JXMLP']->parseOne($r2['config_xml'],"Config", 1);
+					
 					?><tr valign="top">
 						<td align="center"><?=$r2['id']?></td>
-						<td align="center"><?
+						<td align="left"><?
+
+							// STATES/TZ
+							echo $subconfig['tz_offset'];
+							
+						?></td>
+						<td align="left"><?
 
 							// SHOW STATUS
-							echo ucfirst($r2['status']).'<br />';
+							echo ucfirst($r2['status']);
 
-
+						?></td>
+						<td align="left"><?
+						
 							// Progress
 							echo '<img src="percent.php?percent='.$r2['progress'].'" width="100" height="10" border="0" />';
 

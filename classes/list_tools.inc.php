@@ -480,8 +480,8 @@ class ListToolsClass{
 
 			$("#dialog-modal-view-task").dialog({
 				autoOpen: false,
-				width: 700,
-				height: 300,
+				width: 800,
+				height: 400,
 				modal: false,
 				draggable:true,
 				resizable: true
