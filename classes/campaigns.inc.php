@@ -201,6 +201,9 @@ class Campaigns
                 ['id', 'text-center'],
                 ['name', 'text-left'],
                 ['status', 'text-center'],
+                ['px_hidden', 'text-center'],
+                ['verifier_mode', 'text-center'],
+                ['agent_mode', 'text-center'],
                 ['[delete]', 'text-center']
             ];
 
@@ -290,6 +293,12 @@ class Campaigns
                         $('#vcmp_id').val(data.vici_campaign_id);
                         $('#mgr_trf').val(data.manager_transfer);
                         $('#wrm_trf').val(data.warm_transfers);
+
+
+                        $('#verifier_mode').val(data.verifier_mode);
+                        $('#agent_mode').val(data.agent_mode);
+                        
+                        
                         $('#cmp_vars').val(data.variables);
                         $('#prt_cmp_dd').html(data.parent_dd);
                     },
@@ -332,6 +341,10 @@ class Campaigns
                                         <th class="row2 text-center"><?= $this->getOrderLink('id') ?>ID</a></th>
                                         <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
                                         <th class="row2 text-center"><?= $this->getOrderLink('status') ?>Status</a></th>
+                                        <th class="row2 text-center"><?= $this->getOrderLink('px_hidden') ?>PX Hidden</a></th>
+                                        <th class="row2 text-center"><?= $this->getOrderLink('verifier_mode') ?>Verifier Mode</a></th>
+                                        <th class="row2 text-center"><?= $this->getOrderLink('agent_mode') ?>Agent Mode</a></th>
+
                                         <th class="row2">&nbsp;</th>
                                     </tr>
                                 </table>
@@ -428,6 +441,36 @@ class Campaigns
                             </select>
                         </div>
                     </div>
+                    
+                    
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="verifier_mode">Verifier Mode</label>
+                        </div>
+                        <div class="col">
+                            <select id="verifier_mode" name="verifier_mode">
+                                <option value="no">No</option>
+                                <option value="yes">Yes</option>
+								<option value="rousting">Rousting</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="form-row">
+                        <div class="col">
+                            <label class="col-form-label" for="agent_mode">Agent Mode</label>
+                        </div>
+                        <div class="col">
+                            <select id="agent_mode" name="agent_mode">
+                                <option value="system">System Only</option>
+                                <option value="live">Live Only</option>
+								<option value="both">Both</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    
                     <div class="form-row">
                         <div class="col">
                             <label for="variables">Variables</label>
