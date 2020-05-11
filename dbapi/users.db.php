@@ -341,28 +341,28 @@ class UsersAPI{
 	}
 
 
-	
-	
+
+
 	function kickUserByLogin($login_row, $reason){
-		
-		
+
+
 		$dat = array('time_out' => time(), 'details' => $reason);
-	
+
 		$_SESSION['dbapi']->aedit($login_row['id'], $dat, 'logins');
 
-		
-		
-		
+
+
+
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
 	/**
 	 * Track a users login attempt
 	 * @param Integer $uid			The user ID, or 0 if login failed
@@ -379,13 +379,13 @@ class UsersAPI{
 		$dat['username']	= $username;
 		$dat['pass_attempt'] = $password;
 		$dat['result']		= $res;
-		
+
 		$dat['time']		= time();
 		$dat['time_last_action']= $dat['time'];
-		
+
 		$dat['ip']			= $_SERVER["REMOTE_ADDR"];
 		$dat['browser']		= $_SERVER['HTTP_USER_AGENT'];
-		
+
 		$dat['section'] = 'admin';
 
 		$dat['details'] = $details;
@@ -396,85 +396,85 @@ class UsersAPI{
 
 
 	function refreshFeaturesAndPrivs($return_mode=0){
-		
+
 		// RELOAD THE USER RECORD
 		$_SESSION['user'] = $_SESSION['dbapi']->querySQL("SELECT * FROM `users` WHERE id='".$_SESSION['user']['id']."' ");
-		
+
 		$logout = false;
 		$reason = "";
 		if($_SESSION['user']['enabled'] != 'yes'){
 			$logout = true;
 			$reason .= '  User has been disabled.\n';
-			
+
 		}
-		
+
 		// LOAD AND CHECK ACCOUNT STATUS
 		$_SESSION['account'] = $_SESSION['dbapi']->accounts->getByID($_SESSION['user']['account_id']);
-		
+
 		if(!$_SESSION['account']['id'] || $_SESSION['account']['status'] != 'active'){
-			
+
 			$logout = true;
-			
+
 			$reason .= '  Account not found or inactive.\n';
-			
+
 		}
-		
-		
+
+
 		if($logout){
-			
+
 			if(isset($_SESSION['user']) && $_SESSION['user']['id'] > 0){
-				
+
 				$_SESSION['dbapi']->users->updateLogoutTime();
-				
+
 			}
-			
-			
-			
+
+
+
 
 			$reason = 'You have been logged out:\n'.$reason;
-			
-			
+
+
 			switch($return_mode){
 			default:
 			case 0:
-			
+
 				session_unset();
-				
+
 				jsAlert($reason, 1);
-			
+
 				jsRedirect("index.php");
 				exit;
-			
+
 			case 1:
-				
+
 				$_SESSION['api']->errorOut("$reason");
-				
+
 				session_unset();
-				
+
 				exit;
-				
-				
+
+
 			case 2:
-				
+
 				die("ERROR: ".$reason);
-				
+
 			}
 		}
-		
+
 
 		// RELOAD THE FEATURE RECORD
 		if($_SESSION['user']['feature_id'] > 0){
-			
+
 			$_SESSION['features'] = $_SESSION['dbapi']->querySQL("SELECT * FROM features WHERE id='".intval($_SESSION['user']['feature_id'])."' ");
-			
+
 		}
 
-		
-		
+
+
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Updates the 'last_login' time field, to current time
 	 * Requires $_SESSION['user'] to be initialized already
@@ -486,45 +486,45 @@ class UsersAPI{
 	}
 
 	function updateLastActionTime(){
-		
+
 		// CHECK FOR THEM TO BE LOGGED OUT FIRST
 		$logins = $_SESSION['dbapi']->querySQL("SELECT * FROM `logins` WHERE id='".$_SESSION['logins']['id']."' ");
-		
+
 		// THEY'VE BEEN FORCE LOGGED OUT
 		if($logins['id'] > 0 && $logins['time_out'] > 0){
-			
+
 			// BYE FELISHA
 			session_unset();
-			
+
 			if(trim($logins['details'])){
-				
+
 				jsAlert('You have been kicked: '.$logins['details']);
-				
+
 			}
-			
+
 			jsRedirect("index.php");
 			exit;
-			
+
 		}
-		
+
 		$_SESSION['logins'] = $logins;
-		
-		
+
+
 		$dat = array( 'time_last_action' => time() );
-		
+
 		$_SESSION['dbapi']->aedit($_SESSION['logins']['id'],$dat,"logins");
 	}
-	
-	
+
+
 	function updateLogoutTime(){
-		
+
 		$dat = array();
-				
+
 		$dat['time_out'] = time();
 		$dat['duration'] = $dat['time_out'] - $_SESSION['logins']['time'];
-		
+
 		$_SESSION['dbapi']->aedit($_SESSION['logins']['id'],$dat,"logins");
-	
+
 	}
 
 	function userExists($username){
@@ -532,7 +532,7 @@ class UsersAPI{
 		list($id) = $_SESSION['dbapi']->queryROW(
 						"SELECT id FROM `".$this->table."` ".
 						" WHERE username='".mysqli_real_escape_string($_SESSION['dbapi']->db,$username)."' ".
-						" AND enabled='yes' ");
+						" AND enabled='yes'");
 
 		return ($id)?true:false;
 	}
