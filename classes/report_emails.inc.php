@@ -560,6 +560,7 @@ class ReportEmails{
 								<option value="taps">Taps</option>
 								<option value="verifier">Verifier</option>
 								<option value="company">Sub-Company and Group</option>
+								<option value="roustercompany">Sub-Company and Group - Rousters</option>
 							</select>
 
 						</span>
