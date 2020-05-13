@@ -104,15 +104,10 @@ class PhoneLookupTool
                         break;
 
                     case 'phone_num':
-
-
                         if (!value) return false;
-
+                        value.replace(/[^0-9]/g,'');
                         if (value.length < 10 || value.length > 10) return false;
-
                         return true;
-
-
                         break;
 
                 }
