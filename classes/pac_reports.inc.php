@@ -378,6 +378,8 @@ M4 -> N4*/
 			function getPacsURL(){
 
 				var frm = getEl('<?=$this->frm_name?>');
+                let phone_num = frm.s_phone.value;
+                phone_num = phone_num.replace(/[^0-9]/g,'');
 
 				return 'api/api.php'+
 								"?get=pac_reports&"+
@@ -385,7 +387,7 @@ M4 -> N4*/
 
 								's_project='+escape(frm.s_project.value)+"&"+
 								's_amount='+escape(frm.s_amount.value)+"&"+
-								's_phone='+escape(frm.s_phone.value)+"&"+
+								's_phone='+escape(phone_num)+"&"+
 
 								's_gateway='+escape(frm.s_gateway.value)+"&"+
 

@@ -66,13 +66,7 @@ class PhoneLookupTool
 			var cluster_array = new Array();
 			var tmpclusteridx = 0;
 		<?
-			$res = query("SELECT * FROM vici_clusters WHERE `status`='enabled' ".
-
-				//" AND `cluster_type` != 'verifier' ".
-
-				" ORDER BY `name` ASC",1);
-
-
+			$res = query("SELECT * FROM vici_clusters WHERE `status`='enabled' ORDER BY `name` ASC",1);
 
 			/**
 			 * CONNECT TO CLUSTERS AND PUSH NULL-CAMPAIGN DNC AND THE PER-CAMPAIGN DNC
@@ -130,7 +124,6 @@ class PhoneLookupTool
                 // call function to lookup the phone number
 
                 var params = getFormValues(frm, 'validatePhoneField');
-
                 // FORM VALIDATION FAILED!
                 // param[0] == field name
                 // param[1] == field value
@@ -156,7 +149,8 @@ class PhoneLookupTool
 
 //alert('<?=$this->lookup_api?>');
 
-					var phone_num = frm.phone_num.value;
+					let phone_num = frm.phone_num.value;
+					phone_num.replace(/[^0-9]/g,'');
 
 					let totalrecordscount = 0;
 
@@ -644,8 +638,6 @@ class PhoneLookupTool
                     <div class="input-group input-group-sm">
                         <input type="text" class="form-control form-control-alt" name="phone_num" placeholder="Phone.." onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
                         <button type="submit" title="Search" class="btn btn-sm btn-primary">Search..</button>
-
-
                     </div>
                     <br />
                     <input type="checkbox" id="search_area_dripp" name="search_areas[]" value="dripp" />Search DRIPP<br />
