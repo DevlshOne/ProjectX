@@ -236,6 +236,9 @@ class API_ReportEmails{
 						$reptype = 'company';
 
 						break;
+					case 'roustercompany':
+						$reptype = 'roustercompany';
+						break;
 					}
 					
 					$dat['settings'] .= '$report_type = \''.$reptype."';\n";
@@ -307,10 +310,12 @@ class API_ReportEmails{
 					
 				// SUMMARY REPORT ONLY, DOESN'T LOOP GROUPS
 				}else{
+					if($reptype != 'roustercompany')
+						$dat['subject_append'] = ucfirst($reptype);
+					else				
+						$dat['subject_append'] = 'Sub-Company Rousters';
 					
-					$dat['subject_append'] = ucfirst($reptype);
-					
-					
+						
 					$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->report_emails->table);
 					$id = mysqli_insert_id($_SESSION['dbapi']->db);
 					

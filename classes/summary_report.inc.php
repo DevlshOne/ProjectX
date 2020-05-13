@@ -33,7 +33,7 @@ class SummaryReport
 
         include_once($_SESSION['site_config']['basedir'] . "classes/sales_analysis.inc.php");
 
-        //	include_once($_SESSION['site_config']['basedir']."classes/rouster_report.inc.php");
+        include_once($_SESSION['site_config']['basedir']."classes/rouster_report.inc.php");
 //		if(!checkAccess('sales_analysis')){
 //
 //
@@ -49,6 +49,78 @@ class SummaryReport
 
     }
 
+    
+    
+    
+    
+    function generateCompanyRousterData($stime, $etime, $stack){
+    	
+    	$stime = intval($stime);
+    	$etime = intval($etime);
+    	$output = array();
+    	
+    	
+    	foreach ($stack as $company_id => $company_row) {
+    		$output[$company_id] = array(
+    				'company_row' => $company_row
+    		);
+    		
+
+    		$output[$company_id]['user_groups'] = array();
+    		
+    		$sql = "SELECT * FROM `user_groups_master` WHERE company_id='" . intval($company_id) . "' AND `agent_type` IN('taps','all') ORDER BY `user_group` ASC";
+    		//	echo $sql;
+    		
+    		$res = $_SESSION['dbapi']->ROquery($sql, 1);
+    		
+    		//
+    		$x = 0;
+    		while ($group = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
+
+    			$output[$company_id]['user_groups'][$x] = $group;
+    			
+    			
+    			//generateData($stime, $etime, $campaign_code, $agent_cluster_id, $combine_users, $user_group, $ignore_group, $vici_campaign_id='',$ignore_arr = null)
+    			// new args
+    			// generateData($stime, $etime, $campaign_code, $agent_cluster_id, $user_team_id, $combine_users, $user_group, $ignore_group, $vici_campaign_code = '', $ignore_arr = NULL, $vici_campaign_id = '') {
+    			
+    			list($agent_stack, $totals) = $_SESSION['rouster_report']->generateData(
+    																-1, 0, $stime, $etime, 
+    																$group['user_group'], false, NULL, 
+											    					0,  0, 
+											    					NULL, 
+    																true
+    									);
+    			
+    		//	print_r($totals);
+    			//$_SESSION['sales_analysis']->generateData($stime, $etime, null, -1, 0, true, $group['user_group'], null);
+//    			list($data, $totals) = $this->generateData($cluster_id, $user_team_id, $stime, $etime, $user_group, false, $ignore_users, $source_cluster_id, $ignore_source_cluster_id, $source_user_group, $combine_users);
+    			
+    			if ($agent_stack == null) {
+    				
+    				// SKIP GROUPS WITH NO DATA/ZEROS
+    				unset($output[$company_id]['user_groups'][$x]);
+    				
+    			}else{
+    				
+    				$output[$company_id]['user_groups'][$x]['data'][0] = $agent_stack;
+    				$output[$company_id]['user_groups'][$x]['data'][1] = $totals;
+    				
+    			}
+    			
+    			$x++;
+    		}
+    		
+    		
+    	}
+    	
+    	return $output;
+    	
+    }
+    
+    
+    
+    
     function generateCompanyData($stime, $etime, $stack)
     {
 
@@ -262,7 +334,7 @@ class SummaryReport
 
             }
 
-        } else if ($report_type == "company") {
+        } else if ($report_type == "company" || $report_type == "roustercompany") {
 
 
             $dres = $_SESSION['dbapi']->ROquery("SELECT * FROM `companies` WHERE `status`='enabled' ORDER BY `name` ASC", 1);
@@ -273,7 +345,7 @@ class SummaryReport
                 $stack[$cid] = $row;
 
             }
-
+        
 
         } else {
 
@@ -340,6 +412,12 @@ class SummaryReport
 
 
                 break;
+            case 'roustercompany':
+            	
+            	return $this->generateCompanyRousterData($stime, $etime, $stack);
+            	
+            	
+            	break;
         }
 
 
@@ -561,8 +639,7 @@ class SummaryReport
     }
 
 
-    function makeReport()
-    {
+    function makeReport(){
 
 
         //echo $this->makeHTMLReport('1430377200', '1430463599', 'BCSFC', -1, 1,null , array("SYSTEM-TRNG-SOUTH", "SYSTEM-TRNG","SYS-TRNG-SOUTH-AM")) ;
@@ -609,6 +686,8 @@ class SummaryReport
                         <option value="taps"<?= ($type == 'taps') ? " SELECTED" : "" ?>>Taps</option>
                         <option value="verifier"<?= ($type == 'verifier') ? " SELECTED" : "" ?>>Verifier</option>
                         <option value="company"<?= ($type == 'company') ? " SELECTED" : "" ?>>Sub-Company and Group</option>
+                        <option value="roustercompany"<?= ($type == 'roustercompany') ? " SELECTED" : "" ?>>Sub-Company and Group - Rousters</option>                        
+                        
                     </select>
                 </div>
             </div>
@@ -621,6 +700,7 @@ class SummaryReport
         <div class="block-content">
         <?
         if (isset($_POST['generate_report'])) {
+        	
             $time_started = microtime_float();
             ## TIME
             $timestamp = strtotime($_REQUEST['stime_month'] . "/" . $_REQUEST['stime_day'] . "/" . $_REQUEST['stime_year']);
@@ -645,6 +725,8 @@ class SummaryReport
     {
         echo '<div class="small text-left">makeHTMLReport(\'' . $report_type . '\', ' . "$stime, $etime) called</div>\n";
         if ($report_type == 'verifier') {
+        	
+        	
             $cluster_data = $this->generateData($report_type, $stime, $etime);
             if (count($cluster_data) < 1) {
                 return null;
@@ -1102,13 +1184,516 @@ class SummaryReport
             else
                 return null;
 
+                
+                
+        /**
+         * ROUSTER SUMMARY REPORT
+         */
+        }else if ($report_type == 'roustercompany'){
+        	
+        	$company_data = $this->generateData($report_type, $stime, $etime);
+        	
+        	if (count($company_data) < 1) {
+        		return null;
+        	}
+        	
+        	//             print_r($company_data);
+        	
+        	
+        	$gcount = 0;
+        	// ACTIVATE OUTPUT BUFFERING
+        	ob_start();
+        	ob_clean();
+        	echo "<h1>Sub Company - Rouster Summary Report - ";
+        	if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
+        		echo date("m-d-Y", $stime);
+        	} else {
+        		echo date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
+        		
+        	}
+        	echo "</h1>";
+        	?>
+            <table class="table table-sm table-striped">
+                <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
+                <tr>
+                    <th style="border-bottom:1px solid #000;padding-left:5px" class="text-left">Company</th>
+     
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right"># of Calls</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">A</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">%Ans</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Calls/hr</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Contact%</th>
+					
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">PaidCC</th>
+					
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Paid/$Hour</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Worked/$Hour</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">$PaidCC</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Convert%</th>
+					
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Activity</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">In Call</th>
+				<?/**	<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Time</th>**/?>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Paid Time</th>
+					
+					<?/**<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Pause</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Talk Avg</th>
+					<th nowrap style="border-bottom:1px solid #000;padding-left:3px" align="right">Dead</th>**/?>
+                </tr><?
 
+
+                $company_totals = array(
+                
+	                'total_calls'				=> 0,
+	                'total_sales'				=> 0,
+	                'total_hangups'				=> 0,
+	                'total_declines'			=> 0,
+	                'total_ans'					=> 0,
+	                'total_contacts'			=> 0,
+	                'total_reviews'				=> 0,
+	                'total_paid_sales'			=> 0,
+	                'total_paid_sales_amount'	=> 0,
+	                'total_activity_time'		=> 0,
+	                'total_total_time'			=> 0,
+	                
+	                'total_incall_time'			=> 0,
+	                
+	                'total_convert_percent'		=> 0,
+	                
+	                'total_bumps'				=> 0,
+	                'total_pos_bump_agent_amount'	=> 0,
+	                'total_pos_bump_verifier_amount'=> 0,
+	                
+	                'paid_time'	=> 0,
+	                't_max'		=> 0,
+	                't_time'	=> 0,
+	                't_dead'	=> 0,
+	                'total_talk_time'	=> 0,
+	                'total_paid_sales'	=> 0,
+	                
+	                'total_paid_avg_per_hour'	=> 0 ,
+	                'total_worked_avg_per_hour'	=> 0,
+	                
+	                'total_calls_per_hour'		=> 0
+                );
+
+
+
+                $colspan = 19;
+
+                
+//                 print_r($company_data);
+                
+                $subrendercnt = 0;
+                
+                foreach ($company_data as $company_id => $compdata) {
+
+                    // $compdata['company_row'] = (company db record)
+                    // $compdata['user_groups'] = array of user groups, with data
+                    // $compdata['user_groups']['data'] = Array of (agent data, totals)
+                    
+                	if (count($compdata['user_groups']) <= 0) {
+                		
+                		continue;
+                	}
+
+                    ?><tr>
+                    	<th class="text-left" colspan="<?= ($colspan ) ?>" style="font-weight:bold"><?= $compdata['company_row']['name'] ?></th>
+
+                    </tr><?
+
+                    $running_totals = array(
+                    		'total_calls'				=> 0,
+                    		'total_sales'				=> 0,
+                    		'total_hangups'				=> 0,
+                    		'total_declines'			=> 0,
+                    		'total_ans'					=> 0,
+                    		'total_contacts'			=> 0,
+                    		'total_reviews'				=> 0,
+                    		'total_paid_sales'			=> 0,
+                    		'total_paid_sales_amount'	=> 0,
+                    		'total_activity_time'		=> 0,
+                    		'total_total_time'			=> 0,
+                    		
+                    		'total_incall_time'			=> 0,
+                    		
+                    		'total_convert_percent'		=> 0,
+                    		
+                    		'total_bumps'				=> 0,
+                    		'total_pos_bump_agent_amount'	=> 0,
+                    		'total_pos_bump_verifier_amount'=> 0,
+                    		
+                    		'paid_time'	=> 0,
+                    		't_max'		=> 0,
+                    		't_time'	=> 0,
+                    		't_dead'	=> 0,
+                    		'total_talk_time'	=> 0,
+                    		'total_paid_sales'	=> 0,
+                    		
+                    		'total_paid_avg_per_hour'	=> 0 ,
+                    		'total_worked_avg_per_hour'	=> 0,
+                    		
+                    		'total_calls_per_hour'		=> 0
+                    	);
+
+
+                    $rendercnt = 0;
+                    foreach ($compdata['user_groups'] as $ugidx => $group_row) {
+
+                        // SKIP EMPTY GROUPS
+                    	if ($group_row['data'] == null || $group_row['data'][0] == null) continue;
+
+// print_r($group_row);
+                        $totals = $group_row['data'][1];
+
+                        
+                         //print_r($totals);
+//                         // SKIP GROUPS WITH ZERO FOR THE IMPORTANT TOTALS
+//                         if ($totals['total_calls'] == 0 && $totals['total_sales'] == 0 && $totals['total_activity_wrkd_hrs'] == 0) {
+//                             continue;
+//                         }
+
+
+                        $gcount++;
+
+                        $total_ans_percent = (($totals['total_calls'] <= 0) ? 0 : number_format(round((($totals['total_ans']) / ($totals['total_calls'])) * 100, 2), 2));
+
+                        $contact_percent = ($totals['total_calls'] <= 0) ? 0 : number_format(round((($totals['total_contacts']) / ($totals['total_calls'])) * 100, 2), 2); 
+//					echo "GROUP: ".$group_row['user_group']."<br />\n";
+
+//					echo nl2br(print_r($totals,1));
+
+                        $paid_sale_percent = round(((float)$totals['total_paid_sales'] / $totals['total_sales']) * 100, 2);
+
+                        $unpaid_sale_percent = 100 - $paid_sale_percent;
+
+                        ?>
+                        <tr>
+                        <td style="padding-left:10px" nowrap><?= htmlentities(strtoupper($group_row['user_group'])) ?></td>
+                        <td class="text-center"><?=number_format($totals['total_calls']) ?></td>
+                        <td class="text-center"><?=number_format($totals['total_ans']) ?></td>
+                        <td class="text-center"><?=$total_ans_percent?>%</td>
+                        
+                        <td class="text-center"><?=number_format($totals['total_calls_per_hour']) ?></td>
+                        <td class="text-center"><?=$contact_percent ?>%</td>
+                        
+                        <td class="text-center"><?=number_format($totals['total_paid_sales']) ?></td>
+                        <td class="text-center">$<?=number_format($totals['total_paid_avg_per_hour'],2) ?></td>
+                        <td class="text-center">$<?=number_format($totals['total_worked_avg_per_hour'],2) ?></td>                        
+                        <td class="text-center">$<?=number_format($totals['total_paid_sales_amount'],2) ?></td>
+                        
+                        <td class="text-center"><?=number_format($totals['total_convert_percent'],2) ?>%</td>
+                        
+                        
+                        <td class="text-center"><?
+                        
+	                        $tmphours = floor($totals['total_activity_time'] / 3600);
+    						$tmpmin = floor(($totals['total_activity_time'] - ($tmphours * 3600)) / 60);
+							echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+							
+						?></td>
+                        
+                        
+                        <td class="text-center"><?
+                        
+	                        $tmphours = floor($totals['total_incall_time'] / 3600);
+	                        $tmpmin = floor(($totals['total_incall_time'] - ($tmphours * 3600)) / 60);
+	                        echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+								
+						?></td>
+                       <?/** <td class="text-center"><?
+                        
+							$tmphours = floor($totals['t_time'] / 3600);
+							$tmpmin = floor(($totals['t_time'] - ($tmphours * 3600)) / 60);
+                            echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+                            
+                         ?></td>
+                         **/?>
+                        <td class="text-center"><?
+                         
+                         
+                         	$ptime = ($totals['paid_time']);
+                            $tmpmin = floor($ptime / 60);
+                            $tmpsec = ($ptime % 60);
+                            $total_ptime = $tmpmin . ':' . (($tmpsec < 10) ? '0' . $tmpsec : $tmpsec);
+                           	echo $total_ptime;
+                           	
+                         ?></td>
+                 <?  /***     
+                        <td class="text-center"><?= number_format($totals['total_activity_paid_hrs'], 2) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_activity_wrkd_hrs'], 2) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_calls']) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_NI']) ?></td>
+                        <td class="text-center"><?= number_format($totals['total_XFER']) ?></td>
+
+
+                        <td class="text-center"><?= number_format($totals['total_sale_cnt']) ?></td>
+
+
+                        <td class="text-center"><?= number_format($totals['total_paid_sale_cnt']) ?></td>
+                        <td class="text-right"><?= number_format($paid_sale_percent, 2) ?>%</td>
+
+                        <td class="text-right">$<?= number_format($totals['total_paid_sales']) ?></td>
+
+
+                        <td class="text-center"><?= number_format(($totals['total_sale_cnt'] - $totals['total_paid_sale_cnt'])) ?></td>
+                        <td class="text-right"><?= number_format($unpaid_sale_percent, 2) ?>%</td>
+
+
+                        <td class="text-right"><?= number_format($totals['total_closing'], 2) ?>%</td>
+                        <td class="text-right"><?= number_format($totals['total_conversion'], 2) ?>%</td>
+                        <td class="text-right"><?= number_format($totals['total_yes2all'], 2) ?>%</td>
+                        <td class="text-right">$<?= number_format($totals['total_sales']) ?></td>
+
+                        <td class="text-right">$<?= number_format($totals['total_avg'], 2) ?></td>
+                        <td class="text-right">$<?= number_format($totals['total_paid_hr'], 2) ?></td>
+                        <td class="text-right">$<?= number_format($totals['total_wrkd_hr'], 2) ?></td>
+                       ****/?>
+                        </tr><?
+
+                        foreach($totals as $totalkey=>$totalval){
+                        	
+                        	$running_totals[$totalkey] += $totalval;
+                        	
+                        }
+
+                        
+                        $rendercnt++;
+                    }
+
+
+                    // OUTPUT COMPANY TOTALS LINE
+
+
+                    $paid_sale_percent = round(((float)$running_totals['total_paid_sales'] / $running_totals['total_sales']) * 100, 2);
+
+                    $unpaid_sale_percent = 100 - $paid_sale_percent;
+                    $total_ans_percent = (($running_totals['total_calls'] <= 0) ? 0 : number_format(round((($running_totals['total_ans']) / ($running_totals['total_calls'])) * 100, 2), 2));
+                    $contact_percent = ($running_totals['total_calls'] <= 0) ? 0 : number_format(round((($running_totals['total_contacts']) / ($running_totals['total_calls'])) * 100, 2), 2);
+
+                    $running_totals['total_convert_percent'] = round( ($running_totals['total_convert_percent']/$rendercnt),2);
+                    
+                    ?>
+                    <tr>
+						<th style="border-top:1px solid #000;padding:3px" class="text-left" nowrap>Sub-Total:</th>
+
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_calls']) ?></th>
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_ans']) ?></th>
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?= $total_ans_percent ?>%</th>
+                        
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_calls_per_hour']) ?></th>
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?= $contact_percent ?>%</th>
+                        
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?=number_format($running_totals['total_paid_sales']) ?></th>
+						<th class="text-center" style="border-top:1px solid #000;padding:3px">$<?=number_format($running_totals['total_paid_avg_per_hour'],2) ?></th>
+						<th class="text-center" style="border-top:1px solid #000;padding:3px">$<?=number_format($running_totals['total_worked_avg_per_hour'],2) ?></th>                        
+						<th class="text-center" style="border-top:1px solid #000;padding:3px">$<?=number_format($running_totals['total_paid_sales_amount'],2) ?></th>
+						
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?=number_format($running_totals['total_convert_percent'],2)?>%</th>
+						
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?
+                        
+							$tmphours = floor($running_totals['total_activity_time'] / 3600);
+							$tmpmin = floor(($running_totals['total_activity_time'] - ($tmphours * 3600)) / 60);
+							echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+							
+						?></th>
+						<th class="text-center" style="border-top:1px solid #000;padding:3px"><?
+                        
+							$tmphours = floor($running_totals['total_incall_time'] / 3600);
+							$tmpmin = floor(($running_totals['total_incall_time'] - ($tmphours * 3600)) / 60);
+	                        echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+								
+						?></th>
+						<?/*<th class="text-center" style="border-top:1px solid #000;padding:3px"><?
+							$tmphours = floor($running_totals['t_time'] / 3600);
+							$tmpmin = floor(($running_totals['t_time'] - ($tmphours * 3600)) / 60);
+                            echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+                        ?></th>*/?>
+                        
+                        <th class="text-center" style="border-top:1px solid #000;padding:3px"><?
+                         
+                         
+                       		$ptime = ($running_totals['paid_time']);
+                            $tmpmin = floor($ptime / 60);
+                            $tmpsec = ($ptime % 60);
+                            $total_ptime = $tmpmin . ':' . (($tmpsec < 10) ? '0' . $tmpsec : $tmpsec);
+                           	echo $total_ptime;
+                           	
+                       ?></th>
+						
+<?/*
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_paid_hrs'], 2) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_activity_wrkd_hrs'], 2) ?></th>
+
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_NI']) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_XFER']) ?></th>
+
+
+                        <th style="border-top:1px solid #000;padding:3px"><?= number_format($running_totals['total_sale_cnt']) ?></th>
+
+                        <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format($running_totals['total_paid_sale_cnt']) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($paid_sale_percent, 2) ?>%</th>
+
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_paid_sales']) ?></th>
+
+
+                        <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format(($running_totals['total_sale_cnt'] - $running_totals['total_paid_sale_cnt'])) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
+
+
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_closing'], 2) ?>%</th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_conversion'], 2) ?>%</th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($running_totals['total_yes2all'], 2) ?>%</th>
+
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_sales']) ?></th>
+
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_avg'], 2) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_paid_hr'], 2) ?></th>
+                        <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($running_totals['total_wrkd_hr'], 2) ?></th>
+*/?>
+                    </tr>
+                    <?
+
+
+                    foreach($running_totals as $runkey=>$runval){
+                    	$company_totals[$runkey] += $runval;
+                    }
+                    
+                    
+                    $subrendercnt++;
+                    
+                }
+
+
+                // OUTPUT MAIN/FINAL TOTALS LINE
+
+
+                $paid_sale_percent = round(((float)$company_totals['total_paid_sales'] / $company_totals['total_sales']) * 100, 2);
+
+                $unpaid_sale_percent = 100 - $paid_sale_percent;
+
+                $total_ans_percent = (($company_totals['total_calls'] <= 0) ? 0 : number_format(round((($company_totals['total_ans']) / ($company_totals['total_calls'])) * 100, 2), 2));
+                $contact_percent = ($company_totals['total_calls'] <= 0) ? 0 : number_format(round((($company_totals['total_contacts']) / ($company_totals['total_calls'])) * 100, 2), 2);
+                
+                $company_totals['total_convert_percent'] = round( ($company_totals['total_convert_percent']/$subrendercnt),2);
+                ?>
+                <tr>
+					<th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-left" height="55" nowrap>Grand Total:</th>
+					<th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?= number_format($company_totals['total_calls']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?= number_format($company_totals['total_ans']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?= $total_ans_percent ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?= number_format($company_totals['total_calls_per_hour']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?= $contact_percent?>%</th>
+                    
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?=number_format($company_totals['total_paid_sales']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center">$<?=number_format($company_totals['total_paid_avg_per_hour'],2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center">$<?=number_format($company_totals['total_worked_avg_per_hour'],2) ?></th>                        
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center">$<?=number_format($company_totals['total_paid_sales_amount'],2) ?></th>
+
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?=number_format($company_totals['total_convert_percent'],2) ?>%</th>
+
+
+					<th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?
+                        
+						$tmphours = floor($company_totals['total_activity_time'] / 3600);
+						$tmpmin = floor(($company_totals['total_activity_time'] - ($tmphours * 3600)) / 60);
+						echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+						
+					?></th>
+					<th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?
+                        
+						$tmphours = floor($company_totals['total_incall_time'] / 3600);
+						$tmpmin = floor(($company_totals['total_incall_time'] - ($tmphours * 3600)) / 60);
+	                    echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+								
+					?></th>
+					
+					<?/*<th style="border-top:1px solid #000;padding:3px" class="text-center" align="center"><?
+						$tmphours = floor($company_totals['t_time'] / 3600);
+						$tmpmin = floor(($company_totals['t_time'] - ($tmphours * 3600)) / 60);
+                       echo $tmphours . ':' . (($tmpmin <= 9) ? '0' . $tmpmin : $tmpmin);
+                    ?></th>**/?>
+                    
+                    <th style="border-top:1px solid #000;padding:3px;vertical-align:middle" class="text-center" align="center"><?
+                         
+                         
+                   		$ptime = ($company_totals['paid_time']);
+                        $tmpmin = floor($ptime / 60);
+                        $tmpsec = ($ptime % 60);
+                        $total_ptime = $tmpmin . ':' . (($tmpsec < 10) ? '0' . $tmpsec : $tmpsec);
+                        echo $total_ptime;
+                           	
+                    ?></th>
+
+<? /*                   <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_activity_paid_hrs'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_activity_wrkd_hrs'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_calls']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_NI']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_XFER']) ?></th>
+
+
+                    <th style="border-top:1px solid #000;padding:3px"><?= number_format($company_totals['total_sale_cnt']) ?></th>
+
+                    <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format($company_totals['total_paid_sale_cnt']) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($paid_sale_percent, 2) ?>%</th>
+
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_paid_sales']) ?></th>
+
+
+                    <th style="border-top:1px solid #000;padding:3px" class="text-center"><?= number_format(($company_totals['total_sale_cnt'] - $company_totals['total_paid_sale_cnt'])) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($unpaid_sale_percent, 2) ?>%</th>
+
+
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($company_totals['total_closing'], 2) ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($company_totals['total_conversion'], 2) ?>%</th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right"><?= number_format($company_totals['total_yes2all'], 2) ?>%</th>
+
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_sales']) ?></th>
+
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_avg'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_paid_hr'], 2) ?></th>
+                    <th style="border-top:1px solid #000;padding:3px" class="text-right">$<?= number_format($company_totals['total_wrkd_hr'], 2) ?></th>
+*/?>
+                </tr>
+            </table>
+            </div>
+            <div class="block-header bg-info-light">
+                <i class="si si-clock"></i>Generated on: <?= date("g:ia m/d/Y") ?>
+            </div>
+            </form>
+            </div>
+            <?
+
+            // GRAB DATA FROM BUFFER
+            $data = ob_get_contents();
+
+            // TURN OFF OUTPUT BUFFERING, WITHOUT OUTPUTTING
+            ob_end_clean();
+
+            // CONNECT BACK TO PX BEFORE LEAVING
+            connectPXDB();
+
+            // RETURN HTML
+            if ($gcount > 0)
+                return $data;
+            else
+                return null;
+
+        	
+                
+                
             /******* REPORT TYPE : SUB COMPANY AND USER GROUP ********/
         } else if ($report_type == 'company') {
             $company_data = $this->generateData($report_type, $stime, $etime);
+            
             if (count($company_data) < 1) {
                 return null;
             }
+            
+//             print_r($company_data);
+            
+            
             $gcount = 0;
             // ACTIVATE OUTPUT BUFFERING
             ob_start();
@@ -1195,7 +1780,7 @@ class SummaryReport
 
                         ?>
                         <tr>
-                        <td colspan="<?= $colspan ?>" class="text-center">No records found.</td>
+							<td colspan="<?= $colspan ?>" class="text-center">No records found.</td>
                         </tr><?
                         continue;
                     }
@@ -1233,10 +1818,10 @@ class SummaryReport
 
                         $totals = $group_row['data'][1];
 
-                        // SKIP GROUPS WITH ZERO FOR THE IMPORTANT TOTALS
-                        if ($totals['total_calls'] == 0 && $totals['total_sales'] == 0 && $totals['total_activity_wrkd_hrs'] == 0) {
-                            continue;
-                        }
+//                         // SKIP GROUPS WITH ZERO FOR THE IMPORTANT TOTALS
+//                         if ($totals['total_calls'] == 0 && $totals['total_sales'] == 0 && $totals['total_activity_wrkd_hrs'] == 0) {
+//                             continue;
+//                         }
 
 
                         $gcount++;
