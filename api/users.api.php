@@ -665,7 +665,7 @@ class API_Users{
 								connectViciDB($idx);
 
 								// EDIT THE USERS GROUP ON THE VICIDIAL SERVER
-								execSQL("UPDATE `vicidial_users` SET user_group='$new_group' WHERE user_id='".$trans['vici_user_id']."' ");
+								execSQL("UPDATE `vicidial_users` SET user_group='$new_group' WHERE active='Y' AND user_id='".$trans['vici_user_id']."' ");
 
 
 								// ADD NEW TRANSLATE RECORD
@@ -726,7 +726,7 @@ class API_Users{
 							// CONNECT TO VICI CLUSTER
 							connectViciDB($idx);
 
-							$sql = "UPDATE `vicidial_users` SET user_group='$new_group' WHERE user_id='".$trans['vici_user_id']."' ";
+							$sql = "UPDATE `vicidial_users` SET user_group='$new_group' WHERE active = 'Y' AND user_id='".$trans['vici_user_id']."' ";
 
 							//echo $sql;
 							// EDIT THE USERS GROUP ON THE VICIDIAL SERVER
@@ -1053,16 +1053,16 @@ class API_Users{
 			}
 
 			if($row['enabled'] == 'no' && intval($_POST['actually_delete_user']) > 0){
-				
+
 				$_SESSION['dbapi']->adelete($row['id'],'users');
-				
+
 				$_SESSION['api']->outputEditSuccess(-404);
-				
+
 				exit;
-				
+
 			}
-			
-			
+
+
 			unset($dat);
 			$dat['username'] = $username;
 			$dat['priv'] = intval($_POST['priv']);
@@ -1141,10 +1141,10 @@ class API_Users{
 
 				$dat['createdby_time'] = time();
 				$dat['createdby_userid'] = $_SESSION['user']['id'];
-				
+
 				$dat['modifiedby_time'] = time();
 				$dat['modifiedby_userid'] = $_SESSION['user']['id'];
-				
+
 				// IF WE'RE NOT FORCING A PASSWORD RESET
 				if(!$_REQUEST['force_change_password']){
 					## SET CHANGED PW TIME ON USER CREATION
@@ -1188,7 +1188,7 @@ class API_Users{
 		case 'create_api_key':
 
 			# GENERATE A UNIQUE API KEY USING THE SALT FUNCTION WITH LENGTH OF 16 TO RECEIVE 32CHARS
-			
+
 			## CHANGED TO A-Za-z0-9 RANDOM STRING, INSTEAD OF HEX
 			echo $_SESSION['dbapi']->users->generateSalt(32);
 			exit;
@@ -1271,18 +1271,18 @@ class API_Users{
 			##
 
 
-			
+
 
 			if(intval($_REQUEST['s_priv'])){
 
 				$dat['priv'] = intval($_REQUEST['s_priv']);
-				
+
 				if($dat['priv'] == -404){
-					
+
 					unset($dat['priv']);
-					
+
 					$dat['enabled'] = 'no';
-					
+
 				}
 
 			}
