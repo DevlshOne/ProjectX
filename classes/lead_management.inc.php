@@ -176,6 +176,8 @@ class LeadManagement
 
                 var frm = getEl('<?=$this->frm_name?>');
                 var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
+                let ob_phone_num = frm.s_outbound_phone_num.value;
+                ob_phone_num = ob_phone_num.replace(/[^0-9]/g,'');
                 let phone_num = frm.s_phone.value;
                 phone_num = phone_num.replace(/[^0-9]/g,'');
                 return 'api/api.php' +
@@ -187,7 +189,7 @@ class LeadManagement
                     's_firstname=' + escape(frm.s_firstname.value) + "&" +
                     's_lastname=' + escape(frm.s_lastname.value) + "&" +
                     's_phone=' + escape(phone_num) + "&" +
-                    's_outbound_phone_num=' + escape(frm.s_outbound_phone_num.value.trim()) + "&" +
+                    's_outbound_phone_num=' + escape(ob_phone_num.trim()) + "&" +
                     's_cluster_id=' + escape(frm.s_cluster_id.value) + "&" +
                     's_status=' + escape(frm.s_status.value) + "&" +
                     's_agent_username=' + escape(frm.s_agent_username.value) + "&" +
