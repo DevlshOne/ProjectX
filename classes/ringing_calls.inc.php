@@ -831,7 +831,7 @@ class RingingCalls{
 				</td>
 				<td align="center"><?=$this->makeStatusDD('s_status', $_REQUEST['s_status'], '', "loadRings();")?></td>
 				<td align="center"><input type="text" name="s_lead_id" size="5" value="<?=htmlentities($_REQUEST['s_lead_id'])?>"></td>
-				<td align="center"><input type="text" name="s_phone" size="10" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
+				<td align="center"><input type="text" name="s_phone" size="10" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
 				<td align="center">
 					<?=$this->makeCarrierDD('s_carrier', $_REQUEST['s_carrier'], '', "");?>
 				</td>

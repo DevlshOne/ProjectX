@@ -572,7 +572,7 @@ M4 -> N4*/
                     <input type="hidden" name="searching_pac"/>
                     <?=$this->makeProjectDD('s_project', $_REQUEST['s_project'], 'form-control custom-select-sm', "", "[Select Project]");?>
                     <input type="text" class="form-control" placeholder="Amount.." name="s_amount" size="5" value="<?=htmlentities($_REQUEST['s_amount'])?>">
-                    <input type="text" class="form-control" placeholder="Phone.." name="s_phone" size="5" value="<?=htmlentities($_REQUEST['s_phone'])?>">
+                    <input type="text" class="form-control" placeholder="Phone.." onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" name="s_phone" size="5" value="<?=htmlentities($_REQUEST['s_phone'])?>">
                     <?=$this->makeGatewayDD('s_gateway', $_REQUEST['s_gateway'], 'form-control custom-select-sm', "", "[Select Gateway]");?>
                     <button type="submit" title="Search" class="btn btn-sm btn-success" name="the_Search_button">Search</button>
                     <button type="button" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetPacForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadPacs();return false;">Reset</button>

@@ -429,7 +429,7 @@ class LeadManagement
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_lead"/>
                         <input type="text" class="form-control" placeholder="PX ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
-                        <input type="text" class="form-control" placeholder="Outbound Phone #.." name="s_outbound_phone_num" value="<?= htmlentities($_REQUEST['s_outbound_phone_num']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Outbound Phone #.." name="s_outbound_phone_num" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" value="<?= htmlentities($_REQUEST['s_outbound_phone_num']) ?>"/>
                         <?= makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", "[Select Cluster]"); ?>
                         <?= makeCampaignIDDD('s_campaign_id', $_REQUEST['s_campaign_id'], '', "", "[Select Campaign]"); ?>
                         <?= $this->makeDispoDD('s_status', $_REQUEST['s_status'], "", "[Select Dispo]"); ?>
@@ -583,7 +583,7 @@ class LeadManagement
          * <?***/
 
 
-        
+
 
 
         $this->listRecordings($row, false);
@@ -1729,8 +1729,8 @@ class LeadManagement
 
 
         </script><?
-        
-        
+
+
 
     if (intval($_REQUEST['no_script']) < 2){
         ?>
