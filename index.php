@@ -153,19 +153,19 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         function hideNav(both){
 
             if(both){
-	        	$('.sidebar-o').removeClass("sidebar-o-xs sidebar-mini"); // 
+	        	$('.sidebar-o').removeClass("sidebar-o-xs sidebar-mini"); //
             }else{
-	        	$('.sidebar-o').removeClass("sidebar-o-xs"); // 
+	        	$('.sidebar-o').removeClass("sidebar-o-xs"); //
             }
         }
-        
+
         function loadSection(url) {
             // One.block('state_loading', '#main-container');
-            
-            
+
+
             hideNav();
-            
-            
+
+
             $('#main-container').empty().load(url);
             // $('#main-container').empty().html('<table class="tightTable"><tr><td class="align-center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load(url);
             if (dispTimer) {
@@ -240,17 +240,17 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             <div class="content-header bg-white-5">
                 <!-- Logo -->
                 <a class="navbar-brand" href="index.php"><img src="images/cci-logo-200-2.png" height="30" border="0" title="Home"></a>
-                
+
                 <?/**<div style="float:right"><a href="#" onclick="hideNav(true)" class="big">&lt;</a></div>**/?>
-                
-                
+
+
                 <?
 
                 if($_SESSION['user']['priv'] > 5 || $_SESSION['user']['username'] == 'phreak'){
                 	?><div style="float:right"><a href="#" onclick="location='px_status.php'" class="big" title="If you get the reference, we can be friends LOL">&Pi;</a></div><?
                 }
-                
-                
+
+
             ?></div>
             <?
             if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
@@ -364,7 +364,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             ?>
                             <li class="nav-main-item">
                                 <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=phone_lookup&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">DRIPP Lookup</span>
+                                    <span class="nav-main-link-name">Phone Lookup</span>
                                 </a>
                             </li>
                             <?

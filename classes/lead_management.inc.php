@@ -433,17 +433,17 @@ class LeadManagement
                         <?= makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", "[Select Cluster]"); ?>
                         <?= makeCampaignIDDD('s_campaign_id', $_REQUEST['s_campaign_id'], '', "", "[Select Campaign]"); ?>
                         <?= $this->makeDispoDD('s_status', $_REQUEST['s_status'], "", "[Select Dispo]"); ?>
-                        <input type="text" class="form_control" placeholder="Agent.." name="s_agent_username" size="5" value="<?= htmlentities($_REQUEST['s_agent_username']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Verifier.." name="s_verifier_username" size="5" value="<?= htmlentities($_REQUEST['s_verifier_username']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Agent.." name="s_agent_username" size="5" value="<?= htmlentities($_REQUEST['s_agent_username']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Verifier.." name="s_verifier_username" size="5" value="<?= htmlentities($_REQUEST['s_verifier_username']) ?>"/>
                     </div>
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form_control" placeholder="First Name.." name="s_firstname" size="5" value="<?= htmlentities($_REQUEST['s_firstname']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Last Name.." name="s_lastname" size="5" value="<?= htmlentities($_REQUEST['s_lastname']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Lead ID.." name="s_lead_id" size="5" value="<?= htmlentities($_REQUEST['s_lead_id']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Phone #.." name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
-                        <input type="text" class="form_control" placeholder="City.." name="s_city" size="10" value="<?= htmlentities($_REQUEST['s_city']) ?>"/>
-                        <input type="text" class="form_control" placeholder="State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
+                        <input type="text" class="form-control" placeholder="First Name.." name="s_firstname" size="5" value="<?= htmlentities($_REQUEST['s_firstname']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Last Name.." name="s_lastname" size="5" value="<?= htmlentities($_REQUEST['s_lastname']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Lead ID.." name="s_lead_id" size="5" value="<?= htmlentities($_REQUEST['s_lead_id']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Phone #.." name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
+                        <input type="text" class="form-control" placeholder="City.." name="s_city" size="10" value="<?= htmlentities($_REQUEST['s_city']) ?>"/>
+                        <input type="text" class="form-control" placeholder="State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
                         <?= makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", "[Select Office]"); ?>
                         <button type="submit" value="Search" title="Search Leads" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadLeads();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetLeadForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadLeads();return false;">Reset</button>
@@ -1507,7 +1507,7 @@ class LeadManagement
     function makeDispoDD($name, $sel, $onchange, $blank_entry = false, $skip_dispos = null)
     {
 
-        $out = '<select class="form-control custom-select-sm" name="' . $name . '" id="' . $name . '" ';
+        $out = '<select class="custom-select-sm" name="' . $name . '" id="' . $name . '" ';
 
         $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
 
