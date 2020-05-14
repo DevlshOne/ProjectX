@@ -58,13 +58,14 @@ class CompaniesRules
             var <?=$this->index_name?> = 0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
             var CompaniesrulesTableFormat = [
-                ['id', 'text_left'],
-                ['rule_type', 'text_left'],
-                ['trigger', 'text_left'],
-                ['trigger_value', 'text_right'],
-                ['action', 'text_left'],
-                ['action_value', 'text_right'],
-                ['[delete]', 'align_center']
+                ['id', 'text-left'],
+                ['company_id', 'text-left'],
+                ['rule_type', 'text-left'],
+                ['trigger_name', 'text-left'],
+                ['trigger_value', 'text-right'],
+                ['action', 'text-left'],
+                ['action_value', 'text-right'],
+                ['[delete]', 'text-center']
             ];
 
             /**
@@ -109,13 +110,12 @@ class CompaniesRules
 
             }
 
-
             /**
              * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
              */
             var <?=$this->order_prepend?>totalcount = 0;
             function parseCompaniesRules(xmldoc) {
-                <?=$this->order_prepend?>totalcount = parseXMLData('companies_rules', CompaniesrulesTableFormat, xmldoc);
+                <?=$this->order_prepend?>totalcount = parseXMLData('companiesrules', CompaniesrulesTableFormat, xmldoc);
                 // ACTIVATE PAGE SYSTEM!
                 if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
                     makePageSystem('companiesrules',
@@ -199,11 +199,12 @@ class CompaniesRules
                         <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                         <tr>
                             <th class="row2 text-left"><?= $this->getOrderLink('id') ?>ID</a></th>
-                            <th class="row2 text-center"><?= $this->getOrderLink('rule_type') ?>Rule Type</a></th>
-                            <th class="row2 text-center"><?= $this->getOrderLink('trigger_name') ?>Trigger</a></th>
-                            <th class="row2 text-center"><?= $this->getOrderLink('trigger_value') ?>Trigger Value</a></th>
-                            <th class="row2 text-center"><?= $this->getOrderLink('action') ?>Action</a></th>
-                            <th class="row2 text-center"><?= $this->getOrderLink('action_value') ?>Action Value</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('company_id') ?>Company ID</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('rule_type') ?>Rule Type</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('trigger_name') ?>Trigger</a></th>
+                            <th class="row2 text-right"><?= $this->getOrderLink('trigger_value') ?>Trigger Value</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('action') ?>Action</a></th>
+                            <th class="row2 text-right"><?= $this->getOrderLink('action_value') ?>Action Value</a></th>
                             <th class="row2 text-center">&nbsp;</th>
                         </tr>
                     </table>
@@ -273,12 +274,8 @@ class CompaniesRules
             }
 
 
-            function checkNameFrm(frm) {
-
-
-                var params = getFormValues(frm, 'validateNameField');
-
-
+            function checkCompaniesRulesFrm(frm) {
+                var params = getFormValues(frm, 'validateCompanyIDField');
                 // FORM VALIDATION FAILED!
                 // param[0] == field name
                 // param[1] == field value
@@ -349,7 +346,7 @@ class CompaniesRules
 
 
             // SET TITLEBAR
-            $('#dialog-modal-add-rule').dialog("option", "title", '<?=($id) ? 'Editing rule #' . $id . ' - ' . htmlentities($row['rule']) : 'Adding new rule'?>');
+            $('#dialog-modal-add-rule').dialog("option", "title", '<?=($id) ? 'Editing rule #' . $id . ' - ' . htmlentities($row['id']) : 'Adding new rule'?>');
 
 
         </script>
@@ -371,10 +368,10 @@ class CompaniesRules
                 <tr>
                     <th align="left" height="30">Trigger Type:</th>
                     <td>
-                        <select name="trigger_type">
-                            <option <?=htmlentities($row['trigger_type'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
-                            <option <?=htmlentities($row['trigger_type'] == 'greater_equal' ? 'selected' : '');?> value="greater_equal">&#8925;</option>
-                            <option <?=htmlentities($row['trigger_type'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Paid Breaks</option>
+                        <select name="trigger_name">
+                            <option <?=htmlentities($row['trigger_name'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
+                            <option <?=htmlentities($row['trigger_name'] == 'greater_equal' ? 'selected' : '');?> value="greater_equal">&#8925;</option>
+                            <option <?=htmlentities($row['trigger_name'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Paid Breaks</option>
                         </select>
                 </tr>
                 <tr>
@@ -385,9 +382,9 @@ class CompaniesRules
                     <th align="left" height="30">Action Type:</th>
                     <td>
                         <select name="action_type">
-                            <option <?=htmlentities($row['action_type'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
-                            <option <?=htmlentities($row['action_type'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
-                            <option <?=htmlentities($row['action_type'] == '' ? 'selected' : '');?> value="">None</option>
+                            <option <?=htmlentities($row['action'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
+                            <option <?=htmlentities($row['action'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
+                            <option <?=htmlentities($row['action'] == '' ? 'selected' : '');?> value="">None</option>
                         </select>
                     </td>
                 </tr>
@@ -410,7 +407,7 @@ class CompaniesRules
     {
         $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
         $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-        $var .= ");loadCoRules();return false;\">";
+        $var .= ");loadCompaniesRules();return false;\">";
         return $var;
     }
 }

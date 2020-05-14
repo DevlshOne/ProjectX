@@ -242,11 +242,11 @@ function loadAjaxData(loadurl, callback_func_name, mode) {
  * @return Total count of items (not limited by the limit field, the full total, or if not usign page system, total records returned)
  */
 function parseXMLData(area, tableFormat, xmldoc) {
-    /** some debugging if you get hosed
-     console.log('Area =' + area);
-     console.log('tableFormat = ' + tableFormat);
-     console.log('xmldoc = ' + xmldoc);
-     */
+    /** some debugging if you get hosed */
+     // console.log('Area =' + area);
+     // console.log('tableFormat = ' + tableFormat);
+     // console.log('xmldoc = ' + xmldoc);
+     /**/
     var obj;
     var tagname = "";
     var callback_func_name = "";
@@ -326,8 +326,9 @@ function parseXMLData(area, tableFormat, xmldoc) {
         totalcount = dataarr.length;
     }
     // REMOVE ALL ROWS BUT THE HEADER
+    // alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
     clearTable(obj);
-    //alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
+    // alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
     if (dataarr.length == 0) {
         var colspan = obj.rows.item(0).cells.length;
         var lastRow = obj.rows.length;
@@ -789,11 +790,11 @@ function parseXMLData(area, tableFormat, xmldoc) {
             }
         } // END FIELD LIST
     } // END OF XML TAGS
-    
-    
+
+
     $('#total_count_div').html(parseInt(totalcount).toLocaleString('en-US') + " Found");
-    
-    
+
+
     // SECONDARY AJAX - POST PROCESSING - MAKE A SECOND AJAX CALL TO RETRIEVE AND RENDER INFO
     if (special_idx > 0) {
         //console.dir(special_stack);

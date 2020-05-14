@@ -117,7 +117,7 @@ class API_CompaniesRules
                     $pagemode = true;
                     $cntdat = $dat;
                     $cntdat['fields'] = 'COUNT(id)';
-                    list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->names->getResults($cntdat));
+                    list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->companies_rules->getResults($cntdat));
                     $dat['limit'] = array(
                         "offset" => intval($_REQUEST['index']),
                         "count" => intval($_REQUEST['pagesize'])
@@ -127,7 +127,7 @@ class API_CompaniesRules
                 if ($_REQUEST['orderby'] && $_REQUEST['orderdir']) {
                     $dat['order'] = array($_REQUEST['orderby'] => $_REQUEST['orderdir']);
                 }
-                $res = $_SESSION['dbapi']->companiesrules->getResults($dat);
+                $res = $_SESSION['dbapi']->companies_rules->getResults($dat);
                 ## OUTPUT FORMAT TOGGLE
                 switch ($_SESSION['api']->mode) {
                     default:
