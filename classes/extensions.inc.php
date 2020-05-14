@@ -289,9 +289,9 @@ class Extensions
                 <tr>
                     <th align="left" height="30">Extension Start/End:</th>
                     <td>
-                        <input name="start_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
+                        <input name="start_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onfocus="if(parseInt(this.value) == 0){this.value='';}" onfocusout="if(this.value==''){this.value='00000';}" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
                         to
-                        <input name="end_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
+                        <input name="end_number" type="text" size="5" minlength="4" maxlength="6" value="00000" onfocus="if(parseInt(this.value) == 0){this.value='';}" onfocusout="if(this.value==''){this.value='00000';}" onkeyup="this.value=this.value.replace(/[^0-9]/g,'');countExtensions()"/>
 
                     </td>
                 </tr>
