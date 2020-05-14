@@ -26,81 +26,41 @@ class API_CompaniesRules
 
         switch ($_REQUEST['action']) {
             case 'delete':
-
                 $id = intval($_REQUEST['id']);
-
-                //$row = $_SESSION['dbapi']->campaigns->getByID($id);
-
-
-                $_SESSION['dbapi']->names->delete($id);
-
+                $_SESSION['dbapi']->companies_rules->delete($id);
                 logAction('delete', 'names', $id, "");
-
-
                 $_SESSION['api']->outputDeleteSuccess();
-
-
                 break;
-
             case 'view':
-
-
                 $id = intval($_REQUEST['id']);
-
-                $row = $_SESSION['dbapi']->names->getByID($id);
-
-
+                $row = $_SESSION['dbapi']->companies_rules->getByID($id);
                 ## BUILD XML OUTPUT
                 $out = "<" . $this->xml_record_tagname . " ";
-
                 foreach ($row as $key => $val) {
-
-
                     $out .= $key . '="' . htmlentities($val) . '" ';
-
                 }
-
                 $out .= " />\n";
-
-
                 ///$out .= "</".$this->xml_record_tagname.">";
-
                 echo $out;
-
-
                 break;
             case 'edit':
-
-                $id = intval($_POST['adding_name']);
-
-
+                $id = intval($_POST['adding_rule']);
                 unset($dat);
-
-
-                $dat['name'] = trim($_POST['name']);
-                $dat['filename'] = trim($_POST['filename']);
-                $dat['voice_id'] = intval($_POST['voice_id']);
-
+                $dat['company_id'] = intval($_POST['company_id']);
+                $dat['rule_type'] = trim($_POST['rule_type']);
+                $dat['trigger_name'] = trim($_POST['trigger_name']);
+                $dat['trigger_value'] = round($_POST['trigger_value'],2);
+                $dat['action'] = trim($_POST['action']);
+                $dat['action_value'] = round($_POST['action_value'],2);
                 if ($id) {
-
-                    $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->names->table);
-
-                    logAction('edit', 'names', $id, "Name=" . $dat['name']);
-
+                    $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->companies_rules->table);
+                    logAction('edit', 'companies_rules', $id, "Rule=" . $id);
                 } else {
-
-
-                    $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->names->table);
+                    $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->companies_rules->table);
                     $id = mysqli_insert_id($_SESSION['dbapi']->db);
-
-
-                    logAction('add', 'names', $id, "Name=" . $dat['name']);
+                    logAction('add', 'companies_rules', $id, "Rule=" . $id);
                 }
-
-
                 $_SESSION['api']->outputEditSuccess($id);
-
-
                 break;
 
             default:
@@ -155,53 +115,21 @@ class API_CompaniesRules
 
     function handleSecondaryAjax()
     {
-
-
         $out_stack = array();
-
         //print_r($_REQUEST);
-
         foreach ($_REQUEST['special_stack'] as $idx => $data) {
-
             $tmparr = preg_split("/:/", $data);
-
             //print_r($tmparr);
-
-
             switch ($tmparr[1]) {
                 default:
-
                     ## ERROR
                     $out_stack[$idx] = -1;
-
                     break;
-                case 'voice_name':
-
-                    // COULD BE REPLACED LATER WITH A CUSOMIZABLE SCREEN DB TABLE
-                    if ($tmparr[2] <= 0) {
-                        $out_stack[$idx] = '-';
-                    } else {
-
-                        //echo "ID#".$tmparr[2];
-
-                        $out_stack[$idx] = $_SESSION['dbapi']->voices->getName($tmparr[2]);
-                    }
-
-                    break;
-
             }## END SWITCH
-
-
         }
-
-
         $out = $_SESSION['api']->renderSecondaryAjaxXML('Data', $out_stack);
-
         //print_r($out_stack);
         echo $out;
-
     } ## END HANDLE SECONDARY AJAX
-
-
 }
 

@@ -289,6 +289,12 @@ function parseXMLData(area, tableFormat, xmldoc) {
         //
         //		break;
     }
+    /*
+    console.log('obj=' + obj);
+    console.log('tagname=' + tagname);
+    console.log('delete_area=' + delete_area);
+    console.log('callback_func_name=' + callback_func_name);
+    */
     var totalcount = 0;
     var special_tag;
     var special_idx = 0; // USED TO KEEP TRACK OF EACH RECORD

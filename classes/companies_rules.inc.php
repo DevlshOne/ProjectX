@@ -62,9 +62,9 @@ class CompaniesRules
                 ['company_id', 'text-left'],
                 ['rule_type', 'text-left'],
                 ['trigger_name', 'text-left'],
-                ['trigger_value', 'text-right'],
+                ['trigger_value', 'text-left'],
                 ['action', 'text-left'],
-                ['action_value', 'text-right'],
+                ['action_value', 'text-left'],
                 ['[delete]', 'text-center']
             ];
 
@@ -87,7 +87,6 @@ class CompaniesRules
 
 
             var companiesrules_loading_flag = false;
-
             /**
              * Load the companies rules data - make the ajax call, callback to the parse function
              */
@@ -95,19 +94,14 @@ class CompaniesRules
                 // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
                 var val = null;
                 eval('val = companiesrules_loading_flag');
-
-
                 // CHECK IF WE ARE ALREADY LOADING THIS DATA
                 if (val == true) {
                     return;
                 } else {
                     eval('companiesrules_loading_flag = true');
                 }
-
                 <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-
                 loadAjaxData(getCompaniesRulesURL(), 'parseCompaniesRules');
-
             }
 
             /**
@@ -115,7 +109,7 @@ class CompaniesRules
              */
             var <?=$this->order_prepend?>totalcount = 0;
             function parseCompaniesRules(xmldoc) {
-                <?=$this->order_prepend?>totalcount = parseXMLData('companiesrules', CompaniesrulesTableFormat, xmldoc);
+                <?=$this->order_prepend?>totalcount = parseXMLData('companiesrule', CompaniesrulesTableFormat, xmldoc);
                 // ACTIVATE PAGE SYSTEM!
                 if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
                     makePageSystem('companiesrules',
@@ -132,14 +126,14 @@ class CompaniesRules
             }
 
 
-            function handleRuleListClick(id) {
+            function handleCompaniesruleListClick(id) {
                 displayAddRuleDialog(id);
             }
 
             function displayAddRuleDialog(id) {
                 var objname = 'dialog-modal-add-rule';
                 if (id > 0) {
-                    $('#' + objname).dialog("option", "title", 'Editing rule');
+                    $('#' + objname).dialog("option", "title", 'Editing rule # ' + id + ' ');
                 } else {
                     $('#' + objname).dialog("option", "title", 'Adding new rule');
                 }
@@ -195,16 +189,16 @@ class CompaniesRules
                 <! ** END BLOCK SEARCH TABLE -->
                 <! ** BEGIN BLOCK LIST (DATATABLE) -->
                 <div class="block-content">
-                    <table class="table table-sm table-striped" id="companiesrules_table">
+                    <table class="table table-sm table-striped" id="companiesrule_table">
                         <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                         <tr>
                             <th class="row2 text-left"><?= $this->getOrderLink('id') ?>ID</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('company_id') ?>Company ID</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('rule_type') ?>Rule Type</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('trigger_name') ?>Trigger</a></th>
-                            <th class="row2 text-right"><?= $this->getOrderLink('trigger_value') ?>Trigger Value</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('trigger_value') ?>Trigger Value</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('action') ?>Action</a></th>
-                            <th class="row2 text-right"><?= $this->getOrderLink('action_value') ?>Action Value</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('action_value') ?>Action Value</a></th>
                             <th class="row2 text-center">&nbsp;</th>
                         </tr>
                     </table>
@@ -233,129 +227,83 @@ class CompaniesRules
 
     function makeAdd($id)
     {
-
         $id = intval($id);
-
-
         if ($id) {
-
             $row = $_SESSION['dbapi']->names->getByID($id);
-
-
         }
-
         ?>
         <script>
-
-            function validateNameField(name, value, frm) {
-
+            function validateCompaniesRulesField(name, value, frm) {
                 //alert(name+","+value);
-
-
                 switch (name) {
                     default:
-
                         // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
                         return true;
                         break;
-
-                    case 'filename':
-
-
+                    case 'company_id':
                         if (!value) return false;
-
                         return true;
-
-
                         break;
-
+                    case 'trigger_value':
+                        if (!value) return false;
+                        return true;
+                        break;
+                    case 'action_value':
+                        if (!value) return false;
+                        return true;
+                        break;
                 }
                 return true;
             }
 
-
             function checkCompaniesRulesFrm(frm) {
-                var params = getFormValues(frm, 'validateCompanyIDField');
+                var params = getFormValues(frm, 'validateCompaniesRulesField');
                 // FORM VALIDATION FAILED!
                 // param[0] == field name
                 // param[1] == field value
                 if (typeof params == "object") {
-
                     switch (params[0]) {
                         default:
-
-                            alert("Error submitting form. Check your values");
-
+                           alert("Error submitting form. Check your values");
                             break;
-
-                        case 'filename':
-
-                            alert("Please enter the filename for this name.");
-                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
-                            break;
-
                     }
 
                     // SUCCESS - POST AJAX TO SERVER
                 } else {
-
-
                     //alert("Form validated, posting");
-
                     $.ajax({
                         type: "POST",
                         cache: false,
-                        url: 'api/api.php?get=names&mode=xml&action=edit',
+                        url: 'api/api.php?get=companiesrules&mode=xml&action=edit',
                         data: params,
                         error: function () {
                             alert("Error saving user form. Please contact an admin.");
                         },
                         success: function (msg) {
-
-//alert(msg);
-
+                        // alert(msg);
                             var result = handleEditXML(msg);
                             var res = result['result'];
-
                             if (res <= 0) {
-
                                 alert(result['message']);
-
                                 return;
-
                             }
-
-
-                            loadNames();
-
-
-                            displayAddNameDialog(res);
-
+                            loadCompaniesRules();
+                            displayAddRuleDialog(res);
                             alert(result['message']);
-
                         }
-
-
                     });
-
                 }
-
                 return false;
-
             }
-
-
             // SET TITLEBAR
             $('#dialog-modal-add-rule').dialog("option", "title", '<?=($id) ? 'Editing rule #' . $id . ' - ' . htmlentities($row['id']) : 'Adding new rule'?>');
-
-
         </script>
-        <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkCoRulesFrm(this); return false">
+        <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkCompaniesRulesFrm(this); return false">
             <input type="hidden" id="adding_rule" name="adding_rule" value="<?= $id ?>">
             <table border="0" align="center">
                 <tr>
                     <th align="left" height="30">Company ID:</th>
-                    <td><input name="name" type="text" size="50" value="<?= htmlentities($row['name']) ?>"></td>
+                    <td><input name="company_id" type="text" size="50" value="<?= htmlentities($row['name']) ?>"></td>
                 </tr>
                 <tr>
                     <th align="left" height="30">Rule Type:</th>
@@ -398,10 +346,7 @@ class CompaniesRules
         </form>
         </table>
         <?
-
-
     }
-
 
     function getOrderLink($field)
     {
