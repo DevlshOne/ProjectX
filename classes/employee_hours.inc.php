@@ -43,7 +43,6 @@ class EmployeeHours
 		// THIS SHIT IS MOTHERFUCKIGN AJAXED TO THE TEETH
 		// SEE api/employee_hour.api.php FOR POST HANDLING!
 		// <3 <3 -Jon
-
 	}
 
 	function handleFLOW()
@@ -51,17 +50,12 @@ class EmployeeHours
 		# Handle flow, based on query string
 
 		if (!checkAccess('employee_hours')) {
-
-
 			accessDenied("Employee Hours");
-
 			return;
-
 		} else {
+            include_once($_SESSION['site_config']['basedir'] . "/classes/co_rules.inc.php");
 			if (isset($_REQUEST['edit_hours'])) {
-
 				$this->makeEdit(intval($_REQUEST['edit_hours']));
-
 			} else {
 				$this->listEntrys();
 			}
@@ -845,9 +839,9 @@ class EmployeeHours
                 <button type="button" class="btn btn-sm btn-success" title="Export Results to CSV" name="export_csv" onclick="exportResultsCSV()">Export Results CSV</button>
                 <button type="button" class="btn btn-sm btn-success" title="Export TOTALS to CSV" name="export_totals" onclick="exportResultsCSV(1)">Export Totals CSV</button>
                 <button type="button" class="btn btn-sm btn-success" title="Export Clean TOTALS to CSV" name="export_clean_totals" onclick="exportResultsCSV(2)">Export Clean Totals CSV</button>
-                
+
                 <button type="button" class="btn btn-sm btn-success" title="Export Agent Totals" name="export_range" onclick="exportResultsCSV(5)">Export Agent Totals</button>
-                
+
 		</div>
         <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
 
