@@ -1065,7 +1065,15 @@ class API_Users{
 
 			unset($dat);
 			$dat['username'] = $username;
+
 			$dat['priv'] = intval($_POST['priv']);
+
+			# ERROR OUT IF MANAGER(PRIV4 OR LOWER) IS TRYING TO ADD/EDIT USERS WITH ADMIN (PRIV5 OR HIGHER)
+			if(intval($_SESSION['user']['priv']) <= 4 && $dat['priv'] >= 5){
+
+				$_SESSION['api']->errorOut("Unable to update user privilege to Administrator. ", true, -14);
+
+			}
 
 			$dat['first_name'] = trim($_POST['first_name']);
 			$dat['last_name'] = trim($_POST['last_name']);
