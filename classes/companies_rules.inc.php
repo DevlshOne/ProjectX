@@ -59,7 +59,7 @@ class CompaniesRules
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
             var CompaniesrulesTableFormat = [
                 ['id', 'text-left'],
-                ['company_id', 'text-left'],
+                ['[get:company_name:company_id]', 'text-left'],
                 ['rule_type', 'text-left'],
                 ['trigger_name', 'text-left'],
                 ['trigger_value', 'text-left'],
@@ -139,7 +139,7 @@ class CompaniesRules
                 }
                 $('#' + objname).dialog("open");
                 $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                $('#' + objname).load("index.php?area=companiesrules&add_rule=" + id + "&printable=1&no_script=1");
+                $('#' + objname).load("index.php?area=employee_hours&sub_area=config&add_rule=" + id + "&printable=1&no_script=1");
             }
 
             function resetCompaniesRulesForm(frm) {
@@ -154,7 +154,7 @@ class CompaniesRules
         </script>
         <! *** BEGIN ONEUI STYLING REWORK -->
         <div class="block">
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadComapniesRules();return false;">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCompaniesRules();return false;">
                 <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Companies Additional Hours Rules</h4>
@@ -193,7 +193,7 @@ class CompaniesRules
                         <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                         <tr>
                             <th class="row2 text-left"><?= $this->getOrderLink('id') ?>ID</a></th>
-                            <th class="row2 text-left"><?= $this->getOrderLink('company_id') ?>Company ID</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('company_id') ?>Company</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('rule_type') ?>Rule Type</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('trigger_name') ?>Trigger</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('trigger_value') ?>Trigger Value</a></th>
@@ -229,7 +229,7 @@ class CompaniesRules
     {
         $id = intval($id);
         if ($id) {
-            $row = $_SESSION['dbapi']->names->getByID($id);
+            $row = $_SESSION['dbapi']->companies_rules->getByID($id);
         }
         ?>
         <script>
@@ -296,14 +296,14 @@ class CompaniesRules
                 return false;
             }
             // SET TITLEBAR
-            $('#dialog-modal-add-rule').dialog("option", "title", '<?=($id) ? 'Editing rule #' . $id . ' - ' . htmlentities($row['id']) : 'Adding new rule'?>');
+            $('#dialog-modal-add-rule').dialog("option", "title", '<?=($id) ? 'Editing rule # ' . htmlentities($row['id']) : 'Adding new rule'?>');
         </script>
         <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkCompaniesRulesFrm(this); return false">
             <input type="hidden" id="adding_rule" name="adding_rule" value="<?= $id ?>">
             <table border="0" align="center">
                 <tr>
                     <th align="left" height="30">Company ID:</th>
-                    <td><input name="company_id" type="text" size="50" value="<?= htmlentities($row['name']) ?>"></td>
+                    <td><input name="company_id" type="text" size="12" value="<?= htmlentities($row['company_id']) ?>"></td>
                 </tr>
                 <tr>
                     <th align="left" height="30">Rule Type:</th>

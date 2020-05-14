@@ -370,6 +370,12 @@ switch ($_REQUEST['get']) {
 //			$accounts->handleSecondaryAjax();
 //
 //			break;
+            case 'companiesrule':
+                include_once($basedir . "classes/employee_hours.inc.php");
+                include_once($basedir . "api/companies_rules.api.php");
+                $obj = new API_CompaniesRules();
+                $obj->handleSecondaryAjax();
+                break;
         }
 
 

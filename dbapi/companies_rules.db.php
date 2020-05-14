@@ -19,9 +19,7 @@ class CompaniesRulesAPI{
 	 */
 	function getByID($id){
 		$id = intval($id);
-		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->table."` ".
-						" WHERE id='".$id."' "
-					);
+		return $_SESSION['dbapi']->querySQL("SELECT * FROM `".$this->table."` "." WHERE `id` = '".$id."'");
 	}
 	/**
 	 * getResults($asso_array)
@@ -57,50 +55,6 @@ class CompaniesRulesAPI{
 		}else if($info['id']){
 
 			$sql .= " AND `id`='".intval($info['id'])."' ";
-
-		}
-
-
-
-	### NAME SEARCH
-		## ARRAY OF STRINGS, OR SEPERATED SEARCH
-		if(is_array($info['name'])){
-
-			$sql .= " AND (";
-
-			$x=0;
-			foreach($info['name'] as $idx=>$n){
-				if($x++ > 0)$sql .= " OR ";
-
-				$sql .= "`name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
-			}
-
-			$sql .= ") ";
-
-		## SINGLE NAME SEARCH
-		}else if($info['name']){
-
-			$sql .= " AND `name` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['name'])."%' ";
-
-		}
-
-		if(is_array($info['filename'])){
-
-			$sql .= " AND (";
-
-			$x=0;
-			foreach($info['filename'] as $idx=>$n){
-				if($x++ > 0)$sql .= " OR ";
-
-				$sql .= "`filename` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
-			}
-
-			$sql .= ") ";
-
-		## SINGLE NAME SEARCH
-		}else if($info['filename']){
-
-			$sql .= " AND `filename` LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['filename'])."%' ";
 
 		}
 
@@ -154,18 +108,12 @@ class CompaniesRulesAPI{
 		return $_SESSION['dbapi']->query($sql);
 	}
 
-
-
 	function getCount(){
-
 		$row = mysqli_fetch_row($this->getResults(
 						array(
 							"fields" => "COUNT(id)"
 						)
 					));
-
 		return $row[0];
 	}
-
-
 }

@@ -119,13 +119,24 @@ class API_CompaniesRules
         //print_r($_REQUEST);
         foreach ($_REQUEST['special_stack'] as $idx => $data) {
             $tmparr = preg_split("/:/", $data);
-            //print_r($tmparr);
+//            print_r($tmparr);
             switch ($tmparr[1]) {
                 default:
                     ## ERROR
                     $out_stack[$idx] = -1;
                     break;
-            }## END SWITCH
+                case 'company_name':
+                    if($tmparr[2] === '0') {
+                        $out_stack[$idx] = 'DEFAULT';
+                    } else {
+                        if ($tmparr[2] <= 0) {
+                            $out_stack[$idx] = '-';
+                        } else {
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT name AS company_name FROM companies WHERE id=" . intval($tmparr[2]) . " ");
+                        }
+                    }
+                    break;
+            } ## END SWITCH
         }
         $out = $_SESSION['api']->renderSecondaryAjaxXML('Data', $out_stack);
         //print_r($out_stack);

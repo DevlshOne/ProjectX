@@ -602,16 +602,11 @@ class Extensions
                 return 'api/api.php' +
                     "?get=extensions&" +
                     "mode=xml&" +
-
                     's_id=' + escape(frm.s_id.value) + "&" +
                     's_number=' + escape(frm.s_number.value) + "&" +
                     's_status=' + escape(frm.s_status.value) + "&" +
-
                     's_in_use=' + escape(frm.s_in_use.value) + "&" +
-
-
                     's_server_id=' + escape(frm.s_server_id.value) + "&" +
-
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +

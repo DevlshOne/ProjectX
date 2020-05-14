@@ -333,6 +333,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
     }
     // REMOVE ALL ROWS BUT THE HEADER
     // alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
+
     clearTable(obj);
     // alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
     if (dataarr.length == 0) {
@@ -356,7 +357,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
         var newDate, tmptime, datestring, tmpstr;
         var cur_name, cur_class, cur_data, priv_name;
         for (var y = 0; y < tableFormat.length; y++) {
-            //alert("INSERT CELL - "+y+" tableFormat:"+tableFormat[y]);
+            // alert("INSERT CELL - "+y+" tableFormat:"+tableFormat[y]);
             if (!tableFormat[y]) continue;
             cell = row.insertCell(y);
             //alert("Format: "+tableFormat[y][0]+" "+tableFormat[y][1]);
