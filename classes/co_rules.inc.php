@@ -353,28 +353,54 @@ class Names
 
 
         </script>
-        <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkNameFrm(this); return false">
-            <input type="hidden" id="adding_name" name="adding_name" value="<?= $id ?>">
-
-
+        <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkCoRulesFrm(this); return false">
+            <input type="hidden" id="adding_rule" name="adding_rule" value="<?= $id ?>">
             <table border="0" align="center">
                 <tr>
-                    <th align="left" height="30">Name:</th>
+                    <th align="left" height="30">Company ID:</th>
                     <td><input name="name" type="text" size="50" value="<?= htmlentities($row['name']) ?>"></td>
                 </tr>
                 <tr>
-                    <th align="left" height="30">Filename:</th>
-                    <td><input name="filename" type="text" size="50" value="<?= htmlentities($row['filename']) ?>"></td>
+                    <th align="left" height="30">Rule Type:</th>
+                    <td>
+                        <select name="rule_type">
+                            <option <?=htmlentities($row['rule_type'] == 'hours' ? 'selected' : '');?> value="hours">Hours</option>
+                        </select>
+                    </td>
                 </tr>
                 <tr>
-                    <th align="left" height="30">Voice:</th>
-                    <td><?= makeVoiceDD(0, 'voice_id', $row['voice_id']) ?></td>
+                    <th align="left" height="30">Trigger Type:</th>
+                    <td>
+                        <select name="trigger_type">
+                            <option <?=htmlentities($row['trigger_type'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
+                            <option <?=htmlentities($row['trigger_type'] == 'greater_equal' ? 'selected' : '');?> value="greater_equal">&#8925;</option>
+                            <option <?=htmlentities($row['trigger_type'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Paid Breaks</option>
+                        </select>
+                </tr>
+                <tr>
+                    <th align="left" height="30">Trigger Value:</th>
+                    <td><input name="trigger_value" type="number" min="0.00" max="40.00" step="0.01" value="<?= htmlentities($row['trigger_value']) ?>"></td>
+                </tr>
+                <tr>
+                    <th align="left" height="30">Action Type:</th>
+                    <td>
+                        <select name="action_type">
+                            <option <?=htmlentities($row['action_type'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
+                            <option <?=htmlentities($row['action_type'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
+                            <option <?=htmlentities($row['action_type'] == '' ? 'selected' : '');?> value="">None</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th align="left" height="30">Action Value:</th>
+                    <td><input name="action_value" type="number" min="0.00" max="40.00" step="0.01" value="<?= htmlentities($row['action_value']) ?>"></td>
                 </tr>
                 <tr>
                     <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
                 </tr>
         </form>
-        </table><?
+        </table>
+        <?
 
 
     }
@@ -382,13 +408,9 @@ class Names
 
     function getOrderLink($field)
     {
-
         $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
-
         $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-
-        $var .= ");loadNames();return false;\">";
-
+        $var .= ");loadCoRules();return false;\">";
         return $var;
     }
 }
