@@ -1103,11 +1103,11 @@ class Extensions
                 ?>
                 <tr>
                     <th align="left" height="30">PX Register as User</th>
-                    <td><input name="register_as" type="text" size="30" value="<?= htmlentities($row['register_as']) ?>"></td>
+                    <td><input name="register_as" type="text" size="30" value="<?=($row['register_as'])?htmlentities($row['register_as']):'px-system'?>"></td>
                 </tr>
                 <tr>
                     <th align="left" height="30">PX Register Password</th>
-                    <td><input name="register_pass" type="text" size="30" value="<?= htmlentities($row['register_pass']) ?>"></td>
+                    <td><input name="register_pass" type="text" size="30" value="<?=($row['register_pass'])?htmlentities($row['register_pass']):'t1g3rstyl3'?>"></td>
                 </tr>
 
                 <tr>
