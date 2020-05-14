@@ -11,7 +11,7 @@ class CompaniesRules
 {
 
     var $table = 'companies_rules';            ## Classes main table to operate on
-    var $orderby = 'company_id';        ## Default Order field
+    var $orderby = 'id';        ## Default Order field
     var $orderdir = 'DESC';    ## Default order direction
     ## Page  Configuration
     var $pagesize = 20;    ## Adjusts how many items will appear on each page
@@ -58,9 +58,12 @@ class CompaniesRules
             var <?=$this->index_name?> = 0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
             var CompaniesrulesTableFormat = [
-                ['name', 'align_left'],
-                ['[get:voice_name:voice_id]', 'align_center'],
-                ['filename', 'align_center'],
+                ['id', 'text_left'],
+                ['rule_type', 'text_left'],
+                ['trigger', 'text_left'],
+                ['trigger_value', 'text_right'],
+                ['action', 'text_left'],
+                ['action_value', 'text_right'],
                 ['[delete]', 'align_center']
             ];
 
@@ -112,7 +115,7 @@ class CompaniesRules
              */
             var <?=$this->order_prepend?>totalcount = 0;
             function parseCompaniesRules(xmldoc) {
-                <?=$this->order_prepend?>totalcount = parseXMLData('rule', CompaniesrulesTableFormat, xmldoc);
+                <?=$this->order_prepend?>totalcount = parseXMLData('companies_rules', CompaniesrulesTableFormat, xmldoc);
                 // ACTIVATE PAGE SYSTEM!
                 if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
                     makePageSystem('companiesrules',
@@ -145,11 +148,11 @@ class CompaniesRules
                 $('#' + objname).load("index.php?area=companiesrules&add_rule=" + id + "&printable=1&no_script=1");
             }
 
-            function resetRuleForm(frm) {
+            function resetCompaniesRulesForm(frm) {
                 frm.s_id.value = '';
             }
 
-            var companiesrulesrchtog = true;
+            var companiesrulessrchtog = true;
             function toggleCompaniesRulesSearch() {
                 companiesrulessrchtog = !companiesrulessrchtog;
                 ieDisplay('companiesrules_search_table', companiesrulessrchtog);
@@ -160,7 +163,7 @@ class CompaniesRules
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadComapniesRules();return false;">
                 <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
-                    <h4 class="block-title">Company Additional Hours Rules</h4>
+                    <h4 class="block-title">Companies Additional Hours Rules</h4>
                     <button type="button" value="Add" title="Add Rules" class="btn btn-sm btn-primary" onclick="displayAddRuleDialog(0)">Add</button>
                     <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleCompaniesRulesSearch();">Toggle Search</button>
                     <div id="companiesrules_prev_td" class="page_system_prev"></div>
@@ -184,9 +187,9 @@ class CompaniesRules
                 <div class="bg-info-light" id="companiesrules_search_table">
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_companiesrules"/>
-                        <input type="text" class="form-control" placeholder="Company ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
-                        <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadCoRules();return false;">Search</button>
-                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetRulesForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadCoRules();return false;">Reset</button>
+                        <input type="text" class="form-control" placeholder="Rule ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
+                        <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadCompaniesRules();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetCompaniesRulesForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadCompaniesRules();return false;">Reset</button>
                     </div>
                 </div>
                 <! ** END BLOCK SEARCH TABLE -->
@@ -195,9 +198,12 @@ class CompaniesRules
                     <table class="table table-sm table-striped" id="companiesrules_table">
                         <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                         <tr>
-                            <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
-                            <th class="row2 text-center"><?= $this->getOrderLink('voice_id') ?>Voice</a></th>
-                            <th class="row2 text-center"><?= $this->getOrderLink('filename') ?>Filename</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('id') ?>ID</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('rule_type') ?>Rule Type</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('trigger_name') ?>Trigger</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('trigger_value') ?>Trigger Value</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('action') ?>Action</a></th>
+                            <th class="row2 text-center"><?= $this->getOrderLink('action_value') ?>Action Value</a></th>
                             <th class="row2 text-center">&nbsp;</th>
                         </tr>
                     </table>
