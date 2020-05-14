@@ -4,10 +4,10 @@
  *    Written By: Dave Mednick
  ***************************************************************/
 
-$_SESSION['co_rules'] = new CompanyRules;
+$_SESSION['companies_rules'] = new CompaniesRules;
 
 
-class Names
+class CompaniesRules
 {
 
     var $table = 'companies_rules';            ## Classes main table to operate on

@@ -59,7 +59,7 @@ class EmployeeHours
 			    switch($_REQUEST['sub_area']) {
                     case 'config':
                         include_once($_SESSION['site_config']['basedir'] . "/classes/companies_rules.inc.php");
-                        $_SESSION['co_rules']->handleFLOW();
+                        $_SESSION['companies_rules']->handleFLOW();
                         break;
                     default:
                         $this->listEntrys();

@@ -323,6 +323,9 @@ class DBAPI {
 		include_once($_SESSION['site_config']['basedir']."dbapi/users.db.php");
 		$this->users = new UsersAPI();
 
+        ## COMPANIES RULES
+        include_once($_SESSION['site_config']['basedir']."dbapi/companies_rules.db.php");
+        $this->companies_rules = new CompaniesRulesAPI();
 
 		## VOICES
 		include_once($_SESSION['site_config']['basedir']."dbapi/voices.db.php");
