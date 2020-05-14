@@ -75,8 +75,6 @@ class Names
                     "?get=companiesrules&" +
                     "mode=xml&" +
                     's_id=' + escape(frm.s_id.value) + "&" +
-                    's_name=' + escape(frm.s_name.value) + "&" +
-                    's_filename=' + escape(frm.s_filename.value) + "&" +
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
@@ -148,12 +146,7 @@ class Names
             }
 
             function resetRuleForm(frm) {
-                frm.s_companyid.value = '';
-                frm.s_ruletype.value = '';
-                frm.s_triggertype.value = '';
-                frm.s_triggervalue.value = '';
-                frm.s_actiontype.value = '';
-                frm.s_actionvalue.value = '';
+                frm.s_id.value = '';
             }
 
             var companiesrulesrchtog = true;
@@ -192,10 +185,8 @@ class Names
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_companiesrules"/>
                         <input type="text" class="form-control" placeholder="Company ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
-                        <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?= htmlentities($_REQUEST['s_name']) ?>"/>
-                        <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
                         <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadCoRules();return false;">Search</button>
-                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetRuleForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadCoRules();return false;">Reset</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetRulesForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadCoRules();return false;">Reset</button>
                     </div>
                 </div>
                 <! ** END BLOCK SEARCH TABLE -->
