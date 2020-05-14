@@ -53,11 +53,18 @@ class EmployeeHours
 			accessDenied("Employee Hours");
 			return;
 		} else {
-            include_once($_SESSION['site_config']['basedir'] . "/classes/co_rules.inc.php");
 			if (isset($_REQUEST['edit_hours'])) {
 				$this->makeEdit(intval($_REQUEST['edit_hours']));
 			} else {
-				$this->listEntrys();
+			    switch($_REQUEST['sub_area']) {
+                    case 'config':
+                        include_once($_SESSION['site_config']['basedir'] . "/classes/companies_rules.inc.php");
+                        $_SESSION['co_rules']->handleFLOW();
+                        break;
+                    default:
+                        $this->listEntrys();
+                        break;
+                }
 			}
 		}
 
@@ -700,8 +707,8 @@ class EmployeeHours
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadEmps();return false">
                 <input type="hidden" name="searching_emp">
                 <div class="block-header bg-primary-light">
-                    <h4 class="block-title">Employee Hours</h4>
-                    <!--<button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSaleSearch();">Toggle Search</button>-->
+                    <h4 class="block-title">Employee Hours&nbsp;<button type="button" title="Configure Additional Hours" class="btn btn-sm btn-primary" onclick="loadSection('?area=employee_hours&sub_area=config&no_script=1');return false;"><i class="fa fa-user-cog"></i></button></h4>
+
                     <? if (checkAccess('employee_hours_edit')) { ?>
                         <button class="btn btn-sm btn-primary" type="button" title="Add Employee Hours" onclick="displayEditEmpDialog(0)">Add Hours</button>
                         <?

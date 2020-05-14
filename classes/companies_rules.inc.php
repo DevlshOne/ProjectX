@@ -16,11 +16,11 @@ class Names
     ## Page  Configuration
     var $pagesize = 20;    ## Adjusts how many items will appear on each page
     var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
-    var $index_name = 'corules_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
-    var $frm_name = 'corulesnextfrm';
-    var $order_prepend = 'corules_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
+    var $index_name = 'companiesrules_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
+    var $frm_name = 'companiesrulesnextfrm';
+    var $order_prepend = 'companiesrules_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
-    function CoRules()
+    function CompaniesRules()
     {
         ## REQURES DB CONNECTION!
         $this->handlePOST();
@@ -36,12 +36,12 @@ class Names
     function handleFLOW()
     {
         # Handle flow, based on query string
-        if (!checkAccess('corules')) {
-            accessDenied("CoRules");
+        if (!checkAccess('companiesrules')) {
+            accessDenied("CompaniesRules");
             return;
         } else {
-            if (isset($_REQUEST['add_name'])) {
-                $this->makeAdd($_REQUEST['add_name']);
+            if (isset($_REQUEST['add_rule'])) {
+                $this->makeAdd($_REQUEST['add_rule']);
             } else {
                 $this->listEntrys();
             }
@@ -52,12 +52,12 @@ class Names
     {
         ?>
         <script>
-            var corules_delmsg = 'Are you sure you want to delete this rule?';
+            var companiesrules_delmsg = 'Are you sure you want to delete this rule?';
             var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
             var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
             var <?=$this->index_name?> = 0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-            var CorulesTableFormat = [
+            var CompaniesrulesTableFormat = [
                 ['name', 'align_left'],
                 ['[get:voice_name:voice_id]', 'align_center'],
                 ['filename', 'align_center'],
@@ -67,12 +67,12 @@ class Names
             /**
              * Build the URL for AJAX to hit, to build the list
              */
-            function getCoRulesURL() {
+            function getCompaniesRulesURL() {
 
                 var frm = getEl('<?=$this->frm_name?>');
                 var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
                 return 'api/api.php' +
-                    "?get=corules&" +
+                    "?get=companiesrules&" +
                     "mode=xml&" +
                     's_id=' + escape(frm.s_id.value) + "&" +
                     's_name=' + escape(frm.s_name.value) + "&" +
@@ -84,27 +84,27 @@ class Names
             }
 
 
-            var corules_loading_flag = false;
+            var companiesrules_loading_flag = false;
 
             /**
-             * Load the copany rules data - make the ajax call, callback to the parse function
+             * Load the companies rules data - make the ajax call, callback to the parse function
              */
-            function loadCoRules() {
+            function loadCompaniesRules() {
                 // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
                 var val = null;
-                eval('val = corules_loading_flag');
+                eval('val = companiesrules_loading_flag');
 
 
                 // CHECK IF WE ARE ALREADY LOADING THIS DATA
                 if (val == true) {
                     return;
                 } else {
-                    eval('corules_loading_flag = true');
+                    eval('companiesrules_loading_flag = true');
                 }
 
                 <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
 
-                loadAjaxData(getCoRulesURL(), 'parseCoRules');
+                loadAjaxData(getCompaniesRulesURL(), 'parseCompaniesRules');
 
             }
 
@@ -113,21 +113,21 @@ class Names
              * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
              */
             var <?=$this->order_prepend?>totalcount = 0;
-            function parseNames(xmldoc) {
-                <?=$this->order_prepend?>totalcount = parseXMLData('rule', CorulesTableFormat, xmldoc);
+            function parseCompaniesRules(xmldoc) {
+                <?=$this->order_prepend?>totalcount = parseXMLData('rule', CompaniesrulesTableFormat, xmldoc);
                 // ACTIVATE PAGE SYSTEM!
                 if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
-                    makePageSystem('corules',
+                    makePageSystem('companiesrules',
                         '<?=$this->index_name?>',
                         <?=$this->order_prepend?>totalcount,
                         <?=$this->index_name?>,
                         <?=$this->order_prepend?>pagesize,
-                        'loadNames()'
+                        'loadCompaniesRules()'
                     );
                 } else {
-                    hidePageSystem('corules');
+                    hidePageSystem('companiesrules');
                 }
-                eval('corules_loading_flag = false');
+                eval('companiesrules_loading_flag = false');
             }
 
 
@@ -144,33 +144,36 @@ class Names
                 }
                 $('#' + objname).dialog("open");
                 $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                $('#' + objname).load("index.php?area=corules&add_rule=" + id + "&printable=1&no_script=1");
+                $('#' + objname).load("index.php?area=companiesrules&add_rule=" + id + "&printable=1&no_script=1");
             }
 
             function resetRuleForm(frm) {
-                frm.s_id.value = '';
-                frm.s_type.value = '';
-                frm.s_.value = '';
+                frm.s_companyid.value = '';
+                frm.s_ruletype.value = '';
+                frm.s_triggertype.value = '';
+                frm.s_triggervalue.value = '';
+                frm.s_actiontype.value = '';
+                frm.s_actionvalue.value = '';
             }
 
-            var rulesrchtog = true;
-            function toggleRuleSearch() {
-                namesrchtog = !namesrchtog;
-                ieDisplay('name_search_table', namesrchtog);
+            var companiesrulesrchtog = true;
+            function toggleCompaniesRulesSearch() {
+                companiesrulessrchtog = !companiesrulessrchtog;
+                ieDisplay('companiesrules_search_table', companiesrulessrchtog);
             }
         </script>
         <! *** BEGIN ONEUI STYLING REWORK -->
         <div class="block">
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCoRules();return false;">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadComapniesRules();return false;">
                 <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
-                    <h4 class="block-title">Company Rules</h4>
+                    <h4 class="block-title">Company Additional Hours Rules</h4>
                     <button type="button" value="Add" title="Add Rules" class="btn btn-sm btn-primary" onclick="displayAddRuleDialog(0)">Add</button>
-                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleRuleSearch();">Toggle Search</button>
-                    <div id="corules_prev_td" class="page_system_prev"></div>
-                    <div id="corules_page_td" class="page_system_page"></div>
-                    <div id="corules_next_td" class="page_system_next"></div>
-                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadCoRules(); return false;">
+                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleCompaniesRulesSearch();">Toggle Search</button>
+                    <div id="companiesrules_prev_td" class="page_system_prev"></div>
+                    <div id="companiesrules_page_td" class="page_system_page"></div>
+                    <div id="companiesrules_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadCompaniesRules(); return false;">
                         <option value="20">20</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
@@ -185,9 +188,9 @@ class Names
                 </div>
                 <! ** END BLOCK HEADER -->
                 <! ** BEGIN BLOCK SEARCH TABLE -->
-                <div class="bg-info-light" id="corules_search_table">
+                <div class="bg-info-light" id="companiesrules_search_table">
                     <div class="input-group input-group-sm">
-                        <input type="hidden" name="searching_rule"/>
+                        <input type="hidden" name="searching_companiesrules"/>
                         <input type="text" class="form-control" placeholder="Company ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
                         <input type="text" class="form-control" placeholder="Name.." name="s_name" value="<?= htmlentities($_REQUEST['s_name']) ?>"/>
                         <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
@@ -198,7 +201,7 @@ class Names
                 <! ** END BLOCK SEARCH TABLE -->
                 <! ** BEGIN BLOCK LIST (DATATABLE) -->
                 <div class="block-content">
-                    <table class="table table-sm table-striped" id="corules_table">
+                    <table class="table table-sm table-striped" id="companiesrules_table">
                         <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                         <tr>
                             <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Name</a></th>
@@ -224,7 +227,7 @@ class Names
                 containment: '#main-container'
             });
             $("#dialog-modal-add-rule").closest('.ui-dialog').draggable("option","containment","#main-container");
-            loadCoRules();
+            loadCompaniesRules();
         </script>
         <?
     }
@@ -349,7 +352,7 @@ class Names
 
 
             // SET TITLEBAR
-            $('#dialog-modal-add-name').dialog("option", "title", '<?=($id) ? 'Editing Name #' . $id . ' - ' . htmlentities($row['name']) : 'Adding new Name'?>');
+            $('#dialog-modal-add-rule').dialog("option", "title", '<?=($id) ? 'Editing rule #' . $id . ' - ' . htmlentities($row['rule']) : 'Adding new rule'?>');
 
 
         </script>

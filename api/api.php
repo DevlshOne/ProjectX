@@ -446,6 +446,14 @@ switch ($_REQUEST['get']) {
 
         break;
 
+    case 'companiesrules':
+
+        include_once($basedir . "api/companies_rules.api.php");
+        $companies_rules = new API_CompaniesRules();
+        $companies_rules->handleAPI();
+
+        break;
+
     case 'login_tracker':
 
         include_once($basedir . "api/login_tracker.api.php");
