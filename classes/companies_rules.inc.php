@@ -58,7 +58,6 @@ class CompaniesRules
             var <?=$this->index_name?> = 0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
             var CompaniesrulesTableFormat = [
-                ['id', 'text-left'],
                 ['[get:company_name:company_id]', 'text-left'],
                 ['rule_type', 'text-left'],
                 ['trigger_name', 'text-left'],
@@ -78,7 +77,7 @@ class CompaniesRules
                 return 'api/api.php' +
                     "?get=companiesrules&" +
                     "mode=xml&" +
-                    's_id=' + escape(frm.s_id.value) + "&" +
+                    's_company_id=' + escape(frm.s_company_id.value) + "&" +
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
@@ -143,7 +142,7 @@ class CompaniesRules
             }
 
             function resetCompaniesRulesForm(frm) {
-                frm.s_id.value = '';
+                frm.s_company_id.value = '';
             }
 
             var companiesrulessrchtog = true;
@@ -181,7 +180,7 @@ class CompaniesRules
                 <div class="bg-info-light" id="companiesrules_search_table">
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_companiesrules"/>
-                        <input type="text" class="form-control" placeholder="Rule ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
+                        <?= makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), 'loadCompaniesRules();', '[Select Company]') ?>
                         <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadCompaniesRules();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetCompaniesRulesForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadCompaniesRules();return false;">Reset</button>
                     </div>
@@ -192,7 +191,6 @@ class CompaniesRules
                     <table class="table table-sm table-striped" id="companiesrule_table">
                         <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                         <tr>
-                            <th class="row2 text-left"><?= $this->getOrderLink('id') ?>ID</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('company_id') ?>Company</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('rule_type') ?>Rule Type</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('trigger_name') ?>Trigger</a></th>
@@ -234,22 +232,11 @@ class CompaniesRules
         ?>
         <script>
             function validateCompaniesRulesField(name, value, frm) {
-                //alert(name+","+value);
+                // console.log(name, value);
+                // alert(name+","+value);
                 switch (name) {
                     default:
                         // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
-                        return true;
-                        break;
-                    case 'company_id':
-                        if (!value) return false;
-                        return true;
-                        break;
-                    case 'trigger_value':
-                        if (!value) return false;
-                        return true;
-                        break;
-                    case 'action_value':
-                        if (!value) return false;
                         return true;
                         break;
                 }
@@ -303,7 +290,7 @@ class CompaniesRules
             <table border="0" align="center">
                 <tr>
                     <th align="left" height="30">Company ID:</th>
-                    <td><input name="company_id" type="text" size="12" value="<?= htmlentities($row['company_id']) ?>"></td>
+                    <td><?=makeCompanyDD('company_id', intval($row['company_id']), '', 'Default [All]')?></td>
                 </tr>
                 <tr>
                     <th align="left" height="30">Rule Type:</th>
@@ -324,12 +311,12 @@ class CompaniesRules
                 </tr>
                 <tr>
                     <th align="left" height="30">Trigger Value:</th>
-                    <td><input name="trigger_value" type="number" min="0.00" max="40.00" step="0.01" value="<?= htmlentities($row['trigger_value']) ?>"></td>
+                    <td><input name="trigger_value" type="text" value="<?= htmlentities($row['trigger_value']) ?>"></td>
                 </tr>
                 <tr>
                     <th align="left" height="30">Action Type:</th>
                     <td>
-                        <select name="action_type">
+                        <select name="action">
                             <option <?=htmlentities($row['action'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
                             <option <?=htmlentities($row['action'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
                             <option <?=htmlentities($row['action'] == '' ? 'selected' : '');?> value="">None</option>
@@ -338,10 +325,10 @@ class CompaniesRules
                 </tr>
                 <tr>
                     <th align="left" height="30">Action Value:</th>
-                    <td><input name="action_value" type="number" min="0.00" max="40.00" step="0.01" value="<?= htmlentities($row['action_value']) ?>"></td>
+                    <td><input name="action_value" type="text" value="<?= htmlentities($row['action_value']) ?>"></td>
                 </tr>
                 <tr>
-                    <th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
+                    <th colspan="2" class="text-center"><button class="btn btn-sm btn-primary" type="submit">Save Changes</button></th>
                 </tr>
         </form>
         </table>

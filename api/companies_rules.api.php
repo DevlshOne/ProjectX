@@ -49,9 +49,10 @@ class API_CompaniesRules
                 $dat['company_id'] = intval($_POST['company_id']);
                 $dat['rule_type'] = trim($_POST['rule_type']);
                 $dat['trigger_name'] = trim($_POST['trigger_name']);
-                $dat['trigger_value'] = round($_POST['trigger_value'],2);
+                $dat['trigger_value'] = round(floatval($_POST['trigger_value']),2);
                 $dat['action'] = trim($_POST['action']);
-                $dat['action_value'] = round($_POST['action_value'],2);
+                $dat['action_value'] = round(floatval($_POST['action_value']),2);
+//                $dat['id'] = $id;
                 if ($id) {
                     $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->companies_rules->table);
                     logAction('edit', 'companies_rules', $id, "Rule=" . $id);
@@ -68,9 +69,9 @@ class API_CompaniesRules
                 $dat = array();
                 $totalcount = 0;
                 $pagemode = false;
-                ## ID SEARCH
-                if ($_REQUEST['s_id']) {
-                    $dat['id'] = intval($_REQUEST['s_id']);
+                ## COMPANY ID SEARCH
+                if ($_REQUEST['s_company_id']) {
+                    $dat['company_id'] = intval($_REQUEST['s_company_id']);
                 }
                 ## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
                 if (isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])) {
