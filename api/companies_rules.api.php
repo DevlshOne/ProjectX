@@ -24,7 +24,7 @@ class API_CompaniesRules
         }
 
 
-        switch ($_REQUEST['action']) {
+        switch ($_REQUEST['gui_action']) {
             case 'delete':
                 $id = intval($_REQUEST['id']);
                 $_SESSION['dbapi']->companies_rules->delete($id);
@@ -44,7 +44,7 @@ class API_CompaniesRules
                 echo $out;
                 break;
             case 'edit':
-                $id = intval($_POST['adding_rule']);
+                $id = intval($_REQUEST['adding_rule']);
                 unset($dat);
                 $dat['company_id'] = intval($_POST['company_id']);
                 $dat['rule_type'] = trim($_POST['rule_type']);
@@ -52,7 +52,6 @@ class API_CompaniesRules
                 $dat['trigger_value'] = round(floatval($_POST['trigger_value']),2);
                 $dat['action'] = trim($_POST['action']);
                 $dat['action_value'] = round(floatval($_POST['action_value']),2);
-//                $dat['id'] = $id;
                 if ($id) {
                     $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->companies_rules->table);
                     logAction('edit', 'companies_rules', $id, "Rule=" . $id);
@@ -63,7 +62,6 @@ class API_CompaniesRules
                 }
                 $_SESSION['api']->outputEditSuccess($id);
                 break;
-
             default:
             case 'list':
                 $dat = array();

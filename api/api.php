@@ -132,18 +132,13 @@ $_SESSION['dbapi']->users->updateLastActionTime();
 ## SELECT THE DATA TYPES TO RETRIEVE
 switch ($_REQUEST['get']) {
     default:
-
         ## DESTROY SESSION CHECK
         if ($destroy_session) {
-
             unset($_SESSION['account']);
             unset($_SESSION['user']);
             unset($_SESSION['features']);
-
         }
-
         $_SESSION['api']->errorOut("Data type not specified.");
-
         break;
 
 
@@ -353,13 +348,16 @@ switch ($_REQUEST['get']) {
 
             case 'sales_management':
             case 'sale':
-
                 include_once($basedir . "classes/home.inc.php");
                 include_once($basedir . "api/sales_management.api.php");
-
                 $obj = new API_Sales_Management();
                 $obj->handleSecondaryAjax();
-
+                break;
+            case 'companiesrule':
+                include_once($basedir . "classes/employee_hours.inc.php");
+                include_once($basedir . "api/companies_rules.api.php");
+                $obj = new API_CompaniesRules();
+                $obj->handleSecondaryAjax();
                 break;
 
 //		case 'account':
@@ -370,12 +368,6 @@ switch ($_REQUEST['get']) {
 //			$accounts->handleSecondaryAjax();
 //
 //			break;
-            case 'companiesrule':
-                include_once($basedir . "classes/employee_hours.inc.php");
-                include_once($basedir . "api/companies_rules.api.php");
-                $obj = new API_CompaniesRules();
-                $obj->handleSecondaryAjax();
-                break;
         }
 
 

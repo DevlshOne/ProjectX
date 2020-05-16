@@ -52,7 +52,7 @@ class CompaniesRules
     {
         ?>
         <script>
-            var companiesrules_delmsg = 'Are you sure you want to delete this rule?';
+            var companiesrule_delmsg = 'Are you sure you want to delete this rule?';
             var <?=$this->order_prepend?>orderby = "<?=addslashes($this->orderby)?>";
             var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
             var <?=$this->index_name?> = 0;
@@ -239,6 +239,18 @@ class CompaniesRules
                         // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
                         return true;
                         break;
+                    // case 'company_id':
+                    //     if (!value) return false;
+                    //     return true;
+                    //     break;
+                    // case 'trigger_value':
+                    //     if (!value) return false;
+                    //     return true;
+                    //     break;
+                    // case 'action_value':
+                    //     if (!value) return false;
+                    //     return true;
+                    //     break;
                 }
                 return true;
             }
@@ -261,7 +273,7 @@ class CompaniesRules
                     $.ajax({
                         type: "POST",
                         cache: false,
-                        url: 'api/api.php?get=companiesrules&mode=xml&action=edit',
+                        url: 'api/api.php?get=companiesrules&mode=xml&gui_action=edit',
                         data: params,
                         error: function () {
                             alert("Error saving user form. Please contact an admin.");
