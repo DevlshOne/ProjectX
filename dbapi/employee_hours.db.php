@@ -269,4 +269,163 @@ class EmployeeHoursAPI{
 	}
 
 
+	function loadRules($company_id = 0){
+		
+		
+		$out = array();
+		$rowarr = $_SESSION['dbapi']->fetchAllAssoc(
+				
+			"SELECT * FROM `companies_rules` WHERE 1 ".
+			(($company_id > 0)?" AND `company_id`='' ":'').
+			" ORDER BY company_id ASC, trigger_value ASC"
+		);
+	
+		foreach($rowarr as $row){
+			$out[$row['company_id']][] = $row;
+		}
+		
+		return $out;
+	}
+	
+	function autoCalcEmployeeHours($start_time_override = 0){
+		
+		$out = '';
+		
+		if($start_time_override > 0){
+			$stime = $start_time_override;
+			$etime = $stime + 86399;
+		}else{
+			// CURRENT DAY DEFAULT
+			$stime = mktime(0,0,0);
+			$etime = $stime + 86399;
+		}
+		
+		
+		$out .= date("g:i:sa m/d/Y")." - Calculating hours for activity on '".date("m/d/Y", $stime)."'\n";
+		
+		
+		// LOAD THE RULES DATABASE
+		$all_rules = $this->loadRules();
+		
+		
+
+		
+		// GET STACK OF COMPANYS (and there offices) THAT HAVE AUTO CALCULATE ENABLED
+		$companies = $_SESSION['dbapi']->fetchAllAssoc("SELECT * FROM `companies` WHERE `status`='enabled' AND `opt_auto_calc_hours`='yes' ");
+
+		$out .= date("g:i:sa m/d/Y")." - Loading Rules (".count($all_rules).") and Companies (".count($companies).")\n";
+		
+		
+		$ofcstr = '';
+		$rules = array();
+		foreach($companies as $comp){
+			
+			$compname = '#'.$comp['id'].' '.$comp['name'];
+			
+			// FOR EACH COMPANY, GRAB ALL EMPLOYEE HOURS RECORDS FOR THEIR OFFICES.
+			$offices = $_SESSION['dbapi']->fetchAllAssoc("SELECT * FROM `offices` WHERE `enabled`='yes' AND `company_id`='".intval($comp['id'])."' ");
+		
+			$y=0;
+			foreach($offices as $ofc){
+				
+				if($y++ > 0)$ofcstr .= ',';
+				
+				$ofcstr .= $ofc['id'];
+			}
+			
+			$out .= date("g:i:sa m/d/Y")." - Processing $compname - Offices ($ofcstr)\n";
+			
+			
+			// IF THE COMPANY HAS ITS OWN SPECIFIC RULES, USE THOSE
+			if(count($all_rules[$comp['id']]) > 0){
+				
+				$rules = $all_rules[$comp['id']];
+				
+			// ELSE USE DEFAULT RULES
+			}else{
+				$rules = $all_rules[0];
+			}
+			
+			
+			$res = $_SESSION['dbapi']->query("SELECT * FROM `activity_log` WHERE `office` IN ($ofcstr) AND `time_started` BETWEEN '$stime' AND '$etime' ");
+			
+			
+			$out .= date("g:i:sa m/d/Y")." - Located ".mysqli_num_rows($res)." matching activity records.\n";
+			$users_break_time  = 0;
+			while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
+				
+				// CALCULATE THE EMPLOYEES PAID TIME, USING THE RULES
+				
+				// CONVERT TO HOURS (IN CALL + READY + QUEUE TIME, NO PAUSE)
+				$activity_time = $paid_hrs = round( ($row['seconds_INCALL'] + $row['seconds_READY'] + $row['seconds_QUEUE']) / 3600, 3);
+				
+				$users_break_time = 0;
+				
+				foreach($rules as $rule){
+					
+					switch($rule['rule_type']){
+					default:
+						break;
+					
+					case 'hours':
+						
+						if($rule['trigger_name'] == 'greater_than'){
+							
+							// TRIGGERED RULE
+							if($activity_time > $rule['trigger_value']){
+								
+								switch($rule['action']){
+								default:
+									break;
+								case 'paid_break':
+								case 'paid_lunch':
+									
+									$users_break_time  += $rule['action_value'];
+								
+									
+									break;
+
+								}
+								
+								
+							}
+							
+							
+						}
+						
+						
+						break;
+					}
+				
+				} // END FOREACH(RULES)
+				
+				
+				$paid_hrs += $users_break_time;
+				
+				
+				
+				
+				// UPDATE THE EMPLOYEES ACTIVITY LOG RECORD
+				if($activity_time != $paid_hrs){
+					$out .= date("g:i:sa m/d/Y")." ".$compname." - User ".$row['username']." : Updating Paid Time to $paid_hrs ($activity_time + Breaks: ".$users_break_time.")\n";
+				}else{
+					
+					$out .= date("g:i:sa m/d/Y")." ".$compname." - User ".$row['username']." : Updating Paid Time to $paid_hrs\n";
+				}
+				
+				
+				
+			}
+			
+			
+			
+			
+			
+		}
+		
+		
+		
+		
+		return $out;
+	} // END Function autoCalcEmployeeHours()
 }
