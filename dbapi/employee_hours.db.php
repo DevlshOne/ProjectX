@@ -369,10 +369,21 @@ class EmployeeHoursAPI{
 					
 					case 'hours':
 						
-						if($rule['trigger_name'] == 'greater_than'){
+						if($rule['trigger_name'] == 'greater_than' || $rule['trigger_name'] == 'greater_equal'){
 							
+							$triggered = false;
+							
+							if($rule['trigger_name'] == 'greater_equal'){
+								if($activity_time >= $rule['trigger_value']){
+									$triggered = true;
+								}
+							}else{
+								if($activity_time > $rule['trigger_value']){
+									$triggered = true;
+								}
+							}
 							// TRIGGERED RULE
-							if($activity_time > $rule['trigger_value']){
+							if($triggered){ //$activity_time > $rule['trigger_value']){
 								
 								switch($rule['action']){
 								default:
