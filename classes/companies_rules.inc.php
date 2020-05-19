@@ -78,6 +78,10 @@ class CompaniesRules
                     "?get=companiesrules&" +
                     "mode=xml&" +
                     's_company_id=' + escape(frm.s_company_id.value) + "&" +
+                    's_trigger_name=' + escape(frm.s_trigger_name.value) + "&" +
+                    's_trigger_value=' + escape(frm.s_trigger_value.value) + "&" +
+                    's_action_type=' + escape(frm.s_action_type.value) + "&" +
+                    's_action_value=' + escape(frm.s_action_value.value) + "&" +
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
@@ -143,6 +147,10 @@ class CompaniesRules
 
             function resetCompaniesRulesForm(frm) {
                 frm.s_company_id.value = '';
+                frm.s_trigger_name.value = '';
+                frm.s_trigger_value.value = '';
+                frm.s_action_type.value = '';
+                frm.s_action_value.value = '';
             }
 
             var companiesrulessrchtog = true;
@@ -181,6 +189,20 @@ class CompaniesRules
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_companiesrules"/>
                         <?= makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), 'loadCompaniesRules();', '[Select Company]') ?>
+                        <select class="form-control custom-select-sm" name="s_trigger_name" onchange="loadCompaniesRules();">
+                            <option value="">[Select Trigger Type]</option>
+                            <option <?=htmlentities($_REQUEST['s_trigger_name'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
+                            <option <?=htmlentities($_REQUEST['s_trigger_name'] == 'greater_equal' ? 'selected' : '');?> value="greater_equal">&#8925;</option>
+                            <option <?=htmlentities($_REQUEST['s_trigger_name'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Breaks</option>
+                        </select>
+                        <input class="form-control" placeholder="Trigger Value.." name="s_trigger_value" type="text" value="<?= htmlentities($_REQUEST['s_trigger_value']) ?>">
+                        <select class="form-control custom-select-sm" name="s_action_type" onchange="loadCompaniesRules();">
+                            <option value="">[Select Action Type]</option>
+                            <option <?=htmlentities($_REQUEST['s_action_type'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
+                            <option <?=htmlentities($_REQUEST['s_action_type'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
+                            <option <?=htmlentities($_REQUEST['s_action_type'] == 'set_hours' ? 'selected' : '');?> value="set_hours">Set Hours</option>
+                        </select>
+                        <input class="form-control" placeholder="Action Value.." name="s_action_value" type="text" value="<?= htmlentities($_REQUEST['s_action_value']) ?>">
                         <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadCompaniesRules();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetCompaniesRulesForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadCompaniesRules();return false;">Reset</button>
                     </div>
@@ -273,7 +295,7 @@ class CompaniesRules
                     $.ajax({
                         type: "POST",
                         cache: false,
-                        url: 'api/api.php?get=companiesrules&mode=xml&gui_action=edit',
+                        url: 'api/api.php?get=companiesrules&mode=xml&action=edit',
                         data: params,
                         error: function () {
                             alert("Error saving user form. Please contact an admin.");
@@ -301,11 +323,11 @@ class CompaniesRules
             <input type="hidden" id="adding_rule" name="adding_rule" value="<?= $id ?>">
             <table border="0" align="center">
                 <tr>
-                    <th align="left" height="30">Company ID:</th>
-                    <td><?=makeCompanyDD('company_id', intval($row['company_id']), '', 'Default [All]')?></td>
+                    <th colspan="2" align="left" height="30">Company ID:</th>
+                    <td colspan="2"><?=makeCompanyDD('company_id', intval($row['company_id']), '', 'Default [All]')?></td>
                 </tr>
                 <tr>
-                    <th align="left" height="30">Rule Type:</th>
+                    <th colspan="3" align="left" height="30">Rule Type:</th>
                     <td>
                         <select name="rule_type">
                             <option <?=htmlentities($row['rule_type'] == 'hours' ? 'selected' : '');?> value="hours">Hours</option>
@@ -313,34 +335,31 @@ class CompaniesRules
                     </td>
                 </tr>
                 <tr>
-                    <th align="left" height="30">Trigger Type:</th>
+                    <th align="left" height="30">Trigger:</th>
                     <td>
                         <select name="trigger_name">
                             <option <?=htmlentities($row['trigger_name'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
                             <option <?=htmlentities($row['trigger_name'] == 'greater_equal' ? 'selected' : '');?> value="greater_equal">&#8925;</option>
-                            <option <?=htmlentities($row['trigger_name'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Paid Breaks</option>
+                            <option <?=htmlentities($row['trigger_name'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Breaks</option>
                         </select>
+                    <th align="left" height="30">Value:</th>
+                    <td><input name="trigger_value" size="8" type="text" value="<?= htmlentities($row['trigger_value']) ?>"></td>
                 </tr>
                 <tr>
-                    <th align="left" height="30">Trigger Value:</th>
-                    <td><input name="trigger_value" type="text" value="<?= htmlentities($row['trigger_value']) ?>"></td>
-                </tr>
-                <tr>
-                    <th align="left" height="30">Action Type:</th>
+                    <th align="left" height="30">Action:</th>
                     <td>
-                        <select name="action">
-                            <option <?=htmlentities($row['action'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
-                            <option <?=htmlentities($row['action'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
-                            <option <?=htmlentities($row['action'] == '' ? 'selected' : '');?> value="">None</option>
+                        <select name="action_type">
+                            <option <?=htmlentities($row['action_name'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
+                            <option <?=htmlentities($row['action_name'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
+                            <option <?=htmlentities($row['action_name'] == 'set_hours' ? 'selected' : '');?> value="set_hours">Set Hours</option>
+                            <option <?=htmlentities($row['action_name'] == '' ? 'selected' : '');?> value="">None</option>
                         </select>
                     </td>
+                    <th align="left" height="30">Value:</th>
+                    <td><input name="action_value" size="8" type="text" value="<?= htmlentities($row['action_value']) ?>"></td>
                 </tr>
                 <tr>
-                    <th align="left" height="30">Action Value:</th>
-                    <td><input name="action_value" type="text" value="<?= htmlentities($row['action_value']) ?>"></td>
-                </tr>
-                <tr>
-                    <th colspan="2" class="text-center"><button class="btn btn-sm btn-primary" type="submit">Save Changes</button></th>
+                    <th colspan="4" class="text-center"><button class="btn btn-sm btn-primary" type="submit">Save Changes</button></th>
                 </tr>
         </form>
         </table>

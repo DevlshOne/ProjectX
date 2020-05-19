@@ -24,7 +24,7 @@ class API_CompaniesRules
         }
 
 
-        switch ($_REQUEST['gui_action']) {
+        switch ($_REQUEST['action']) {
             case 'delete':
                 $id = intval($_REQUEST['id']);
                 $_SESSION['dbapi']->companies_rules->delete($id);
@@ -50,7 +50,7 @@ class API_CompaniesRules
                 $dat['rule_type'] = trim($_POST['rule_type']);
                 $dat['trigger_name'] = trim($_POST['trigger_name']);
                 $dat['trigger_value'] = round(floatval($_POST['trigger_value']),2);
-                $dat['action'] = trim($_POST['action']);
+                $dat['action'] = trim($_POST['action_type']);
                 $dat['action_value'] = round(floatval($_POST['action_value']),2);
                 if ($id) {
                     $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->companies_rules->table);
@@ -71,6 +71,18 @@ class API_CompaniesRules
                 if ($_REQUEST['s_company_id']) {
                     $dat['company_id'] = intval($_REQUEST['s_company_id']);
                 }
+            if ($_REQUEST['s_trigger_name']) {
+                $dat['trigger_name'] = $_REQUEST['s_trigger_name'];
+            }
+            if ($_REQUEST['s_trigger_value']) {
+                $dat['trigger_value'] = floatval($_REQUEST['s_trigger_value']);
+            }
+            if ($_REQUEST['s_action_type']) {
+                $dat['action_type'] = $_REQUEST['s_action_type'];
+            }
+            if ($_REQUEST['s_action_value']) {
+                $dat['action_value'] = floatval($_REQUEST['s_action_value']);
+            }
                 ## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
                 if (isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])) {
                     $pagemode = true;

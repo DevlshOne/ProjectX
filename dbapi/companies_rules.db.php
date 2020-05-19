@@ -60,7 +60,18 @@ class CompaniesRulesAPI
         } else if ($info['company_id']) {
             $sql .= " AND `company_id`='" . intval($info['company_id']) . "' ";
         }
-
+        if ($info['action_type']) {
+            $sql .= " AND `action`='" . $info['action_type'] . "' ";
+        }
+        if ($info['action_value']) {
+            $sql .= " AND `action_value`='" . floatval($info['action_value']) . "' ";
+        }
+        if ($info['trigger_name']) {
+            $sql .= " AND `trigger_name`='" . $info['trigger_name'] . "' ";
+        }
+        if ($info['trigger_value']) {
+            $sql .= " AND `trigger_value`='" . floatval($info['trigger_value']) . "' ";
+        }
         ## SKIP/IGNORE ID's
         if (isset($info['skip_id'])) {
 
