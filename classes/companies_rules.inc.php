@@ -349,10 +349,10 @@ class CompaniesRules
                     <th align="left" height="30">Action:</th>
                     <td>
                         <select name="action_type">
-                            <option <?=htmlentities($row['action_name'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
-                            <option <?=htmlentities($row['action_name'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
-                            <option <?=htmlentities($row['action_name'] == 'set_hours' ? 'selected' : '');?> value="set_hours">Set Hours</option>
-                            <option <?=htmlentities($row['action_name'] == '' ? 'selected' : '');?> value="">None</option>
+                            <option <?=htmlentities($row['action'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
+                            <option <?=htmlentities($row['action'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
+                            <option <?=htmlentities($row['action'] == 'set_hours' ? 'selected' : '');?> value="set_hours">Set Hours</option>
+                            <option <?=htmlentities($row['action'] == '' ? 'selected' : '');?> value="">None</option>
                         </select>
                     </td>
                     <th align="left" height="30">Value:</th>

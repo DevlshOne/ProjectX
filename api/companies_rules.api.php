@@ -71,18 +71,18 @@ class API_CompaniesRules
                 if ($_REQUEST['s_company_id']) {
                     $dat['company_id'] = intval($_REQUEST['s_company_id']);
                 }
-            if ($_REQUEST['s_trigger_name']) {
-                $dat['trigger_name'] = $_REQUEST['s_trigger_name'];
-            }
-            if ($_REQUEST['s_trigger_value']) {
-                $dat['trigger_value'] = floatval($_REQUEST['s_trigger_value']);
-            }
-            if ($_REQUEST['s_action_type']) {
-                $dat['action_type'] = $_REQUEST['s_action_type'];
-            }
-            if ($_REQUEST['s_action_value']) {
-                $dat['action_value'] = floatval($_REQUEST['s_action_value']);
-            }
+                if ($_REQUEST['s_trigger_name']) {
+                    $dat['trigger_name'] = $_REQUEST['s_trigger_name'];
+                }
+                if ($_REQUEST['s_trigger_value']) {
+                    $dat['trigger_value'] = floatval($_REQUEST['s_trigger_value']);
+                }
+                if ($_REQUEST['s_action_type']) {
+                    $dat['action_type'] = $_REQUEST['s_action_type'];
+                }
+                if ($_REQUEST['s_action_value']) {
+                    $dat['action_value'] = floatval($_REQUEST['s_action_value']);
+                }
                 ## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
                 if (isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])) {
                     $pagemode = true;
