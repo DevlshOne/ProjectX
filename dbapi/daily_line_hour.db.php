@@ -65,7 +65,7 @@ SELECT SQL_NO_CACHE
 					SELECT 
 					   username,
                        sum(calls_today) as _hand_calls_today,
-                       sum(paid_time) as _hand_paid_time,
+                       (SUM(paid_time) + SUM(paid_corrections)) as _hand_paid_time,
 					   sum(seconds_INCALL+seconds_READY+seconds_QUEUE+seconds_PAUSED) as `_hand_activity_seconds`
 					from activity_log
 					WHERE time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
@@ -133,7 +133,7 @@ FROM (
                 -- sec_to_time(max(activity_time)) as _hand_paid_minutes,
                 max(activity_time) as hand_wrkd_minutes,
                 calls_today as hand_total_calls,
-                max(paid_time) as hand_paid_minutes
+                max((paid_time+paid_corrections)) as hand_paid_minutes
             FROM activity_log
             WHERE  time_started BETWEEN {$startUnixTime} AND {$endUnixTime}
             GROUP BY 1

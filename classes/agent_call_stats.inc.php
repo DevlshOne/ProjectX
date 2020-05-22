@@ -185,6 +185,7 @@ class AgentCallStats
                 //echo "Agent $username found in stack.<br />\n";
                 $agent_array[$username]['activity_time'] += $row['activity_time'];
                 $agent_array[$username]['paid_time'] += $row['paid_time'];
+                $agent_array[$username]['paid_corrections'] += $row['paid_corrections'];
                 $agent_array[$username]['seconds_INCALL'] += $row['seconds_INCALL'];
                 $agent_array[$username]['seconds_READY'] += $row['seconds_READY'];
                 $agent_array[$username]['seconds_QUEUE'] += $row['seconds_QUEUE'];
@@ -282,7 +283,7 @@ class AgentCallStats
             $out[$x]['call_cnt'] = $agent['call_cnt'];
             $out[$x]['hangup_cnt'] = $agent['hangup_cnt'];
             $out[$x]['decline_cnt'] = $agent['decline_cnt'];
-            $out[$x]['paid_time'] = $agent['paid_time'];
+            $out[$x]['paid_time'] = ($agent['paid_time'] + $agent['paid_corrections']);
             $out[$x]['t_time'] = $t_time;
             $out[$x]['t_pause'] = $t_pause;
             $out[$x]['t_talk'] = $t_talk;

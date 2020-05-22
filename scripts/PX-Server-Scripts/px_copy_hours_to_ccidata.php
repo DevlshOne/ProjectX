@@ -91,7 +91,7 @@
 		$sql .= "(".
 					"'".addslashes($row['username'])."',".
 					"'".addslashes($date)."',".
-					"'".addslashes(round($row['paid_time']/60,2))."',".
+					"'".addslashes(round((($row['paid_time']+$row['paid_corrections'])/60),2))."',".
 					"'".addslashes($row['office'])."',".
 					"'".addslashes($row['call_group'])."'".
 				")";

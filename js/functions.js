@@ -19,6 +19,20 @@ ie4 = ( ie && !dom );
 
 
 
+function format_phone(phone){
+
+	phone=phone.trim();
+	
+	if(phone.length < 1)return '';
+
+	if(phone.length <= 10){
+		return "("+phone.substr(0,3)+") "+phone.substr(3,3)+"-"+phone.substr(6);
+	}else{
+		return "("+phone.substr(0,3)+") "+phone.substr(3,3)+"-"+phone.substr(6, 4)+' EXT '+phone.substr(10);
+	}
+
+}
+
 
 function hasCheckedCheckboxes(baseobj){
 

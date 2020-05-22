@@ -199,7 +199,7 @@ class EmployeeHoursAPI{
 		if($info['show_problems']){
 
 
-			$sql .= " AND (`paid_time` > activity_time) ";
+			$sql .= " AND ((`paid_time` + `paid_corrections`) > activity_time) ";
 
 		}
 
@@ -316,7 +316,7 @@ class EmployeeHoursAPI{
 		$out .= date("g:i:sa m/d/Y")." - Loading Rules (".count($all_rules).") and Companies (".count($companies).")\n";
 		
 		
-		$ofcstr = '';
+		
 		$rules = array();
 		foreach($companies as $comp){
 			
@@ -326,6 +326,7 @@ class EmployeeHoursAPI{
 			$offices = $_SESSION['dbapi']->fetchAllAssoc("SELECT * FROM `offices` WHERE `enabled`='yes' AND `company_id`='".intval($comp['id'])."' ");
 		
 			$y=0;
+			$ofcstr = '';
 			foreach($offices as $ofc){
 				
 				if($y++ > 0)$ofcstr .= ',';
@@ -349,19 +350,78 @@ class EmployeeHoursAPI{
 			
 			$res = $_SESSION['dbapi']->query("SELECT * FROM `activity_log` WHERE `office` IN ($ofcstr) AND `time_started` BETWEEN '$stime' AND '$etime' ");
 			
+			$user_activity_arr = array();
 			
 			$out .= date("g:i:sa m/d/Y")." - Located ".mysqli_num_rows($res)." matching activity records.\n";
+			
 			$users_break_time  = 0;
 			while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 				
-				// CALCULATE THE EMPLOYEES PAID TIME, USING THE RULES
+			//	print_r($row);
 				
-				// CONVERT TO HOURS (IN CALL + READY + QUEUE TIME, NO PAUSE)
-				$activity_time = $paid_hrs = round( ($row['seconds_INCALL'] + $row['seconds_READY'] + $row['seconds_QUEUE']) / 3600, 3);
+				$base_username = trim($row['username']);
+				
+				$second_hand_mode = false;
+				if($base_username[strlen($base_username)-1] == '2'){
+					
+					$base_username = substr($base_username,0, strlen($base_username)-1);
+					$second_hand_mode = true;
+				}
+				
+				
+				//echo "BASE USERNAME: $base_username \n"; /// + $row['seconds_DISPO'] 
+				
+				// CONVERT TO HOURS (IN CALL + READY + QUEUE TIME, NO PAUSE or DISPO time)
+				//$activity_time = $paid_hrs = round( ($row['seconds_INCALL'] + $row['seconds_READY'] + $row['seconds_QUEUE']) / 3600, 3);
+				
+				// USE THE "DETECTED (OLD)" ACTIVITY TRACKER INSTEAD
+				$activity_time = $paid_hrs = round( ($row['activity_time'] / 60), 3); 
+				
+				
+				// SEE IF THE USER EXISTS ALREADY
+				// IF SO, PICK THE LARGER OF THE ACTIVITY TIMES TO USE, AND PUSH ACTIVITY TO EXISTING STACK
+				if(array_key_exists($base_username, $user_activity_arr)){
+					
+					if($activity_time > $user_activity_arr[$base_username]['activity_time']){
+						$user_activity_arr[$base_username]['activity_time'] = $activity_time;
+					}
+					
+					$user_activity_arr[$base_username]['activity'][] = $row;
+				
+					$user_activity_arr[$base_username]['num_hands'] = count($user_activity_arr[$base_username]['activity']);
+					
+					if(!$second_hand_mode){
+						$user_activity_arr[$base_username]['main_user_activity_id'] = $row['id'];
+					}
+					
+					
+				// IF NOT FOUND, CREATE THE USERS BASE ACTIVITY STACK 
+				}else{
+					$user_activity_arr[$base_username] = array(
+					
+						'user'				=> $base_username,
+						'main_user_activity_id' => $row['id'],
+						'activity_time'		=> $activity_time,
+						'activity'			=> array($row),
+						'num_hands'			=> 1
+					);
+				}
+				
+			}
+			
+			
+			foreach($user_activity_arr as $base_username=>$row){
+				
+				// CALCULATE THE EMPLOYEES PAID TIME, USING THE RULES
+				$activity_time = $paid_hrs = $row['activity_time'];
 				
 				$users_break_time = 0;
 				
+				$rule_breaker = false;
+				
 				foreach($rules as $rule){
+					
+					if($rule_breaker)break;
 					
 					switch($rule['rule_type']){
 					default:
@@ -396,6 +456,17 @@ class EmployeeHoursAPI{
 									
 									break;
 
+									
+									
+								case 'set_hours':
+									
+									$users_break_time = 0;
+									$paid_hrs = $rule['action_value'];
+									
+									// KICK OUT OF THE RULES AT THIS POINT (skip any rules that follow)
+									$rule_breaker = true;
+									
+									break;
 								}
 								
 								
@@ -418,11 +489,23 @@ class EmployeeHoursAPI{
 				
 				// UPDATE THE EMPLOYEES ACTIVITY LOG RECORD
 				if($activity_time != $paid_hrs){
-					$out .= date("g:i:sa m/d/Y")." ".$compname." - User ".$row['username']." : Updating Paid Time to $paid_hrs ($activity_time + Breaks: ".$users_break_time.")\n";
+
+					// UPPER CAP HIT
+					if($rule_breaker){
+						
+						$out .= date("g:i:sa m/d/Y")." ".$compname." - User $base_username (".$row['activity'][0]['call_group'].")".(($row['num_hands'] > 1)?'(Hands: '.$row['num_hands'].')':'').": Updating Paid Time to $paid_hrs\t\t($activity_time Capped)\n";
+						
+					}else{
+						$out .= date("g:i:sa m/d/Y")." ".$compname." - User $base_username (".$row['activity'][0]['call_group'].")".(($row['num_hands'] > 1)?'(Hands: '.$row['num_hands'].')':'').": Updating Paid Time to $paid_hrs\t\t($activity_time + Breaks: ".$users_break_time.")\n";
+					}
 				}else{
 					
-					$out .= date("g:i:sa m/d/Y")." ".$compname." - User ".$row['username']." : Updating Paid Time to $paid_hrs\n";
+					$out .= date("g:i:sa m/d/Y")." ".$compname." - User $base_username (".$row['activity'][0]['call_group'].")".(($row['num_hands'] > 1)?'(Hands: '.$row['num_hands'].')':'').": Updating Paid Time to $paid_hrs\n";
 				}
+
+				// UPDATE ACTIVITY LOG RECORD FOR MAIN USER 
+				//$_SESSION['dbapi']->execSQL("UPDATE `activity_log` SET `paid_time`='".(($paid_hrs * 60))."' WHERE `id`='".$row['main_user_activity_id']."' ");
+				
 				
 				
 				

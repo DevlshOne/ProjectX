@@ -63,7 +63,23 @@ class EmployeeHours
 				$this->makeEdit(intval($_REQUEST['edit_hours']));
 
 			} else {
-				$this->listEntrys();
+				
+				switch($_REQUEST['sub_area']){
+				case 'config':
+					
+					include_once($_SESSION['site_config']['basedir'] . "/classes/companies_rules.inc.php");
+					$_SESSION['companies_rules']->handleFLOW();
+					
+					break;
+				default:
+					
+					$this->listEntrys();
+					
+					break;
+				}
+				
+				
+				
 			}
 		}
 

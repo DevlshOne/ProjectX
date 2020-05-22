@@ -180,6 +180,18 @@ class LeadManagement
                 ob_phone_num = ob_phone_num.replace(/[^0-9]/g,'');
                 let phone_num = frm.s_phone.value;
                 phone_num = phone_num.replace(/[^0-9]/g,'');
+
+
+				try{
+
+					
+                	if(phone_num.length > 0){
+
+                		pushPhoneSearch(phone_num);
+                    	
+	                }
+				}catch(ex){}
+                
                 return 'api/api.php' +
                     "?get=lead_management&" +
                     "mode=xml&" +
@@ -207,6 +219,8 @@ class LeadManagement
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
                 "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+
+
             }
 
 
@@ -406,6 +420,47 @@ class LeadManagement
                 }
             }
 
+            function initAutoComplete(field_id, arr){
+
+				//var tarr = arr.reverse();
+            	
+            	autocomplete(getEl(field_id), arr, false);
+            	
+            }
+
+			function pushPhoneSearch(phnum){
+
+				phnum = phnum.replace(/[^0-9]/g,'');
+				let tmpph;
+				for(var x=0;x < pidx;x++){
+
+					tmpph = recent_searches_phones[x].replace(/[^0-9]/g,'');
+
+					// SKIP IF ALREADY IN THE LIST
+					if(tmpph == phnum)return false;
+						
+				}
+
+				
+				//alert("Pushing : "+phnum);
+
+				recent_searches_phones[pidx++] = format_phone(phnum);
+
+				initAutoComplete('s_phone', recent_searches_phones);
+			}
+
+
+            var recent_searches_phones = new Array();
+            var pidx=0;
+            <?
+            
+            foreach($_SESSION['recent_searches']['phones'] as $phnum => $search_cnt){
+            	
+            	?>recent_searches_phones[pidx++] = '<?=format_phone($phnum)?>';
+            	<?
+            }
+            ?>
+
         </script>
         <div class="block">
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadLeads();return false;">
@@ -443,7 +498,13 @@ class LeadManagement
                         <input type="text" class="form-control" placeholder="First Name.." name="s_firstname" size="5" value="<?= htmlentities($_REQUEST['s_firstname']) ?>"/>
                         <input type="text" class="form-control" placeholder="Last Name.." name="s_lastname" size="5" value="<?= htmlentities($_REQUEST['s_lastname']) ?>"/>
                         <input type="text" class="form-control" placeholder="Lead ID.." name="s_lead_id" size="5" value="<?= htmlentities($_REQUEST['s_lead_id']) ?>"/>
-                        <input type="text" class="form-control" placeholder="Phone #.." name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
+
+
+<div class="autocomplete" style="width:150px;padding:0">
+	<input type="text" class="form-control" style="padding:0px" placeholder="Phone #.." id="s_phone" name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
+</div>
+                        
+                        
                         <input type="text" class="form-control" placeholder="City.." name="s_city" size="10" value="<?= htmlentities($_REQUEST['s_city']) ?>"/>
                         <input type="text" class="form-control" placeholder="State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
                         <input type="text" class="form-control" placeholder="Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
@@ -526,6 +587,11 @@ class LeadManagement
             $('#s_status').attr('title', 'Select Status');
             $('#s_office_id').attr('title', 'Select Office');
             loadLeads();
+
+
+
+
+            initAutoComplete('s_phone', recent_searches_phones);
         </script>
         <?
 

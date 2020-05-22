@@ -699,7 +699,7 @@ class SalesAnalysis
             if ($combine_users) {
 
                 list($activity_paid, $activity_wrkd, $activity_num_calls) =
-                    $_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log " .
+                    $_SESSION['dbapi']->ROqueryROW("SELECT (SUM(paid_time) + SUM(paid_corrections)), SUM(activity_time),SUM(calls_today) FROM activity_log " .
                         "WHERE `time_started` BETWEEN '$stime' AND '$etime' " .
                         //	" AND `account_id`='".$_SESSION['account']['id']."' ".
                         " AND `username`='" . mysqli_real_escape_string($_SESSION['db'], strtolower($agentobj->username)) . "' "
@@ -710,7 +710,7 @@ class SalesAnalysis
 
                 //" AND (username='".mysql_real_escape_string($agent)."' OR username='".mysql_real_escape_string($agent)."2') "
                 list($activity_paid2, $activity_wrkd2, $activity_num_calls2) =
-                    $_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log " .
+                    $_SESSION['dbapi']->ROqueryROW("SELECT (SUM(paid_time) + SUM(paid_corrections)), SUM(activity_time),SUM(calls_today) FROM activity_log " .
                         "WHERE `time_started` BETWEEN '$stime' AND '$etime' " .
                         //	" AND `account_id`='".$_SESSION['account']['id']."' ".
                         " AND `username`='" . mysqli_real_escape_string($_SESSION['db'], strtolower($agentobj->username)) . "2' "
@@ -727,7 +727,7 @@ class SalesAnalysis
             } else {
                 // GET AGENT ACTIVITY TIMER
                 list($activity_paid, $activity_wrkd, $activity_num_calls) =
-                    $_SESSION['dbapi']->ROqueryROW("SELECT SUM(paid_time), SUM(activity_time),SUM(calls_today) FROM activity_log " .
+                    $_SESSION['dbapi']->ROqueryROW("SELECT (SUM(paid_time) + SUM(paid_corrections)), SUM(activity_time),SUM(calls_today) FROM activity_log " .
                         "WHERE `time_started` BETWEEN '$stime' AND '$etime' " .
                         //" AND `account_id`='".$_SESSION['account']['id']."' ".
                         " AND `username`='" . mysqli_real_escape_string($_SESSION['db'], strtolower($agentobj->username)) . "' " .
