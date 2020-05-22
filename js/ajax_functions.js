@@ -632,9 +632,9 @@ function parseXMLData(area, tableFormat, xmldoc) {
                         // INSERT DROPDOWNS HERE INSTEAD OF A TEXT FIELD....
                         cell_text = '<input type="hidden" name="activity_id_' + x + '" id="activity_id_' + x + '" value="' + dataarr[x].getAttribute('id') + '">' +
                             
-                            '<span title="Calculated hours based on activity">'+sel_hour+"hr "+sel_min+"min (<span id=\"paid_ghetto_time_" + x + "\">" + s + "</span>)<br />" +
+                            '<span title="Calculated hours based on activity">'+sel_hour+"hr "+sel_min+"min (<span id=\"paid_ghetto_time_" + x + "\">" + s + "</span>)</span><br />" +
                             
-                            '<select name="paid_correction_polarity"><option value="add">PLUS (+)<option value="subtract">MINUS (-)</select>'+
+                            '<select name="paid_correction_polarity_' + x+'"><option value="add">PLUS (+)<option value="subtract">MINUS (-)</select>'+
                             makeNumberDD('paid_correction_hour_' + x, corrsel_hour, 0, 12, 1, false, '', false) + "h&nbsp;" +
                             makeNumberDD('paid_correction_min_' + x, corrsel_min, 0, 59, 1, true, '', false) + 'm<br />' +
                             

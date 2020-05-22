@@ -509,7 +509,12 @@ class EmployeeHours
                 window.location = '#header_anchor';
                 for (var x = 0; (obj = getEl('activity_id_' + x)) != null; x++) {
                     id_data += obj.value + "\t";
-                    hours_data += getEl('paid_hour_' + x).value + ":" + getEl('paid_min_' + x).value + "\t";
+ <?/**
+ paid_correction_polarity
+ paid_correction_hour_
+ paid_correction_min_
+ 
+ **/?>              hours_data += ((getEl('paid_correction_polarity_'+x).value == 'subtract')?'-':'')+getEl('paid_correction_hour_' + x).value + ":" + getEl('paid_correction_min_' + x).value + "\t";
                     notes_data += getEl('note_data_' + x).value + "||";
                 }
                 frm.activity_ids.value = id_data;

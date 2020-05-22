@@ -157,15 +157,27 @@ class API_Employee_Hours{
 				if($activity_id <= 0) continue;
 
 				$notes = $notes_array[$idx];
-				$hours = $hours_array[$idx];
+				$hours = trim($hours_array[$idx]);
 
-
+				$is_neg = false;
+				if($hours[0] == '-'){
+					$is_neg = true;
+				}else{
+					$is_neg = false;
+				}
+				$hours[0] = '0';
+				
 				list($hrs,$min) = preg_split("/\:/", $hours);
 
 				$min += ($hrs * 60);
+				
+				if($is_neg){
+					$min = $min * -1;
+				}
 
 				$dat = array();
-				$dat['paid_time'] = $min;//floatval($hours) * 60;
+				//$dat['paid_time'] = $min;//floatval($hours) * 60;
+				$dat['paid_corrections'] = $min;
 				$dat['notes'] = $notes;
 
 				aedit($activity_id, $dat, 'activity_log');
