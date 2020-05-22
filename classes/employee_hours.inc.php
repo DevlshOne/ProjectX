@@ -330,7 +330,7 @@ class EmployeeHours
                     ?>['[render:hours_from_min:paid_time]', 'align_center'],
                 ['note_data', 'align_left'], <?
                     }else{
-                    ?>['[render:editable_hours_from_min:paid_time]', 'align_center'],
+                    ?>['[render:editable_hours_from_min:paid_time:paid_corrections]', 'align_center'],
                 ['[textfield:notes:note_data:30]', 'align_left'],<?
 
                 }

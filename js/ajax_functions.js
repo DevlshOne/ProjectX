@@ -606,18 +606,39 @@ function parseXMLData(area, tableFormat, xmldoc) {
                          */
                     } else if (tmparr[1] == 'editable_hours_from_min') {
                         //	alert(dataarr[x].getAttribute(tmparr[2])
-                        var s = (Math.round(parseInt(dataarr[x].getAttribute(tmparr[2])) / 60 * 100) / 100).toString();
+                    	
+                    	var correctionamt=0;
+                    	//editable_hours_from_min:paid_time:paid_corrections
+                        if(tmparr[3]){
+                        	correctionamt = parseInt(dataarr[x].getAttribute(tmparr[3]));
+                        }
+                    	
+                        var basetime = parseInt(dataarr[x].getAttribute(tmparr[2]));
+                        
+                        var s = (Math.round(parseInt(basetime + correctionamt) / 60 * 100) / 100).toString();
                         if (s.indexOf('.') == -1) s += '.';
                         while (s.length < s.indexOf('.') + 3) s += '0';
                         //cell_text = '<input type="text" size="5" name="'+tmparr[2]+'_'+x+'" id="'+tmparr[2]+'_'+x+'" value="'+s+'" > hrs.'; //= '<input type="hidden" name="activity_id_'+x+'" id="activity_id_'+x+'" value="'+dataarr[x].getAttribute('id')+'">'+
-                        var minutes_tmp = parseInt(dataarr[x].getAttribute(tmparr[2]));
-                        var sel_hour = Math.floor(minutes_tmp / 60);
-                        var sel_min = minutes_tmp % 60;
+
+                        var corrsel_hour = Math.floor(correctionamt / 60);
+                        var corrsel_min = correctionamt % 60;
+                        
+ 
+                        var sel_hour = Math.floor(basetime / 60);
+                        var sel_min = basetime % 60;
+                        
+                        
+                        
                         // INSERT DROPDOWNS HERE INSTEAD OF A TEXT FIELD....
                         cell_text = '<input type="hidden" name="activity_id_' + x + '" id="activity_id_' + x + '" value="' + dataarr[x].getAttribute('id') + '">' +
-                            makeNumberDD('paid_hour_' + x, sel_hour, 0, 24, 1, false, '', false) + "h&nbsp;" +
-                            makeNumberDD('paid_min_' + x, sel_min, 0, 59, 1, true, '', false) + 'm<br />' +
-                            "(<span id=\"paid_ghetto_time_" + x + "\">" + s + "</span>)";
+                            
+                            '<span title="Calculated hours based on activity">'+sel_hour+"hr "+sel_min+"min (<span id=\"paid_ghetto_time_" + x + "\">" + s + "</span>)<br />" +
+                            
+                            '<select name="paid_correction_polarity"><option value="add">PLUS (+)<option value="subtract">MINUS (-)</select>'+
+                            makeNumberDD('paid_correction_hour_' + x, corrsel_hour, 0, 12, 1, false, '', false) + "h&nbsp;" +
+                            makeNumberDD('paid_correction_min_' + x, corrsel_min, 0, 59, 1, true, '', false) + 'm<br />' +
+                            
+                            '';
 //									makeTimebar("stime_",1, curDate,false);
 //
 // 						output += "<br />";
