@@ -357,7 +357,7 @@ class API_ReportEmails
                         $j_tmp->agent_cluster_id = trim($_POST['agent_cluster_id']);
                     break;
                     case 3 :
-                        $j_tmp->report_type = trim($_POST['report_type']);
+                        $j_tmp->report_type = trim($_POST['summary_report_type']);
                     break;
             }
                 $calculated_last_ran_time = 0;
@@ -429,10 +429,7 @@ class API_ReportEmails
                     logAction('add', 'report_emails', $id, "Subject_append=" . $dat['subject_append']);
                 }
                 $_SESSION['api']->outputEditSuccess($id);
-
-
                 break;
-
             default:
             case 'list':
 
