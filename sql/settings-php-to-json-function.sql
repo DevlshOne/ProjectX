@@ -3,7 +3,7 @@ UPDATE `report_emails` AS `destination`,
     SELECT
     id,
     @num_settings := 0 + LENGTH(settings) - LENGTH(REPLACE(settings, ';', '')) AS num_settings,
-    JSON_ARRAY(
+    JSON_OBJECT(
         REPLACE(SUBSTRING_INDEX(SUBSTRING_INDEX(settings, ';', 1), ' = ', 1), '$', ''),
     TRIM(BOTH '"' FROM SUBSTRING_INDEX(SUBSTRING_INDEX(SUBSTRING_INDEX(settings, ';', 1), ' = ', 2), ' = ', -1)),
     IF(@num_settings > 1,
