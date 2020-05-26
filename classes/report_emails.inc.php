@@ -244,7 +244,7 @@ class ReportEmails{
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_reports"/>
                         <input type="text" class="form-control" placeholder="ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
-                        <select class="form-control custom-select-sm" name="s_report_id">
+                        <select class="form-control custom-select-sm" name="s_report_id" onchange="loadReports();">
                             <option value=""<?=(!$_REQUEST['s_report_id'])?" SELECTED ":""?>>[Select Report Type]</option>
                             <option value="1"<?=($_REQUEST['s_report_id'] == 1)?" SELECTED ":""?>>Sales Analysis</option>
                             <option value="2"<?=($_REQUEST['s_report_id'] == 2)?" SELECTED ":""?>>Verifier Report</option>
@@ -637,29 +637,19 @@ class ReportEmails{
 				return true;
 			}
 			function checkReportFrm(frm){
-
-
 				var params = getFormValues(frm,'validateReportField');
-
-
 				// FORM VALIDATION FAILED!
 				// param[0] == field name
 				// param[1] == field value
 				if(typeof params == "object"){
-
 					switch(params[0]){
 					default:
-
 						alert("Error submitting form. Check your values");
-
 						break;
-
 					case 'subject_append':
-
 						alert("Please enter the subject for this email.");
 						eval('try{frm.'+params[0]+'.select();}catch(e){}');
 						break;
-
 					}
 
 				// SUCCESS - POST AJAX TO SERVER
@@ -842,7 +832,11 @@ class ReportEmails{
                 case 1 :
 					echo "<tr>
 							<th><label>Combine Users:</label></th>
-							<td><input type='checkbox' name='combine_users'" . ($jSettings->combine_users == 1 ? " checked" : "") . "/></td>
+							<td><input type='checkbox' value='1' name='combine_users'" . ($jSettings->combine_users == 1 ? " checked" : "") . "/></td>
+						</tr>
+						<tr>
+							<th><label>User Group:</label></th>
+							<td>" . makeUserGroupDD('user_groups', $jSettings->user_group, '', '', 4) . "</td>
 						</tr>
 						<tr>
 							<th><label>Cluster:</label></th>
@@ -851,8 +845,12 @@ class ReportEmails{
                     break;
                 case 2 :
                     echo "<tr>
+							<th><label>User Group:</label></th>
+							<td>" . makeUserGroupDD('user_groups', $jSettings->user_group, '', '', 4) . "</td>
+						</tr>
+						<tr>
 							<th><label>Cluster:</label></th>
-							<td>" . makeClusterDD('cluster_id', $jSettings->cluster_id, '', '', 1) . "</td>
+							<td>" . makeClusterDD('agent_cluster_id', getClusterIndex($jSettings->agent_cluster_idx), '', '', 1) . "</td>
 						</tr>";
                     break;
                 case 3 :
