@@ -1414,13 +1414,13 @@ class SalesAnalysis
             echo '<br /><span style="float:bottom;color:#fff">Load time: ' . $time_taken . '</span>';
 
             $page_title = '<h1>';
-            
+
             if ($campaign_code) {
             	$page_title .= $campaign_code . ' ';
             }
-            
+
             $page_title .= "Sales Analysis - ";
-            
+
             if (!is_array($_REQUEST['agent_cluster_id']) && $_REQUEST['agent_cluster_id'] >= 0) {
             	//				echo getClusterName($agent_cluster_id);//$_SESSION['site_config']['db'][$agent_cluster_id]['name'].' - ';
             	$page_title.= $_SESSION['site_config']['db'][$_REQUEST['agent_cluster_id']]['name'] . ' - ';
@@ -1428,18 +1428,18 @@ class SalesAnalysis
             	foreach ($_REQUEST['agent_cluster_id'] as $aci) {
             		$aci = intval($aci);
             		$page_title .= (($aci == -1) ? '[ALL]' : $_SESSION['site_config']['db'][$aci]['name']) . ' - ';
-            		
+
             		// ALL MEANS ALL
             		if ($aci == -1) break;
             	}
             }
-            
 
-            	
+
+
             	if (date("m-d-Y", $stime) == date("m-d-Y", $etime)) {
-            		
+
             		$page_title.= date("m-d-Y", $stime);
-            		
+
             	} else {
             		$page_title.= date("m-d-Y", $stime) . ' to ' . date("m-d-Y", $etime);
             	}
@@ -1471,9 +1471,9 @@ class SalesAnalysis
 
 
                 $page_title .= '</h3>';
-                
-                
-            
+
+
+
             if (!isset($_REQUEST['no_nav'])) {
                 ?>
                 <script>
@@ -1488,7 +1488,7 @@ class SalesAnalysis
 
                             	},
                                 {extend: 'copy', header: false, footer: false},
-                                
+
                             ],
                         });
                         go('#anc_sales_report');
@@ -2112,25 +2112,33 @@ class SalesAnalysis
             $cluster_id = 0;
             $source_cluster_id = 0;
             $ignore_source_cluster_id = 0;
-
             $source_user_group = null;
-
             $report_type = 'cold';
-
             $user_team_id = 0;
 
             // EXECUTE THE REPORT SETTINGS, TO POPULATE OR OVERWRITE REPORT VARIABLES/SETTINGS
-            echo date("H:i:s m/d/Y") . " - Loading PHP Variables/SETTINGS for report:\n" . $row['settings'] . "\n";
+            echo date("H:i:s m/d/Y") . " - Loading PHP Variables/SETTINGS for report:\n" . $row['settings'] . "\n" . $row['json_settings'] . "\n";
 
             $eres = eval($row['settings']);
-
+            $rep_settings = json_decode($row['json_settings']);
+            if(property_exists('rep_settings', 'agent_cluster_id')) {
+                $agent_cluster_idx = $rep_settings->agent_cluster_idx;
+            }
+            if(property_exists('rep_settings', 'combine_users')) {
+                $combine_users = $rep_settings->combine_users;
+            }
+            if(property_exists('rep_settings', 'user_group')) {
+                $user_group = $rep_settings->user_group;
+            }
+            if(property_exists('rep_settings', 'cluster_id')) {
+                $cluster_id = $rep_settings->cluster_id;
+            }
 
             $html = null;
 
             // SWITCH REPORT TYPE
             switch (intval($row['report_id'])) {
                 default:
-
                     echo date("H:i:s m/d/Y") . " - ERROR: report_id: " . $row['report_id'] . " hasn't been added yet.\n";
                     continue;
 
@@ -2139,7 +2147,6 @@ class SalesAnalysis
                     if ($agent_cluster_id > 0) {
                         $agent_cluster_idx = getClusterIndex($agent_cluster_id);
                     }
-
 
                     // GENERATE REPORT HTML ( RETURNS NULL IF THERE ARE NO RECORDS TO REPORT ON!)
                     // NOTE: THE VARIABLES THAT APPEAR 'uninitialized' ARE LOADED FROM THE 'settings' DB FIELD
@@ -2157,8 +2164,8 @@ class SalesAnalysis
                         (($campaign_code) ? "Campaign Code: " . $campaign_code . "\n" : '') .
                         (($agent_cluster_idx) ? "Cluster IDX: " . $agent_cluster_idx . "\n" : '') .
                         (($user_team_id) ? "Team ID: " . $user_team_id . "\n" : '') .
-                        (($combine_users) ? "Combine users: " . $combine_users . "\n" : '') .
-                        (($user_group) ? " User Group:" . $user_group . "\n" : '') .
+                        (($combine_users) ? "Combine users: " . $rep_settings->combine_users . "\n" : '') .
+                        (($user_group) ? " User Group:" . $rep_settings->user_group . "\n" : '') .
                         "\nReport is attached (or view email as HTML).";
 
 
