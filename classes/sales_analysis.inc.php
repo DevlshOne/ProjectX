@@ -2119,7 +2119,7 @@ class SalesAnalysis
             // EXECUTE THE REPORT SETTINGS, TO POPULATE OR OVERWRITE REPORT VARIABLES/SETTINGS
             echo date("H:i:s m/d/Y") . " - Loading PHP Variables/SETTINGS for report:\n" . $row['settings'] . "\n" . $row['json_settings'] . "\n";
 
-            $eres = eval($row['settings']);
+//            $eres = eval($row['settings']);
             $rep_settings = json_decode($row['json_settings']);
             if(property_exists('rep_settings', 'agent_cluster_id')) {
                 $agent_cluster_idx = $rep_settings->agent_cluster_idx;
@@ -2164,8 +2164,8 @@ class SalesAnalysis
                         (($campaign_code) ? "Campaign Code: " . $campaign_code . "\n" : '') .
                         (($agent_cluster_idx) ? "Cluster IDX: " . $agent_cluster_idx . "\n" : '') .
                         (($user_team_id) ? "Team ID: " . $user_team_id . "\n" : '') .
-                        (($combine_users) ? "Combine users: " . $rep_settings->combine_users . "\n" : '') .
-                        (($user_group) ? " User Group:" . $rep_settings->user_group . "\n" : '') .
+                        (($combine_users) ? "Combine users: " . $combine_users . "\n" : '') .
+                        (($user_group) ? " User Group:" . $user_group . "\n" : '') .
                         "\nReport is attached (or view email as HTML).";
 
 
