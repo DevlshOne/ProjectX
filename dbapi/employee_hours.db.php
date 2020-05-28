@@ -359,7 +359,7 @@ class EmployeeHoursAPI{
 				
 			//	print_r($row);
 				
-				$base_username = trim($row['username']);
+				$base_username = trim(strtoupper($row['username']));
 				
 				$second_hand_mode = false;
 				if($base_username[strlen($base_username)-1] == '2'){
@@ -422,6 +422,12 @@ class EmployeeHoursAPI{
 				foreach($rules as $rule){
 					
 					if($rule_breaker)break;
+					
+					if( ($rule['late_rule'] == 'yes' && $row['activity'][0]['is_late'] != 'yes') ||
+						($rule['late_rule'] == 'no' && $row['activity'][0]['is_late'] == 'yes')
+					){ continue;}
+					
+					
 					
 					switch($rule['rule_type']){
 					default:
@@ -504,7 +510,7 @@ class EmployeeHoursAPI{
 				}
 
 				// UPDATE ACTIVITY LOG RECORD FOR MAIN USER 
-				//$_SESSION['dbapi']->execSQL("UPDATE `activity_log` SET `paid_time`='".(($paid_hrs * 60))."' WHERE `id`='".$row['main_user_activity_id']."' ");
+				$_SESSION['dbapi']->execSQL("UPDATE `activity_log` SET `paid_time`='".(($paid_hrs * 60))."', `paid_break_time`='".addslashes($users_break_time)."' WHERE `id`='".$row['main_user_activity_id']."' ");
 				
 				
 				

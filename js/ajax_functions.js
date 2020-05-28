@@ -386,11 +386,27 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     tmparr = special_tag.split(":");// 0 = call_function, 1 = the function name to call, 2 = Button/Link name, 3 = arg1 to pass
                     cell.innerHTML = '<input type="button" value="' + tmparr[2] + '" onclick="' + tmparr[1] + '(' + dataarr[x].getAttribute(tmparr[3]) + ')">';
                     cell.className = clsname + ' ' + cur_class;
+                    
+                    
                     // MAKE A CHECKBOX
                 } else if (special_tag.indexOf("checkbox:") == 0) {
+                	
                     tmparr = special_tag.split(":");
-                    cell.innerHTML = '<input type="checkbox" name="' + tmparr[1] + x + '" id="' + tmparr[1] + x + '" value="' + dataarr[x].getAttribute(tmparr[2]) + '">';
+                    
+                	var chkedval = '';
+                	
+                	var ischecked = false;
+                	
+                	if(tmparr[3]){
+                		chkedval = dataarr[x].getAttribute(tmparr[3]);
+                		
+                		ischecked = (chkedval == 'yes' || chkedval == 'true')?true:false;
+                	}
+                	
+
+                    cell.innerHTML = '<input type="checkbox" name="' + tmparr[1] + x + '" id="' + tmparr[1] + x + '" '+((ischecked)?' CHECKED ':'')+' value="' + dataarr[x].getAttribute(tmparr[2]) + '">';
                     cell.className = clsname + ' ' + cur_class;
+                    
                     // Render field, with a label after it
                 } else if (special_tag.indexOf("postlabel:") == 0) {
                     tmparr = special_tag.split(":");
@@ -575,7 +591,10 @@ function parseXMLData(area, tableFormat, xmldoc) {
                         // do nothing, button click only
                     }
                 } else if (special_tag.indexOf("render:") >= 0) {
+                	
+                	
                     tmparr = special_tag.split(":");
+                    
                     if (tmparr[1] == 'who') {
                         var cell_text = "-"
                         if (dataarr[x].getAttribute('type') == 'campaign') {
@@ -607,36 +626,52 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     } else if (tmparr[1] == 'editable_hours_from_min') {
                         //	alert(dataarr[x].getAttribute(tmparr[2])
                     	
+                    	///alert(
                     	var correctionamt=0;
                     	//editable_hours_from_min:paid_time:paid_corrections
                         if(tmparr[3]){
                         	correctionamt = parseInt(dataarr[x].getAttribute(tmparr[3]));
+                        	
+                        	//alert(correctionamt);
                         }
                     	
                         var basetime = parseInt(dataarr[x].getAttribute(tmparr[2]));
                         
-                        var s = (Math.round(parseInt(basetime + correctionamt) / 60 * 100) / 100).toString();
+                        var paid_time_actual = parseInt(basetime + correctionamt);
+                        
+                        
+                        var s = (Math.round(paid_time_actual / 60 * 100) / 100).toString();
                         if (s.indexOf('.') == -1) s += '.';
                         while (s.length < s.indexOf('.') + 3) s += '0';
                         //cell_text = '<input type="text" size="5" name="'+tmparr[2]+'_'+x+'" id="'+tmparr[2]+'_'+x+'" value="'+s+'" > hrs.'; //= '<input type="hidden" name="activity_id_'+x+'" id="activity_id_'+x+'" value="'+dataarr[x].getAttribute('id')+'">'+
 
+                        // DETECT NEGATIVE FOR THE PLUS/MINUS DROPDOWN OPTION
+                        var is_negative = (correctionamt < 0)?true:false;
+                        
+                        // FLIP TO POSITIVE FOR THE DROPDOWN SELECTIONS
+                        correctionamt = (is_negative)?correctionamt * -1:correctionamt;
+                        
                         var corrsel_hour = Math.floor(correctionamt / 60);
                         var corrsel_min = correctionamt % 60;
                         
  
+                        
+                        
                         var sel_hour = Math.floor(basetime / 60);
                         var sel_min = basetime % 60;
                         
+                        var paid_hour = Math.floor(paid_time_actual / 60);
+                        var paid_min = paid_time_actual % 60;
                         
                         
                         // INSERT DROPDOWNS HERE INSTEAD OF A TEXT FIELD....
                         cell_text = '<input type="hidden" name="activity_id_' + x + '" id="activity_id_' + x + '" value="' + dataarr[x].getAttribute('id') + '">' +
                             
-                            '<span title="Calculated hours based on activity">'+sel_hour+"hr "+sel_min+"min (<span id=\"paid_ghetto_time_" + x + "\">" + s + "</span>)</span><br />" +
-                            
-                            '<select name="paid_correction_polarity_' + x+'"><option value="add">PLUS (+)<option value="subtract">MINUS (-)</select>'+
+                        	'<span title="System Calculated hours based on activity">Calculated: '+sel_hour+"hr "+sel_min+"min</span><br />"+
+                            '<select id="paid_correction_polarity_' + x+'" name="paid_correction_polarity_' + x+'"><option value="add">PLUS (+)<option value="subtract" '+((is_negative)?' SELECTED ':'')+'>MINUS (-)</select>'+
                             makeNumberDD('paid_correction_hour_' + x, corrsel_hour, 0, 12, 1, false, '', false) + "h&nbsp;" +
                             makeNumberDD('paid_correction_min_' + x, corrsel_min, 0, 59, 1, true, '', false) + 'm<br />' +
+                            '<span title="Hours after corrections/adjustments">PAID: '+paid_hour+"hr "+paid_min+"min (<span id=\"paid_ghetto_time_" + x + "\">" + s + "</span>)</span><br />" +
                             
                             '';
 //									makeTimebar("stime_",1, curDate,false);

@@ -148,7 +148,8 @@ class API_Employee_Hours{
 
 			$notes_array = preg_split("/\|\|/", $_POST['activity_notes'], -1);
 
-
+			$lates_array = preg_split("/\t/", $_POST['activity_is_lates'], -1);
+			
 			foreach($id_array as $idx=>$activity_id){
 
 				$activity_id = intval($activity_id);
@@ -159,13 +160,18 @@ class API_Employee_Hours{
 				$notes = $notes_array[$idx];
 				$hours = trim($hours_array[$idx]);
 
+				$is_late = strtolower($lates_array[$idx]);
+				
 				$is_neg = false;
 				if($hours[0] == '-'){
 					$is_neg = true;
+					$hours[0] = '0';
 				}else{
 					$is_neg = false;
 				}
-				$hours[0] = '0';
+				
+				
+				
 				
 				list($hrs,$min) = preg_split("/\:/", $hours);
 
@@ -179,6 +185,8 @@ class API_Employee_Hours{
 				//$dat['paid_time'] = $min;//floatval($hours) * 60;
 				$dat['paid_corrections'] = $min;
 				$dat['notes'] = $notes;
+				
+				$dat['is_late'] = (($is_late == 'true')?'yes':'no');
 
 				aedit($activity_id, $dat, 'activity_log');
 

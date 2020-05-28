@@ -325,13 +325,14 @@ class EmployeeHours
                 ['[render:hours_from_min:activity_time]', 'align_center'],
                 ['[render:hours_from_sec:seconds_INCALL:seconds_READY:seconds_QUEUE]', 'align_center'],
                 ['[render:breakdown_hours_from_sec:In Call,seconds_INCALL:Ready,seconds_READY:Queue,seconds_QUEUE:Paused,seconds_PAUSED]', 'align_center'],
-                    <?
+                <?
                     if(!checkAccess('employee_hours_edit')){
-                    ?>['[render:hours_from_min:paid_time]', 'align_center'],
-                ['note_data', 'align_left'], <?
+                   		?>['[render:hours_from_min:paid_time]', 'align_center'],
+		                ['note_data', 'align_left'], <?
                     }else{
-                    ?>['[render:editable_hours_from_min:paid_time:paid_corrections]', 'align_center'],
-                ['[textfield:notes:note_data:30]', 'align_left'],<?
+						?>['[render:editable_hours_from_min:paid_time:paid_corrections]', 'align_center'],
+						['[checkbox:is_late:is_late:is_late]', 'align_center'],
+                		['[textfield:notes:note_data:30]', 'align_left'],<?
 
                 }
                 ?>
@@ -505,6 +506,8 @@ class EmployeeHours
                 var id_data = "";
                 var hours_data = "";
                 var notes_data = "";
+                var lates_data = "";
+                
                 $('#total_count_div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                 window.location = '#header_anchor';
                 for (var x = 0; (obj = getEl('activity_id_' + x)) != null; x++) {
@@ -516,10 +519,14 @@ class EmployeeHours
  
  **/?>              hours_data += ((getEl('paid_correction_polarity_'+x).value == 'subtract')?'-':'')+getEl('paid_correction_hour_' + x).value + ":" + getEl('paid_correction_min_' + x).value + "\t";
                     notes_data += getEl('note_data_' + x).value + "||";
+
+                    lates_data += getEl('is_late'+x).checked + "\t";
                 }
                 frm.activity_ids.value = id_data;
                 frm.activity_hours.value = hours_data;
                 frm.activity_notes.value = notes_data;
+                frm.activity_is_lates.value = lates_data;
+                
                 var params = getFormValues(frm, '');
                 $.ajax({
                     type: "POST",
@@ -563,7 +570,7 @@ class EmployeeHours
 
             function highlightHoursProblems() {
                 var obj = null;
-
+/*
                 var paid_hours = 0, detected_hours = 0, activity_id;
                 for (var x = 0; (obj = getEl('activity_id_' + x)) != null; x++) {
 
@@ -587,7 +594,7 @@ class EmployeeHours
                         $("#paid_hours_cell_" + x).attr("class", "align_center");
                     }
 
-                }
+                }*/
 
 
             }
@@ -617,6 +624,8 @@ class EmployeeHours
 
                 //var min = value * 60;
 
+				var polarity_val = $('#paid_correction_polarity_setall').val();
+                
                 var hours = parseInt($('#paid_hour_setall').val());//Math.floor(min / 60);
                 var minutes = parseInt($('#paid_min_setall').val());//parseInt(min % 60);
 
@@ -624,13 +633,18 @@ class EmployeeHours
                     minutes = '0' + minutes;
                 }
 
-                for (var x = 0; (obj = getEl('paid_hour_' + x)) != null; x++) {
 
+                
+                
+                for (var x = 0; (obj = getEl('paid_correction_hour_' + x)) != null; x++) {
+
+                	getEl('paid_correction_polarity_' + x).value = polarity_val;
+                	
                     obj.value = hours;
 
                 }
 
-                for (var x = 0; (obj = getEl('paid_min_' + x)) != null; x++) {
+                for (var x = 0; (obj = getEl('paid_correction_min_' + x)) != null; x++) {
 
                     obj.value = minutes;
 
@@ -816,6 +830,10 @@ class EmployeeHours
                         </div>
                     </div>
                 </div>
+                
+                <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="if(processListSubmit(this.form)){ $('#set_hours_form').submit(); }" name="save_button">Save Changes</button>
+                
+                
                 <div class="block-content block-content-full">
                     <table class="table table-sm table-striped" id="emp_table">
                         <tr>
@@ -827,6 +845,7 @@ class EmployeeHours
                             <th class="row2 text-center"><?= $this->getOrderLink('seconds_INCALL') ?>Detected</a><a href="#" onclick="alert('The hours that the system detected activity for. (not perfect/accurate)\n\nNote: 6.5 hrs means 6 hours and 30 minutes.');return false;">&nbsp;(?)</a></th>
                             <th class="row2 text-center"><?= $this->getOrderLink('seconds_READY') ?>Breakdown</a></th>
                             <th class="row2 text-center"><?= $this->getOrderLink('paid_time') ?>Paid</a><a href="#" onclick="alert('Note: 6.5 hrs means 6 hours and 30 minutes.');return false;">&nbsp;(?)</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('is_late') ?>Late?</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('notes') ?>Notes</a></th>
                         </tr>
                     </table>
@@ -844,13 +863,16 @@ class EmployeeHours
 	                        <input type="hidden" name="activity_ids" id="activity_ids"/>
 	                        <input type="hidden" name="activity_hours" id="activity_hours"/>
 	                        <input type="hidden" name="activity_notes" id="activity_notes"/>
+	                        <input type="hidden" name="activity_is_lates" id="activity_is_lates"/>
 	                        <div id="setallspan" style="margin-left:1.2em"></div>
 	                        <button type="button" class="btn btn-sm btn-danger" title="Set All (On-Screen)" onclick="setAllToValue();">Set All (On-Screen)</button>
-	                        <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="$('#set_hours_form').submit();" name="save_button">Save Changes</button>
+	                        <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="if(processListSubmit(this.form)){ $('#set_hours_form').submit(); }" name="save_button">Save Changes</button>
 
-	                </form>
-	                <?
-	            } ?>
+	                </form><?
+	            } 
+	            
+	            
+	            ?>
 
 
                         <span id="spn_total_activity"></span>
@@ -877,7 +899,8 @@ class EmployeeHours
         <script>
             $(function () {
                 $('#setallspan').html(
-                    makeNumberDD('paid_hour_setall', 0, 0, 24, 1, false, '', false) + "h&nbsp;" + makeNumberDD('paid_min_setall', 0, 0, 59, 1, true, '', false) + 'm'
+               		'<select id="paid_correction_polarity_setall" name="paid_correction_polarity_setall"><option value="add">PLUS (+)<option value="subtract">MINUS (-)</select>'+
+                    makeNumberDD('paid_hour_setall', 0, 0, 12, 1, false, '', false) + "h&nbsp;" + makeNumberDD('paid_min_setall', 0, 0, 59, 1, true, '', false) + 'm'
                 );
                 $("#dialog-modal-edit_emp").dialog({
                     autoOpen: false,
