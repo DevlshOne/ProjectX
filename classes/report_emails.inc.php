@@ -825,7 +825,7 @@ class ReportEmails{
             // 1 - Sales Analysis [agent_cluster_idx, combine_users, user_group]
             // 2 - Verifier Report [cluster_id, user_group]
             // 3 - Summary Report [report_type]
-            // 4 - Rouster Report
+            // 4 - Rouster Report [cluster_id, user_group]
             switch($row['report_id']) {
                 default :
                     break;
@@ -844,6 +844,7 @@ class ReportEmails{
 						</tr>";
                     break;
                 case 2 :
+                case 4 :
                     echo "<tr>
 							<th><label>User Group:</label></th>
 							<td>" . makeUserGroupDD('user_groups', $jSettings->user_group, '', '', 4) . "</td>
