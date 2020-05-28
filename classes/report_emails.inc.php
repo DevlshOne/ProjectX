@@ -722,6 +722,7 @@ class ReportEmails{
 			function showNoChangeMessage(n) {
 			    if(n > 0) {
 			        alert('You may not change report types of existing reports. Please create a new report instead.');
+			        $('#report_type_id').attr('disabled', true);
                 }
 			    return;
             }
@@ -731,7 +732,7 @@ class ReportEmails{
 		<table border="0" align="center">
 		<tr>
 			<th align="left" width="100" height="30">Report Type:</th>
-			<td><select name="report_id" onchange="showNoChangeMessage('<?=$id?>');">
+			<td><select id="report_type_id" name="report_id" onchange="showNoChangeMessage('<?=$id?>');">
 				<option value="1">Sales Analysis</option>
 				<option value="2" <?=(($row['report_id'] == 2)?" SELECTED ":"")?> >
 					Verifier Report
