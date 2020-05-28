@@ -186,13 +186,10 @@ class API_ReportEmails
                     switch ($report_id) {
                         case 1:
                         default:
-
                             $saleclusterid = intval($_POST['sales_cluster_id']);
                             $saleclusterid = ($saleclusterid <= 0) ? -1 : $saleclusterid;
-
                             $dat['settings'] .= '$agent_cluster_idx = ' . $saleclusterid . ";\n";
                             $j_tmp->agent_cluster_idx = $saleclusterid;
-
                             if ($_POST['combine_users'] != 'on') {
                                 $dat['settings'] .= '$combine_users = 0;' . "\n";
                                 $j_tmp->combine_users = 0;
@@ -202,21 +199,16 @@ class API_ReportEmails
                             }
                             $dat['json_settings'] = json_encode($j_tmp);
                             break;
-                        case 2:
-
+                        case 2 :
                             $verifierclusterid = intval($_POST['verifier_cluster_id']);
                             $verifierclusterid = ($verifierclusterid <= 0) ? -1 : $verifierclusterid;
-
                             $dat['settings'] .= '$cluster_id = ' . $verifierclusterid . ";\n";
                             $j_tmp->cluster_id = $verifierclusterid;
                             $dat['json_settings'] = json_encode($j_tmp);
                             break;
                         case 3:
-
                             $process_groups = false;
-
                             $reptype = trim($_POST['summary_report_type']);
-
                             switch (strtolower($reptype)) {
                                 default:
                                 case 'cold':
@@ -242,10 +234,8 @@ class API_ReportEmails
                             $dat['json_settings'] = json_encode($j_tmp);
                             break;
                         case 4:
-
                             $rousterclusterid = intval($_POST['rouster_cluster_id']);
                             $rousterclusterid = ($rousterclusterid <= 0) ? -1 : $rousterclusterid;
-
                             $dat['settings'] .= '$cluster_id = ' . $rousterclusterid . ";\n";
                             $j_tmp->cluster_id = $rousterclusterid;
                             $dat['json_settings'] = json_encode($j_tmp);
