@@ -256,45 +256,29 @@ class API_ReportEmails
 
                             $tmpstr = '';
                             foreach ($_POST['user_groups'] as $usergroup) {
-                                if ($x++ > 0) $tmpstr .= ',';
+                                if ($x++ > 0) {
+                                    $tmpstr .= ',';
+                                }
                                 $tmpstr .= '"' . addslashes($usergroup) . '"';
                                 $j_tmp->user_group[] = $usergroup;
                             }
-
                             $dat['settings'] .= $tmpstr . ');' . "\n";
                             $dat['json_settings'] = json_encode($j_tmp);
-
                             $dat['subject_append'] = 'Combined Groups(' . $tmpstr . ')';
-
                             $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->report_emails->table);
                             $id = mysqli_insert_id($_SESSION['dbapi']->db);
-
-
                             logAction('add', 'report_emails', $id, "Subject_append=" . $dat['subject_append']);
-
-
                         } else {
-
                             $base_settings = $dat['settings'];
-
-
                             foreach ($_POST['user_groups'] as $usergroup) {
-
                                 $dat['subject_append'] = $usergroup;
-
                                 $dat['settings'] = $base_settings . '$user_group = "' . addslashes($usergroup) . '";' . "\n";
-
-                                $j_tmp->user_group[] = $usergroup;
+                                $j_tmp->user_group = $usergroup;
                                 $dat['json_settings'] = json_encode($j_tmp);
-
                                 $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->report_emails->table);
                                 $id = mysqli_insert_id($_SESSION['dbapi']->db);
-
-
                                 logAction('bulk_add', 'report_emails', $id, "Subject_append=" . $dat['subject_append']);
-
                             }
-
                         }
 
                         // SUMMARY REPORT ONLY, DOESN'T LOOP GROUPS
