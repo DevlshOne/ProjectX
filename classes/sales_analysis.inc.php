@@ -2120,18 +2120,18 @@ class SalesAnalysis
             echo date("H:i:s m/d/Y") . " - Loading PHP Variables/SETTINGS for report:\n" . $row['settings'] . "\n" . $row['json_settings'] . "\n";
 
 //            $eres = eval($row['settings']);
-            $rep_settings = json_decode($row['json_settings']);
+            $jSettings = json_decode($row['json_settings']);
             if(property_exists('rep_settings', 'agent_cluster_id')) {
-                $agent_cluster_idx = $rep_settings->agent_cluster_idx;
+                $agent_cluster_idx = $jSettings->agent_cluster_idx;
             }
             if(property_exists('rep_settings', 'combine_users')) {
-                $combine_users = $rep_settings->combine_users;
+                $combine_users = $jSettings->combine_users;
             }
             if(property_exists('rep_settings', 'user_group')) {
-                $user_group = $rep_settings->user_group;
+                $user_group = $jSettings->user_group;
             }
             if(property_exists('rep_settings', 'cluster_id')) {
-                $cluster_id = $rep_settings->cluster_id;
+                $cluster_id = $jSettings->cluster_id;
             }
 
             $html = null;

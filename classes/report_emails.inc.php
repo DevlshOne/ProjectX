@@ -850,7 +850,7 @@ class ReportEmails{
 						</tr>
 						<tr>
 							<th><label>Cluster:</label></th>
-							<td>" . makeClusterDD('agent_cluster_id', getClusterIndex($jSettings->agent_cluster_idx), '', '', 1) . "</td>
+							<td>" . makeClusterDD('cluster_id', $jSettings->cluster_id, '', '', 1) . "</td>
 						</tr>";
                     break;
                 case 3 :
