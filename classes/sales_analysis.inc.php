@@ -2121,7 +2121,7 @@ class SalesAnalysis
 
 //            $eres = eval($row['settings']);
             $jSettings = json_decode($row['json_settings']);
-            if(property_exists('rep_settings', 'agent_cluster_id')) {
+            if(property_exists('rep_settings', 'agent_cluster_idx')) {
                 $agent_cluster_idx = $jSettings->agent_cluster_idx;
             }
             if(property_exists('rep_settings', 'combine_users')) {
@@ -2143,11 +2143,9 @@ class SalesAnalysis
                     continue;
 
                 case 1:
-
                     if ($agent_cluster_id > 0) {
                         $agent_cluster_idx = getClusterIndex($agent_cluster_id);
                     }
-
                     // GENERATE REPORT HTML ( RETURNS NULL IF THERE ARE NO RECORDS TO REPORT ON!)
                     // NOTE: THE VARIABLES THAT APPEAR 'uninitialized' ARE LOADED FROM THE 'settings' DB FIELD
                     $html = $this->makeHTMLReport($stime, $etime, $campaign_code, $agent_cluster_idx, $user_team_id, $combine_users, $user_group, $ignore_group);

@@ -822,9 +822,9 @@ class ReportEmails{
 		</tr>
             <?
             $jSettings = json_decode($row['json_settings']);
-            // 1 - Sales Analysis [agent_cluster_id, combine_users, user_group]
+            // 1 - Sales Analysis [agent_cluster_idx, combine_users, user_group]
             // 2 - Verifier Report [cluster_id, user_group]
-            // 3 - Summary Report
+            // 3 - Summary Report [report_type]
             // 4 - Rouster Report
             switch($row['report_id']) {
                 default :
@@ -840,7 +840,7 @@ class ReportEmails{
 						</tr>
 						<tr>
 							<th><label>Cluster:</label></th>
-							<td>" . makeClusterDD('agent_cluster_id', getClusterIndex($jSettings->agent_cluster_idx), '', '', 1) . "</td>
+							<td>" . makeClusterDD('agent_cluster_idx', getClusterIndex($jSettings->agent_cluster_idx), '', '', 1) . "</td>
 						</tr>";
                     break;
                 case 2 :
