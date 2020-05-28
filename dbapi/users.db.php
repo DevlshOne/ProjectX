@@ -538,12 +538,12 @@ class UsersAPI{
 	}
 
 
-	function generateSalt($len=10){
+	// function generateSalt($len=10){
 
-		# CREATE A UNIQUE SALT TO BE USED DURING LOGIN
-		# DEFAULT RANDOM BYTE LENGTH 10
-		return generateRandomString($len);//bin2hex(random_bytes($len));
+	// 	# CREATE A UNIQUE SALT TO BE USED DURING LOGIN
+	// 	# DEFAULT RANDOM BYTE LENGTH 10
+	// 	return generateRandomString($len);//bin2hex(random_bytes($len));
 
-	}
+	// }
 
 }

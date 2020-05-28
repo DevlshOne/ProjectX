@@ -44,8 +44,19 @@ include_once($basedir . "db.inc.php");
 include_once($basedir . 'utils/db_utils.php');
 
 
-## API KEY AND AUTHENTICATION CHECK
+## UNAUTHENTICATED LOGIN SALT GENERATION 
+## FOR USE BY LOGIN AJAX
+if($_REQUEST['generate_login_salt'] == 'true'){
 
+    unset($_SESSION['login_salt']);
+    $_SESSION['login_salt'] = $_SESSION['api']->generateLoginSalt();
+    echo $_SESSION['login_salt'];
+    exit;
+
+}
+
+
+## API KEY AND AUTHENTICATION CHECK
 if ($_REQUEST['login_code'] && !$_SESSION['user']['id']) {
 
     $login_code = trim($_REQUEST['login_code']);

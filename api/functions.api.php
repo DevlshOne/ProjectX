@@ -182,4 +182,15 @@ class API_Functions{
 		}
 		return $out;
 	}
+
+
+	function generateLoginSalt($len=10){
+
+		# CREATE A UNIQUE LOGIN SALT - DEFAULT LENGTH 10
+		return generateRandomString($len);
+
+	}
+
+
+	
 }
