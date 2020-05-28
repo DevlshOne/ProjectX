@@ -342,19 +342,20 @@ class API_ReportEmails
 
                 // 1 - Sales Analysis [agent_cluster_id, combine_users, user_group]
                 // 2 - Verifier Report [cluster_id, user_group]
-                // 3 - Summary Report
-                // 4 - Rouster Report
+                // 3 - Summary Report [report_type]
+                // 4 - Rouster Report [cluster_id, user_group]
                 switch($dat['report_id']) {
                     default :
                         break;
                     case 1 :
                         $j_tmp->combine_users = trim($_POST['combine_users']) == 1 ? '1' : '0';
                         $j_tmp->user_group = trim($_POST['user_groups']);
-                        $j_tmp->agent_cluster_id = trim($_POST['agent_cluster_id']);
+                        $j_tmp->agent_cluster_idx = trim($_POST['agent_cluster_idx']);
                     break;
                     case 2 :
+                    case 4 :
                         $j_tmp->user_group = trim($_POST['user_groups']);
-                        $j_tmp->agent_cluster_id = trim($_POST['agent_cluster_id']);
+                        $j_tmp->cluster_id = trim($_POST['cluster_id']);
                     break;
                     case 3 :
                         $j_tmp->report_type = trim($_POST['summary_report_type']);
