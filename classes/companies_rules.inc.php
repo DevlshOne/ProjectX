@@ -342,15 +342,13 @@ class CompaniesRules
                     </td>
                 </tr>
                 <tr>
-                    <th align="left" height="30">Late Rule:</th>
+                    <th colspan="3" align="left" height="30">Late Rule:</th>
                     <td>
-                        <select name="trigger_name">
+                        <select name="late_rule">
                             <option <?=htmlentities($row['late_rule'] == 'yes' ? 'selected' : '');?> value="yes">Yes</option>
                             <option <?=htmlentities($row['late_rule'] == 'no' ? 'selected' : '');?> value="no">No</option>
                             <option <?=htmlentities($row['late_rule'] == 'both' ? 'selected' : '');?> value="both">Both</option>
                         </select>
-                    <th align="left" height="30">Value:</th>
-                    <td><input name="trigger_value" size="8" type="text" value="<?= htmlentities($row['trigger_value']) ?>"></td>
                 </tr>
                 <tr>
                     <th align="left" height="30">Trigger:</th>
