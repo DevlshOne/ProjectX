@@ -136,14 +136,25 @@ class API_Schedules
                     ## ERROR
                     $out_stack[$idx] = -1;
                     break;
-                case 'schedule_name':
+                case 'company_name':
                     if($tmparr[2] === '0') {
                         $out_stack[$idx] = 'DEFAULT';
                     } else {
                         if ($tmparr[2] <= 0) {
                             $out_stack[$idx] = '-';
                         } else {
-                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT name AS schedule_name FROM schedules WHERE id=" . intval($tmparr[2]) . " ");
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT name AS company_name FROM companies WHERE id=" . intval($tmparr[2]) . " ");
+                        }
+                    }
+                    break;
+                case 'office_name':
+                    if($tmparr[2] === '0') {
+                        $out_stack[$idx] = 'DEFAULT';
+                    } else {
+                        if ($tmparr[2] <= 0) {
+                            $out_stack[$idx] = '-';
+                        } else {
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT name AS office_name FROM offices WHERE id=" . intval($tmparr[2]) . " ");
                         }
                     }
                     break;

@@ -57,32 +57,27 @@ class Schedules
             var <?=$this->order_prepend?>orderdir = "<?=$this->orderdir?>";
             var <?=$this->index_name?> = 0;
             var <?=$this->order_prepend?>pagesize = <?=$this->pagesize?>;
-            var CompaniesrulesTableFormat = [
+            var SchedulesTableFormat = [
+                ['name', 'text-left'],
                 ['[get:company_name:company_id]', 'text-left'],
-                ['rule_type', 'text-left'],
-                ['trigger_name', 'text-left'],
-                ['trigger_value', 'text-left'],
-                ['action', 'text-left'],
-                ['action_value', 'text-left'],
+                ['[get:office_name:office_id]', 'text-left'],
+                ['start_time', 'text-left'],
+                ['end_time', 'text-left'],
                 ['[delete]', 'text-center']
             ];
 
             /**
              * Build the URL for AJAX to hit, to build the list
              */
-            function getCompaniesRulesURL() {
+            function getSchedulesURL() {
 
                 var frm = getEl('<?=$this->frm_name?>');
                 var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
                 return 'api/api.php' +
-                    "?get=companiesrules&" +
+                    "?get=schedules&" +
                     "mode=xml&" +
                     's_company_id=' + escape(frm.s_company_id.value) + "&" +
-                    's_trigger_name=' + escape(frm.s_trigger_name.value) + "&" +
-                    's_trigger_value=' + escape(frm.s_trigger_value.value) + "&" +
-                    's_action_type=' + escape(frm.s_action_type.value) + "&" +
-                    's_action_value=' + escape(frm.s_action_value.value) + "&" +
-                    's_schedule_id=' + escape(frm.s_schedule_id.value) + "&" +
+                    's_office_id=' + escape(frm.s_office_id.value) + "&" +
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
@@ -90,89 +85,86 @@ class Schedules
             }
 
 
-            var companiesrules_loading_flag = false;
+            var schedules_loading_flag = false;
             /**
              * Load the companies rules data - make the ajax call, callback to the parse function
              */
-            function loadCompaniesRules() {
+            function loadSchedules() {
                 // ANTI-CLICK-SPAMMING/DOUBLE CLICK PROTECTION
                 var val = null;
-                eval('val = companiesrules_loading_flag');
+                eval('val = schedules_loading_flag');
                 // CHECK IF WE ARE ALREADY LOADING THIS DATA
                 if (val == true) {
                     return;
                 } else {
-                    eval('companiesrules_loading_flag = true');
+                    eval('schedules_loading_flag = true');
                 }
                 <?=$this->order_prepend?>pagesize = parseInt($('#<?=$this->order_prepend?>pagesizeDD').val());
-                loadAjaxData(getCompaniesRulesURL(), 'parseCompaniesRules');
+                loadAjaxData(getSchedulesURL(), 'parseSchedules');
             }
 
             /**
              * CALL THE CENTRAL PARSE FUNCTION WITH AREA SPECIFIC ARGS
              */
             var <?=$this->order_prepend?>totalcount = 0;
-            function parseCompaniesRules(xmldoc) {
-                <?=$this->order_prepend?>totalcount = parseXMLData('companiesrule', CompaniesrulesTableFormat, xmldoc);
+            function parseSchedules(xmldoc) {
+                <?=$this->order_prepend?>totalcount = parseXMLData('schedule', SchedulesTableFormat, xmldoc);
                 // ACTIVATE PAGE SYSTEM!
                 if (<?=$this->order_prepend?>totalcount > <?=$this->order_prepend?>pagesize) {
-                    makePageSystem('companiesrules',
+                    makePageSystem('schedules',
                         '<?=$this->index_name?>',
                         <?=$this->order_prepend?>totalcount,
                         <?=$this->index_name?>,
                         <?=$this->order_prepend?>pagesize,
-                        'loadCompaniesRules()'
+                        'loadSchedules()'
                     );
                 } else {
-                    hidePageSystem('companiesrules');
+                    hidePageSystem('schedules');
                 }
-                eval('companiesrules_loading_flag = false');
+                eval('schedules_loading_flag = false');
             }
 
 
-            function handleCompaniesruleListClick(id) {
-                displayAddRuleDialog(id);
+            function handleScheduleListClick(id) {
+                displayAddScheduleDialog(id);
             }
 
-            function displayAddRuleDialog(id) {
-                var objname = 'dialog-modal-add-rule';
+            function displayAddScheduleDialog(id) {
+                var objname = 'dialog-modal-add-schedule';
                 if (id > 0) {
-                    $('#' + objname).dialog("option", "title", 'Editing rule # ' + id + ' ');
+                    $('#' + objname).dialog("option", "title", 'Editing schedule # ' + id + ' ');
                 } else {
-                    $('#' + objname).dialog("option", "title", 'Adding new rule');
+                    $('#' + objname).dialog("option", "title", 'Adding new schedule');
                 }
                 $('#' + objname).dialog("open");
                 $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                $('#' + objname).load("index.php?area=employee_hours&sub_area=config&add_rule=" + id + "&printable=1&no_script=1");
+                // TODO - where is this coming from?
+                $('#' + objname).load("index.php?area=employee_hours&sub_area=config&add_schedule=" + id + "&printable=1&no_script=1");
             }
 
-            function resetCompaniesRulesForm(frm) {
+            function resetSchedulesSearchForm(frm) {
                 frm.s_company_id.value = '';
-                frm.s_trigger_name.value = '';
-                frm.s_trigger_value.value = '';
-                frm.s_action_type.value = '';
-                frm.s_action_value.value = '';
-                frm.s_schedule_id.value = '';
+                frm.s_office_id.value = '';
             }
 
-            var companiesrulessrchtog = true;
-            function toggleCompaniesRulesSearch() {
-                companiesrulessrchtog = !companiesrulessrchtog;
-                ieDisplay('companiesrules_search_table', companiesrulessrchtog);
+            var schedulessrchtog = true;
+            function toggleSchedulesSearch() {
+                schedulessrchtog = !schedulessrchtog;
+                ieDisplay('schedules_search_table', schedulessrchtog);
             }
         </script>
         <! *** BEGIN ONEUI STYLING REWORK -->
         <div class="block">
-            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCompaniesRules();return false;">
+            <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadSchedules();return false;">
                 <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Companies Additional Hours Rules</h4>
-                    <button type="button" value="Add" title="Add Rules" class="btn btn-sm btn-primary" onclick="displayAddRuleDialog(0)">Add</button>
-                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleCompaniesRulesSearch();">Toggle Search</button>
-                    <div id="companiesrules_prev_td" class="page_system_prev"></div>
-                    <div id="companiesrules_page_td" class="page_system_page"></div>
-                    <div id="companiesrules_next_td" class="page_system_next"></div>
-                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadCompaniesRules(); return false;">
+                    <button type="button" value="Add" title="Add Rules" class="btn btn-sm btn-primary" onclick="displayAddScheduleDialog(0)">Add</button>
+                    <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSchedulesSearch();">Toggle Search</button>
+                    <div id="schedules_prev_td" class="page_system_prev"></div>
+                    <div id="schedules_page_td" class="page_system_page"></div>
+                    <div id="schedules_next_td" class="page_system_next"></div>
+                    <select title="Rows Per Page" class="custom-select-sm" name="<?=$this->order_prepend?>pagesize" id="<?=$this->order_prepend?>pagesizeDD" onchange="<?=$this->index_name?>=0;loadSchedules(); return false;">
                         <option value="20">20</option>
                         <option value="50">50</option>
                         <option value="100">100</option>
@@ -187,41 +179,24 @@ class Schedules
                 </div>
                 <! ** END BLOCK HEADER -->
                 <! ** BEGIN BLOCK SEARCH TABLE -->
-                <div class="bg-info-light" id="companiesrules_search_table">
+                <div class="bg-info-light" id="schedules_search_table">
                     <div class="input-group input-group-sm">
-                        <input type="hidden" name="searching_companiesrules"/>
-                        <?= makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), 'loadCompaniesRules();', '[Select Company]') ?>
-                        <?= makeScheduleDD('s_schedule_id', htmlentities($_REQUEST['s_schedule_id']), 'loadCompaniesRules();', '[Select Schedule]') ?>
-                        <select class="form-control custom-select-sm" name="s_trigger_name" onchange="loadCompaniesRules();">
-                            <option value="">[Select Trigger Type]</option>
-                            <option <?=htmlentities($_REQUEST['s_trigger_name'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
-                            <option <?=htmlentities($_REQUEST['s_trigger_name'] == 'greater_equal' ? 'selected' : '');?> value="greater_equal">&#8925;</option>
-                            <option <?=htmlentities($_REQUEST['s_trigger_name'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Breaks</option>
-                        </select>
-                        <input class="form-control" placeholder="Trigger Value.." name="s_trigger_value" type="text" value="<?= htmlentities($_REQUEST['s_trigger_value']) ?>">
-                        <select class="form-control custom-select-sm" name="s_action_type" onchange="loadCompaniesRules();">
-                            <option value="">[Select Action Type]</option>
-                            <option <?=htmlentities($_REQUEST['s_action_type'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
-                            <option <?=htmlentities($_REQUEST['s_action_type'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
-                            <option <?=htmlentities($_REQUEST['s_action_type'] == 'set_hours' ? 'selected' : '');?> value="set_hours">Set Hours</option>
-                        </select>
-                        <input class="form-control" placeholder="Action Value.." name="s_action_value" type="text" value="<?= htmlentities($_REQUEST['s_action_value']) ?>">
-                        <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadCompaniesRules();return false;">Search</button>
-                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetCompaniesRulesForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadCompaniesRules();return false;">Reset</button>
+                        <input type="hidden" name="searching_schedules"/>
+                        <?= makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), 'loadSchedules();', '[Select Company]') ?>
+                        <?= makeOfficeDD('s_office_id', htmlentities($_REQUEST['s_office_id']), 'loadSchedules();', '[Select Office]') ?>
+                        <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadSchedules();return false;">Search</button>
+                        <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetSchedulesSearchForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadSchedules();return false;">Reset</button>
                     </div>
                 </div>
                 <! ** END BLOCK SEARCH TABLE -->
                 <! ** BEGIN BLOCK LIST (DATATABLE) -->
                 <div class="block-content">
-                    <table class="table table-sm table-striped" id="companiesrule_table">
+                    <table class="table table-sm table-striped" id="schedule_table">
                         <caption id="current_time_span" class="small text-right">Server Time: <?=date("g:ia m/d/Y T")?></caption>
                         <tr>
-                            <th class="row2 text-left"><?= $this->getOrderLink('company_id') ?>Company</a></th>
-                            <th class="row2 text-left"><?= $this->getOrderLink('rule_type') ?>Rule Type</a></th>
-                            <th class="row2 text-left"><?= $this->getOrderLink('trigger_name') ?>Trigger</a></th>
-                            <th class="row2 text-left"><?= $this->getOrderLink('trigger_value') ?>Trigger Value</a></th>
-                            <th class="row2 text-left"><?= $this->getOrderLink('action') ?>Action</a></th>
-                            <th class="row2 text-left"><?= $this->getOrderLink('action_value') ?>Action Value</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Schedule</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('company_name') ?>Company</a></th>
+                            <th class="row2 text-left"><?= $this->getOrderLink('office_name') ?>Office</a></th>
                             <th class="row2 text-center">&nbsp;</th>
                         </tr>
                     </table>
@@ -230,9 +205,9 @@ class Schedules
             </form>
         </div>
         <! *** END ONEUI STYLING REWORK -->
-        <div id="dialog-modal-add-rule" title="Adding new rule" class="nod"></div>
+        <div id="dialog-modal-add-schedule" title="Adding new schedule" class="nod"></div>
         <script>
-            $("#dialog-modal-add-rule").dialog({
+            $("#dialog-modal-add-schedule").dialog({
                 autoOpen: false,
                 width: 'auto',
                 modal: false,
@@ -241,8 +216,8 @@ class Schedules
                 position: {my: 'center', at: 'center'},
                 containment: '#main-container'
             });
-            $("#dialog-modal-add-rule").closest('.ui-dialog').draggable("option","containment","#main-container");
-            loadCompaniesRules();
+            $("#dialog-modal-add-schedule").closest('.ui-dialog').draggable("option","containment","#main-container");
+            loadSchedules();
         </script>
         <?
     }
@@ -252,11 +227,11 @@ class Schedules
     {
         $id = intval($id);
         if ($id) {
-            $row = $_SESSION['dbapi']->companies_rules->getByID($id);
+            $row = $_SESSION['dbapi']->schedules->getByID($id);
         }
         ?>
         <script>
-            function validateCompaniesRulesField(name, value, frm) {
+            function validateSchedulesField(name, value, frm) {
                 // console.log(name, value);
                 // alert(name+","+value);
                 switch (name) {
@@ -280,8 +255,8 @@ class Schedules
                 return true;
             }
 
-            function checkCompaniesRulesFrm(frm) {
-                var params = getFormValues(frm, 'validateCompaniesRulesField');
+            function checkSchedulesFrm(frm) {
+                var params = getFormValues(frm, 'validateSchedulesField');
                 // FORM VALIDATION FAILED!
                 // param[0] == field name
                 // param[1] == field value
@@ -298,7 +273,7 @@ class Schedules
                     $.ajax({
                         type: "POST",
                         cache: false,
-                        url: 'api/api.php?get=companiesrules&mode=xml&action=edit',
+                        url: 'api/api.php?get=schedules&mode=xml&action=edit',
                         data: params,
                         error: function () {
                             alert("Error saving user form. Please contact an admin.");
@@ -311,8 +286,8 @@ class Schedules
                                 alert(result['message']);
                                 return;
                             }
-                            loadCompaniesRules();
-                            displayAddRuleDialog(res);
+                            loadSchedules();
+                            displayAddScheduleDialog(res);
                             alert(result['message']);
                         }
                     });
@@ -320,59 +295,55 @@ class Schedules
                 return false;
             }
             // SET TITLEBAR
-            $('#dialog-modal-add-rule').dialog("option", "title", '<?=($id) ? 'Editing rule # ' . htmlentities($row['id']) : 'Adding new rule'?>');
+            $('#dialog-modal-add-schedule').dialog("option", "title", '<?=($id) ? 'Editing schedule # ' . htmlentities($row['id']) : 'Adding new schedule'?>');
         </script>
-        <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkCompaniesRulesFrm(this); return false">
-            <input type="hidden" id="adding_rule" name="adding_rule" value="<?= $id ?>">
+        <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkSchedulesFrm(this); return false">
+            <input type="hidden" id="adding_schedule" name="adding_schedule" value="<?= $id ?>">
             <table border="0" align="center">
                 <tr>
-                    <th colspan="2" align="left" height="30">Company ID:</th>
+                    <th colspan="2" align="left" height="30">Name:</th>
+                    <td colspan="2">
+                        <input type="text" name="name" id="name" value="<?=htmlentities($row['name']);?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="2" align="left" height="30">Company:</th>
                     <td colspan="2"><?=makeCompanyDD('company_id', intval($row['company_id']), '', 'Default [All]')?></td>
                 </tr>
                 <tr>
-                    <th colspan="2" align="left" height="30">Assign to Schedule:</th>
-                    <td colspan="2"><?=makeScheduleDD('schedule_id', intval($row['schedule_id']), '', '[None]')?></td>
+                    <th colspan="2" align="left" height="30">Office:</th>
+                    <td colspan="2"><?=makeOfficeDD('office_id', intval($row['office_id']), '', '','Default [All]')?></td>
                 </tr>
                 <tr>
-                    <th colspan="3" align="left" height="30">Rule Type:</th>
-                    <td>
-                        <select name="rule_type">
-                            <option <?=htmlentities($row['rule_type'] == 'hours' ? 'selected' : '');?> value="hours">Hours</option>
-                        </select>
+                    <th colspan="2" align="left" height="30">User Group(s):</th>
+                    <td colspan="2"><?= makeUserGroupDD('user_groups[]', htmlentities($row['user_groups']), '', "", 10, false); ?></td>
+                </tr>
+                <tr>
+                    <th align="left" height="30">Start Time:</th>
+                    <td></td>
+                    <th align="left" height="30">End Time:</th>
+                    <td></td>
+                </tr>
+                <tr>
+                    <th align="left" height="84" colspan="2">Select Days:</th>
+                    <td align="left" valign="top" height="84">
+                        Sunday<br/>
+                        Monday<br/>
+                        Tuesday<br/>
+                        Wednesday<br/>
+                        Thursday<br/>
+                        Friday<br/>
+                        Saturday<br/>
                     </td>
-                </tr>
-                <tr>
-                    <th colspan="3" align="left" height="30">Late Rule:</th>
-                    <td>
-                        <select name="late_rule">
-                            <option <?=htmlentities($row['late_rule'] == 'yes' ? 'selected' : '');?> value="yes">Yes</option>
-                            <option <?=htmlentities($row['late_rule'] == 'no' ? 'selected' : '');?> value="no">No</option>
-                            <option <?=htmlentities($row['late_rule'] == 'both' ? 'selected' : '');?> value="both">Both</option>
-                        </select>
-                </tr>
-                <tr>
-                    <th align="left" height="30">Trigger:</th>
-                    <td>
-                        <select name="trigger_name">
-                            <option <?=htmlentities($row['trigger_name'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
-                            <option <?=htmlentities($row['trigger_name'] == 'greater_equal' ? 'selected' : '');?> value="greater_equal">&#8925;</option>
-                            <option <?=htmlentities($row['trigger_name'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Breaks</option>
-                        </select>
-                    <th align="left" height="30">Value:</th>
-                    <td><input name="trigger_value" size="8" type="text" value="<?= htmlentities($row['trigger_value']) ?>"></td>
-                </tr>
-                <tr>
-                    <th align="left" height="30">Action:</th>
-                    <td>
-                        <select name="action_type">
-                            <option <?=htmlentities($row['action'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
-                            <option <?=htmlentities($row['action'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
-                            <option <?=htmlentities($row['action'] == 'set_hours' ? 'selected' : '');?> value="set_hours">Set Hours</option>
-                            <option <?=htmlentities($row['action'] == '' ? 'selected' : '');?> value="">None</option>
-                        </select>
+                    <td align="left" valign="top" height="84">
+                        <input type="checkbox" value="yes" name="work_sun" <?=($row['work_sun'] == 'yes' ? ' checked' : '')?> /><br/>
+                        <input type="checkbox" value="yes" name="work_mon" <?=($row['work_mon'] == 'yes' ? ' checked' : '')?> /><br/>
+                        <input type="checkbox" value="yes" name="work_tues" <?=($row['work_tues'] == 'yes' ? ' checked' : '')?> /><br/>
+                        <input type="checkbox" value="yes" name="work_wed" <?=($row['work_wed'] == 'yes' ? ' checked' : '')?> /><br/>
+                        <input type="checkbox" value="yes" name="work_thurs" <?=($row['work_thurs'] == 'yes' ? ' checked' : '')?> /><br/>
+                        <input type="checkbox" value="yes" name="work_fri" <?=($row['work_fri'] == 'yes' ? ' checked' : '')?> /><br/>
+                        <input type="checkbox" value="yes" name="work_sat" <?=($row['work_sat'] == 'yes' ? ' checked' : '')?> /><br/>
                     </td>
-                    <th align="left" height="30">Value:</th>
-                    <td><input name="action_value" size="8" type="text" value="<?= htmlentities($row['action_value']) ?>"></td>
                 </tr>
                 <tr>
                     <th colspan="4" class="text-center"><button class="btn btn-sm btn-primary" type="submit">Save Changes</button></th>
@@ -386,41 +357,7 @@ class Schedules
     {
         $var = '<a href="#" onclick="setOrder(\'' . addslashes($this->order_prepend) . '\',\'' . addslashes($field) . '\',';
         $var .= "((" . $this->order_prepend . "orderdir == 'DESC')?'ASC':'DESC')";
-        $var .= ");loadCompaniesRules();return false;\">";
+        $var .= ");loadSchedules();return false;\">";
         return $var;
     }
 }
-
-/**
- * @param string      $name        the name and id of the select element
- * @param string      $sel         the currently selected option
- * @param string|null $onchange    if populated, script to execute onchange
- * @param string|bool $blank_entry if populated, string that represents the option text when field is blank
- *
- * @return string $showDD complete select statement ready to be rendered
- */
-function makeScheduleDD($name, $sel, $onchange = NULL, $blank_entry = false)
-{
-    $sql = "SELECT `id`, `name` FROM schedules";
-    $res = query($sql, 1);
-    $showDD = "<select class='form-control custom-select-sm' name='" . $name . "' id='" . $name . "'";
-    if (isset($onchange)) {
-        $showDD .= " onchange='" . htmlentities(trim($onchange)) . "'";
-    }
-    $showDD .= ">";
-    if ($blank_entry) {
-        $showDD .= "<option value=''>" . $blank_entry . "</option>";
-    }
-    if (mysqli_num_rows($res) > 0) {
-        for ($x = 0; $row = mysqli_fetch_array($res); $x++) {
-            $showDD .= "<option value='" . $row['id'] . "'";
-            if ($row['id'] == $sel) {
-                $showDD .= " selected";
-            }
-            $showDD .= ">" . $row['name'] . "</option>";
-        }
-    }
-    $showDD .= "</select>";
-    return $showDD;
-}
-
