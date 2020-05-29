@@ -158,7 +158,7 @@ class Schedules
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadSchedules();return false;">
                 <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
-                    <h4 class="block-title">Schedules <button type="button" title="Configure Rules" class="btn btn-sm btn-primary" onclick="loadSection('?area=employee_hours&sub_area=companies_rules&no_script=1');return false;"><i class="fa fa-user-cog"></i></button></h4>
+                    <h4 class="block-title">Schedules</h4>
                     <button type="button" value="Add" title="Add Rules" class="btn btn-sm btn-primary" onclick="displayAddScheduleDialog(0)">Add</button>
                     <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSchedulesSearch();">Toggle Search</button>
                     <div id="schedules_prev_td" class="page_system_prev"></div>
@@ -314,11 +314,11 @@ class Schedules
                 </tr>
                 <tr>
                     <th colspan="2" align="left" height="30">Office:</th>
-                    <td colspan="2"><?=makeOfficeDD('office_id', intval($row['office_id']), '', '','Default [All]')?></td>
+                    <td colspan="2"><?=makeOfficeDD('office_id', intval($row['office_id']), 'form-control custom-select-sm', '','Default [All]')?></td>
                 </tr>
                 <tr>
                     <th colspan="2" align="left" height="30">User Group(s):</th>
-                    <td colspan="2"><?= makeUserGroupDD('user_groups[]', htmlentities($row['user_groups']), '', '', 10, false); ?></td>
+                    <td colspan="2"><?= makeUserGroupDD('user_groups[]', htmlentities($row['user_groups']), 'form-control custom-select-sm', '', 10, false); ?></td>
                 </tr>
                 <tr>
                     <th colspan="2" align="left" height="30">Start Time:</th>
@@ -348,6 +348,11 @@ class Schedules
                         <input type="checkbox" value="yes" name="work_fri" <?=($row['work_fri'] == 'yes' ? ' checked' : '')?> /><br/>
                         <input type="checkbox" value="yes" name="work_sat" <?=($row['work_sat'] == 'yes' ? ' checked' : '')?> /><br/>
                     </td>
+                </tr>
+                <tr>
+                    <th colspan="4" class="text-left">
+                        <button type="button" title="Configure Additional Hours Rules" class="btn btn-sm btn-warning" onclick="$('#dialog-modal-add-schedule').dialog('close');loadSection('?area=employee_hours&sub_area=companies_rules&no_script=1');return false;">Edit Company Rules</button>
+                    </th>
                 </tr>
                 <tr>
                     <th colspan="4" class="text-center"><button class="btn btn-sm btn-primary" type="submit">Save Changes</button></th>

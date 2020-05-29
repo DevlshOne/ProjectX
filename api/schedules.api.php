@@ -58,7 +58,11 @@ class API_Schedules
                 $dat['work_thurs'] = (trim($_POST['work_thurs']) === 'yes' ? 'yes' : 'no');
                 $dat['work_fri'] = (trim($_POST['work_fri']) === 'yes' ? 'yes' : 'no');
                 $dat['work_sat'] = (trim($_POST['work_sat']) === 'yes' ? 'yes' : 'no');
-                $dat['user_group'] = join(",", $_POST['user_groups[]']);
+                if(count($_POST['user_groups[]'])) {
+                    $dat['user_group'] = join(",", $_POST['user_groups[]']);
+                } else {
+                    $dat['user_group'] = NULL;
+                }
                 if ($id) {
                     $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->schedules->table);
                     logAction('edit', 'schedules', $id, "Schedule=" . $id);
