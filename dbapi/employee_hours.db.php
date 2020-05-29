@@ -510,7 +510,7 @@ class EmployeeHoursAPI{
 				}
 
 				// UPDATE ACTIVITY LOG RECORD FOR MAIN USER 
-				$_SESSION['dbapi']->execSQL("UPDATE `activity_log` SET `paid_time`='".(($paid_hrs * 60))."', `paid_break_time`='".addslashes($users_break_time)."' WHERE `id`='".$row['main_user_activity_id']."' ");
+				$_SESSION['dbapi']->execSQL("UPDATE `activity_log` SET `paid_time`='".(($paid_hrs * 60))."', `paid_break_time`='".($users_break_time * 60)."' WHERE `id`='".$row['main_user_activity_id']."' ");
 				
 				
 				

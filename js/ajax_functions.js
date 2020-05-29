@@ -639,6 +639,9 @@ function parseXMLData(area, tableFormat, xmldoc) {
                         
                         var paid_time_actual = parseInt(basetime + correctionamt);
                         
+                        var paid_break_time = parseInt(dataarr[x].getAttribute('paid_break_time'));
+                        
+                        var basetime_no_breaks = basetime - paid_break_time;
                         
                         var s = (Math.round(paid_time_actual / 60 * 100) / 100).toString();
                         if (s.indexOf('.') == -1) s += '.';
@@ -651,11 +654,18 @@ function parseXMLData(area, tableFormat, xmldoc) {
                         // FLIP TO POSITIVE FOR THE DROPDOWN SELECTIONS
                         correctionamt = (is_negative)?correctionamt * -1:correctionamt;
                         
+                        
+                        
+                        
                         var corrsel_hour = Math.floor(correctionamt / 60);
                         var corrsel_min = correctionamt % 60;
                         
  
+                        var breakless_hour = Math.floor(basetime_no_breaks / 60);
+                        var breakless_min = basetime_no_breaks % 60;
                         
+                        var break_hour = Math.floor(paid_break_time / 60);
+                        var break_min = paid_break_time % 60;
                         
                         var sel_hour = Math.floor(basetime / 60);
                         var sel_min = basetime % 60;
@@ -667,7 +677,9 @@ function parseXMLData(area, tableFormat, xmldoc) {
                         // INSERT DROPDOWNS HERE INSTEAD OF A TEXT FIELD....
                         cell_text = '<input type="hidden" name="activity_id_' + x + '" id="activity_id_' + x + '" value="' + dataarr[x].getAttribute('id') + '">' +
                             
-                        	'<span title="System Calculated hours based on activity">Calculated: '+sel_hour+"hr "+sel_min+"min</span><br />"+
+                        	'<span title="System Calculated hours based on activity:\n  '+
+                        			breakless_hour+':'+zeroFill( breakless_min, 2 )+' Base Activity Time\n  '+
+                        			break_hour+':'+zeroFill( break_min, 2 )+' Calculated Breaks\n">Calculated: '+sel_hour+"hr "+sel_min+"min</span><br />"+
                             '<select id="paid_correction_polarity_' + x+'" name="paid_correction_polarity_' + x+'"><option value="add">PLUS (+)<option value="subtract" '+((is_negative)?' SELECTED ':'')+'>MINUS (-)</select>'+
                             makeNumberDD('paid_correction_hour_' + x, corrsel_hour, 0, 12, 1, false, '', false) + "h&nbsp;" +
                             makeNumberDD('paid_correction_min_' + x, corrsel_min, 0, 59, 1, true, '', false) + 'm<br />' +
