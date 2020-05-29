@@ -44,7 +44,7 @@ include_once($basedir . "db.inc.php");
 include_once($basedir . 'utils/db_utils.php');
 
 
-## UNAUTHENTICATED LOGIN SALT GENERATION 
+## UNAUTHENTICATED LOGIN SALT GENERATION
 ## FOR USE BY LOGIN AJAX
 if($_REQUEST['generate_login_salt'] == 'true'){
 
@@ -370,6 +370,11 @@ switch ($_REQUEST['get']) {
                 $obj = new API_CompaniesRules();
                 $obj->handleSecondaryAjax();
                 break;
+            case 'schedule':
+                include_once($basedir . "api/schedules.api.php");
+                $obj = new API_Schedules();
+                $obj->handleSecondaryAjax();
+                break;
 
 //		case 'account':
 //
@@ -456,11 +461,15 @@ switch ($_REQUEST['get']) {
         break;
 
     case 'companiesrules':
-
         include_once($basedir . "api/companies_rules.api.php");
         $companies_rules = new API_CompaniesRules();
         $companies_rules->handleAPI();
+        break;
 
+    case 'schedules':
+        include_once($basedir . "api/schedules.api.php");
+        $schedules = new API_Schedules();
+        $schedules->handleAPI();
         break;
 
     case 'login_tracker':
