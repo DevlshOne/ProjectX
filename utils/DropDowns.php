@@ -60,7 +60,7 @@
         return $showDD;
     }
 
-    function makeServerDD($name, $sel, $blank_field = 0)
+function makeServerDD($name, $sel, $blank_field = 0)
     {
         $out = '<select name="' . $name . '" id="' . $name . '">';
 

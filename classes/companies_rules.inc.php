@@ -82,6 +82,7 @@ class CompaniesRules
                     's_trigger_value=' + escape(frm.s_trigger_value.value) + "&" +
                     's_action_type=' + escape(frm.s_action_type.value) + "&" +
                     's_action_value=' + escape(frm.s_action_value.value) + "&" +
+                    's_schedule_id=' + escape(frm.s_schedule_id.value) + "&" +
                     "index=" + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
@@ -151,6 +152,7 @@ class CompaniesRules
                 frm.s_trigger_value.value = '';
                 frm.s_action_type.value = '';
                 frm.s_action_value.value = '';
+                frm.s_schedule_id.value = '';
             }
 
             var companiesrulessrchtog = true;
@@ -189,6 +191,12 @@ class CompaniesRules
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_companiesrules"/>
                         <?= makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), 'loadCompaniesRules();', '[Select Company]') ?>
+                        <select class="form-control custom-select-sm" name="s_schedule_id" onchange="loadCompaniesRules();">
+                            <option value="">[Select Trigger Type]</option>
+                            <option <?=htmlentities($_REQUEST['s_schedule_id'] == 'yes' ? 'selected' : '');?> value="yes">Yes</option>
+                            <option <?=htmlentities($_REQUEST['s_schedule_id'] == 'no' ? 'selected' : '');?> value="no">No</option>
+                            <option <?=htmlentities($_REQUEST['s_schedule_id'] == 'both' ? 'selected' : '');?> value="both">Both</option>
+                        </select>
                         <select class="form-control custom-select-sm" name="s_trigger_name" onchange="loadCompaniesRules();">
                             <option value="">[Select Trigger Type]</option>
                             <option <?=htmlentities($_REQUEST['s_trigger_name'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
@@ -327,12 +335,27 @@ class CompaniesRules
                     <td colspan="2"><?=makeCompanyDD('company_id', intval($row['company_id']), '', 'Default [All]')?></td>
                 </tr>
                 <tr>
+                    <th colspan="2" align="left" height="30">Assign to Schedule:</th>
+                    <td colspan="2"><?=makeScheduleDD('schedule_id', intval($row['schedule_id']), '', '[None]')?></td>
+                </tr>
+                <tr>
                     <th colspan="3" align="left" height="30">Rule Type:</th>
                     <td>
                         <select name="rule_type">
                             <option <?=htmlentities($row['rule_type'] == 'hours' ? 'selected' : '');?> value="hours">Hours</option>
                         </select>
                     </td>
+                </tr>
+                <tr>
+                    <th align="left" height="30">Late Rule:</th>
+                    <td>
+                        <select name="trigger_name">
+                            <option <?=htmlentities($row['late_rule'] == 'yes' ? 'selected' : '');?> value="yes">Yes</option>
+                            <option <?=htmlentities($row['late_rule'] == 'no' ? 'selected' : '');?> value="no">No</option>
+                            <option <?=htmlentities($row['late_rule'] == 'both' ? 'selected' : '');?> value="both">Both</option>
+                        </select>
+                    <th align="left" height="30">Value:</th>
+                    <td><input name="trigger_value" size="8" type="text" value="<?= htmlentities($row['trigger_value']) ?>"></td>
                 </tr>
                 <tr>
                     <th align="left" height="30">Trigger:</th>
@@ -374,3 +397,37 @@ class CompaniesRules
         return $var;
     }
 }
+
+/**
+ * @param string      $name        the name and id of the select element
+ * @param string      $sel         the currently selected option
+ * @param string|null $onchange    if populated, script to execute onchange
+ * @param string|bool $blank_entry if populated, string that represents the option text when field is blank
+ *
+ * @return string $showDD complete select statement ready to be rendered
+ */
+function makeScheduleDD($name, $sel, $onchange = NULL, $blank_entry = false)
+{
+    $sql = "SELECT `id` FROM schedules";
+    $res = query($sql, 1);
+    $showDD = "<select class='form-control custom-select-sm' name='" . $name . "' id='" . $name . "'";
+    if (isset($onchange)) {
+        $showDD .= " onchange='" . htmlentities(trim($onchange)) . "'";
+    }
+    $showDD .= ">";
+    if ($blank_entry) {
+        $showDD .= "<option value=''>" . $blank_entry . "</option>";
+    }
+    if (mysqli_num_rows($res) > 0) {
+        for ($x = 0; $row = mysqli_fetch_array($res); $x++) {
+            $showDD .= "<option value='" . $row['id'] . "'";
+            if ($row['id'] == $sel) {
+                $showDD .= " selected";
+            }
+            $showDD .= ">" . $row['name'] . "</option>";
+        }
+    }
+    $showDD .= "</select>";
+    return $showDD;
+}
+
