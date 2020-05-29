@@ -59,18 +59,22 @@ class EmployeeHours
 
 				switch($_REQUEST['sub_area']){
 				case 'config':
-					
+
 					include_once($_SESSION['site_config']['basedir'] . "/classes/companies_rules.inc.php");
 					$_SESSION['companies_rules']->handleFLOW();
-					
+
 					break;
+                    case 'schedules':
+                        include_once($_SESSION['site_config']['basedir'] . "/classes/schedules.inc.php");
+                        $_SESSION['schedules']->handleFLOW();
+                        break;
 				default:
-					
+
 					$this->listEntrys();
-					
+
 					break;
 				}
-				
+
 			}
 		}
 
@@ -498,7 +502,7 @@ class EmployeeHours
                 var hours_data = "";
                 var notes_data = "";
                 var lates_data = "";
-                
+
                 $('#total_count_div').html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                 window.location = '#header_anchor';
                 for (var x = 0; (obj = getEl('activity_id_' + x)) != null; x++) {
@@ -507,7 +511,7 @@ class EmployeeHours
  paid_correction_polarity
  paid_correction_hour_
  paid_correction_min_
- 
+
  **/?>              hours_data += ((getEl('paid_correction_polarity_'+x).value == 'subtract')?'-':'')+getEl('paid_correction_hour_' + x).value + ":" + getEl('paid_correction_min_' + x).value + "\t";
                     notes_data += getEl('note_data_' + x).value + "||";
 
@@ -517,7 +521,7 @@ class EmployeeHours
                 frm.activity_hours.value = hours_data;
                 frm.activity_notes.value = notes_data;
                 frm.activity_is_lates.value = lates_data;
-                
+
                 var params = getFormValues(frm, '');
                 $.ajax({
                     type: "POST",
@@ -616,7 +620,7 @@ class EmployeeHours
                 //var min = value * 60;
 
 				var polarity_val = $('#paid_correction_polarity_setall').val();
-                
+
                 var hours = parseInt($('#paid_hour_setall').val());//Math.floor(min / 60);
                 var minutes = parseInt($('#paid_min_setall').val());//parseInt(min % 60);
 
@@ -625,12 +629,12 @@ class EmployeeHours
                 }
 
 
-                
-                
+
+
                 for (var x = 0; (obj = getEl('paid_correction_hour_' + x)) != null; x++) {
 
                 	getEl('paid_correction_polarity_' + x).value = polarity_val;
-                	
+
                     obj.value = hours;
 
                 }
@@ -732,7 +736,7 @@ class EmployeeHours
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadEmps();return false">
                 <input type="hidden" name="searching_emp">
                 <div class="block-header bg-primary-light">
-                    <h4 class="block-title">Employee Hours&nbsp;<button type="button" title="Configure Additional Hours Rules" class="btn btn-sm btn-primary" onclick="loadSection('?area=employee_hours&sub_area=config&no_script=1');return false;"><i class="fa fa-user-cog"></i></button></h4>
+                    <h4 class="block-title">Employee Hours&nbsp;<button type="button" title="Configure Schedules" class="btn btn-sm btn-primary" onclick="loadSection('?area=employee_hours&sub_area=schedules&no_script=1');return false;"><i class="fa fa-user-cog"></i></button></h4>
 
                     <? if (checkAccess('employee_hours_edit')) { ?>
                         <button class="btn btn-sm btn-primary" type="button" title="Add Employee Hours" onclick="displayEditEmpDialog(0)">Add Hours</button>
@@ -821,10 +825,10 @@ class EmployeeHours
                         </div>
                     </div>
                 </div>
-                
+
                 <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="if(processListSubmit(getEl('set_hours_form'))){ $('#set_hours_form').submit(); }" name="save_button">Save Changes</button>
-                
-                
+
+
                 <div class="block-content block-content-full">
                     <table class="table table-sm table-striped" id="emp_table">
                         <tr>
@@ -860,9 +864,9 @@ class EmployeeHours
 	                        <button type="button" class="btn btn-sm btn-danger" title="Save Changes" onclick="if(processListSubmit(getEl('set_hours_form'))){ $('#set_hours_form').submit(); }" name="save_button">Save Changes</button>
 
 	                </form><?
-	            } 
-	            
-	            
+	            }
+
+
 	            ?>
 
 

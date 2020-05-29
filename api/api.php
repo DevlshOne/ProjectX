@@ -371,6 +371,7 @@ switch ($_REQUEST['get']) {
                 $obj->handleSecondaryAjax();
                 break;
             case 'schedule':
+                include_once($basedir . "classes/employee_hours.inc.php");
                 include_once($basedir . "api/schedules.api.php");
                 $obj = new API_Schedules();
                 $obj->handleSecondaryAjax();

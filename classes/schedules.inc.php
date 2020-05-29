@@ -61,8 +61,8 @@ class Schedules
                 ['name', 'text-left'],
                 ['[get:company_name:company_id]', 'text-left'],
                 ['[get:office_name:office_id]', 'text-left'],
-                ['start_time', 'text-left'],
-                ['end_time', 'text-left'],
+                // ['[get:start_offset:start_time]', 'text-left'],
+                // ['[get:end_offset:end_time]', 'text-left'],
                 ['[delete]', 'text-center']
             ];
 
@@ -139,7 +139,7 @@ class Schedules
                 $('#' + objname).dialog("open");
                 $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
                 // TODO - where is this coming from?
-                $('#' + objname).load("index.php?area=employee_hours&sub_area=config&add_schedule=" + id + "&printable=1&no_script=1");
+                $('#' + objname).load("index.php?area=employee_hours&sub_area=schedules&add_schedule=" + id + "&printable=1&no_script=1");
             }
 
             function resetSchedulesSearchForm(frm) {
@@ -158,7 +158,7 @@ class Schedules
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadSchedules();return false;">
                 <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
-                    <h4 class="block-title">Companies Additional Hours Rules</h4>
+                    <h4 class="block-title">Schedules</h4>
                     <button type="button" value="Add" title="Add Rules" class="btn btn-sm btn-primary" onclick="displayAddScheduleDialog(0)">Add</button>
                     <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSchedulesSearch();">Toggle Search</button>
                     <div id="schedules_prev_td" class="page_system_prev"></div>
@@ -183,7 +183,7 @@ class Schedules
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_schedules"/>
                         <?= makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), 'loadSchedules();', '[Select Company]') ?>
-                        <?= makeOfficeDD('s_office_id', htmlentities($_REQUEST['s_office_id']), 'loadSchedules();', '[Select Office]') ?>
+                        <?= makeOfficeDD('s_office_id', htmlentities($_REQUEST['s_office_id']), 'loadSchedules();', 'loadSchedules();','[Select Office]') ?>
                         <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadSchedules();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetSchedulesSearchForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadSchedules();return false;">Reset</button>
                     </div>
@@ -197,6 +197,8 @@ class Schedules
                             <th class="row2 text-left"><?= $this->getOrderLink('name') ?>Schedule</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('company_name') ?>Company</a></th>
                             <th class="row2 text-left"><?= $this->getOrderLink('office_name') ?>Office</a></th>
+<!--                            <th class="row2 text-left">--><?//= $this->getOrderLink('start_offset') ?><!--Start Time</a></th>-->
+<!--                            <th class="row2 text-left">--><?//= $this->getOrderLink('end_offset') ?><!--End Time</a></th>-->
                             <th class="row2 text-center">&nbsp;</th>
                         </tr>
                     </table>
@@ -319,13 +321,15 @@ class Schedules
                     <td colspan="2"><?= makeUserGroupDD('user_groups[]', htmlentities($row['user_groups']), '', "", 10, false); ?></td>
                 </tr>
                 <tr>
-                    <th align="left" height="30">Start Time:</th>
-                    <td></td>
-                    <th align="left" height="30">End Time:</th>
-                    <td></td>
+                    <th colspan="2" align="left" height="30">Start Time:</th>
+                    <td colspan="2"><?php echo makeTimebar("start_time", 2, NULL, false, intval($row['start_time'])); ?></td>
                 </tr>
                 <tr>
-                    <th align="left" height="84" colspan="2">Select Days:</th>
+                    <th align="left" height="30" colspan="2">End Time:</th>
+                    <td colspan="2"><?php echo makeTimebar("end_time", 2, NULL, false, intval($row['end_time'])); ?></td>
+                </tr>
+                <tr>
+                    <th align="left" height="84" colspan="2" valign="top">Days:</th>
                     <td align="left" valign="top" height="84">
                         Sunday<br/>
                         Monday<br/>

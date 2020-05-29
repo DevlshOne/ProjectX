@@ -74,15 +74,6 @@ class API_Schedules
                 if ($_REQUEST['s_office_id']) {
                     $dat['office_id'] = $_REQUEST['s_office_id'];
                 }
-                if ($_REQUEST['s_trigger_value']) {
-                    $dat['trigger_value'] = floatval($_REQUEST['s_trigger_value']);
-                }
-                if ($_REQUEST['s_action_type']) {
-                    $dat['action_type'] = $_REQUEST['s_action_type'];
-                }
-                if ($_REQUEST['s_action_value']) {
-                    $dat['action_value'] = floatval($_REQUEST['s_action_value']);
-                }
                 ## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
                 if (isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])) {
                     $pagemode = true;
@@ -154,7 +145,19 @@ class API_Schedules
                         if ($tmparr[2] <= 0) {
                             $out_stack[$idx] = '-';
                         } else {
-                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT name AS office_name FROM offices WHERE id=" . intval($tmparr[2]) . " ");
+                            list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT name AS office_name FROM offices WHERE id=" . intval($tmparr[2])) . " ";
+                        }
+                    }
+                    break;
+                case 'start_offset':
+                case 'end_offset' :
+                    if($tmparr[2] === '0') {
+                        $out_stack[$idx] = 'NONE';
+                    } else {
+                        if ($tmparr[2] <= 0) {
+                            $out_stack[$idx] = '-';
+                        } else {
+                            list($out_stack[$idx]) = date("H:i A", intval($tmparr[2])) . " ";
                         }
                     }
                     break;
