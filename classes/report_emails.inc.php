@@ -837,7 +837,7 @@ class ReportEmails{
 						</tr>
 						<tr>
 							<th><label>User Group:</label></th>
-							<td>" . makeUserGroupDD('user_groups', $jSettings->user_group, '', '', 4) . "</td>
+							<td>" . makeUserGroupDD('user_groups[]', $jSettings->user_group, '', '', 10, false) . "</td>
 						</tr>
 						<tr>
 							<th><label>Cluster:</label></th>
@@ -848,7 +848,7 @@ class ReportEmails{
                 case 4 :
                     echo "<tr>
 							<th><label>User Group:</label></th>
-							<td>" . makeUserGroupDD('user_groups', $jSettings->user_group, '', '', 4) . "</td>
+							<td>" . makeUserGroupDD('user_groups[]', $jSettings->user_group, '', '', 10, false) . "</td>
 						</tr>
 						<tr>
 							<th><label>Cluster:</label></th>
