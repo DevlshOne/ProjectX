@@ -1,1 +1,1 @@
-ALTER TABLE `schedules` ADD `name` VARCHAR(128) NOT NULL AFTER `company_id`;
+ALTER TABLE `schedules` ADD `name` VARCHAR(64) NULL DEFAULT AFTER `end_time`;
