@@ -46,17 +46,24 @@ class API_Schedules
             case 'edit':
                 $id = intval($_REQUEST['adding_schedule']);
                 unset($dat);
+                $dat['name'] = trim($_POST['name']);
                 $dat['company_id'] = intval($_POST['company_id']);
-                $dat['rule_type'] = trim($_POST['rule_type']);
-                $dat['trigger_name'] = trim($_POST['trigger_name']);
-                $dat['trigger_value'] = round(floatval($_POST['trigger_value']),2);
-                $dat['action'] = trim($_POST['action_type']);
-                $dat['action_value'] = round(floatval($_POST['action_value']),2);
+                $dat['office_id'] = intval($_POST['office_id']);
+                $dat['start_time'] = intval(($_POST['start_offset_hour'] * 3600) + ($_POST['start_offset_min'] * 60) + ($_POST['start_offset_timemode'] === 'pm' ? 43200 : 0));
+                $dat['end_time'] = intval(($_POST['end_offset_hour'] * 3600) + ($_POST['end_offset_min'] * 60) + ($_POST['end_offset_timemode'] === 'pm' ? 43200 : 0));
+                $dat['work_sun'] = (trim($_POST['work_sun']) === 'yes' ? 'yes' : 'no');
+                $dat['work_mon'] = (trim($_POST['work_mon'] === 'yes' ? 'yes' : 'no'));
+                $dat['work_tues'] = (trim($_POST['work_tues'] === 'yes' ? 'yes' : 'no'));
+                $dat['work_wed'] = (trim($_POST['work_wed'] === 'yes' ? 'yes' : 'no'));
+                $dat['work_thurs'] = (trim($_POST['work_thurs'] === 'yes' ? 'yes' : 'no'));
+                $dat['work_fri'] = (trim($_POST['work_fri'] === 'yes' ? 'yes' : 'no'));
+                $dat['work_sat'] = (trim($_POST['work_sat'] === 'yes' ? 'yes' : 'no'));
+                $dat['user_groups'] = $_POST['user_groups'];
                 if ($id) {
                     $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->schedules->table);
                     logAction('edit', 'schedules', $id, "Schedule=" . $id);
                 } else {
-                    $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->companies_rules->table);
+                    $_SESSION['dbapi']->aadd($dat, $_SESSION['dbapi']->schedules->table);
                     $id = mysqli_insert_id($_SESSION['dbapi']->db);
                     logAction('add', 'schedules', $id, "Schedule=" . $id);
                 }

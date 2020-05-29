@@ -322,11 +322,11 @@ class Schedules
                 </tr>
                 <tr>
                     <th colspan="2" align="left" height="30">Start Time:</th>
-                    <td colspan="2"><?php echo makeTimebar("start_time", 2, NULL, false, intval($row['start_time'])); ?></td>
+                    <td colspan="2"><?php echo makeTimebar("start_offset_", 2, NULL, false, intval($row['start_time'])); ?></td>
                 </tr>
                 <tr>
                     <th align="left" height="30" colspan="2">End Time:</th>
-                    <td colspan="2"><?php echo makeTimebar("end_time", 2, NULL, false, intval($row['end_time'])); ?></td>
+                    <td colspan="2"><?php echo makeTimebar("end_offset_", 2, NULL, false, intval($row['end_time'])); ?></td>
                 </tr>
                 <tr>
                     <th align="left" height="84" colspan="2" valign="top">Days:</th>
