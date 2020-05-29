@@ -84,12 +84,12 @@ class API_ReportEmails{
 
 			break;
 		case 'bulk_add':
-			
-			
+
+
 			/**
 			 * Array
 (
-    [bulk_adding_emails] => 
+    [bulk_adding_emails] =>
     [report_id] => 1
     [template_id] => Array
         (
@@ -100,15 +100,15 @@ class API_ReportEmails{
  // SALES ANAL FIELDS
     [combine_users] => on
     [sales_cluster_id] => 7
- // VERIFIER FIELDS   
+ // VERIFIER FIELDS
     [verifier_cluster_id] => 9
- // SUMMAR FIELDS   
+ // SUMMAR FIELDS
     [summary_report_type] => cold
- // ROUSTER FIELDS   
+ // ROUSTER FIELDS
     [rouster_cluster_id] => 1
-    
-    
-    
+
+
+
     [email_address] => test
     [user_groups] => Array
         (
@@ -119,19 +119,19 @@ class API_ReportEmails{
 
     [combined_group_report] => on
 )*/
-			
+
 			//print_r($_POST);
 			//exit;
 			$reptype = '';
 			$report_id = intval($_POST['report_id']);
 			$email_to = filterEmail(trim($_POST['email_address']));
-			
+
 			foreach($_POST['template_id'] as $template_id){
-				
+
 				$template = $_SESSION['dbapi']->report_emails_templates->getByID($template_id);
-				
+
 				$reptype = '';
-				
+
 				// BUILD RECORD TO BE INSERTED
 				$dat = array();
 				$dat['enabled'] = 'yes';
@@ -139,88 +139,88 @@ class API_ReportEmails{
 				$dat['email_address'] = $email_to;
 				$dat['interval'] = $template['interval'];
 				$dat['trigger_time'] = $template['trigger_time'];
-				
+
 				// CALCULATE LAST RAN!
 				$calculated_last_ran_time = 0;
-				
+
 				switch($dat['interval']){
 				case 'daily':
 				default:
 
 					// CURRENT DAY AT 0:00 AM PLUS THE DAY OFFSET (75600 = 9pm for example), minus 24 hours, for yesterdays time
 					$calculated_last_ran_time = (mktime(0,0,0) + $dat['trigger_time']) - 86400;
-					
-					
+
+
 					break;
 				case 'weekly':
-					
+
 					$diw = date("w");
-					
+
 					// GET TODAYS TIME, from 00:00:00
 					$tmptime = mktime(0,0,0);
-					
+
 					// SUBTRACT DAY OFFSET, TO GET BEGINNING OF WEEK
 					$tmptime -= ($diw * 86400);
-					
+
 					// SAVE THIS FOR LATER
 					$startofweek = $tmptime;
-					
+
 					// APPLY TIME OFFSET
 					$tmptime += $dat['trigger_time'];
-					
+
 					$calculated_last_ran_time = $tmptime - 604800;
-					
-					
-					
+
+
+
 					break;
 				case 'monthly':
-					
+
 					// GET FIRST DAY OF THE MONTH, FOR LAST MONTH
 					$calculated_last_ran_time = mktime(0,0,0, date("m") - 1, 1, date("Y")) + $dat['trigger_time'];
-					
+
 					break;
 				}
-				
-				
+
+
 				$dat['last_ran'] = $calculated_last_ran_time;
-				
-				
+
+
 				$dat['settings'] = '';
-				
+
 				$process_groups = true;
-				
+
 				switch($report_id){
 				case 1:
 				default:
-				
+
 					$saleclusterid = intval($_POST['sales_cluster_id']);
 					$saleclusterid = ($saleclusterid <= 0)?-1:$saleclusterid;
-					
+
 					$dat['settings'] .= '$agent_cluster_idx = '.$saleclusterid.";\n";
-					
+
 					if($_POST['combine_users'] != 'on'){
-						
+
 						$dat['settings'] .= '$combine_users = 0;'."\n";
 					}else{
-						
+
 						$dat['settings'] .= '$combine_users = 1;'."\n";
 					}
-					
+
 					break;
 				case 2:
-					
+
 					$verifierclusterid = intval($_POST['verifier_cluster_id']);
 					$verifierclusterid = ($verifierclusterid <= 0)?-1:$verifierclusterid;
-					
+
 					$dat['settings'] .= '$cluster_id = '.$verifierclusterid.";\n";
-					
+
 					break;
 				case 3:
-					
+
 					$process_groups = false;
-					
+
 					$reptype = trim($_POST['summary_report_type']);
-					
+
 					switch(strtolower($reptype)){
 					default:
 					case 'cold':
@@ -240,97 +240,97 @@ class API_ReportEmails{
 						$reptype = 'roustercompany';
 						break;
 					}
-					
+
 					$dat['settings'] .= '$report_type = \''.$reptype."';\n";
-					
+
 					break;
 				case 4:
-					
+
 					$rousterclusterid = intval($_POST['rouster_cluster_id']);
 					$rousterclusterid = ($rousterclusterid <= 0)?-1:$rousterclusterid;
-					
+
 					$dat['settings'] .= '$cluster_id = '.$rousterclusterid.";\n";
 					break;
 				}
-				
+
 				/**
 				 * SALES/VERIFIER/Rouster Reports all use this path
 				 */
 				if($process_groups){
-					
-					
+
+
 					// COMBINE TO SINGLE RECORD
 					if(strtolower(trim($_POST['combined_group_report'])) == 'on'){
-						
+
 						$dat['settings'] .= '$user_group = array(';
-						
+
 						//"'..'"
 						$x=0;
-						
+
 						$tmpstr = '';
 						foreach($_POST['user_groups'] as $usergroup){
-							
+
 							if($x++ > 0)$tmpstr .= ',';
-							
+
 							$tmpstr .= '"'.addslashes($usergroup).'"';
 						}
-						
+
 						$dat['settings'] .= $tmpstr.');'."\n";
-						
+
 						$dat['subject_append'] = 'Combined Groups('.$tmpstr.')';
-						
-						
+
+
 						$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->report_emails->table);
 						$id = mysqli_insert_id($_SESSION['dbapi']->db);
-						
-						
+
+
 						logAction('add', 'report_emails', $id, "Subject_append=".$dat['subject_append']);
-						
-						
+
+
 					}else{
-						
+
 						$base_settings = $dat['settings'];
-						
-						
+
+
 						foreach($_POST['user_groups'] as $usergroup){
-						
+
 							$dat['subject_append'] = $usergroup;
-							
+
 							$dat['settings'] = $base_settings.'$user_group = "'.addslashes($usergroup).'";'."\n";
-							
+
 							$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->report_emails->table);
 							$id = mysqli_insert_id($_SESSION['dbapi']->db);
-							
-							
+
+
 							logAction('bulk_add', 'report_emails', $id, "Subject_append=".$dat['subject_append']);
-							
+
 						}
-						
+
 					}
-					
+
 				// SUMMARY REPORT ONLY, DOESN'T LOOP GROUPS
 				}else{
 					if($reptype != 'roustercompany')
 						$dat['subject_append'] = ucfirst($reptype);
-					else				
+					else
 						$dat['subject_append'] = 'Sub-Company Rousters';
-					
-						
+
+
 					$_SESSION['dbapi']->aadd($dat,$_SESSION['dbapi']->report_emails->table);
 					$id = mysqli_insert_id($_SESSION['dbapi']->db);
-					
-					
+
+
 					logAction('add', 'report_emails', $id, "Subject_append=".$dat['subject_append']);
-					
-					
+
+
 				}
-				
+
 			}
-			 
+
 			$_SESSION['api']->outputEditSuccess(1);
-			
+
 			break;
-			
+
 		case 'edit':
 
 			$id = intval($_POST['adding_report']);

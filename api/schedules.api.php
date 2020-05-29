@@ -52,13 +52,13 @@ class API_Schedules
                 $dat['start_time'] = intval(($_POST['start_offset_hour'] * 3600) + ($_POST['start_offset_min'] * 60) + ($_POST['start_offset_timemode'] === 'pm' ? 43200 : 0));
                 $dat['end_time'] = intval(($_POST['end_offset_hour'] * 3600) + ($_POST['end_offset_min'] * 60) + ($_POST['end_offset_timemode'] === 'pm' ? 43200 : 0));
                 $dat['work_sun'] = (trim($_POST['work_sun']) === 'yes' ? 'yes' : 'no');
-                $dat['work_mon'] = (trim($_POST['work_mon'] === 'yes' ? 'yes' : 'no'));
-                $dat['work_tues'] = (trim($_POST['work_tues'] === 'yes' ? 'yes' : 'no'));
-                $dat['work_wed'] = (trim($_POST['work_wed'] === 'yes' ? 'yes' : 'no'));
-                $dat['work_thurs'] = (trim($_POST['work_thurs'] === 'yes' ? 'yes' : 'no'));
-                $dat['work_fri'] = (trim($_POST['work_fri'] === 'yes' ? 'yes' : 'no'));
-                $dat['work_sat'] = (trim($_POST['work_sat'] === 'yes' ? 'yes' : 'no'));
-                $dat['user_groups'] = $_POST['user_groups'];
+                $dat['work_mon'] = (trim($_POST['work_mon']) === 'yes' ? 'yes' : 'no');
+                $dat['work_tues'] = (trim($_POST['work_tues']) === 'yes' ? 'yes' : 'no');
+                $dat['work_wed'] = (trim($_POST['work_wed']) === 'yes' ? 'yes' : 'no');
+                $dat['work_thurs'] = (trim($_POST['work_thurs']) === 'yes' ? 'yes' : 'no');
+                $dat['work_fri'] = (trim($_POST['work_fri']) === 'yes' ? 'yes' : 'no');
+                $dat['work_sat'] = (trim($_POST['work_sat']) === 'yes' ? 'yes' : 'no');
+                $dat['user_group'] = join(",", $_POST['user_groups[]']);
                 if ($id) {
                     $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->schedules->table);
                     logAction('edit', 'schedules', $id, "Schedule=" . $id);
