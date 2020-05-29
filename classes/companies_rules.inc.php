@@ -191,12 +191,7 @@ class CompaniesRules
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_companiesrules"/>
                         <?= makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), 'loadCompaniesRules();', '[Select Company]') ?>
-                        <select class="form-control custom-select-sm" name="s_schedule_id" onchange="loadCompaniesRules();">
-                            <option value="">[Select Trigger Type]</option>
-                            <option <?=htmlentities($_REQUEST['s_schedule_id'] == 'yes' ? 'selected' : '');?> value="yes">Yes</option>
-                            <option <?=htmlentities($_REQUEST['s_schedule_id'] == 'no' ? 'selected' : '');?> value="no">No</option>
-                            <option <?=htmlentities($_REQUEST['s_schedule_id'] == 'both' ? 'selected' : '');?> value="both">Both</option>
-                        </select>
+                        <input class="form-control" placeholder="Schedule ID.." name="s_schedule_id" type="text" value="<?= htmlentities($_REQUEST['s_schedule_id']) ?>">
                         <select class="form-control custom-select-sm" name="s_trigger_name" onchange="loadCompaniesRules();">
                             <option value="">[Select Trigger Type]</option>
                             <option <?=htmlentities($_REQUEST['s_trigger_name'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
@@ -424,7 +419,7 @@ function makeScheduleDD($name, $sel, $onchange = NULL, $blank_entry = false)
             if ($row['id'] == $sel) {
                 $showDD .= " selected";
             }
-            $showDD .= ">" . $row['name'] . "</option>";
+            $showDD .= ">" . $row['id'] . "</option>";
         }
     }
     $showDD .= "</select>";
