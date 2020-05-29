@@ -58,7 +58,7 @@ class EmployeeHours
 			} else {
 
 				switch($_REQUEST['sub_area']){
-				case 'config':
+				case 'companies_rules':
 
 					include_once($_SESSION['site_config']['basedir'] . "/classes/companies_rules.inc.php");
 					$_SESSION['companies_rules']->handleFLOW();
@@ -737,7 +737,6 @@ class EmployeeHours
                 <input type="hidden" name="searching_emp">
                 <div class="block-header bg-primary-light">
                     <h4 class="block-title">Employee Hours&nbsp;<button type="button" title="Configure Schedules" class="btn btn-sm btn-primary" onclick="loadSection('?area=employee_hours&sub_area=schedules&no_script=1');return false;"><i class="fa fa-user-cog"></i></button></h4>
-
                     <? if (checkAccess('employee_hours_edit')) { ?>
                         <button class="btn btn-sm btn-primary" type="button" title="Add Employee Hours" onclick="displayEditEmpDialog(0)">Add Hours</button>
                         <?

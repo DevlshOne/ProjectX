@@ -158,7 +158,7 @@ class Schedules
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadSchedules();return false;">
                 <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
-                    <h4 class="block-title">Schedules</h4>
+                    <h4 class="block-title">Schedules <button type="button" title="Configure Rules" class="btn btn-sm btn-primary" onclick="loadSection('?area=employee_hours&sub_area=companies_rules&no_script=1');return false;"><i class="fa fa-user-cog"></i></button></h4>
                     <button type="button" value="Add" title="Add Rules" class="btn btn-sm btn-primary" onclick="displayAddScheduleDialog(0)">Add</button>
                     <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleSchedulesSearch();">Toggle Search</button>
                     <div id="schedules_prev_td" class="page_system_prev"></div>
@@ -183,7 +183,7 @@ class Schedules
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_schedules"/>
                         <?= makeCompanyDD('s_company_id', htmlentities($_REQUEST['s_company_id']), 'loadSchedules();', '[Select Company]') ?>
-                        <?= makeOfficeDD('s_office_id', htmlentities($_REQUEST['s_office_id']), 'loadSchedules();', 'loadSchedules();','[Select Office]') ?>
+                        <?= makeOfficeDD('s_office_id', htmlentities($_REQUEST['s_office_id']), 'form-control custom-select-sm', 'loadSchedules();','[Select Office]') ?>
                         <button type="submit" value="Search" title="Search Rules" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadSchedules();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetSchedulesSearchForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadSchedules();return false;">Reset</button>
                     </div>
@@ -318,7 +318,7 @@ class Schedules
                 </tr>
                 <tr>
                     <th colspan="2" align="left" height="30">User Group(s):</th>
-                    <td colspan="2"><?= makeUserGroupDD('user_groups[]', htmlentities($row['user_groups']), '', "", 10, false); ?></td>
+                    <td colspan="2"><?= makeUserGroupDD('user_groups[]', htmlentities($row['user_groups']), '', '', 10, false); ?></td>
                 </tr>
                 <tr>
                     <th colspan="2" align="left" height="30">Start Time:</th>
