@@ -233,7 +233,8 @@ class RousterReport
 
                     $agent_array[$username]['activity_time'] += $row['activity_time'];
                     $agent_array[$username]['paid_time'] += $row['paid_time'];
-
+                    $agent_array[$username]['paid_corrections'] += $row['paid_corrections'];
+                    
                     $agent_array[$username]['agent_count']++;
 
                     $agent_array[$username]['seconds_INCALL'] += $row['seconds_INCALL'];
@@ -615,7 +616,7 @@ class RousterReport
 
             $out[$x]['worked_calls_hr'] = $agent['worked_calls_hr'];
 
-            $out[$x]['paid_time'] = $agent['paid_time'];
+            $out[$x]['paid_time'] = ($agent['paid_time'] + $agent['paid_corrections']);
 
             // THE LARGER OF THE 2 RECORDS FOR TALK TIME, WHEN COMBINING HANDS
             $out[$x]['t_time_max'] = ($t_max > $t_max2) ? $t_max : $t_max2;
@@ -983,7 +984,13 @@ class RousterReport
                                 $act_total_time = 0;
 
                                 foreach ($row['agent']['total_activity_date_time_array'] as $tdate => $ttime) {
+                                	
+                                	// TAKE THE LARGER OF THE 2
+                                	//if($ttime > $activity_time){
+                                	//	$activity_time  = $ttime;
+                                	//}
                                     $activity_time += $ttime;
+                                    
                                 }
 
                                 foreach ($row['agent']['total_activity_date_daily_array'] as $tdate => $ttime) {

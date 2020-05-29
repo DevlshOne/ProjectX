@@ -10,10 +10,14 @@
 
 
 
-	$stime = mktime(0,0,0);
-	$etime = mktime(23,59,59);
+	$stime = 0;
 
-	
+
+	if(count($argv) > 1 && $argv[1] && ($tmptime = strtotime($argv[1])) > 0){
+		
+		$stime = mktime(0,0,0, date("m", $tmptime), date("d", $tmptime), date("Y", $tmptime));
+
+	}
 	
 	include_once($basedir."dbapi/dbapi.inc.php");
 	
@@ -26,14 +30,14 @@
 	
 	
 
-	echo "Starting '$process_name' script on ".date("m/d/Y",$stime)."...\n";
+	echo "Starting '$process_name' script on ".date("m/d/Y").(($stime > 0)?" against Date: ".date('m/d/Y', $stime):'')."...\n";
 
 
 	// CONNECT PX DB
 	connectPXDB();
 
 	
-	$process_logs = $_SESSION['dbapi']->employee_hours->autoCalcEmployeeHours(0);
+	$process_logs = $_SESSION['dbapi']->employee_hours->autoCalcEmployeeHours($stime);
 	
 	
 	echo $process_logs;
