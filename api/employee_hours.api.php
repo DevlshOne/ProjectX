@@ -148,7 +148,8 @@ class API_Employee_Hours{
 
 			$notes_array = preg_split("/\|\|/", $_POST['activity_notes'], -1);
 
-
+			$lates_array = preg_split("/\t/", $_POST['activity_is_lates'], -1);
+			
 			foreach($id_array as $idx=>$activity_id){
 
 				$activity_id = intval($activity_id);
@@ -157,16 +158,35 @@ class API_Employee_Hours{
 				if($activity_id <= 0) continue;
 
 				$notes = $notes_array[$idx];
-				$hours = $hours_array[$idx];
+				$hours = trim($hours_array[$idx]);
 
-
+				$is_late = strtolower($lates_array[$idx]);
+				
+				$is_neg = false;
+				if($hours[0] == '-'){
+					$is_neg = true;
+					$hours[0] = '0';
+				}else{
+					$is_neg = false;
+				}
+				
+				
+				
+				
 				list($hrs,$min) = preg_split("/\:/", $hours);
 
 				$min += ($hrs * 60);
+				
+				if($is_neg){
+					$min = $min * -1;
+				}
 
 				$dat = array();
-				$dat['paid_time'] = $min;//floatval($hours) * 60;
+				//$dat['paid_time'] = $min;//floatval($hours) * 60;
+				$dat['paid_corrections'] = $min;
 				$dat['notes'] = $notes;
+				
+				$dat['is_late'] = (($is_late == 'true')?'yes':'no');
 
 				aedit($activity_id, $dat, 'activity_log');
 
@@ -461,7 +481,9 @@ class API_Employee_Hours{
 							//echo $user.' '.$row['paid_time'].' vs '.((float)$row['paid_time']
 
 							$rowarr[$user]['activity_time'] += $row['activity_time'];
-							$rowarr[$user]['paid_time'] += $row['paid_time'];
+							$rowarr[$user]['paid_time'] += ($row['paid_time'] );
+							
+							$rowarr[$user]['paid_corrections'] += $row['paid_corrections'];
 
 							$rowarr[$user]['seconds_INCALL'] += $row['seconds_INCALL'];
 							$rowarr[$user]['seconds_READY'] += $row['seconds_READY'];
@@ -523,7 +545,7 @@ class API_Employee_Hours{
 						//$total_paid += round($row['paid_time']/60,3);
 
 
-						$total_paid += round($row['paid_time']/60, 2);
+						$total_paid += round(($row['paid_time'] + $row['paid_corrections'])/60, 2);
 
 					}
 
@@ -562,7 +584,7 @@ class API_Employee_Hours{
 								renderTimeFormattedSTD($row['seconds_DISPO']).",".
 
 
-								round($row['paid_time']/60, 2).",".
+								round(($row['paid_time']+ $row['paid_corrections'])/60, 2).",".
 								//renderTimeFormattedSTD($row['paid_time'] * 60).",".
 
 								preg_replace("/[,\"']/",'',$row['notes'])."\r\n";
@@ -613,6 +635,7 @@ $rowarr = array();
 
 							$rowarr[$user]['activity_time'] += $row['activity_time'];
 							$rowarr[$user]['paid_time'] += $row['paid_time'];
+							$rowarr[$user]['paid_corrections'] += $row['paid_corrections'];
 
 							$rowarr[$user]['seconds_INCALL'] += $row['seconds_INCALL'];
 							$rowarr[$user]['seconds_READY'] += $row['seconds_READY'];
@@ -660,7 +683,7 @@ $rowarr = array();
 
 
 						$total_activity += $row['activity_time'];
-						$total_paid += $row['paid_time'];
+						$total_paid += $row['paid_time'] + $row['paid_corrections'];
 
 					}
 
@@ -697,7 +720,7 @@ $rowarr = array();
 								round(($row['seconds_PAUSED'] - $row['seconds_DISPO'])/3600,2).",".
 
 
-								round($row['paid_time']/60,2).",".
+								round(($row['paid_time'] + $row['paid_corrections'])/60,2).",".
 								preg_replace("/[,\"']/",'',$row['notes'])."\r\n";
 
 						$total_act += $new_activity;
@@ -783,7 +806,7 @@ $rowarr = array();
 						//}
 						
 						
-						$agent_arr[$row['username']][$curdate]['paid_hours'] = round($row['paid_time']/60,2);
+						$agent_arr[$row['username']][$curdate]['paid_hours'] = round(($row['paid_time'] + $row['paid_corrections'])/60,2);
 						
 						//$agent_arr[$row['username']][$curdate]['total_paid_hours'] += $agent_arr[$row['username']][$curdate]['paid_hours'];
 						$agent_arr[$row['username']]['total_paid_hours'] += $agent_arr[$row['username']][$curdate]['paid_hours'];
@@ -874,7 +897,7 @@ $rowarr = array();
 								renderTimeFormattedSTD($row['seconds_QUEUE']).",".
 								renderTimeFormattedSTD($row['seconds_PAUSED']).",".
 
-								round($row['paid_time']/60,4).",".
+								round(($row['paid_time']+$row['paid_corrections'])/60,4).",".
 								preg_replace("/[,\"']/",'',$row['notes'])."\r\n";
 
 

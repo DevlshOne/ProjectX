@@ -75,13 +75,17 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <link rel="stylesheet" type="text/css"
           href="src/assets/js/plugins/datatables/buttons-bs4/buttons.bootstrap4.min.css"/>
     <link rel="stylesheet" type="text/css" href="src/assets/css/oneui.min.css"/>
+    
+    
+    <link rel="stylesheet" type="text/css" href="css/autocomplete.css"/>
+    
 
     <script type="text/javascript" src="src/assets/js/core/jquery.min.js"></script>
 
     <script type="text/javascript" src="js/ajax_functions.js"></script>
     <script type="text/javascript" src="js/functions.js"></script>
     <script type="text/javascript" src="js/page_system.js"></script>
-
+	<script type="text/javascript" src="js/autocomplete.js"></script>
     <script>
         var feDebug = false;
         $('nav').ready(function () {
@@ -1203,10 +1207,6 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
         // USER NOT LOGGED IN, SHOW LOGIN SCREEN
         } else {
-            # GENERATE NEW LOGIN SALT AND ADD TO SESSION IF THERE IS NONE
-            if (!isset($_SESSION['login_salt'])) {
-                $_SESSION['login_salt'] = $_SESSION['dbapi']->users->generateSalt();
-            }
             include_once("classes/login.inc.php");
             $_SESSION['login'] = new LoginClass();
             $_SESSION['login']->makeLoginForm();

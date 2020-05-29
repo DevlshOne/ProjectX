@@ -49,7 +49,7 @@ class API_Lead_Management{
 	 *
 	 * -Jon - 8/9/2019
 	 *
-	 * @param unknown $row SALE ROW/RECORD
+	 * @param array $row SALE ROW/RECORD
 	 */
 	function createSaleOnCCIData($row){
 		
@@ -1322,6 +1322,18 @@ class API_Lead_Management{
 				if($_REQUEST['s_phone']){
 					
 					$dat['phone_number'] = preg_replace("/[^0-9]/","",trim($_REQUEST['s_phone']));
+					
+					
+					// PUSH TO RECENTLY SEARCHED ARRAY
+					if(!is_array($_SESSION['recent_searches'])){
+						$_SESSION['recent_searches'] = array( 'phones' => array());
+					}
+					
+					if(!array_key_exists($dat['phone_number'], $_SESSION['recent_searches']['phones'])){
+						$_SESSION['recent_searches']['phones'][$dat['phone_number']] = 1;
+					}else{
+						$_SESSION['recent_searches']['phones'][$dat['phone_number']]++;
+					}
 					
 				}
 				

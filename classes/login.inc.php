@@ -17,26 +17,43 @@ class LoginClass
             //echo "Login POST";
             //print_r($_REQUEST);exit;
             $user = trim($_POST['username']);
+
             $pass = trim($_POST['md5pass']);
+
             $kicktourl = ((isset($_POST['kick_to'])) ? trim($_POST['kick_to']) : '');
+
             $row = $_SESSION['dbapi']->users->checkLogin($user, $pass, $_SESSION['login_salt']);
+
             ## USER/PASS INVALID, OR ACCOUNT DISABLED
             if (!$row || $row <= 0) {
+
                 $_SESSION['dbapi']->users->tracklogin(0, $user, $pass, 'Failure');
+
                 jsAlert("ERROR: YOUR USER/PASS ARE INCORRECT", 0);
-                # GENERATE NEW LOGIN SALT
-                $_SESSION['login_salt'] = $_SESSION['dbapi']->users->generateSalt();
+
+                // # GENERATE NEW LOGIN SALT
+                // $_SESSION['login_salt'] = $_SESSION['dbapi']->users->generateSalt();
+
                 jsRedirect(stripurl(array('area', 'no_script')));
+
                 exit;
+
                 // MUST BE AN ADMIN OR MANAGER TO ACCESS THIS CODE
             } else if ($row['priv'] < 4) {
+
                 $_SESSION['dbapi']->users->tracklogin(0, $user, $pass, 'Failure');
+
                 jsAlert("ERROR: You must be an administrator/manager to access this section.", 0);
+
                 jsRedirect(stripurl(''));
+
                 exit;
+
             } else {
+
                 // LOAD AND CHECK ACCOUNT STATUS
                 $_SESSION['account'] = $_SESSION['dbapi']->accounts->getByID($row['account_id']);
+
                 if (!$_SESSION['account']['id']) {
                 	
                     $_SESSION['dbapi']->users->tracklogin(0, $user, $pass, 'Failure', 'Account ' . intval($row['account_id']) . ' not found.');
@@ -46,6 +63,7 @@ class LoginClass
                     unset($_SESSION['account']);
                     
                     jsRedirect(stripurl(''));
+
                     exit;
                 }
                 if ($_SESSION['account']['status'] != 'active') {
@@ -57,6 +75,7 @@ class LoginClass
                     unset($_SESSION['account']);
                     
                     jsRedirect(stripurl(''));
+
                     exit;
                 }
                 
@@ -127,45 +146,60 @@ class LoginClass
               ## FINALLY IN FOR REAL, ALL TESTS PASSED  
                 
                 
-                
-                
                 $login_id = $_SESSION['dbapi']->users->tracklogin($row['id'], $user, $pass, 'Success');
+
                 ## STORE USER RECORD IN SESSION!
                 $_SESSION['user'] = $row;
-                # GENERATE NEW LOGIN SALT
-                $_SESSION['login_salt'] = $_SESSION['dbapi']->users->generateSalt();
+
+                // # GENERATE NEW LOGIN SALT
+                // $_SESSION['login_salt'] = $_SESSION['dbapi']->users->generateSalt();
+
                 $_SESSION['logins'] = $_SESSION['dbapi']->querySQL("SELECT * FROM `logins` WHERE id='" . $login_id . "' ");
+
                 ## LOAD FEATURES FOR THE USER, IF THEY ARE SET
                 if ($row['feature_id'] > 0) {
                     $_SESSION['features'] = $_SESSION['dbapi']->querySQL("SELECT * FROM features WHERE id='" . intval($row['feature_id']) . "' ");
                 }
+
                 // LOAD ASSIGNED OFFICES
                 if ($row['priv'] < 5) {
+
                     // INIT THE ARRAY
                     $_SESSION['assigned_offices'] = array();
+
                     // POPULATE THE ALLOWED/ASSIGNED OFFICES ARRAY
                     $re2 = $_SESSION['dbapi']->query("SELECT * FROM `users_offices` WHERE user_id='" . mysqli_real_escape_string($_SESSION['dbapi']->db, $row['id']) . "'");
+                   
                     $_SESSION['assigned_office_groups'] = array();
+                   
                     $_SESSION['assigned_groups'] = array();
+                   
                     while ($r2 = mysqli_fetch_array($re2, MYSQLI_ASSOC)) {
+                       
                         $_SESSION['assigned_offices'][] = $r2['office_id'];
                         // POPULATE THE GROUP ARRAY FOR THE SELECTED OFFICE(S)
                         if (!is_array($_SESSION['assigned_office_groups'][$r2['office_id']])) {
                             $_SESSION['assigned_office_groups'][$r2['office_id']] = array();
                         }
+                       
                         $re3 = $_SESSION['dbapi']->query("SELECT * FROM `user_groups` WHERE `office`='" . mysqli_real_escape_string($_SESSION['dbapi']->db, $r2['office_id']) . "'");
+                       
                         while ($r3 = mysqli_fetch_array($re3, MYSQLI_ASSOC)) {
                             $_SESSION['assigned_groups'][] = $r3['user_group'];
                             $_SESSION['assigned_office_groups'][$r2['office_id']][] = $r3['user_group'];
                         }
                     }
                 }
+               
                 ## UPDATE THE TIME OF LAST LOGIN
                 $_SESSION['dbapi']->users->updateLastLoginTime();
+               
                 if ($kicktourl) {
                     $_SESSION['one_time_kick_to'] = $kicktourl;
                 }
+               
                 jsRedirect('index.php');
+               
                 exit;
             }
         }
@@ -187,7 +221,24 @@ class LoginClass
                 $('#page-container').remove('sidebar aside');
                 $('#page-container').removeClass('sidebar-o sidebar-dark');
 
+
+
+
+
                 function checkLoginForm(frm) {
+
+
+                    // LOGIN SALT CALL
+                    var loginSalt = null;
+                    $.ajax({
+                        url: "api/api.php?mode=json&generate_login_salt=true",
+                        type: 'get',
+                        async: false,
+                        success: function(data) {
+                            loginSalt = data;
+                        } 
+                    });
+
                     if (!frm.username.value) {
                         alert("Error: Please enter a username");
                         frm.username.select();
@@ -198,8 +249,9 @@ class LoginClass
                         frm.password.select();
                         return false;
                     }
+
                     var obj = getEl('md5pass');
-                    obj.value = hex_md5(hex_md5(frm.password.value) + '<?=$_SESSION['login_salt']?>');
+                    obj.value = hex_md5(hex_md5(frm.password.value) + loginSalt);
                     frm.password.value = '';
                     return true;
                 }
