@@ -1,0 +1,1 @@
+ALTER TABLE `schedules` ADD `name` VARCHAR(128) NOT NULL AFTER `company_id`;
