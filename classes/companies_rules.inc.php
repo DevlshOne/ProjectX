@@ -166,7 +166,7 @@ class CompaniesRules
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadCompaniesRules();return false;">
                 <! ** BEGIN BLOCK HEADER -->
                 <div class="block-header bg-primary-light">
-                    <h4 class="block-title">Companies Additional Hours Rules <button type="button" title="Configure Schedules" class="btn btn-sm btn-primary" onclick="loadSection('?area=employee_hours&sub_area=schedules&no_script=1');return false;"><i class="fa fa-user-cog"></i></button></h4>
+                    <h4 class="block-title">Companies Additional Hours Rules <button type="button" title="Configure Schedules" class="btn btn-sm btn-primary" onclick="loadSection('?area=employee_hours&sub_area=schedules&no_script=1');return false;">Configure Schedules</button></h4>
                     <button type="button" value="Add" title="Add Rules" class="btn btn-sm btn-primary" onclick="displayAddRuleDialog(0)">Add</button>
                     <button type="button" value="Search" title="Toggle Search" class="btn btn-sm btn-primary" onclick="toggleCompaniesRulesSearch();">Toggle Search</button>
                     <div id="companiesrules_prev_td" class="page_system_prev"></div>
