@@ -143,8 +143,7 @@ class Schedules
             }
 
             function resetSchedulesSearchForm(frm) {
-                frm.s_company_id.value = '';
-                frm.s_office_id.value = '';
+                $('frm').trigger('reset');
             }
 
             var schedulessrchtog = true;
