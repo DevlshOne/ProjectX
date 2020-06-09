@@ -240,18 +240,6 @@ class Schedules
                         // ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
                         return true;
                         break;
-                    // case 'company_id':
-                    //     if (!value) return false;
-                    //     return true;
-                    //     break;
-                    // case 'trigger_value':
-                    //     if (!value) return false;
-                    //     return true;
-                    //     break;
-                    // case 'action_value':
-                    //     if (!value) return false;
-                    //     return true;
-                    //     break;
                 }
                 return true;
             }
@@ -350,7 +338,7 @@ class Schedules
                 </tr>
                 <tr>
                     <th colspan="4" class="text-left">
-                        <button type="button" title="Configure Additional Hours Rules" class="btn btn-sm btn-warning" onclick="$('#dialog-modal-add-schedule').dialog('close');loadSection('?area=employee_hours&sub_area=companies_rules&no_script=1');return false;">Edit Company Rules</button>
+                        <button type="button" title="Configure Additional Hours Rules" class="btn btn-sm btn-warning" onclick="$('#dialog-modal-add-schedule').dialog('close');loadSection('?area=employee_hours&sub_area=companies_rules&s_company_id=<?=intval($row['company_id']);?>&no_script=1');return false;">Edit Company Rules</button>
                     </th>
                 </tr>
                 <tr>

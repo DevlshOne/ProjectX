@@ -143,7 +143,7 @@ class CompaniesRules
                 }
                 $('#' + objname).dialog("open");
                 $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>');
-                $('#' + objname).load("index.php?area=employee_hours&sub_area=config&add_rule=" + id + "&printable=1&no_script=1");
+                $('#' + objname).load("index.php?area=employee_hours&sub_area=companies_rules&add_rule=" + id + "&printable=1&no_script=1");
             }
 
             function resetCompaniesRulesForm(frm) {
