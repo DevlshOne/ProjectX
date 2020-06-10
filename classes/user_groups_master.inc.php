@@ -216,7 +216,7 @@ class UserGroupsMaster
                             <option value="all" <?= htmlentities($_REQUEST['s_agent_type']) == 'all' ? ' selected' : '' ?>>All</option>
                         </select>
                         <?= makeOfficeDD('s_office', htmlentities($_REQUEST['s_office']), "form-control custom-select-sm", null, '[Select Office]', null) ?>
-                        <button type="submit" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadUsers();return false;">Search</button>
+                        <button type="submit" value="Search" title="Search Names" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadUser_groups_master();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetUserGroupsMasterForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadUser_groups_master();return false;">Reset</button>
                     </div>
                 </div>
