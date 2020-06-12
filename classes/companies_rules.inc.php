@@ -11,8 +11,8 @@ class CompaniesRules
 {
 
     var $table = 'companies_rules';            ## Classes main table to operate on
-    var $orderby = 'id';        ## Default Order field
-    var $orderdir = 'DESC';    ## Default order direction
+    var $orderby = 'company_id';        ## Default Order field
+    var $orderdir = 'ASC';    ## Default order direction
     ## Page  Configuration
     var $pagesize = 20;    ## Adjusts how many items will appear on each page
     var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
@@ -326,15 +326,15 @@ class CompaniesRules
             <input type="hidden" id="adding_rule" name="adding_rule" value="<?= $id ?>">
             <table border="0" align="center">
                 <tr>
-                    <th colspan="2" align="left" height="30">Company ID:</th>
-                    <td colspan="2"><?=makeCompanyDD('company_id', intval($row['company_id']), '', 'Default [All]')?></td>
+                    <th  align="left" height="30">Company ID:</th>
+                    <td ><?=makeCompanyDD('company_id', intval($row['company_id']), '', 'Default [All]')?></td>
                 </tr>
                 <tr>
-                    <th colspan="2" align="left" height="30">Assign to Schedule:</th>
-                    <td colspan="2"><?=makeScheduleDD('schedule_id', intval($row['schedule_id']), '', '[None]')?></td>
+                    <th align="left" height="30">Assign to Schedule:</th>
+                    <td ><?=makeScheduleDD('schedule_id', intval($row['schedule_id']), '', '[None]')?></td>
                 </tr>
                 <tr>
-                    <th colspan="3" align="left" height="30">Rule Type:</th>
+                    <th align="left" height="30">Rule Type:</th>
                     <td>
                         <select name="rule_type">
                             <option <?=htmlentities($row['rule_type'] == 'hours' ? 'selected' : '');?> value="hours">Hours</option>
@@ -342,37 +342,38 @@ class CompaniesRules
                     </td>
                 </tr>
                 <tr>
-                    <th colspan="3" align="left" height="30">Late Rule:</th>
+                    <th align="left" height="30">Late Rule:</th>
                     <td>
                         <select name="late_rule">
                             <option <?=htmlentities($row['late_rule'] == 'yes' ? 'selected' : '');?> value="yes">Yes</option>
                             <option <?=htmlentities($row['late_rule'] == 'no' ? 'selected' : '');?> value="no">No</option>
                             <option <?=htmlentities($row['late_rule'] == 'both' ? 'selected' : '');?> value="both">Both</option>
                         </select>
+               		</td>
                 </tr>
                 <tr>
                     <th align="left" height="30">Trigger:</th>
-                    <td>
-                        <select name="trigger_name">
+
+                    <td height="30"> <select name="trigger_name">
                             <option <?=htmlentities($row['trigger_name'] == 'greater_than' ? 'selected' : '');?> value="greater_than">&gt;</option>
                             <option <?=htmlentities($row['trigger_name'] == 'greater_equal' ? 'selected' : '');?> value="greater_equal">&#8925;</option>
                             <option <?=htmlentities($row['trigger_name'] == 'no_paid_breaks' ? 'selected' : '');?> value="no_paid_breaks">No Breaks</option>
                         </select>
-                    <th align="left" height="30">Value:</th>
-                    <td><input name="trigger_value" size="8" type="text" value="<?= htmlentities($row['trigger_value']) ?>"></td>
+                        
+                        <input name="trigger_value" size="8" type="text" value="<?= htmlentities($row['trigger_value']) ?>" />
+					</td>
                 </tr>
                 <tr>
                     <th align="left" height="30">Action:</th>
-                    <td>
-                        <select name="action_type">
+                    <td align="left" height="30">
+                   		<select name="action_type">
                             <option <?=htmlentities($row['action'] == 'paid_lunch' ? 'selected' : '');?> value="paid_lunch">Paid Lunch</option>
                             <option <?=htmlentities($row['action'] == 'paid_break' ? 'selected' : '');?> value="paid_break">Paid Break</option>
                             <option <?=htmlentities($row['action'] == 'set_hours' ? 'selected' : '');?> value="set_hours">Set Hours</option>
                             <option <?=htmlentities($row['action'] == '' ? 'selected' : '');?> value="">None</option>
                         </select>
+                        <input name="action_value" size="8" type="text" value="<?= htmlentities($row['action_value']) ?>" />
                     </td>
-                    <th align="left" height="30">Value:</th>
-                    <td><input name="action_value" size="8" type="text" value="<?= htmlentities($row['action_value']) ?>"></td>
                 </tr>
                 <tr>
                     <th colspan="4" class="text-center"><button class="btn btn-sm btn-primary" type="submit">Save Changes</button></th>

@@ -18,7 +18,7 @@ class CompaniesRulesAPI
 
     /**
      * Get a Rule by ID
-     * @param    $id        The database ID of the record
+     * @param    $id   Integer     The database ID of the record
      * @return    assoc-array of the database record
      */
     function getByID($id)
@@ -60,6 +60,22 @@ class CompaniesRulesAPI
         } else if ($info['company_id']) {
             $sql .= " AND `company_id`='" . intval($info['company_id']) . "' ";
         }
+        
+        
+        if (is_array($info['schedule_id'])) {
+        	$sql .= " AND (";
+        	$x = 0;
+        	foreach ($info['schedule_id'] as $idx => $sid) {
+        		if ($x++ > 0) $sql .= " OR ";
+        		$sql .= "`schedule_id`='" . intval($sid) . "' ";
+        	}
+        	$sql .= ") ";
+        	## SINGLE ID SEARCH
+        } else if ($info['schedule_id']) {
+        	$sql .= " AND `schedule_id`='" . intval($info['schedule_id']) . "' ";
+        }
+        
+        
         if ($info['action_type']) {
             $sql .= " AND `action`='" . $info['action_type'] . "' ";
         }
