@@ -31,8 +31,8 @@ class UserGroupsMasterAPI{
 
 	/**
 	 * Get a user by ID
-	 * @param 	$user_id		The database ID of the record
-	 * @param	$account_id		Optional account ID restriction
+	 * @param 	$user_id	Integer	The database ID of the record
+	 * @param	$account_id	Integer	Optional account ID restriction
 	 * 	 * @return	assoc-array of the database record
 	 */
 	function getByID($id){
@@ -99,6 +99,9 @@ class UserGroupsMasterAPI{
 
 		}
 
+		
+		
+		
         ## USER GROUP SEARCH
         if(is_array($info['user_group'])){
             $sql .= " AND (";
@@ -113,6 +116,9 @@ class UserGroupsMasterAPI{
             $sql .= " AND user_group LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['user_group'])."%' ";
         }
 
+        
+        
+        
 		## GROUP NAME SEARCH
 		if(is_array($info['group_name'])){
 			$sql .= " AND (";
@@ -127,6 +133,76 @@ class UserGroupsMasterAPI{
 			$sql .= " AND group_name LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['group_name'])."%' ";
 		}
 
+
+		
+		
+		if(is_array($info['office'])){
+			
+			$sql .= " AND (";
+			
+			$x=0;
+			foreach($info['office'] as $idx=>$sid){
+				if($x++ > 0)$sql .= " OR ";
+				
+				$sql .= "`office`='".intval($sid)."' ";
+			}
+			
+			$sql .= ") ";
+			
+			## SINGLE ID SEARCH
+		}else if($info['office']){
+			
+			$sql .= " AND `office`='".intval($info['office'])."' ";
+			
+		}
+		
+		
+		
+		if(is_array($info['agent_type'])){
+			$sql .= " AND (";
+			$x=0;
+			foreach($info['agent_type'] as $idx=>$n){
+				if($x++ > 0)$sql .= " OR ";
+				$sql .= " agent_type= '".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."' ";
+			}
+			$sql .= ") ";
+			## SINGLE GROUP SEARCH
+		} else if($info['agent_type']){
+			$sql .= " AND agent_type='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['agent_type'])."' ";
+		}
+
+		if(is_array($info['time_shift'])){
+			$sql .= " AND (";
+			$x=0;
+			foreach($info['time_shift'] as $idx=>$n){
+				if($x++ > 0)$sql .= " OR ";
+				$sql .= " time_shift= '".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."' ";
+			}
+			$sql .= ") ";
+			## SINGLE GROUP SEARCH
+		} else if($info['time_shift']){
+			$sql .= " AND time_shift='".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['time_shift'])."' ";
+		}
+		
+		if(is_array($info['company_id'])){
+			
+			$sql .= " AND (";
+			
+			$x=0;
+			foreach($info['company_id'] as $idx=>$sid){
+				if($x++ > 0)$sql .= " OR ";
+				
+				$sql .= "`company_id`='".intval($sid)."' ";
+			}
+			
+			$sql .= ") ";
+			
+			## SINGLE ID SEARCH
+		}else if($info['company_id']){
+			
+			$sql .= " AND `company_id`='".intval($info['company_id'])."' ";
+			
+		}
 
 	## SKIP/IGNORE ID's
 		if(isset($info['skip_id'])){
