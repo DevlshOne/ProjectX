@@ -22,7 +22,7 @@ ie4 = ( ie && !dom );
 function format_phone(phone){
 
 	phone=phone.trim();
-	
+
 	if(phone.length < 1)return '';
 
 	if(phone.length <= 10){
@@ -123,7 +123,7 @@ function makeNumberDD(name,sel,start,end,inc,zeropad,tag_inject,blankfield){
 	//$sel = intval($sel);
 
 	sel = parseInt(sel);
-	
+
 	var out = '<select name="'+name+'" id="'+name+'" '+tag_inject+' >';
 
 	out += (blankfield)?'<option value=""></option>':'';
@@ -131,9 +131,9 @@ function makeNumberDD(name,sel,start,end,inc,zeropad,tag_inject,blankfield){
 	for(var x=start;x <= end;x += inc){
 
 		out+= '<option value="'+((zeropad && x < 10)?'0'+x:x)+'"';
-		
+
 		out+= (sel == parseInt(x))?' SELECTED ':'';
-		
+
 		out+= '>'+((zeropad && x < 10)?('0'+x):x);
 	}
 
