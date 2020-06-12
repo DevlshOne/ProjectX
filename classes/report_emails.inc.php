@@ -22,6 +22,18 @@ class ReportEmails{
 
 	var $order_prepend = 're_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
+	
+	
+	var $report_types = array(
+			
+		1 => "Sales Analysis",
+		2 => "Verifier Report",
+		3 => "Summary Report",
+		4 => "Rouster Report"
+			
+	);
+	
+	
 	function ReportEmails(){
 
 
@@ -732,18 +744,33 @@ class ReportEmails{
 		<table border="0" align="center">
 		<tr>
 			<th align="left" width="100" height="30">Report Type:</th>
-			<td><select id="report_type_id" name="report_id" onchange="showNoChangeMessage('<?=$id?>');">
-				<option value="1">Sales Analysis</option>
-				<option value="2" <?=(($row['report_id'] == 2)?" SELECTED ":"")?> >
-					Verifier Report
-				</option>
-				<option value="3" <?=(($row['report_id'] == 3)?" SELECTED ":"")?> >
-					Summary Report
-				</option>
-				<option value="4" <?=(($row['report_id'] == 4)?" SELECTED ":"")?> >
-					Rouster Report
-				</option>
-			</select></td>
+			<td><?
+			
+			if($id){
+				
+				echo $this->report_types[$row['report_id']];
+				
+				?><input type="hidden" name="report_id" value="<?=$row['report_id']?>" /><?
+				
+			}else{
+				// onchange="showNoChangeMessage('$id
+				
+				
+				?><select id="report_type_id" name="report_id">
+					<option value="1">Sales Analysis</option>
+					<option value="2" <?=(($row['report_id'] == 2)?" SELECTED ":"")?> >
+						Verifier Report
+					</option>
+					<option value="3" <?=(($row['report_id'] == 3)?" SELECTED ":"")?> >
+						Summary Report
+					</option>
+					<option value="4" <?=(($row['report_id'] == 4)?" SELECTED ":"")?> >
+						Rouster Report
+					</option>
+				</select><?
+			}
+			
+			?></td>
 		</tr>
 		<tr>
 			<th align="left" height="30">Subject<br />(Group Name):</th>
@@ -827,6 +854,9 @@ class ReportEmails{
             // 2 - Verifier Report [cluster_id, user_group]
             // 3 - Summary Report [report_type]
             // 4 - Rouster Report [cluster_id, user_group]
+            
+          //  print_r($jSettings);
+            
             switch($row['report_id']) {
                 default :
                     break;

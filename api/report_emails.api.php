@@ -319,21 +319,21 @@ class API_ReportEmails
                 // 3 - Summary Report [report_type]
                 // 4 - Rouster Report [cluster_id, user_group]
                 switch($dat['report_id']) {
-                    default :
+                default :
                         break;
-                    case 1 :
+                case 1 :
                         $j_tmp->combine_users = trim($_POST['combine_users']) == 1 ? '1' : '0';
-                        $j_tmp->user_group = trim($_POST['user_groups']);
+                        $j_tmp->user_group = $_POST['user_groups'];
                         $j_tmp->agent_cluster_idx = trim($_POST['agent_cluster_idx']);
                     break;
-                    case 2 :
-                    case 4 :
-                        $j_tmp->user_group = trim($_POST['user_groups']);
+               case 2 :
+               case 4 :
+                        $j_tmp->user_group = $_POST['user_groups'];
                         $j_tmp->cluster_id = trim($_POST['cluster_id']);
                     break;
-                    case 3 :
-                        $j_tmp->report_type = trim($_POST['summary_report_type']);
-                    break;
+               case 3 :
+                   $j_tmp->report_type = trim($_POST['summary_report_type']);
+               		break;
             }
                 $calculated_last_ran_time = 0;
                 $dat['json_settings'] = json_encode($j_tmp);

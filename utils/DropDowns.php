@@ -140,7 +140,12 @@ function makeServerDD($name, $sel, $blank_field = 0)
 
 
     		$out .= '<option value="' . htmlentities($row['user_group']) . '" ';
-    		$out .= ($sel == $row['user_group']) ? ' SELECTED ' : '';
+    		
+    		if(is_array($sel)){
+    			$out .= (in_array($row['user_group'],$sel)) ? ' SELECTED ' : '';
+    		}else{
+	    		$out .= ($sel == $row['user_group']) ? ' SELECTED ' : '';
+    		}
     		$out .= '>' . htmlentities($row['user_group']) . '</option>';
 
 
