@@ -99,27 +99,32 @@ class UserGroupsMasterAPI{
 
 		}
 
-
+        ## USER GROUP SEARCH
+        if(is_array($info['user_group'])){
+            $sql .= " AND (";
+            $x=0;
+            foreach($info['user_group'] as $idx=>$n){
+                if($x++ > 0)$sql .= " OR ";
+                $sql .= " user_group LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
+            }
+            $sql .= ") ";
+            ## SINGLE GROUP SEARCH
+        } else if($info['user_group']){
+            $sql .= " AND user_group LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['user_group'])."%' ";
+        }
 
 		## GROUP NAME SEARCH
 		if(is_array($info['group_name'])){
-
 			$sql .= " AND (";
-
 			$x=0;
 			foreach($info['group_name'] as $idx=>$n){
 				if($x++ > 0)$sql .= " OR ";
-
-				$sql .= " user_group LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
+				$sql .= " group_name LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$n)."%' ";
 			}
-
 			$sql .= ") ";
-
 		## SINGLE GROUP SEARCH
 		}else if($info['group_name']){
-
-			$sql .= " AND  user_group LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['group_name'])."%' ";
-
+			$sql .= " AND group_name LIKE '%".mysqli_real_escape_string($_SESSION['dbapi']->db,$info['group_name'])."%' ";
 		}
 
 
