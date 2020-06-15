@@ -190,6 +190,9 @@ class API_Employee_Hours{
 
 				aedit($activity_id, $dat, 'activity_log');
 
+				
+				$_SESSION['dbapi']->employee_hours->autoCalculateEmployeeByActivity($activity_id);
+				
 
 				logAction('edit', 'employee_hours', $activity_id, "");
 			}
