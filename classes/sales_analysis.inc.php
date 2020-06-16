@@ -2121,16 +2121,16 @@ class SalesAnalysis
 
 //            $eres = eval($row['settings']);
             $jSettings = json_decode($row['json_settings']);
-            if(property_exists('rep_settings', 'agent_cluster_idx')) {
+            if(property_exists($jSettings, 'agent_cluster_idx')) {
                 $agent_cluster_idx = $jSettings->agent_cluster_idx;
             }
-            if(property_exists('rep_settings', 'combine_users')) {
+            if(property_exists($jSettings, 'combine_users')) {
                 $combine_users = $jSettings->combine_users;
             }
-            if(property_exists('rep_settings', 'user_group')) {
+            if(property_exists($jSettings, 'user_group')) {
                 $user_group = $jSettings->user_group;
             }
-            if(property_exists('rep_settings', 'cluster_id')) {
+            if(property_exists($jSettings, 'cluster_id')) {
                 $cluster_id = $jSettings->cluster_id;
             }
 
