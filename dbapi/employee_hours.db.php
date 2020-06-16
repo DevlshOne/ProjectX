@@ -1429,15 +1429,26 @@ class EmployeeHoursAPI{
 			foreach($absent_user_stack as $username => $time_first_absent){
 				
 				$out .= "Marking User ($username) LATE for the workweek of ".date("m/d/Y", $stime)." thru ".date("m/d/Y", $etime)." (First absence: ".date("m/d/Y", $time_first_absent).")\n";
-				
+
 				//$_SESSION['dbapi']->execSQL(
 				$sql =	"UPDATE `activity_log` SET `is_late`='yes', `has_set_late`='yes-yes' ".
 						" WHERE `username` IN ('".mysqli_real_escape_string($_SESSION['dbapi']->db, $username)."', '".mysqli_real_escape_string($_SESSION['dbapi']->db, $username.'2')."') ".
 						" AND time_started BETWEEN '$stime' AND '$etime' ".
 						"";
-				$_SESSION['dbapi']->execSQL($sql);
-				//echo $sql."\n\n";
-				//		);
+			
+				
+				if($comp['opt_auto_calc_hours'] == 'yes'){
+					
+					//echo $sql."\n";
+					// UPDATE ACTIVITY LOG RECORD FOR MAIN USER
+					$_SESSION['dbapi']->execSQL($sql);
+					
+				}else{
+					echo "Company (#".$comp['id'].' - '.$comp['name'].") in Debug only mode, no changes made.\n";
+					
+				}
+				
+		
 			
 				
 				// THEN RECALCULATE 
