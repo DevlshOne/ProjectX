@@ -966,12 +966,14 @@ class UserClass
             var itemp = 0;
             var item_id = new Array();
             var item_name = new Array();
+            var item_office = new Array();
             var item_clusterid = new Array();
 
             <?    while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
 
                 ?>item_id[itemp] = <?=intval($row['id'])?>;
             item_name[itemp] = "<?=addslashes($row['user_group'])?>";
+            item_office[itemp] = "<?=addslashes($row['office'])?>";
             item_clusterid[itemp] = <?=intval($row['vici_cluster_id'])?>;
             itemp++;
             <?
@@ -1003,6 +1005,9 @@ class UserClass
 //				newopts[0].value	= 0;
                 var curid = 0;
                 var medie = false;
+
+                let curnamestr = "";
+                
                 for (x = 0; x < item_id.length; x++) {
                     //curid=item_id[x];
                     curid = x;
@@ -1028,11 +1033,14 @@ class UserClass
                     if (ie) obj.add(newopts[x]);
                     else obj.add(newopts[x], null);
 
+                    curnamestr = item_name[curid] + " (Office "+item_office[curid]+")";
+
+                    
                     newopts[x].value = item_name[curid];//item_id[curid];
 
 
-                    if (ie) newopts[x].innerText = item_name[curid];
-                    else newopts[x].innerHTML = item_name[curid];
+                    if (ie) newopts[x].innerText = curnamestr;//item_name[curid];
+                    else newopts[x].innerHTML = curnamestr;//item_name[curid];
 
                     //if(selid == item_id[curid])obj.value=item_id[curid];
                     if (selid == item_name[curid]) obj.value = item_name[curid];
@@ -1051,7 +1059,7 @@ class UserClass
 
                 if (!frm.main_group_dd.value) return recheck('Please Specify the users main group to add them to.', frm.main_group_dd);
 
-                if (!frm.office_id.value) return recheck('Please Specify the users office', frm.office_id);
+                //if (!frm.office_id.value) return recheck('Please Specify the users office', frm.office_id);
 
 
                 // GATHER PARAMS INTO STRING
@@ -1129,15 +1137,15 @@ class UserClass
                     <th align="left">Main Group</th>
                     <td><select id="main_group_dd" name="main_group_dd"></select></td>
                 </tr>
-                <tr>
+                <?/*<tr>
                     <th align="left">Office</th>
-                    <td><?
+                    <td><span id="grp_office_spn"></span><?
 
-                        echo makeOfficeDD("office_id", $_REQUEST['office_id'], '', "", 0);
+                        //echo makeOfficeDD("office_id", $_REQUEST['office_id'], '', "", 0);
 
 
                         ?></td>
-                </tr>
+                </tr>*/?>
                 <tr>
                     <th align="left">Vici Settings Template</th>
                     <td><?
@@ -2631,8 +2639,8 @@ class UserClass
 
                 $("#dialog-modal-vici-add").dialog({
                     autoOpen: false,
-                    width: 430,
-                    height: 220,
+                    width: 'auto',
+                    height: 'auto',
                     modal: false,
                     draggable: true,
                     resizable: false

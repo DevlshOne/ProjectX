@@ -947,7 +947,10 @@ class API_Users{
 			$cluster_id = intval($_POST['vici_cluster_id']);
 
 			$main_group = trim($_POST['main_group_dd']);
-			$office = trim($_POST['office_id']);
+			//$office = trim($_POST['office_id']);
+			
+			
+			list($office) = $_SESSION['dbapi']->queryROW("SELECT office FROM `user_groups_master` WHERE `user_group`='".mysqli_real_escape_string($_SESSION['dbapi']->db, trim($main_group))."'");
 
 			$vici_template_id = intval($_POST['vici_template_id']);
 
