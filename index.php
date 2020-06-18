@@ -153,19 +153,19 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         function hideNav(both){
 
             if(both){
-	        	$('.sidebar-o').removeClass("sidebar-o-xs sidebar-mini"); // 
+	        	$('.sidebar-o').removeClass("sidebar-o-xs sidebar-mini"); //
             }else{
-	        	$('.sidebar-o').removeClass("sidebar-o-xs"); // 
+	        	$('.sidebar-o').removeClass("sidebar-o-xs"); //
             }
         }
-        
+
         function loadSection(url) {
             // One.block('state_loading', '#main-container');
-            
-            
+
+
             hideNav();
-            
-            
+
+
             $('#main-container').empty().load(url);
             // $('#main-container').empty().html('<table class="tightTable"><tr><td class="align-center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load(url);
             if (dispTimer) {
@@ -240,17 +240,17 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             <div class="content-header bg-white-5">
                 <!-- Logo -->
                 <a class="navbar-brand" href="index.php"><img src="images/cci-logo-200-2.png" height="30" border="0" title="Home"></a>
-                
+
                 <?/**<div style="float:right"><a href="#" onclick="hideNav(true)" class="big">&lt;</a></div>**/?>
-                
-                
+
+
                 <?
 
                 if($_SESSION['user']['priv'] > 5 || $_SESSION['user']['username'] == 'phreak'){
                 	?><div style="float:right"><a href="#" onclick="location='px_status.php'" class="big" title="If you get the reference, we can be friends LOL">&Pi;</a></div><?
                 }
-                
-                
+
+
             ?></div>
             <?
             if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
@@ -309,11 +309,35 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             </li>
                             <?
                         }
-                        if (checkAccess('quiz_questions')) {
+                        ?>
+                    </ul>
+                </li>
+                <?
+            }
+            if (checkAccess('quiz_questions') || checkAccess('quiz_results')) {
+                ?>
+                <li class="nav-main-item">
+                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu"
+                       aria-haspopup="true" aria-expanded="false">
+                        <i class="nav-main-link-icon fa fa-question"></i>
+                        <span class="nav-main-heading">Quiz</span>
+                    </a>
+                    <ul class="nav-main-submenu">
+                        <?
+                    if (checkAccess('quiz_questions')) {
+                    ?>
+                        <li class="nav-main-item">
+                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">
+                                <span class="nav-main-link-name">Quiz Questions</span>
+                            </a>
+                        </li>
+                        <?
+                        }
+                        if (checkAccess('quiz_results')) {
                             ?>
                             <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Quiz Questions</span>
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=quiz_results&no_script=1" onclick="loadSection(this.href);return false">
+                                    <span class="nav-main-link-name">Quiz Results</span>
                                 </a>
                             </li>
                             <?
@@ -365,15 +389,6 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             <li class="nav-main-item">
                                 <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=phone_lookup&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">DRIPP Lookup</span>
-                                </a>
-                            </li>
-                            <?
-                        }
-                        if (checkAccess('quiz_results')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=quiz_results&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Quiz Results</span>
                                 </a>
                             </li>
                             <?
