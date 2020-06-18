@@ -314,70 +314,60 @@ class API_Employee_Hours{
 
 		// CSV MODE - IGNORE PAGE SYSTEM!
 		if($_SESSION['api']->mode != "csv"){
-
 			## PAGE SIZE / INDEX SYSTEM - OPTIONAL - IF index AND pagesize BOTH PASSED IN
 			if(isset($_REQUEST['index']) && isset($_REQUEST['pagesize'])){
-
 				$pagemode = true;
-
 				$cntdat = $dat;
 				$cntdat['fields'] = 'COUNT(id)';
 				list($totalcount) = mysqli_fetch_row($_SESSION['dbapi']->employee_hours->getResults($cntdat));
-
 				$dat['limit'] = array(
 									"offset"=>intval($_REQUEST['index']),
 									"count"=>intval($_REQUEST['pagesize'])
 								);
-
 			}
-
 		}
-
-
-
-
 			## ORDER BY SYSTEM
 			if($_REQUEST['orderby'] && $_REQUEST['orderdir']){
-				
+
 				if($_REQUEST['orderby'] == 'time_started'){
 
 					$dat['fields'] = '*, FROM_UNIXTIME(time_started, \'%Y-%m-%d\') as date_started ';
-					
+
 					$dat['order'] = array(
 										"date_started"=>$_REQUEST['orderdir'],
 										'username' => 'ASC'
 									);
-					
+
 				}else if($_REQUEST['orderby'] == 'username'){
-					
+
 					$dat['fields'] = '*, FROM_UNIXTIME(time_started, \'%Y-%m-%d\') as date_started ';
-					
+
 					$dat['order'] = array(
 							$_REQUEST['orderby']=>$_REQUEST['orderdir'],
 							'date_started' => 'ASC'
 					);
-					
+
 				}else{
 					$dat['order'] = array($_REQUEST['orderby']=>$_REQUEST['orderdir']);
 				}
-				
+
 // 				print_r($dat);
-				
+
 			}else if($dat['report_mode']){
-				
+
 				switch($dat['report_mode']){
 				default:
 					break;
 				case 5:
-					
+
 					$dat['order'] = array(
 										'username' => 'ASC',
 										'time_started' => 'ASC'
 									);
-					
+
 					break;
 				}
-				
+
 			}
 
 
@@ -413,31 +403,21 @@ class API_Employee_Hours{
 
 		## GENERATE CSV
 			case 'csv':
-
-
 				if($dat['date_mode'] == 'daterange'){
 					$filename = "Hours_Data-".$dat['date1']."-to-".$dat['date2'].".csv";
-
 					$stime = strtotime($dat['date1']);
 					$stime = mktime(0,0,0,date("m",$stime), date("d", $stime), date("Y", $stime));
-
 					$etime = strtotime($dat['date2']);
 					$etime = mktime(23,59,59,date("m",$etime), date("d", $etime), date("Y", $etime));
-
 				}else{
 					$filename = "Hours_Data-".$dat['date'].".csv";
-
 					$stime = strtotime($dat['date']);
 					$stime = mktime(0,0,0,date("m",$stime), date("d", $stime), date("Y", $stime));
 					$etime = $stime + 86399;
 				}
-
 //echo date("g:i:sa m/d/Y", $stime).' - '.date("g:i:sa m/d/Y", $etime)."\n";
-
-
 				switch($dat['report_mode']){
 				case 1:
-
 					$rowarr = array();
 					$total_activity = 0;
 					$total_paid = 0;
@@ -729,128 +709,128 @@ $rowarr = array();
 
 					break;
 
-					
+
 				case 5:
-					
+
 					if($dat['date_mode'] == 'daterange'){
 						$filename = "Agent-Totals-".$dat['date1']."-to-".$dat['date2'].".csv";
-						
-						
+
+
 					}else{
 						$filename = "Agent-Totals-".$dat['date'].".csv";
-						
-						
+
+
 					}
-					
-					
-					
-					
+
+
+
+
 					$out = "Agent,Office,";
 
 					$date_totals = array();
 					for($x = $stime;$x < $etime;$x += 86400){
 						$curdate = date("m/d/y", $x);
 						$out .= $curdate.',';
-						
+
 						$date_totals[$curdate] = 0;
-						
+
 					}
-					
+
 					$out .= "Total\r\n";
-					
-					
+
+
 					$agent_arr = array();
-					
+
 					while($row = mysqli_fetch_array($res, MYSQLI_ASSOC)){
-						
+
 						$row['username'] = strtoupper($row['username']);
-						
+
 						if(!$agent_arr[$row['username']]){
 							$agent_arr[$row['username']] = array();
 							$agent_arr[$row['username']]['total_paid_hours'] = 0;
 						}
-						
+
 						$new_activity = $row['seconds_INCALL'] + $row['seconds_READY'] + $row['seconds_QUEUE'];
-						
+
 						$curdate = date("m/d/y", $row['time_started']);
-						
+
 						$agent_arr[$row['username']]['office'] = $row['office'];
-						
+
 						$agent_arr[$row['username']][$curdate] = $row;
-						
+
 						//if(!isset($agent_arr[$row['username']][$curdate]['total_paid_hours'])){
-						//	$agent_arr[$row['username']][$curdate]['total_paid_hours'] = 0;						
+						//	$agent_arr[$row['username']][$curdate]['total_paid_hours'] = 0;
 						//}
-						
-						
+
+
 						$agent_arr[$row['username']][$curdate]['paid_hours'] = round($row['paid_time']/60,2);
-						
+
 						//$agent_arr[$row['username']][$curdate]['total_paid_hours'] += $agent_arr[$row['username']][$curdate]['paid_hours'];
 						$agent_arr[$row['username']]['total_paid_hours'] += $agent_arr[$row['username']][$curdate]['paid_hours'];
-						
+
 // 						$out .= date("m/d/Y", $row['time_started']).",".
 // 								$row['username'].",".
 // 								$row['call_group'].",".
 // 								$row['office'].",".
 // 								round($row['activity_time']/60,2).",".
-								
+
 // 								renderTimeFormattedSTD($new_activity).",".
-								
+
 // 								renderTimeFormattedSTD($row['seconds_INCALL']).",".
 // 								renderTimeFormattedSTD($row['seconds_READY']).",".
 // 								renderTimeFormattedSTD($row['seconds_QUEUE']).",".
 // 								renderTimeFormattedSTD($row['seconds_PAUSED']).",".
-								
+
 // 								round($row['paid_time']/60,4).",".
 // 								preg_replace("/[,\"']/",'',$row['notes'])."\r\n";
-								
-								
+
+
 					} // END WHILE LOOP (data prep)
-					
-					
+
+
 					$grand_total = 0;
 					foreach($agent_arr as $username => $data){
-						
+
 						$out .= $username.','.$data['office'].',';
-						
-						
+
+
 						for($x = $stime;$x < $etime;$x += 86400){
 							$curdate = date("m/d/y", $x);
-							
+
 							$out .= $data[$curdate]['paid_hours'].',';
-							
-							
+
+
 							$date_totals[$curdate] += $data[$curdate]['paid_hours'];
 						}
-						
+
 						$out .= $data['total_paid_hours']."\r\n";
-						
+
 						$grand_total += $data['total_paid_hours'];
 					}
-					
+
 					$out .= ",,";
-					
+
 					for($x = $stime;$x < $etime;$x += 86400){
 						$curdate = date("m/d/y", $x);
-						
-						
+
+
 						$out .= $date_totals[$curdate].',';
 					}
-					
+
 					$out .= $grand_total."\r\n";
-					
+
 					header("Content-Type: text/csv");
-					
+
 					header('Content-Disposition: attachment; filename="'.$filename.'"');
-					
-					
+
+
 					echo $out;
-					
+
 					exit;
-					
-					
+
+
 					break;
-					
+
 				default:
 
 					//$out = "Date,Agent,Group,Office,Activity,Paid Hours,Notes\r\n";

@@ -99,6 +99,23 @@
                         "index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
                     "orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
                 }
+                function exportQuestions() {
+                    let frm = getEl('<?=$this->frm_name?>');
+                    let <?=$this->order_prepend?>pagesize = <?=$this->order_prepend?>totalcount;
+                    debugger;
+                    return 'api/api.php'+
+                        "?get=questions&"+
+                        "mode=csv&"+
+                        's_quiz_id='+escape(frm.s_quiz_id.value)+"&"+
+                        's_question='+escape(frm.s_question.value)+"&"+
+                        's_answer='+escape(frm.s_answer.value)+"&"+
+                        's_filename='+escape(frm.s_filename.value)+"&"+
+                        "index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
+                        "orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
+                }
+                function importQuestions() {
+
+                }
                 var questions_loading_flag = false;
                 /**
                  * Load the data - make the ajax call, callback to the parse function
@@ -158,7 +175,7 @@
                     frm.s_answer.value = '';
                     frm.s_filename.value='';
                 }
-                var questionsrchtog = false;
+                var questionsrchtog = true;
                 function toggleQuestionSearch(){
                     questionsrchtog = !questionsrchtog;
                     ieDisplay('question_search_table', questionsrchtog);
@@ -187,15 +204,17 @@
                             </button>
                         </div>
                     </div>
-                    <div class="bg-info-light nod" id="question_search_table">
+                    <div class="bg-info-light" id="question_search_table">
                         <div class="input-group input-group-sm">
                             <input type="hidden" name="searching_question"/>
-                            <?=$this->makeDD('s_quiz_id',$_REQUEST['s_quiz_id'],'',"",0, "[Select Quiz]");?>
+                            <?=$this->makeDD('s_quiz_id',$_REQUEST['s_quiz_id'],'',"loadQuestions();",0, "[Select Quiz]");?>
                             <input type="text" class="form-control" placeholder="Question.." name="s_question" value="<?=htmlentities($_REQUEST['s_question'])?>" />
                             <input type="text" class="form-control" placeholder="Answer.." name="s_answer" value="<?= htmlentities($_REQUEST['s_answer']) ?>"/>
                             <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
                             <button type="button" value="Search" title="Search Quiz Questions" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadQuestions();return false;">Search</button>
                             <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetQuestionForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadQuestions();return false;">Reset</button>
+                            <button type="button" value="Export" title="Export Results to CSV" class="btn btn-sm btn-danger" id="export_button" name="export_button" onclick="exportQuestions();">Export</button>
+                            <button type="button" value="Import" title="Import Quiz Questions" class="btn btn-sm btn-success" id="import_button" name="import_button" onclick="importQuestions();">Import</button>
                         </div>
                     </div>
                     <div class="block-content">
@@ -227,7 +246,7 @@
                 });
 
                 $("#dialog-modal-add-question").closest('.ui-dialog').draggable("option","containment","#main-container");
-                
+
                 loadQuestions();
                 $('#s_quiz_id').attr('title', 'Select Quiz ID');
             </script>
@@ -406,23 +425,14 @@
 
                 // SET TITLEBAR
                 $('#dialog-modal-add-question').dialog( "option", "title", '<?=($id)?'Editing Question #'.$id.' - '.htmlentities($row['question']):'Adding new Question'?>' );
-
-
-
             </script>
-            <center><div id="quiz_media_player" title="Playing Quiz File"></center>
+            <div class="text-center" id="quiz_media_player" title="Playing Quiz File">
             <form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkQuestionFrm(this); return false">
                 <input type="hidden" id="adding_question" name="adding_question" value="<?=$id?>" >
-
-
                 <table border="0" align="center">
                     <tr>
                         <th align="left" height="30">Quiz:</th>
-                        <td><?
-
-                                echo $this->makeDD('quiz_id',$row['quiz_id'],'',"",0, 0);
-
-                            ?></td>
+                        <td><?=$this->makeDD('quiz_id',$row['quiz_id'],'',"",0, 0);?></td>
                     </tr>
                     <tr>
                         <th align="left" height="30">Question:</th>
@@ -442,6 +452,7 @@
 						<input type="button" value="Listen" onclick="playAudio('<?=$row['id']?>')"></th>
 					</tr>
 		</form>
+            </div>
 		</table><?
 
 
