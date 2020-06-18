@@ -196,8 +196,8 @@ class API_Questions
                             $out .= $row['duration'] . "," .
                                 $row['question'] . "," .
                                 $row['answer'] . "," .
-                                escapeCSV($row['variables']) . "," .
-                                escapeCSV($row['file']) . "," .
+                                htmlentities($row['variables']) . "," .
+                                htmlentities($row['file']) . "," .
                                 $row['script_id'] . "," .
                                 $row['play_index'] . "," .
                                 $row['script_repeat_mode'] . "\r\n";

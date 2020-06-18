@@ -86,32 +86,27 @@
                 /**
                  * Build the URL for AJAX to hit, to build the list
                  */
-                function getQuestionsURL(){
-                    var frm = getEl('<?=$this->frm_name?>');
-                    var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
+                function getQuestionsURL(csv_mode){
+                    let frm = getEl('<?=$this->frm_name?>');
+                    let <?=$this->order_prepend?>pagesize = 0;
+                    if(csv_mode) {
+                        <?=$this->order_prepend?>pagesize = <?=$this->order_prepend?>totalcount;
+                    } else {
+                        <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
+                    }
                     return 'api/api.php'+
-                        "?get=questions&"+
-                        "mode=xml&"+
-                        's_quiz_id='+escape(frm.s_quiz_id.value)+"&"+
-                        's_question='+escape(frm.s_question.value)+"&"+
-                        's_answer='+escape(frm.s_answer.value)+"&"+
-                        's_filename='+escape(frm.s_filename.value)+"&"+
-                        "index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
-                    "orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
+                        '?get=questions&'+
+                        'mode=' + ((csv_mode) ? 'csv' : 'xml') + '&'+
+                        's_quiz_id='+escape(frm.s_quiz_id.value)+'&'+
+                        's_question='+escape(frm.s_question.value)+'&'+
+                        's_answer='+escape(frm.s_answer.value)+'&'+
+                        's_filename='+escape(frm.s_filename.value)+'&'+
+                        'index=' + (<?=$this->index_name?> * <?=$this->order_prepend?>pagesize) + '&pagesize=' + <?=$this->order_prepend?>pagesize + '&'+
+                        'orderby='+<?=$this->order_prepend?>orderby+'&orderdir='+<?=$this->order_prepend?>orderdir;
                 }
                 function exportQuestions() {
-                    let frm = getEl('<?=$this->frm_name?>');
-                    let <?=$this->order_prepend?>pagesize = <?=$this->order_prepend?>totalcount;
-                    debugger;
-                    return 'api/api.php'+
-                        "?get=questions&"+
-                        "mode=csv&"+
-                        's_quiz_id='+escape(frm.s_quiz_id.value)+"&"+
-                        's_question='+escape(frm.s_question.value)+"&"+
-                        's_answer='+escape(frm.s_answer.value)+"&"+
-                        's_filename='+escape(frm.s_filename.value)+"&"+
-                        "index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
-                        "orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
+                    let url = getQuestionsURL(true);
+                    window.open(url);
                 }
                 function importQuestions() {
 
@@ -213,8 +208,8 @@
                             <input type="text" class="form-control" placeholder="Filename.." name="s_filename" value="<?= htmlentities($_REQUEST['s_filename']) ?>"/>
                             <button type="button" value="Search" title="Search Quiz Questions" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadQuestions();return false;">Search</button>
                             <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetQuestionForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadQuestions();return false;">Reset</button>
-                            <button type="button" value="Export" title="Export Results to CSV" class="btn btn-sm btn-danger" id="export_button" name="export_button" onclick="exportQuestions();">Export</button>
-                            <button type="button" value="Import" title="Import Quiz Questions" class="btn btn-sm btn-success" id="import_button" name="import_button" onclick="importQuestions();">Import</button>
+                            <button type="button" value="Export" title="Export Results to CSV" class="btn btn-sm btn-danger" name="export_button" onclick="exportQuestions();">Export</button>
+                            <button type="button" value="Import" title="Import Quiz Questions" class="btn btn-sm btn-success" name="import_button" onclick="importQuestions();">Import</button>
                         </div>
                     </div>
                     <div class="block-content">

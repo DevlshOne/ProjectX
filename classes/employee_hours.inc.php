@@ -619,9 +619,7 @@ class EmployeeHours
 
 
             function exportResultsCSV(total_mode) {
-
                 var url = getEmpsURL(true, total_mode);
-
                 window.open(url);
             }
 
@@ -845,9 +843,9 @@ class EmployeeHours
                 <button type="button" class="btn btn-sm btn-success" title="Export Results to CSV" name="export_csv" onclick="exportResultsCSV()">Export Results CSV</button>
                 <button type="button" class="btn btn-sm btn-success" title="Export TOTALS to CSV" name="export_totals" onclick="exportResultsCSV(1)">Export Totals CSV</button>
                 <button type="button" class="btn btn-sm btn-success" title="Export Clean TOTALS to CSV" name="export_clean_totals" onclick="exportResultsCSV(2)">Export Clean Totals CSV</button>
-                
+
                 <button type="button" class="btn btn-sm btn-success" title="Export Agent Totals" name="export_range" onclick="exportResultsCSV(5)">Export Agent Totals</button>
-                
+
 		</div>
         <caption id="current_time_span" class="small text-right">Server Time: <?= date("g:ia m/d/Y T") ?></caption>
 
