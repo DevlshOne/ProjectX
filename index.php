@@ -263,13 +263,14 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                 echo $item;
             }
 
-            function makeNavSubItem($area, $linkname)
+            function makeNavSubItem($privcheck, $area, $subheading)
             {
                 $item = '<li class="nav-main-item">';
                 $item .= '<a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=' . $area . '&no_script=1" onclick="loadSection(this.href);return false">';
-                $item .= '<span class="nav-main-link-name">' . $linkname . '</span></a></li>';
-                echo $item;
-
+                $item .= '<span class="nav-main-link-name">' . $subheading . '</span></a></li>';
+                if (checkAccess($privcheck)) {
+                    echo $item;
+                }
             }
 
             if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
@@ -278,20 +279,12 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     <? makeNavItem(true, 'fa-donate', 'Campaigns'); ?>
                     <ul class="nav-main-submenu">
                         <?
-                        if (checkAccess('campaigns')) {
-                            makeNavSubItem('campaigns', 'Campaign Setup');
-                            makeNavSubItem('campaign_parents', 'Campaign Parents');
-                            makeNavSubItem('form_builder', 'Form Builder');
-                        }
-                        if (checkAccess('voices')) {
-                            makeNavSubItem('voices', 'Voices');
-                        }
-                        if (checkAccess('names')) {
-                            makeNavSubItem('names', 'Names');
-                        }
-                        if (checkAccess('scripts')) {
-                            makeNavSubItem('scripts', 'Scripts');
-                        }
+                        makeNavSubItem('campaigns', 'campaigns', 'Campaign Setup');
+                        makeNavSubItem('campaigns', 'campaign_parents', 'Campaign Parents');
+                        makeNavSubItem('campaigns', 'form_builder', 'Form Builder');
+                        makeNavSubItem('voices', 'voices', 'Voices');
+                        makeNavSubItem('names', 'names', 'Names');
+                        makeNavSubItem('scripts', 'scripts', 'Scripts');
                         ?>
                     </ul>
                 </li>
@@ -303,12 +296,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     <? makeNavItem(true, 'fa-question', 'Quiz'); ?>
                     <ul class="nav-main-submenu">
                         <?
-                        if (checkAccess('quiz_questions')) {
-                            makeNavSubItem('quiz_questions', 'Quiz Questions');
-                        }
-                        if (checkAccess('quiz_results')) {
-                            makeNavSubItem('quiz_results', 'Quiz Results');
-                        }
+                        makeNavSubItem('quiz_questions', 'quiz_questions', 'Quiz Questions');
+                        makeNavSubItem('quiz_results', 'quiz_results', 'Quiz Results');
                         ?>
                     </ul>
                 </li>
@@ -320,39 +309,17 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     <? makeNavItem(true, 'fa-tools', 'Management Tools'); ?>
                     <ul class="nav-main-submenu">
                         <?
-                        if (checkAccess('lead_management')) {
-                            makeNavSubItem('lead_management', 'Lead Management');
-                        }
-                        if (checkAccess('sales_management')) {
-                            makeNavSubItem('sales_management', 'Sales Management');
-                        }
-                        if (checkAccess('employee_hours')) {
-                            makeNavSubItem('employee_hours', 'Employee Hours');
-                        }
-                        if (checkAccess('phone_lookup')) {
-                            makeNavSubItem('phone_lookup', 'DRIPP Lookup');
-                        }
-                        if (checkAccess('ringing_calls')) {
-//                            makeNavSubItem('ringing_calls', 'Ring Report');
-                        }
-                        if (checkAccess('messages')) {
-//                            makeNavSubItem('messages', 'Agent Messages');
-                        }
-                        if (checkAccess('dialer_status')) {
-                            makeNavSubItem('dialer_status', 'Dialer Status');
-                        }
-                        if (checkAccess('server_status')) {
-                            makeNavSubItem('server_status', 'Server Status');
-                        }
-                        if (checkAccess('extensions')) {
-                            makeNavSubItem('extensions', 'Extensions');
-                        }
-                        if (checkAccess('offices')) {
-                            makeNavSubItem('offices', 'Offices');
-                        }
-                        if (checkAccess('process_tracker_schedules')) {
-                            makeNavSubItem('process_tracker_schedules', 'Process Tracker');
-                        }
+                        makeNavSubItem('lead_management', 'lead_management', 'Lead Management');
+                        makeNavSubItem('sales_management', 'sales_management', 'Sales Management');
+                        makeNavSubItem('employee_hours', 'employee_hours', 'Employee Hours');
+                        makeNavSubItem('phone_lookup', 'phone_lookup', 'DRIPP Lookup');
+                        // makeNavSubItem('ringing-calls', 'ringing_calls', 'Ring Report');
+                        // makeNavSubItem('messages', 'messages', 'Agent Messages');
+                        makeNavSubItem('dialer_status', 'dialer_status', 'Dialer Status');
+                        makeNavSubItem('server_status', 'server_status', 'Server Status');
+                        makeNavSubItem('extensions', 'extensions', 'Extensions');
+                        makeNavSubItem('offices', 'offices', 'Offices');
+                        makeNavSubItem('process_tracker_schedules', 'process_tracker_schedules', 'Process Tracker');
                         ?>
                     </ul>
                 </li>
@@ -364,14 +331,14 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     <? makeNavItem(true, 'fa-list', 'List Tools'); ?>
                     <ul class="nav-main-submenu">
                         <?
-                        makeNavSubItem('list_tools&tool=build_list', 'List Builder');
-                        makeNavSubItem('list_tools&tool=dnc_tools', 'DNC Management');
-                        makeNavSubItem('list_tools&tool=manage_lists', 'VICI List Management');
-                        makeNavSubItem('list_tools&tool=tasks', 'Task / Status Management');
-                        makeNavSubItem('list_tools&tool=load_list', 'Import Leads');
-                        makeNavSubItem('list_tools&tool=view_imports', 'List Imports / Counts');
-                        makeNavSubItem('list_tools&tool=performance_reports', 'List Performance Reports');
-                        makeNavSubItem('list_tools&tool=vici_report', 'VICIDIAL List Counts');
+                        makeNavSubItem('list_tools', 'list_tools&tool=build_list', 'List Builder');
+                        makeNavSubItem('list_tools', 'list_tools&tool=dnc_tools', 'DNC Management');
+                        makeNavSubItem('list_tools', 'list_tools&tool=manage_lists', 'VICI List Management');
+                        makeNavSubItem('list_tools', 'list_tools&tool=tasks', 'Task / Status Management');
+                        makeNavSubItem('list_tools', 'list_tools&tool=load_list', 'Import Leads');
+                        makeNavSubItem('list_tools', 'list_tools&tool=view_imports', 'List Imports / Counts');
+                        makeNavSubItem('list_tools', 'list_tools&tool=performance_reports', 'List Performance Reports');
+                        makeNavSubItem('list_tools', 'list_tools&tool=vici_report', 'VICIDIAL List Counts');
                         ?>
                     </ul>
                 </li>
@@ -383,45 +350,19 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     <?= makeNavItem(true, 'fa-database', 'Reports'); ?>
                     <ul class="nav-main-submenu">
                         <?
-                        if (checkAccess('fronter_closer')) {
-                            makeNavSubItem('fronter_closer', 'Fronter / Closer');
-                        }
-                        if (checkAccess('sales_analysis')) {
-                            makeNavSubItem('sales_analysis', 'Sales Analysis');
-                        }
-                        if (checkAccess('agent_call_stats')) {
-                            makeNavSubItem('agent_call_stats', 'Verifier Call Stats');
-                        }
-                        if (checkAccess('rouster_report')) {
-                            makeNavSubItem('rouster_report', 'Rouster Call Stats');
-                        }
-                        if (checkAccess('summary_report')) {
-                            makeNavSubItem('summary_report', 'Summary Report');
-                        }
-                        if (checkAccess('dialer_sales')) {
-                            makeNavSubItem('dialer_sales', 'AC Sales By Dialer');
-                        }
-                        if (checkAccess('user_charts')) {
-                            makeNavSubItem('user_charts', 'User Charts');
-                        }
-                        if (checkAccess('recent_hangups')) {
-                            makeNavSubItem('recent_hangups', 'Recent Hangups');
-                        }
-                        if (checkAccess('dispo_log')) {
-                            makeNavSubItem('dispo_log', 'Disposition Logs');
-                        }
-                        if (checkAccess('capacity_report')) {
-                            makeNavSubItem('capacity_report', 'Capacity Reports');
-                        }
-                        if (checkAccess('report_emails')) {
-                            makeNavSubItem('report_emails', 'Report Email Setup');
-                        }
-                        if (checkAccess('user_status_report')) {
-                            makeNavSubItem('user_status_report', 'User Status Report');
-                        }
-                        if (checkAccess('script_statistics')) {
-                            makeNavSubItem('script_statistics', 'Script Statistics');
-                        }
+                        makeNavSubItem('fronter_closer', 'fronter_closer', 'Fronter / Closer');
+                        makeNavSubItem('sales_analysis', 'sales_analysis', 'Sales Analysis');
+                        makeNavSubItem('agent_call_stats', 'agent_call_stats', 'Verifier Call Stats');
+                        makeNavSubItem('rouster_report', 'rouster_report', 'Rouster Call Stats');
+                        makeNavSubItem('summary_report', 'summary_report', 'Summary Report');
+                        makeNavSubItem('dialer_sales', 'dialer_sales', 'AC Sales By Dialer');
+                        makeNavSubItem('user_charts', 'user_charts', 'User Charts');
+                        makeNavSubItem('recent_hangups', 'recent_hangups', 'Recent Hangups');
+                        makeNavSubItem('dispo_log', 'dispo_log', 'Disposition Logs');
+                        makeNavSubItem('capacity_report', 'capacity_report', 'Capacity Reports');
+                        makeNavSubItem('report_emails', 'report_emails', 'Report Email Setup');
+                        makeNavSubItem('user_status_report', 'user_status_report', 'User Status Report');
+                        makeNavSubItem('script_statistics', 'script_statistics', 'Script Statistics');
                         ?>
                     </ul>
                 </li>
@@ -433,9 +374,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     <?= makeNavItem(true, 'fa-toolbox', 'PACs Maintenance'); ?>
                     <ul class="nav-main-submenu">
                         <?
-                        if (checkAccess('pac_reports')) {
-                            makeNavSubItem('pac_reports', 'Web Donations');
-                        }
+                        makeNavSubItem('pac_reports', 'pac_reports', 'Web Donations');
                         ?>
                     </ul>
                 </li>
@@ -447,19 +386,13 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     <?= makeNavItem(true, 'fa-user', 'Users'); ?>
                     <ul class="nav-main-submenu">
                         <?
-                        makeNavSubItem('users', 'User Manager');
-                        makeNavSubItem('user_groups', 'Groups Manager');
-                        makeNavSubItem('user_teams', 'Teams Manager');
-                        makeNavSubItem('user_groups_master', 'Master Groups Manager');
-                        if (checkAccess('feature_control')) {
-                            makeNavSubItem('feature_control', 'Feature Control');
-                        }
-                        if (checkAccess('login_tracker')) {
-                            makeNavSubItem('login_tracker', 'Login Tracker');
-                        }
-                        if (checkAccess('action_log')) {
-                            makeNavSubItem('action_log', 'Action Logs');
-                        }
+                        makeNavSubItem('users', 'users', 'User Manager');
+                        makeNavSubItem('users', 'user_groups', 'Groups Manager');
+                        makeNavSubItem('users', 'user_teams', 'Teams Manager');
+                        makeNavSubItem('users', 'user_groups_master', 'Master Groups Manager');
+                        makeNavSubItem('feature_control', 'feature_control', 'Feature Control');
+                        makeNavSubItem('login_tracker', 'login_tracker', 'Login Tracker');
+                        makeNavSubItem('action_log', 'action_log', 'Action Logs');
                         ?>
                     </ul>
                 </li>
@@ -548,11 +481,11 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <main id="main-container">
         <?
         if (isset($_REQUEST['area']) && $_REQUEST['area']) {
-            ?>
-            <script>
-                loadSection('<?=stripurl('no_script')?>&no_script=1');
-            </script>
-            <?
+        ?>
+        <script>
+            loadSection('<?=stripurl('no_script')?>&no_script=1');
+        </script>
+        <?
         }
 
         $_SESSION['interface']->makeNewheader();
