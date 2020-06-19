@@ -68,7 +68,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <link rel="stylesheet"
           href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400italic,600,700%7COpen+Sans:300,400,400italic,600,700">
 
-    <link rel="stylesheet" href="css/jquery-ui.min.css" />
+    <link rel="stylesheet" href="css/jquery-ui.min.css"/>
     <link rel="stylesheet" type="text/css" href="css/style.css"/>
 
     <link rel="stylesheet" type="text/css" href="src/assets/js/plugins/datatables/dataTables.bootstrap4.css"/>
@@ -150,12 +150,12 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
 
 
-        function hideNav(both){
+        function hideNav(both) {
 
-            if(both){
-	        	$('.sidebar-o').removeClass("sidebar-o-xs sidebar-mini"); //
-            }else{
-	        	$('.sidebar-o').removeClass("sidebar-o-xs"); //
+            if (both) {
+                $('.sidebar-o').removeClass("sidebar-o-xs sidebar-mini"); //
+            } else {
+                $('.sidebar-o').removeClass("sidebar-o-xs"); //
             }
         }
 
@@ -195,12 +195,12 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             $('input[type="checkbox"], :checkbox').removeClass('form-control').addClass('form-check-input-sm');
             $('button, :button, :submit, input[type="button"], input[type="submit"]').removeClass('form-control').addClass('btn btn-sm btn-primary');
             $('select').addClass('custom-select-sm');
-            $('.ui-dialog-content').css('height','');
+            $('.ui-dialog-content').css('height', '');
             $('.ui-widget-header').removeClass('ui-widget-header').addClass('bg-primary-light');
             return;
         }
     </script>
-        <?
+    <?
     if (!isset($_REQUEST['no_script']) && !isset($_REQUEST['no_nav'])) {
         ?>
         <script type="text/javascript" src="src/assets/js/oneui.core.min.js"></script>
@@ -241,73 +241,56 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                 <!-- Logo -->
                 <a class="navbar-brand" href="index.php"><img src="images/cci-logo-200-2.png" height="30" border="0" title="Home"></a>
 
-                <?/**<div style="float:right"><a href="#" onclick="hideNav(true)" class="big">&lt;</a></div>**/?>
+                <? /**<div style="float:right"><a href="#" onclick="hideNav(true)" class="big">&lt;</a></div>**/ ?>
 
 
                 <?
 
-                if($_SESSION['user']['priv'] > 5 || $_SESSION['user']['username'] == 'phreak'){
-                	?><div style="float:right"><a href="#" onclick="location='px_status.php'" class="big" title="If you get the reference, we can be friends LOL">&Pi;</a></div><?
+                if ($_SESSION['user']['priv'] > 5 || $_SESSION['user']['username'] == 'phreak') {
+                    ?>
+                    <div style="float:right"><a href="#" onclick="location='px_status.php'" class="big" title="If you get the reference, we can be friends LOL">&Pi;</a></div><?
                 }
 
 
-            ?></div>
+                ?>
+            </div>
             <?
+            function makeNavItem($hasSubLevel = false, $icon, $heading)
+            {
+                $item = '<a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">';
+                $item .= '<i class="nav-main-link-icon fa ' . $icon . '"></i>';
+                $item .= '<span class="nav-main-heading">' . $heading . '</span></a>';
+                echo $item;
+            }
+
+            function makeNavSubItem($area, $linkname)
+            {
+                $item = '<li class="nav-main-item">';
+                $item .= '<a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=' . $area . '&no_script=1" onclick="loadSection(this.href);return false">';
+                $item .= '<span class="nav-main-link-name">' . $linkname . '</span></a></li>';
+                echo $item;
+
+            }
+
             if (checkAccess('campaigns') || checkAccess('voices') || checkAccess('names') || checkAccess('scripts')) {
                 ?>
                 <li class="nav-main-item">
-                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="nav-main-link-icon fa fa-donate"></i>
-                        <span class="nav-main-heading">Campaigns</span>
-                    </a>
+                    <? makeNavItem(true, 'fa-donate', 'Campaigns'); ?>
                     <ul class="nav-main-submenu">
                         <?
                         if (checkAccess('campaigns')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=campaigns&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Campaign Setup</span>
-                                </a>
-                            </li>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=campaign_parents&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Campaign Parents</span>
-                                </a>
-                            </li>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=form_builder&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Form Builder</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('campaigns', 'Campaign Setup');
+                            makeNavSubItem('campaign_parents', 'Campaign Parents');
+                            makeNavSubItem('form_builder', 'Form Builder');
                         }
                         if (checkAccess('voices')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=voices&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Voices</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('voices', 'Voices');
                         }
                         if (checkAccess('names')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=names&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Names</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('names', 'Names');
                         }
                         if (checkAccess('scripts')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=scripts&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Scripts</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('scripts', 'Scripts');
                         }
                         ?>
                     </ul>
@@ -324,14 +307,14 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     </a>
                     <ul class="nav-main-submenu">
                         <?
-                    if (checkAccess('quiz_questions')) {
-                    ?>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">Quiz Questions</span>
-                            </a>
-                        </li>
-                        <?
+                        if (checkAccess('quiz_questions')) {
+                            ?>
+                            <li class="nav-main-item">
+                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">
+                                    <span class="nav-main-link-name">Quiz Questions</span>
+                                </a>
+                            </li>
+                            <?
                         }
                         if (checkAccess('quiz_results')) {
                             ?>
@@ -350,21 +333,11 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             if (checkAccess('sales_management') || checkAccess('lead_management') || checkAccess('employee_hours') || checkAccess('ringing_calls') || checkAccess('messages') || checkAccess('server_status') || checkAccess('extensions')) {
                 ?>
                 <li class="nav-main-item">
-                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="nav-main-link-icon fa fa-tools"></i>
-                        <span class="nav-main-heading">Management Tools</span>
-                    </a>
+                    <? makeNavItem(true, 'fa-tools', 'Management Tools'); ?>
                     <ul class="nav-main-submenu">
                         <?
                         if (checkAccess('lead_management')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=lead_management&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Lead Management</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('lead_management', 'Lead Management');
                         }
                         if (checkAccess('sales_management')) {
                             ?>
@@ -395,20 +368,20 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         }
                         if (checkAccess('ringing_calls')) {
                             ?>
-<!--                            <li class="nav-main-item">-->
-<!--                                <a class="nav-main-link" href="?area=ringing_calls&no_script=1" onclick="loadSection(this.href);return false">-->
-<!--                                    <span class="nav-main-link-name">Ring Report</span>-->
-<!--                                </a>-->
-<!--                            </li>-->
+                            <!--                            <li class="nav-main-item">-->
+                            <!--                                <a class="nav-main-link" href="?area=ringing_calls&no_script=1" onclick="loadSection(this.href);return false">-->
+                            <!--                                    <span class="nav-main-link-name">Ring Report</span>-->
+                            <!--                                </a>-->
+                            <!--                            </li>-->
                             <?
                         }
                         if (checkAccess('messages')) {
                             ?>
-<!--                            <li class="nav-main-item">-->
-<!--                                <a class="nav-main-link" href="?area=messages&no_script=1" onclick="loadSection(this.href);return false">-->
-<!--                                    <span class="nav-main-link-name">Agent Messages</span>-->
-<!--                                </a>-->
-<!--                            </li>-->
+                            <!--                            <li class="nav-main-item">-->
+                            <!--                                <a class="nav-main-link" href="?area=messages&no_script=1" onclick="loadSection(this.href);return false">-->
+                            <!--                                    <span class="nav-main-link-name">Agent Messages</span>-->
+                            <!--                                </a>-->
+                            <!--                            </li>-->
                             <?
                         }
                         if (checkAccess('dialer_status')) {
@@ -449,9 +422,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         }
 
 
-
                         if (checkAccess('process_tracker_schedules')) {
-                        	?>
+                            ?>
                             <li class="nav-main-item">
                                 <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=process_tracker_schedules&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Process Tracker</span>
@@ -520,56 +492,23 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             if (checkAccess('fronter_closer') || checkAccess('sales_analysis') || checkAccess('agent_call_stats') || checkAccess('user_charts') || checkAccess('recent_hangups') || checkAccess('script_statistics') || checkAccess('dispo_log') || checkAccess('capacity_report') || checkAccess('report_emails') || checkAccess('user_status_report')) {
                 ?>
                 <li class="nav-main-item">
-                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">
-                        <i class="nav-main-link-icon fa fa-database"></i>
-                        <span class="nav-main-heading">Reports</span>
-                    </a>
+                    <?= makeNavItem(true, 'fa-database', 'Reports'); ?>
                     <ul class="nav-main-submenu">
                         <?
                         if (checkAccess('fronter_closer')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=fronter_closer&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Fronter / Closer</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('fronter-closer', 'Fronter / Closer');
                         }
                         if (checkAccess('sales_analysis')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=sales_analysis&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Sales Analysis</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('sales-analysis', 'Sales Analysis');
                         }
                         if (checkAccess('agent_call_stats')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=agent_call_stats&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Verifier Call Stats</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('agent_call_stats', 'Verifier Call Stats');
                         }
                         if (checkAccess('rouster_report')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=rouster_report&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Rouster Call Stats</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('rouster_report', 'Rouster Call Stats');
                         }
                         if (checkAccess('summary_report')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=summary_report&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Summary Report</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('summary_report', 'Summary Report');
                         }
                         if (checkAccess('dialer_sales')) {
                             ?>
@@ -637,7 +576,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
 
 
                         if (checkAccess('script_statistics')) {
-                        	?>
+                            ?>
                             <li class="nav-main-item">
                                 <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=script_statistics&no_script=1" onclick="loadSection(this.href);return false">
                                     <span class="nav-main-link-name">Script Statistics</span>
@@ -645,7 +584,6 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             </li>
                             <?
                         }
-
 
 
                         ?>
@@ -980,7 +918,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     }
                     break;
                 case 'process_tracker_schedules':
-                    if (checkAccess('process_tracker_schedules') ) {
+                    if (checkAccess('process_tracker_schedules')) {
 
                         include_once("classes/process_tracker_schedules.inc.php");
                         $_SESSION['process_tracker_schedules']->handleFLOW();
