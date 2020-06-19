@@ -257,7 +257,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             <?
             function makeNavItem($hasSubLevel = false, $icon, $heading)
             {
-                $item = '<a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">';
+                $item = '<a href="#" class="nav-main-link' . ($hasSubLevel ? ' nav-main-link-submenu" data-toggle="submenu"' : '"') . ' aria-haspopup="true" aria-expanded="false">';
                 $item .= '<i class="nav-main-link-icon fa ' . $icon . '"></i>';
                 $item .= '<span class="nav-main-heading">' . $heading . '</span></a>';
                 echo $item;
@@ -293,7 +293,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             if (checkAccess('quiz_questions') || checkAccess('quiz_results')) {
                 ?>
                 <li class="nav-main-item">
-                    <? makeNavItem(true, 'fa-question', 'Quiz'); ?>
+                    <? makeNavItem(true, 'fa-book-open', 'Training'); ?>
                     <ul class="nav-main-submenu">
                         <?
                         makeNavSubItem('quiz_questions', 'quiz_questions', 'Quiz Questions');
@@ -312,8 +312,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         makeNavSubItem('lead_management', 'lead_management', 'Lead Management');
                         makeNavSubItem('sales_management', 'sales_management', 'Sales Management');
                         makeNavSubItem('employee_hours', 'employee_hours', 'Employee Hours');
-                        makeNavSubItem('phone_lookup', 'phone_lookup', 'DRIPP Lookup');
-                        // makeNavSubItem('ringing-calls', 'ringing_calls', 'Ring Report');
+                        makeNavSubItem('phone_lookup', 'phone_lookup', 'Phone Lookup');
+                        // makeNavSubItem('ringing_calls', 'ringing_calls', 'Ring Report');
                         // makeNavSubItem('messages', 'messages', 'Agent Messages');
                         makeNavSubItem('dialer_status', 'dialer_status', 'Dialer Status');
                         makeNavSubItem('server_status', 'server_status', 'Server Status');
@@ -481,11 +481,11 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
     <main id="main-container">
         <?
         if (isset($_REQUEST['area']) && $_REQUEST['area']) {
-        ?>
-        <script>
-            loadSection('<?=stripurl('no_script')?>&no_script=1');
-        </script>
-        <?
+            ?>
+            <script>
+                loadSection('<?=stripurl('no_script')?>&no_script=1');
+            </script>
+            <?
         }
 
         $_SESSION['interface']->makeNewheader();
