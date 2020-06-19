@@ -573,13 +573,14 @@ class RingingCalls{
 			function getRingsURL(){
 
 				var frm = getEl('<?=$this->frm_name?>');
-
+                let phone_num = frm.s_phone.value;
+                phone_num = phone_num.replace(/[^0-9]/g,'');
 				return 'api/api.php'+
 								"?get=ringing_calls&"+
 								"mode=xml&"+
 
 								's_lead_id='+escape(frm.s_lead_id.value)+"&"+
-								's_phone='+escape(frm.s_phone.value)+"&"+
+								's_phone='+escape(phone_num)+"&"+
 								's_carrier='+escape(frm.s_carrier.value)+"&"+
 								's_cluster_id='+escape(frm.s_cluster_id.value)+"&"+
 
@@ -831,7 +832,7 @@ class RingingCalls{
 				</td>
 				<td align="center"><?=$this->makeStatusDD('s_status', $_REQUEST['s_status'], '', "loadRings();")?></td>
 				<td align="center"><input type="text" name="s_lead_id" size="5" value="<?=htmlentities($_REQUEST['s_lead_id'])?>"></td>
-				<td align="center"><input type="text" name="s_phone" size="10" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
+				<td align="center"><input type="text" name="s_phone" size="10" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" value="<?=htmlentities($_REQUEST['s_phone'])?>"></td>
 				<td align="center">
 					<?=$this->makeCarrierDD('s_carrier', $_REQUEST['s_carrier'], '', "");?>
 				</td>

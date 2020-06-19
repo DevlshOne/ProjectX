@@ -19,6 +19,20 @@ ie4 = ( ie && !dom );
 
 
 
+function format_phone(phone){
+
+	phone=phone.trim();
+
+	if(phone.length < 1)return '';
+
+	if(phone.length <= 10){
+		return "("+phone.substr(0,3)+") "+phone.substr(3,3)+"-"+phone.substr(6);
+	}else{
+		return "("+phone.substr(0,3)+") "+phone.substr(3,3)+"-"+phone.substr(6, 4)+' EXT '+phone.substr(10);
+	}
+
+}
+
 
 function hasCheckedCheckboxes(baseobj){
 
@@ -108,6 +122,8 @@ function makeNumberDD(name,sel,start,end,inc,zeropad,tag_inject,blankfield){
 
 	//$sel = intval($sel);
 
+	sel = parseInt(sel);
+
 	var out = '<select name="'+name+'" id="'+name+'" '+tag_inject+' >';
 
 	out += (blankfield)?'<option value=""></option>':'';
@@ -115,7 +131,9 @@ function makeNumberDD(name,sel,start,end,inc,zeropad,tag_inject,blankfield){
 	for(var x=start;x <= end;x += inc){
 
 		out+= '<option value="'+((zeropad && x < 10)?'0'+x:x)+'"';
-		out+= (sel == x)?' SELECTED ':'';
+
+		out+= (sel == parseInt(x))?' SELECTED ':'';
+
 		out+= '>'+((zeropad && x < 10)?('0'+x):x);
 	}
 
@@ -473,3 +491,30 @@ LMTtabs.prototype = {
 		this.defaultTab = tabindex;
 	}
 };
+
+function stampToTime(s, mode) {
+	if(s == null) return '&nbsp;';
+	let dt = new Date(s * 1000);
+	let yr = dt.getFullYear();
+	let mo = dt.getMonth();
+	let da = dt.getDate();
+	let hr = dt.getHours();
+	let mi = dt.getMinutes() < 10 ? '0' + dt.getMinutes() : dt.getMinutes();
+	let se = dt.getSeconds() < 10 ? '0' + dt.getSeconds() : dt.getSeconds();
+	// mode 0 returns "MM/DD/YYYY HH:MM:SS"
+	// mode 1 returns "YYYY-MM-DD HH:MM:SS"
+	switch(mode) {
+		default:
+		case 0:
+			return mo + '/' + da + '/' + yr + '&nbsp;' + hr + ':' + mi + ':' + se;
+		break;
+		case 1:
+			return yr + '-' + mo + '-' + da + '&nbsp;' + hr + ':' + mi + ':' + se;
+		break;
+	}
+}
+
+function toCurrency(i) {
+	let f = new Intl.NumberFormat('en-US', {style: 'currency', currency: 'USD'});
+	return f.format(i);
+}

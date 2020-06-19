@@ -22,6 +22,18 @@ class ReportEmails{
 
 	var $order_prepend = 're_';				## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
 
+	
+	
+	var $report_types = array(
+			
+		1 => "Sales Analysis",
+		2 => "Verifier Report",
+		3 => "Summary Report",
+		4 => "Rouster Report"
+			
+	);
+	
+	
 	function ReportEmails(){
 
 
@@ -94,7 +106,6 @@ class ReportEmails{
 				['[get:friendly_trigger_time:interval:trigger_time]','align_center'],
 				['email_address','align_left'],
 				['subject_append','align_left'],
-
 				['[delete]','align_center']
 			];
 
@@ -108,12 +119,10 @@ class ReportEmails{
 				return 'api/api.php'+
 								"?get=report_emails&"+
 								"mode=xml&"+
-
 								's_id='+escape(frm.s_id.value)+"&"+
 								's_report_id='+escape(frm.s_report_id.value)+"&"+
 								's_email_address='+escape(frm.s_email_address.value)+"&"+
 								's_subject_append='+escape(frm.s_subject_append.value)+"&"+
-
 								"index="+(<?=$this->index_name?> * <?=$this->order_prepend?>pagesize)+"&pagesize="+<?=$this->order_prepend?>pagesize+"&"+
 								"orderby="+<?=$this->order_prepend?>orderby+"&orderdir="+<?=$this->order_prepend?>orderdir;
 			}
@@ -247,7 +256,7 @@ class ReportEmails{
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_reports"/>
                         <input type="text" class="form-control" placeholder="ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
-                        <select class="form-control custom-select-sm" name="s_report_id">
+                        <select class="form-control custom-select-sm" name="s_report_id" onchange="loadReports();">
                             <option value=""<?=(!$_REQUEST['s_report_id'])?" SELECTED ":""?>>[Select Report Type]</option>
                             <option value="1"<?=($_REQUEST['s_report_id'] == 1)?" SELECTED ":""?>>Sales Analysis</option>
                             <option value="2"<?=($_REQUEST['s_report_id'] == 2)?" SELECTED ":""?>>Verifier Report</option>
@@ -375,6 +384,10 @@ class ReportEmails{
 			// SET TITLEBAR
 			$('#dialog-modal-add-name').dialog( "option", "title", '<?=($id)?'Editing Report Email #'.$id.' - '.htmlentities($row['subject_append']):'Adding new Report Email'?>' );
 			function toggleReportMode(mode){
+			    // mode 1 - Sales Analysis
+                // mode 2 - Verifier Report
+                // mode 3 - Summary Report
+                // mode 4 - Rouster Report
 				buildTemplateDD(mode, 'template_id');
 				switch(mode){
 				case '1':
@@ -499,10 +512,7 @@ class ReportEmails{
 		</script>
 		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkBulkReportFrm(this); return false">
 			<input type="hidden" id="bulk_adding_emails" name="bulk_adding_emails"  >
-
-
 		<table border="0" align="center">
-
 		<tr>
 			<th align="left" width="100" height="30">Report Type:</th>
 			<td><select id="report_id" name="report_id" onchange="toggleReportMode(this.value)">
@@ -532,36 +542,29 @@ class ReportEmails{
 
 					?></select></td>
 					<td>
-
 						<span id="report_options_1" class="nod">
-
 							<label>Combine Users:</label>
 							<input type="checkbox" name="combine_users" CHECKED /><br />
-
 							<label>Cluster:</label>
 							<?
 								echo makeClusterDD('sales_cluster_id',-1, "", "", 1);
 							?>
-
 						</span>
 						<span id="report_options_2" class="nod">
-
 							<label>Cluster:</label>
 							<?
 								echo makeClusterDD('verifier_cluster_id',9, "", "", false);
 							?>
 						</span>
 						<span id="report_options_3" class="nod">
-
 							<label>Summary Report Type:</label><br />
 							<select name="summary_report_type">
-
 								<option value="cold">Cold</option>
 								<option value="taps">Taps</option>
 								<option value="verifier">Verifier</option>
 								<option value="company">Sub-Company and Group</option>
+								<option value="roustercompany">Sub-Company and Group - Rousters</option>
 							</select>
-
 						</span>
 						<span id="report_options_4" class="nod">
 
@@ -589,10 +592,7 @@ class ReportEmails{
 				<table border="0" width="100%"  id="user_group_tr">
 				<tr>
 					<td><?
-
-					//			makeUserGroupDD($name, $sel, $class, $onchange, $size=0, $blank_option = 1)
 						echo makeUserGroupDD('user_groups[]', '', '', "", 10, false);
-
 					?></td>
 					<td>
 
@@ -621,89 +621,47 @@ class ReportEmails{
 
 			//toggleTimeMode($('#interval').val());
 
-		</script><?
+		</script>
+        <?
 	}
-
-
-
-
-
 	function makeAdd($id){
-
 		$id=intval($id);
-
-
 		if($id){
-
 			$row = $_SESSION['dbapi']->report_emails->getByID($id);
-
-
 			$diw = floor( ($row['trigger_time'] / 86400) );
-
 			$diw_offset = ($diw * 86400);
-
 			$timeoffset = ($row['trigger_time'] % 86400);
-
-
-
-
-
 		}
-
-		?><script>
-
+		?>
+        <script>
 			function validateReportField(name,value,frm){
-
 				//alert(name+","+value);
-
-
 				switch(name){
 				default:
-
 					// ALLOW FIELDS WE DONT SPECIFY TO BYPASS!
 					return true;
 					break;
-
-				case 'subject_append':
-
-
+    			case 'subject_append':
 					if(!value)return false;
-
 					return true;
-
-
 					break;
-
 				}
 				return true;
 			}
-
-
-
 			function checkReportFrm(frm){
-
-
 				var params = getFormValues(frm,'validateReportField');
-
-
 				// FORM VALIDATION FAILED!
 				// param[0] == field name
 				// param[1] == field value
 				if(typeof params == "object"){
-
 					switch(params[0]){
 					default:
-
 						alert("Error submitting form. Check your values");
-
 						break;
-
 					case 'subject_append':
-
 						alert("Please enter the subject for this email.");
 						eval('try{frm.'+params[0]+'.select();}catch(e){}');
 						break;
-
 					}
 
 				// SUCCESS - POST AJAX TO SERVER
@@ -759,12 +717,8 @@ class ReportEmails{
 
 			// SET TITLEBAR
 			$('#dialog-modal-add-name').dialog( "option", "title", '<?=($id)?'Editing Report Email #'.$id.' - '.htmlentities($row['subject_append']):'Adding new Report Email'?>' );
-
-
 			function toggleTimeMode(mode){
-
 				if(mode == "weekly"){
-
 					ieDisplay('weeklyrow', 1);
 					ieDisplay('monthlyrow', 0);
 				}else if(mode == "monthly"){
@@ -776,33 +730,48 @@ class ReportEmails{
 					ieDisplay('monthlyrow', 0);
 					ieDisplay('weeklyrow', 0);
 				}
-
 			}
-
-
+			function showNoChangeMessage(n) {
+			    if(n > 0) {
+			        alert('You may not change report types of existing reports. Please create a new report instead.');
+			        $('#report_type_id').attr('disabled', true);
+                }
+			    return;
+            }
 		</script>
 		<form method="POST" action="<?=stripurl('')?>" autocomplete="off" onsubmit="checkReportFrm(this); return false">
 			<input type="hidden" id="adding_name" name="adding_report" value="<?=$id?>" >
-
-
 		<table border="0" align="center">
-
 		<tr>
 			<th align="left" width="100" height="30">Report Type:</th>
-			<td><select name="report_id">
-				<option value="1">Sales Analysis</option>
-				<option value="2" <?=(($row['report_id'] == 2)?" SELECTED ":"")?> >
-					Verifier Report
-				</option>
-				<option value="3" <?=(($row['report_id'] == 3)?" SELECTED ":"")?> >
-					Summary Report
-				</option>
-				<option value="4" <?=(($row['report_id'] == 4)?" SELECTED ":"")?> >
-					Rouster Report
-				</option>
-			</select></td>
+			<td><?
+			
+			if($id){
+				
+				echo $this->report_types[$row['report_id']];
+				
+				?><input type="hidden" name="report_id" value="<?=$row['report_id']?>" /><?
+				
+			}else{
+				// onchange="showNoChangeMessage('$id
+				
+				
+				?><select id="report_type_id" name="report_id">
+					<option value="1">Sales Analysis</option>
+					<option value="2" <?=(($row['report_id'] == 2)?" SELECTED ":"")?> >
+						Verifier Report
+					</option>
+					<option value="3" <?=(($row['report_id'] == 3)?" SELECTED ":"")?> >
+						Summary Report
+					</option>
+					<option value="4" <?=(($row['report_id'] == 4)?" SELECTED ":"")?> >
+						Rouster Report
+					</option>
+				</select><?
+			}
+			
+			?></td>
 		</tr>
-
 		<tr>
 			<th align="left" height="30">Subject<br />(Group Name):</th>
 			<td><input name="subject_append" type="text" size="50" value="<?=htmlentities($row['subject_append'])?>"></td>
@@ -812,18 +781,16 @@ class ReportEmails{
 			<td><input name="email_address" type="text" size="50" value="<?=htmlentities($row['email_address'])?>"></td>
 		</tr>
 		<tr>
-			<th align="left" height="30">Interval:</th>
+            <th><label>Interval:</label></th>
 			<td><select name="interval" id="interval" onchange="toggleTimeMode(this.value);">
 				<option value="daily"<?=($row['interval'] == 'daily')?" SELECTED":""?>>Daily</option>
 				<option value="weekly"<?=($row['interval'] == 'weekly')?" SELECTED":""?>>Weekly</option>
 				<option value="monthly"<?=($row['interval'] == 'monthly')?" SELECTED":""?>>Monthly</option>
 			</select></td>
 		</tr>
-
 		<tr id="weeklyrow">
-			<th align="left" height="30" colspan="2" nowrap>Day&nbsp;of&nbsp;Wk:
-
-				<select name="day_of_week_offset">
+            <th><label>Day&nbsp;of&nbsp;Week:</label></th>
+            <td><select name="day_of_week_offset">
 					<option value="0"<?=($diw == 0)?" SELECTED":""?>>Sunday</option>
 					<option value="1"<?=($diw == 1)?" SELECTED":""?>>Monday</option>
 					<option value="2"<?=($diw == 2)?" SELECTED":""?>>Tuesday</option>
@@ -831,7 +798,7 @@ class ReportEmails{
 					<option value="4"<?=($diw == 4)?" SELECTED":""?>>Thursday</option>
 					<option value="5"<?=($diw == 5)?" SELECTED":""?>>Friday</option>
 					<option value="6"<?=($diw == 6)?" SELECTED":""?>>Saturday</option>
-				</select>
+                </select></td>
 			</th>
 		</tr>
 
@@ -846,8 +813,8 @@ class ReportEmails{
 
 		<tr>
 			<th align="left" height="30">Trigger Time:</th>
-			<td><select name="trigger_time">
-
+			<td>
+                <select name="trigger_time">
 			<option value="0"<?=($timeoffset == 0)?" SELECTED ":""?>>12 AM</option>
 			<option value="3600"<?=($timeoffset == 3600)?" SELECTED ":""?>>1 AM</option>
 			<option value="7200"<?=($timeoffset == 7200)?" SELECTED ":""?>>2 AM</option>
@@ -869,32 +836,77 @@ class ReportEmails{
 			<option value="64800"<?=($timeoffset == 64800)?" SELECTED ":""?>>6 PM</option>
 			<option value="68400"<?=($timeoffset == 68400)?" SELECTED ":""?>>7 PM</option>
 			<option value="72000"<?=($timeoffset == 72000)?" SELECTED ":""?>>8 PM</option>
-
 			<option value="75600"<?=($timeoffset == 75600)?" SELECTED ":""?>>9 PM</option>
-
 			<option value="79200"<?=($timeoffset == 79200)?" SELECTED ":""?>>10 PM</option>
 			<option value="82800"<?=($timeoffset == 82800)?" SELECTED ":""?>>11 PM</option>
-
-
-			</select></td>
+			</select>
+            </td>
 		</tr>
-
 		<tr>
 			<td>&nbsp;</td>
 			<td height="30">
-
 				<input type="checkbox" name="fix_last_ran_time" value="1" <?=(!$id)?' CHECKED DISABLED':''?>>Fix/Re-Calculate Last ran time
-
 			</td>
 		</tr>
-
-		<tr valign="top">
-			<th align="left" height="30">Settings:</th>
-			<td><textarea name="settings" rows="5" cols="55"><?=htmlentities($row['settings'])?></textarea></td>
-		</tr>
-
-
-
+            <?
+            $jSettings = json_decode($row['json_settings']);
+            // 1 - Sales Analysis [agent_cluster_idx, combine_users, user_group]
+            // 2 - Verifier Report [cluster_id, user_group]
+            // 3 - Summary Report [report_type]
+            // 4 - Rouster Report [cluster_id, user_group]
+            
+          //  print_r($jSettings);
+            
+            switch($row['report_id']) {
+                default :
+                    break;
+                case 1 :
+					echo "<tr>
+							<th><label>Combine Users:</label></th>
+							<td><input type='checkbox' value='1' name='combine_users'" . ($jSettings->combine_users == 1 ? " checked" : "") . "/></td>
+						</tr>
+						<tr>
+							<th><label>User Group:</label></th>
+							<td>" . makeUserGroupDD('user_groups[]', $jSettings->user_group, '', '', 10, false) . "</td>
+						</tr>
+						<tr>
+							<th><label>Cluster:</label></th>
+							<td>" . makeClusterDD('agent_cluster_idx', getClusterIndex($jSettings->agent_cluster_idx), '', '', 1) . "</td>
+						</tr>";
+                    break;
+                case 2 :
+                case 4 :
+                    echo "<tr>
+							<th><label>User Group:</label></th>
+							<td>" . makeUserGroupDD('user_groups[]', $jSettings->user_group, '', '', 10, false) . "</td>
+						</tr>
+						<tr>
+							<th><label>Cluster:</label></th>
+							<td>" . makeClusterDD('cluster_id', $jSettings->cluster_id, '', '', 1) . "</td>
+						</tr>";
+                    break;
+                case 3 :
+                    echo "<tr>
+                            <th><label>Summary Type:</label></th>
+                            <td><select name='summary_report_type'>
+								<option value='cold'" . ($jSettings->report_type == "cold" ? " selected" : "") . ">Cold</option>
+								<option value='taps'" . ($jSettings->report_type == "taps" ? " selected" : "") . ">Taps</option>
+								<option value='verifier'" . ($jSettings->report_type == "verifier" ? " selected" : "") . ">Verifier</option>
+								<option value='company'" . ($jSettings->report_type == "company" ? " selected" : "") . ">Sub-Company and Group</option>
+								<option value='roustercompany'" . ($jSettings->report_type == "roustercompany" ? " selected" : "") . ">Sub-Company and Group - Rousters</option>
+							</select></td>
+							</tr>";
+                    break;
+            }
+            ?>
+<!--		<tr valign="top">-->
+<!--			<th align="left" height="30">Settings:</th>-->
+<!--			<td><textarea name="settings" rows="5" cols="55">--><?//=htmlentities($row['settings'])?><!--</textarea></td>-->
+<!--		</tr>-->
+<!--            <tr valign="top">-->
+<!--                <th align="left" height="30">Settings (JSON):</th>-->
+<!--                <td><textarea name="json_settings" readonly rows="5" cols="55">--><?//=htmlentities($row['json_settings'])?><!--</textarea></td>-->
+<!--            </tr>-->
 		<tr>
 			<th colspan="2" align="center"><input type="submit" value="Save Changes"></th>
 		</tr>

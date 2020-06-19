@@ -242,11 +242,11 @@ function loadAjaxData(loadurl, callback_func_name, mode) {
  * @return Total count of items (not limited by the limit field, the full total, or if not usign page system, total records returned)
  */
 function parseXMLData(area, tableFormat, xmldoc) {
-    /** some debugging if you get hosed
-     console.log('Area =' + area);
-     console.log('tableFormat = ' + tableFormat);
-     console.log('xmldoc = ' + xmldoc);
-     */
+    /** some debugging if you get hosed */
+     // console.log('Area =' + area);
+     // console.log('tableFormat = ' + tableFormat);
+     // console.log('xmldoc = ' + xmldoc);
+     /**/
     var obj;
     var tagname = "";
     var callback_func_name = "";
@@ -289,6 +289,12 @@ function parseXMLData(area, tableFormat, xmldoc) {
         //
         //		break;
     }
+    /*
+    console.log('obj=' + obj);
+    console.log('tagname=' + tagname);
+    console.log('delete_area=' + delete_area);
+    console.log('callback_func_name=' + callback_func_name);
+    */
     var totalcount = 0;
     var special_tag;
     var special_idx = 0; // USED TO KEEP TRACK OF EACH RECORD
@@ -326,8 +332,10 @@ function parseXMLData(area, tableFormat, xmldoc) {
         totalcount = dataarr.length;
     }
     // REMOVE ALL ROWS BUT THE HEADER
+    // alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
+
     clearTable(obj);
-    //alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
+    // alert("area:"+area+" "+obj+" "+obj.rows.item(0).cells);
     if (dataarr.length == 0) {
         var colspan = obj.rows.item(0).cells.length;
         var lastRow = obj.rows.length;
@@ -349,7 +357,7 @@ function parseXMLData(area, tableFormat, xmldoc) {
         var newDate, tmptime, datestring, tmpstr;
         var cur_name, cur_class, cur_data, priv_name;
         for (var y = 0; y < tableFormat.length; y++) {
-            //alert("INSERT CELL - "+y+" tableFormat:"+tableFormat[y]);
+            // alert("INSERT CELL - "+y+" tableFormat:"+tableFormat[y]);
             if (!tableFormat[y]) continue;
             cell = row.insertCell(y);
             //alert("Format: "+tableFormat[y][0]+" "+tableFormat[y][1]);
@@ -386,11 +394,27 @@ function parseXMLData(area, tableFormat, xmldoc) {
                     tmparr = special_tag.split(":");// 0 = call_function, 1 = the function name to call, 2 = Button/Link name, 3 = arg1 to pass
                     cell.innerHTML = '<input type="button" value="' + tmparr[2] + '" onclick="' + tmparr[1] + '(' + dataarr[x].getAttribute(tmparr[3]) + ')">';
                     cell.className = clsname + ' ' + cur_class;
+                    
+                    
                     // MAKE A CHECKBOX
                 } else if (special_tag.indexOf("checkbox:") == 0) {
+                	
                     tmparr = special_tag.split(":");
-                    cell.innerHTML = '<input type="checkbox" name="' + tmparr[1] + x + '" id="' + tmparr[1] + x + '" value="' + dataarr[x].getAttribute(tmparr[2]) + '">';
+                    
+                	var chkedval = '';
+                	
+                	var ischecked = false;
+                	
+                	if(tmparr[3]){
+                		chkedval = dataarr[x].getAttribute(tmparr[3]);
+                		
+                		ischecked = (chkedval == 'yes' || chkedval == 'true')?true:false;
+                	}
+                	
+
+                    cell.innerHTML = '<input type="checkbox" name="' + tmparr[1] + x + '" id="' + tmparr[1] + x + '" '+((ischecked)?' CHECKED ':'')+' value="' + dataarr[x].getAttribute(tmparr[2]) + '">';
                     cell.className = clsname + ' ' + cur_class;
+                    
                     // Render field, with a label after it
                 } else if (special_tag.indexOf("postlabel:") == 0) {
                     tmparr = special_tag.split(":");
@@ -575,7 +599,10 @@ function parseXMLData(area, tableFormat, xmldoc) {
                         // do nothing, button click only
                     }
                 } else if (special_tag.indexOf("render:") >= 0) {
+                	
+                	
                     tmparr = special_tag.split(":");
+                    
                     if (tmparr[1] == 'who') {
                         var cell_text = "-"
                         if (dataarr[x].getAttribute('type') == 'campaign') {
@@ -606,18 +633,67 @@ function parseXMLData(area, tableFormat, xmldoc) {
                          */
                     } else if (tmparr[1] == 'editable_hours_from_min') {
                         //	alert(dataarr[x].getAttribute(tmparr[2])
-                        var s = (Math.round(parseInt(dataarr[x].getAttribute(tmparr[2])) / 60 * 100) / 100).toString();
+                    	
+                    	///alert(
+                    	var correctionamt=0;
+                    	//editable_hours_from_min:paid_time:paid_corrections
+                        if(tmparr[3]){
+                        	correctionamt = parseInt(dataarr[x].getAttribute(tmparr[3]));
+                        	
+                        	//alert(correctionamt);
+                        }
+                    	
+                        var basetime = parseInt(dataarr[x].getAttribute(tmparr[2]));
+                        
+                        var paid_time_actual = parseInt(basetime + correctionamt);
+                        
+                        var paid_break_time = parseInt(dataarr[x].getAttribute('paid_break_time'));
+                        
+                        var basetime_no_breaks = basetime - paid_break_time;
+                        
+                        var s = (Math.round(paid_time_actual / 60 * 100) / 100).toString();
                         if (s.indexOf('.') == -1) s += '.';
                         while (s.length < s.indexOf('.') + 3) s += '0';
                         //cell_text = '<input type="text" size="5" name="'+tmparr[2]+'_'+x+'" id="'+tmparr[2]+'_'+x+'" value="'+s+'" > hrs.'; //= '<input type="hidden" name="activity_id_'+x+'" id="activity_id_'+x+'" value="'+dataarr[x].getAttribute('id')+'">'+
-                        var minutes_tmp = parseInt(dataarr[x].getAttribute(tmparr[2]));
-                        var sel_hour = Math.floor(minutes_tmp / 60);
-                        var sel_min = minutes_tmp % 60;
+
+                        // DETECT NEGATIVE FOR THE PLUS/MINUS DROPDOWN OPTION
+                        var is_negative = (correctionamt < 0)?true:false;
+                        
+                        // FLIP TO POSITIVE FOR THE DROPDOWN SELECTIONS
+                        correctionamt = (is_negative)?correctionamt * -1:correctionamt;
+                        
+                        
+                        
+                        
+                        var corrsel_hour = Math.floor(correctionamt / 60);
+                        var corrsel_min = correctionamt % 60;
+                        
+ 
+                        var breakless_hour = Math.floor(basetime_no_breaks / 60);
+                        var breakless_min = basetime_no_breaks % 60;
+                        
+                        var break_hour = Math.floor(paid_break_time / 60);
+                        var break_min = paid_break_time % 60;
+                        
+                        var sel_hour = Math.floor(basetime / 60);
+                        var sel_min = basetime % 60;
+                        
+                        var paid_hour = Math.floor(paid_time_actual / 60);
+                        var paid_min = paid_time_actual % 60;
+                        
+                        
                         // INSERT DROPDOWNS HERE INSTEAD OF A TEXT FIELD....
                         cell_text = '<input type="hidden" name="activity_id_' + x + '" id="activity_id_' + x + '" value="' + dataarr[x].getAttribute('id') + '">' +
-                            makeNumberDD('paid_hour_' + x, sel_hour, 0, 24, 1, false, '', false) + "h&nbsp;" +
-                            makeNumberDD('paid_min_' + x, sel_min, 0, 59, 1, true, '', false) + 'm<br />' +
-                            "(<span id=\"paid_ghetto_time_" + x + "\">" + s + "</span>)";
+                            
+                        	'<span title="System Calculated hours based on activity:\n  '+
+                        			breakless_hour+':'+zeroFill( breakless_min, 2 )+' Base Activity Time\n  '+
+                        			break_hour+':'+zeroFill( break_min, 2 )+' Calculated Breaks\n">Calculated: '+sel_hour+"hr "+sel_min+"min</span><br />"+
+                            '<select id="paid_correction_polarity_' + x+'" name="paid_correction_polarity_' + x+'"><option value="add">PLUS (+)<option value="subtract" '+((is_negative)?' SELECTED ':'')+'>MINUS (-)</select>'+
+                            makeNumberDD('paid_correction_hour_' + x, corrsel_hour, 0, 12, 1, false, '', false) + "h&nbsp;" +
+                            makeNumberDD('paid_correction_min_' + x, corrsel_min, 0, 59, 1, true, '', false) + 'm<br />' +
+                            '<span title="Hours after corrections/adjustments">PAID: '+paid_hour+"hr "+paid_min+"min (<span id=\"paid_ghetto_time_" + x + "\">" + s + "</span>)</span><br />" +
+                            
+                            '';
 //									makeTimebar("stime_",1, curDate,false);
 //
 // 						output += "<br />";
@@ -789,11 +865,11 @@ function parseXMLData(area, tableFormat, xmldoc) {
             }
         } // END FIELD LIST
     } // END OF XML TAGS
-    
-    
+
+
     $('#total_count_div').html(parseInt(totalcount).toLocaleString('en-US') + " Found");
-    
-    
+
+
     // SECONDARY AJAX - POST PROCESSING - MAKE A SECOND AJAX CALL TO RETRIEVE AND RENDER INFO
     if (special_idx > 0) {
         //console.dir(special_stack);

@@ -73,13 +73,13 @@ class API_Rousting_Report
 
     public function createDetailReport($results)
     {
-        $report = [];
+        $report = array();
 
         foreach($results as $row) {
             $activity_time = array_sum($row['agent']['total_activity_date_time_array']);
             $act_total_time = array_sum($row['agent']['total_activity_date_daily_array']);
 
-            $report[] = [
+            $report[] = array(
                 'agent' => $row['username'],
                 'num_calls' => $row['call_cnt'],
                 'answered_total' => $row['ans_cnt'],
@@ -87,13 +87,13 @@ class API_Rousting_Report
                 'calls_per_hour' => $row['worked_calls_hr'],
                 'contact_percent' => ($row['call_cnt'] <= 0)?0:number_format( round( (($row['contact_cnt']) / ($row['call_cnt'])) * 100, 2), 2),
                 'paid_cc_num' => $row['paid_sale_cnt'],
-                'paid_per_hour' => ($row['paid_time'] <= 0)?0:($row['paid_sale_total'] / ($row['paid_time']/60)),
+            		'paid_per_hour' => (($row['paid_time']+$row['paid_corrections']) <= 0)?0:($row['paid_sale_total'] / (($row['paid_time']+$row['paid_corrections'])/60)),
                 'worked_per_hour' => ($act_total_time <= 0)?0:($row['paid_sale_total'] / ($activity_time/3600)),
                 'paid_cc_amount' => $row['paid_sale_total'],
                 'activity' => $this->secondsToTime($activity_time),
                 'in_call' => $this->secondsToTime($row['agent']['seconds_INCALL']),
                 'time' => $this->secondsToTime($act_total_time),
-                'paid_time' => $this->secondsToTime($row['paid_time']),
+            	'paid_time' => $this->secondsToTime(  $row['paid_time']+$row['paid_corrections']  ),
                 'pause' => $this->secondsToTime($row['t_pause']),
                 'talk_average' => $this->secondsToTime(($row['call_cnt'] <= 0)?0:round($row['t_talk'] / $row['call_cnt'])),
                 'dead' => $this->secondsToTime($row['t_dead']),
@@ -102,7 +102,7 @@ class API_Rousting_Report
                 'bump_total' => $row['agent']['bump_count'],
                 'pos_bump_amount' => $row['agent']['pos_bump_amount'],
                 'pos_bump_percent' => $row['agent']['pos_bump_percent']
-            ];
+            );
         }
 
         return $report;

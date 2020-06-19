@@ -176,6 +176,22 @@ class LeadManagement
 
                 var frm = getEl('<?=$this->frm_name?>');
                 var <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
+                let ob_phone_num = frm.s_outbound_phone_num.value;
+                ob_phone_num = ob_phone_num.replace(/[^0-9]/g,'');
+                let phone_num = frm.s_phone.value;
+                phone_num = phone_num.replace(/[^0-9]/g,'');
+
+
+				try{
+
+					
+                	if(phone_num.length > 0){
+
+                		pushPhoneSearch(phone_num);
+                    	
+	                }
+				}catch(ex){}
+                
                 return 'api/api.php' +
                     "?get=lead_management&" +
                     "mode=xml&" +
@@ -184,8 +200,8 @@ class LeadManagement
                     's_campaign_id=' + escape(frm.s_campaign_id.value) + "&" +
                     's_firstname=' + escape(frm.s_firstname.value) + "&" +
                     's_lastname=' + escape(frm.s_lastname.value) + "&" +
-                    's_phone=' + escape(frm.s_phone.value) + "&" +
-                    's_outbound_phone_num=' + escape(frm.s_outbound_phone_num.value.trim()) + "&" +
+                    's_phone=' + escape(phone_num) + "&" +
+                    's_outbound_phone_num=' + escape(ob_phone_num.trim()) + "&" +
                     's_cluster_id=' + escape(frm.s_cluster_id.value) + "&" +
                     's_status=' + escape(frm.s_status.value) + "&" +
                     's_agent_username=' + escape(frm.s_agent_username.value) + "&" +
@@ -203,12 +219,13 @@ class LeadManagement
             )
                 +"&pagesize=" + <?=$this->order_prepend?>pagesize + "&" +
                 "orderby=" + <?=$this->order_prepend?>orderby + "&orderdir=" + <?=$this->order_prepend?>orderdir;
+
+
             }
 
 
             var leads_loading_flag = false;
             var page_load_start;
-
             /**
              * Load the name data - make the ajax call, callback to the parse function
              */
@@ -403,6 +420,47 @@ class LeadManagement
                 }
             }
 
+            function initAutoComplete(field_id, arr){
+
+				//var tarr = arr.reverse();
+            	
+            	autocomplete(getEl(field_id), arr, false);
+            	
+            }
+
+			function pushPhoneSearch(phnum){
+
+				phnum = phnum.replace(/[^0-9]/g,'');
+				let tmpph;
+				for(var x=0;x < pidx;x++){
+
+					tmpph = recent_searches_phones[x].replace(/[^0-9]/g,'');
+
+					// SKIP IF ALREADY IN THE LIST
+					if(tmpph == phnum)return false;
+						
+				}
+
+				
+				//alert("Pushing : "+phnum);
+
+				recent_searches_phones[pidx++] = format_phone(phnum);
+
+				initAutoComplete('s_phone', recent_searches_phones);
+			}
+
+
+            var recent_searches_phones = new Array();
+            var pidx=0;
+            <?
+            
+            foreach($_SESSION['recent_searches']['phones'] as $phnum => $search_cnt){
+            	
+            	?>recent_searches_phones[pidx++] = '<?=format_phone($phnum)?>';
+            	<?
+            }
+            ?>
+
         </script>
         <div class="block">
             <form name="<?= $this->frm_name ?>" id="<?= $this->frm_name ?>" method="POST" action="<?= $_SERVER['REQUEST_URI'] ?>" onsubmit="loadLeads();return false;">
@@ -429,21 +487,27 @@ class LeadManagement
                     <div class="input-group input-group-sm">
                         <input type="hidden" name="searching_lead"/>
                         <input type="text" class="form-control" placeholder="PX ID.." name="s_id" value="<?= htmlentities($_REQUEST['s_id']) ?>"/>
-                        <input type="text" class="form-control" placeholder="Outbound Phone #.." name="s_outbound_phone_num" value="<?= htmlentities($_REQUEST['s_outbound_phone_num']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Outbound Phone #.." name="s_outbound_phone_num" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')" value="<?= htmlentities($_REQUEST['s_outbound_phone_num']) ?>"/>
                         <?= makeClusterDD('s_cluster_id', $_REQUEST['s_cluster_id'], '', "", "[Select Cluster]"); ?>
                         <?= makeCampaignIDDD('s_campaign_id', $_REQUEST['s_campaign_id'], '', "", "[Select Campaign]"); ?>
                         <?= $this->makeDispoDD('s_status', $_REQUEST['s_status'], "", "[Select Dispo]"); ?>
-                        <input type="text" class="form_control" placeholder="Agent.." name="s_agent_username" size="5" value="<?= htmlentities($_REQUEST['s_agent_username']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Verifier.." name="s_verifier_username" size="5" value="<?= htmlentities($_REQUEST['s_verifier_username']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Agent.." name="s_agent_username" size="5" value="<?= htmlentities($_REQUEST['s_agent_username']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Verifier.." name="s_verifier_username" size="5" value="<?= htmlentities($_REQUEST['s_verifier_username']) ?>"/>
                     </div>
                     <div class="input-group input-group-sm">
-                        <input type="text" class="form_control" placeholder="First Name.." name="s_firstname" size="5" value="<?= htmlentities($_REQUEST['s_firstname']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Last Name.." name="s_lastname" size="5" value="<?= htmlentities($_REQUEST['s_lastname']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Lead ID.." name="s_lead_id" size="5" value="<?= htmlentities($_REQUEST['s_lead_id']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Phone #.." name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
-                        <input type="text" class="form_control" placeholder="City.." name="s_city" size="10" value="<?= htmlentities($_REQUEST['s_city']) ?>"/>
-                        <input type="text" class="form_control" placeholder="State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
-                        <input type="text" class="form_control" placeholder="Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
+                        <input type="text" class="form-control" placeholder="First Name.." name="s_firstname" size="5" value="<?= htmlentities($_REQUEST['s_firstname']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Last Name.." name="s_lastname" size="5" value="<?= htmlentities($_REQUEST['s_lastname']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Lead ID.." name="s_lead_id" size="5" value="<?= htmlentities($_REQUEST['s_lead_id']) ?>"/>
+
+
+<div class="autocomplete" style="width:150px;padding:0">
+	<input type="text" class="form-control" style="padding:0px" placeholder="Phone #.." id="s_phone" name="s_phone" size="10" value="<?= htmlentities($_REQUEST['s_phone']) ?>" onkeyup="this.value=this.value.replace(/[^0-9]/g,'')"/>
+</div>
+                        
+                        
+                        <input type="text" class="form-control" placeholder="City.." name="s_city" size="10" value="<?= htmlentities($_REQUEST['s_city']) ?>"/>
+                        <input type="text" class="form-control" placeholder="State.." name="s_state" size="10" value="<?= htmlentities($_REQUEST['s_state']) ?>"/>
+                        <input type="text" class="form-control" placeholder="Vici List ID.." name="s_vici_list_id" size="5" value="<?= htmlentities($_REQUEST['s_vici_list_id']) ?>"/>
                         <?= makeOfficeDD('s_office_id', $_REQUEST['s_office_id'], '', "", "[Select Office]"); ?>
                         <button type="submit" value="Search" title="Search Leads" class="btn btn-sm btn-primary" name="the_Search_button" onclick="loadLeads();return false;">Search</button>
                         <button type="button" value="Reset" title="Reset Search Criteria" class="btn btn-sm btn-primary" onclick="resetLeadForm(this.form);resetPageSystem('<?= $this->index_name ?>');loadLeads();return false;">Reset</button>
@@ -523,6 +587,11 @@ class LeadManagement
             $('#s_status').attr('title', 'Select Status');
             $('#s_office_id').attr('title', 'Select Office');
             loadLeads();
+
+
+
+
+            initAutoComplete('s_phone', recent_searches_phones);
         </script>
         <?
 
@@ -583,7 +652,7 @@ class LeadManagement
          * <?***/
 
 
-        
+
 
 
         $this->listRecordings($row, false);
@@ -1507,7 +1576,7 @@ class LeadManagement
     function makeDispoDD($name, $sel, $onchange, $blank_entry = false, $skip_dispos = null)
     {
 
-        $out = '<select class="form-control custom-select-sm" name="' . $name . '" id="' . $name . '" ';
+        $out = '<select class="custom-select-sm" name="' . $name . '" id="' . $name . '" ';
 
         $out .= ($onchange) ? ' onchange="' . $onchange . '" ' : '';
 
@@ -1729,8 +1798,8 @@ class LeadManagement
 
 
         </script><?
-        
-        
+
+
 
     if (intval($_REQUEST['no_script']) < 2){
         ?>
