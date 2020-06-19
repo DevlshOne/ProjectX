@@ -300,30 +300,14 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             if (checkAccess('quiz_questions') || checkAccess('quiz_results')) {
                 ?>
                 <li class="nav-main-item">
-                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="nav-main-link-icon fa fa-question"></i>
-                        <span class="nav-main-heading">Quiz</span>
-                    </a>
+                    <? makeNavItem(true, 'fa-question', 'Quiz'); ?>
                     <ul class="nav-main-submenu">
                         <?
                         if (checkAccess('quiz_questions')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=quiz_questions&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Quiz Questions</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('quiz_questions', 'Quiz Questions');
                         }
                         if (checkAccess('quiz_results')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=quiz_results&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Quiz Results</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('quiz_results', 'Quiz Results');
                         }
                         ?>
                     </ul>
@@ -340,96 +324,34 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             makeNavSubItem('lead_management', 'Lead Management');
                         }
                         if (checkAccess('sales_management')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=sales_management&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Sales Management</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('sales_management', 'Sales Management');
                         }
                         if (checkAccess('employee_hours')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=employee_hours&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Employee Hours</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('employee_hours', 'Employee Hours');
                         }
                         if (checkAccess('phone_lookup')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=phone_lookup&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">DRIPP Lookup</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('phone_lookup', 'DRIPP Lookup');
                         }
                         if (checkAccess('ringing_calls')) {
-                            ?>
-                            <!--                            <li class="nav-main-item">-->
-                            <!--                                <a class="nav-main-link" href="?area=ringing_calls&no_script=1" onclick="loadSection(this.href);return false">-->
-                            <!--                                    <span class="nav-main-link-name">Ring Report</span>-->
-                            <!--                                </a>-->
-                            <!--                            </li>-->
-                            <?
+//                            makeNavSubItem('ringing_calls', 'Ring Report');
                         }
                         if (checkAccess('messages')) {
-                            ?>
-                            <!--                            <li class="nav-main-item">-->
-                            <!--                                <a class="nav-main-link" href="?area=messages&no_script=1" onclick="loadSection(this.href);return false">-->
-                            <!--                                    <span class="nav-main-link-name">Agent Messages</span>-->
-                            <!--                                </a>-->
-                            <!--                            </li>-->
-                            <?
+//                            makeNavSubItem('messages', 'Agent Messages');
                         }
                         if (checkAccess('dialer_status')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=dialer_status&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Dialer Status</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('dialer_status', 'Dialer Status');
                         }
                         if (checkAccess('server_status')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=server_status&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Server Status</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('server_status', 'Server Status');
                         }
                         if (checkAccess('extensions')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=extensions&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Extensions</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('extensions', 'Extensions');
                         }
                         if (checkAccess('offices')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=offices&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Offices</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('offices', 'Offices');
                         }
-
-
                         if (checkAccess('process_tracker_schedules')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=process_tracker_schedules&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Process Tracker</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('process_tracker_schedules', 'Process Tracker');
                         }
                         ?>
                     </ul>
@@ -439,52 +361,18 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             if (checkAccess('list_tools')) {
                 ?>
                 <li class="nav-main-item">
-                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="nav-main-link-icon fa fa-list"></i>
-                        <span class="nav-main-heading">List Tools</span>
-                    </a>
+                    <? makeNavItem(true, 'fa-list', 'List Tools'); ?>
                     <ul class="nav-main-submenu">
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=list_tools&tool=build_list&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">List Builder</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=list_tools&tool=dnc_tools&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">DNC Management</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=list_tools&tool=manage_lists&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">VICI List Management</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=list_tools&tool=tasks&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">Task / Status Management</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=list_tools&tool=load_list&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">Import Leads</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=list_tools&tool=view_imports&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">List Imports / Counts</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=list_tools&tool=performance_reports&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">List Performance Report</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=list_tools&tool=vici_report&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">VICIDIAL List Count</span>
-                            </a>
-                        </li>
+                        <?
+                        makeNavSubItem('list_tools&tool=build_list', 'List Builder');
+                        makeNavSubItem('list_tools&tool=dnc_tools', 'DNC Management');
+                        makeNavSubItem('list_tools&tool=manage_lists', 'VICI List Management');
+                        makeNavSubItem('list_tools&tool=tasks', 'Task / Status Management');
+                        makeNavSubItem('list_tools&tool=load_list', 'Import Leads');
+                        makeNavSubItem('list_tools&tool=view_imports', 'List Imports / Counts');
+                        makeNavSubItem('list_tools&tool=performance_reports', 'List Performance Reports');
+                        makeNavSubItem('list_tools&tool=vici_report', 'VICIDIAL List Counts');
+                        ?>
                     </ul>
                 </li>
                 <?
@@ -496,10 +384,10 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                     <ul class="nav-main-submenu">
                         <?
                         if (checkAccess('fronter_closer')) {
-                            makeNavSubItem('fronter-closer', 'Fronter / Closer');
+                            makeNavSubItem('fronter_closer', 'Fronter / Closer');
                         }
                         if (checkAccess('sales_analysis')) {
-                            makeNavSubItem('sales-analysis', 'Sales Analysis');
+                            makeNavSubItem('sales_analysis', 'Sales Analysis');
                         }
                         if (checkAccess('agent_call_stats')) {
                             makeNavSubItem('agent_call_stats', 'Verifier Call Stats');
@@ -511,81 +399,29 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                             makeNavSubItem('summary_report', 'Summary Report');
                         }
                         if (checkAccess('dialer_sales')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=dialer_sales&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">AC Sales By Dialer</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('dialer_sales', 'AC Sales By Dialer');
                         }
                         if (checkAccess('user_charts')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=user_charts&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">User Charts</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('user_charts', 'User Charts');
                         }
                         if (checkAccess('recent_hangups')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=recent_hangups&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Recent Hangups</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('recent_hangups', 'Recent Hangups');
                         }
                         if (checkAccess('dispo_log')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=dispo_log&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Disposition Logs</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('dispo_log', 'Disposition Logs');
                         }
                         if (checkAccess('capacity_report')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=capacity_report&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Capacity Reports</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('capacity_report', 'Capacity Reports');
                         }
                         if (checkAccess('report_emails')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=report_emails&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Report Email Setup</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('report_emails', 'Report Email Setup');
                         }
                         if (checkAccess('user_status_report')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=user_status_report&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">User Status Report</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('user_status_report', 'User Status Report');
                         }
-
-
                         if (checkAccess('script_statistics')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=script_statistics&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Script Statistics</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('script_statistics', 'Script Statistics');
                         }
-
-
                         ?>
                     </ul>
                 </li>
@@ -594,21 +430,11 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             if (checkAccess('pac_web_donations')) {
                 ?>
                 <li class="nav-main-item">
-                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="nav-main-link-icon fa fa-toolbox"></i>
-                        <span class="nav-main-heading">PACs Maintenance</span>
-                    </a>
+                    <?= makeNavItem(true, 'fa-toolbox', 'PACs Maintenance'); ?>
                     <ul class="nav-main-submenu">
                         <?
                         if (checkAccess('pac_reports')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=pac_reports&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Web Donations</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('pac_reports', 'Web Donations');
                         }
                         ?>
                     </ul>
@@ -618,59 +444,21 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             if (checkAccess('users')) {
                 ?>
                 <li class="nav-main-item">
-                    <a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu"
-                       aria-haspopup="true" aria-expanded="false">
-                        <i class="nav-main-link-icon fa fa-user"></i>
-                        <span class="nav-main-heading">Users</span>
-                    </a>
+                    <?= makeNavItem(true, 'fa-user', 'Users'); ?>
                     <ul class="nav-main-submenu">
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=users&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">Search / List Users</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=user_groups&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">Group Manager</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" href="?area=user_teams&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">Team Manager</span>
-                            </a>
-                        </li>
-                        <li class="nav-main-item">
-                            <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=user_groups_master&no_script=1" onclick="loadSection(this.href);return false">
-                                <span class="nav-main-link-name">Master Groups Manager</span>
-                            </a>
-                        </li>
                         <?
+                        makeNavSubItem('users', 'User Manager');
+                        makeNavSubItem('user_groups', 'Groups Manager');
+                        makeNavSubItem('user_teams', 'Teams Manager');
+                        makeNavSubItem('user_groups_master', 'Master Groups Manager');
                         if (checkAccess('feature_control')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=feature_control&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Feature Control</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('feature_control', 'Feature Control');
                         }
                         if (checkAccess('login_tracker')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=login_tracker&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Login Tracker</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('login_tracker', 'Login Tracker');
                         }
                         if (checkAccess('action_log')) {
-                            ?>
-                            <li class="nav-main-item">
-                                <a class="nav-main-link" data-toggle="layout" data-action="sidebar_Mini_toggle" href="?area=action_log&no_script=1" onclick="loadSection(this.href);return false">
-                                    <span class="nav-main-link-name">Action Logs</span>
-                                </a>
-                            </li>
-                            <?
+                            makeNavSubItem('action_log', 'Action Logs');
                         }
                         ?>
                     </ul>
