@@ -257,7 +257,7 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
             <?
             function makeNavItem($hasSubLevel = false, $icon, $heading)
             {
-                $item = '<a href="#" class="nav-main-link nav-main-link-submenu" data-toggle="submenu" aria-haspopup="true" aria-expanded="false">';
+                $item = '<a href="#" class="nav-main-link' . ($hasSubLevel ? ' nav-main-link-submenu" data-toggle="submenu"' : '"') . ' aria-haspopup="true" aria-expanded="false">';
                 $item .= '<i class="nav-main-link-icon fa ' . $icon . '"></i>';
                 $item .= '<span class="nav-main-heading">' . $heading . '</span></a>';
                 echo $item;
@@ -312,8 +312,8 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
                         makeNavSubItem('lead_management', 'lead_management', 'Lead Management');
                         makeNavSubItem('sales_management', 'sales_management', 'Sales Management');
                         makeNavSubItem('employee_hours', 'employee_hours', 'Employee Hours');
-                        makeNavSubItem('phone_lookup', 'phone_lookup', 'DRIPP Lookup');
-                        // makeNavSubItem('ringing-calls', 'ringing_calls', 'Ring Report');
+                        makeNavSubItem('phone_lookup', 'phone_lookup', 'Phone Lookup');
+                        // makeNavSubItem('ringing_calls', 'ringing_calls', 'Ring Report');
                         // makeNavSubItem('messages', 'messages', 'Agent Messages');
                         makeNavSubItem('dialer_status', 'dialer_status', 'Dialer Status');
                         makeNavSubItem('server_status', 'server_status', 'Server Status');

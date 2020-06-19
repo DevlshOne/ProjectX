@@ -448,38 +448,120 @@
 					</tr>
 		</form>
             </div>
-		</table><?
-
-
+		</table>
+            <?
         }
 
-
         function PlayQuizFile($id){
-
         	# Play audio file function - it will display audio player with play_audio_file.php as source
-
         	$id=intval($id);
-
         	if($id){
-
         		$row = $_SESSION['dbapi']->quiz_questions->getByID($id);
-
         	}
-
         	?>
 		<audio id="audio_obj" autoplay controls>
 			<source src="play_audio_file.php?file=<?=htmlentities($row['file'])?>" type="audio/wav" />
 			Your browser does not support the audio element.
 		</audio><br>
 		<a href="#" onclick="parent.hideAudio();return false">[Hide Player]</a>
-
 		<script>
 			parent.applyUniformity();
-		</script><?
+		</script>
+            <?
 
 	}
-
-
+        function importQuizResults($filepath, $filename){
+            // Get Quiz ID from filename
+            // $qid =
+            if(stripos($filename, ".tsv") > -1){
+                $sep = "\t";
+            }else{
+                $sep = ",";
+            }
+            $row = 0;
+            // Get the file as a CSV (Intrinsic) and load it into an array
+            $csvData = [];
+            if (($handle = fopen($filepath, "r")) !== FALSE) {
+                while (($data = fgetcsv($handle, 1000, $sep)) !== FALSE) {
+                    for ($c=0; $c < count($data); $c++) {
+                        $csvData[$row] = $data[$c];
+                    }
+                    $row++;
+                }
+                fclose($handle);
+            }
+            // First line is always the header
+            $headerRow = $csvData[0];
+            // Remaining lines are actual data
+            $quizData = array_splice($csvData,1,1);
+            // Iterate through the data and update the table (if necessary)
+            foreach($quizData as $quizRowNum => $quizRowData){
+                // SKIP BLANK LINES
+                if (trim($quizRowData) == '') continue;
+                $line_data = str_getcsv ($line,$sep,'"');
+                $dat = array();
+                $dat['pac_id']		= $_SESSION['fecdata']['current_pac']['id'];
+                $dat['filing_id']	= $_SESSION['fecdata']['current_file']['id'];
+                $full_address = '';
+                foreach($header_format as $idx=>$field_name){
+                    // DETECT AND STRIP QUOTES
+                    if($line_data[$idx][0] == '"' && $line_data[$idx][strlen($line_data[$idx])-1] == '"'){
+                        $line_data[$idx] = substr($line_data[$idx],1, strlen($line_data[$idx])-2);
+                    }
+                    $line_data[$idx] = trim($line_data[$idx]);
+                    switch($field_name){
+                        default:
+                            $dat[$field_name] = trim($line_data[$idx]);
+                            break;
+                        case 'amount':
+                            $dat[$field_name] = preg_replace("/[^0-9-.]/", '', $line_data[$idx]);
+                            break;
+                        case 'category_code':
+                            $dat[$field_name] = intval($line_data[$idx]);
+                            break;
+                        case 'date':
+                            $dat[$field_name] = date("Y-m-d", strtotime($line_data[$idx]));
+                            break;
+                        case 'zip':
+                            $dat[$field_name] = preg_replace("/[^0-9]/", '', $line_data[$idx]);
+                            break;
+                        case 'address1':
+                            $full_address = $line_data[$idx];
+                            // IF IT DOESNT CONTAIN THE SECOND ADDRESS LINE
+                            if(!$has_address2_field){
+                                // ATTEMPT TO PARSE THE FIRST LINE INTO 2 LINES
+                                $tidx = stripos($line_data[$idx]," suite");
+                                $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," ste");
+                                $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," apt");
+                                $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," BLDG");
+                                $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," UNIT");
+                                $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," LOT");
+                                $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," SPC");
+                                $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," TRLR");
+                                $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx],"#");
+                                // POSSIBLE DIVIDER DETECTED
+                                if($tidx > -1){
+                                    $dat[$field_name] = trim(substr($line_data[$idx], 0,  $tidx));
+                                    $dat['address2'] = trim(substr($line_data[$idx], $tidx));
+                                    // NOTHING DETECTED, KEEP WHOLE
+                                }else{
+                                    $dat[$field_name] = $line_data[$idx];
+                                }
+                                // ELSE JUST STORE AS ADDRESS1
+                            }else{
+                                $dat[$field_name] = $line_data[$idx];
+                            }
+                            break;
+                    } // END SWITCH(field name)
+                } // END FOREACH(header field)
+                $dat['unique_id'] = md5(trim($dat['company']).' '.trim($dat['zip']).' '.substr($full_address,0,8));
+                // MUST HAVE A DATE SPECIFIED, TO BE INCLUDED
+                if($dat['date']){
+                    $cnt += aadd($dat, $this->expenses_table);
+                }
+            } // END FOREACH(line)
+            return $cnt;
+        }
 
         function makeDD($name,$sel,$class,$onchange,$size, $blank_entry=1){
 
