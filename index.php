@@ -877,10 +877,6 @@ if (!isset($_REQUEST['no_script']) || (isset($_REQUEST['force_scripts']) && $_RE
         }
         // USER NOT LOGGED IN, SHOW LOGIN SCREEN
         } else {
-            # GENERATE NEW LOGIN SALT AND ADD TO SESSION IF THERE IS NONE
-            if (!isset($_SESSION['login_salt'])) {
-                $_SESSION['login_salt'] = $_SESSION['dbapi']->users->generateSalt();
-            }
             include_once("classes/login.inc.php");
             $_SESSION['login'] = new LoginClass();
             $_SESSION['login']->makeLoginForm();

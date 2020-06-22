@@ -538,7 +538,9 @@ class UsersAPI{
 	}
 
 
-	// function generateSalt($len=10){
+	function generateSalt($len=10){
+	    return;
+    }
 
 	// 	# CREATE A UNIQUE SALT TO BE USED DURING LOGIN
 	// 	# DEFAULT RANDOM BYTE LENGTH 10
