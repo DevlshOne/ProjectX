@@ -292,7 +292,6 @@ class QuizQuestions
             return $response;
         }
         // Get the file as a CSV (Intrinsic) and load it into an array
-        // duration,question,answer,variables,file,script_id,play_index,script_repeat_mode
         $fArray = $fFields = array();
         $i = 0;
         $fHandle = @fopen($qtmpFileName, "r");
@@ -318,74 +317,49 @@ class QuizQuestions
             $response = [0, "File not found!"];
             return $response;
         }
-        // First line is always the header
-        $headerRow = $fFields;
         // Iterate through the data and update the table (if necessary)
         foreach($fArray as $quizRowNum => $quizRow) {
             // SKIP BLANK LINES
             if (!is_array($quizRow)) continue;
             $dat = array();
             $dat['quiz_id']	= $qID;
-            $succCount = 0;
-            foreach($fFields as $fHeaderKey => $field_name){
-                // DETECT AND STRIP QUOTES
-                if($line_data[$idx][0] == '"' && $line_data[$idx][strlen($line_data[$idx])-1] == '"'){
-                    $line_data[$idx] = substr($line_data[$idx],1, strlen($line_data[$idx])-2);
-                }
-                $line_data[$idx] = trim($line_data[$idx]);
-                switch($field_name){
+            $sCount = 0;
+            foreach($fFields as $fHeaderKey => $fldValue){
+                // Strip any style quotes from the current value
+                preg_replace("/<!--.*?-->/", "", $fldValue);
+                // duration,question,answer,variables,file,script_id,play_index,script_repeat_mode
+                switch($fHeaderKey){
                     default:
-                        $dat[$field_name] = trim($line_data[$idx]);
+                        $dat[$fHeaderKey] = trim($fldValue);
                         break;
-                    case 'amount':
-                        $dat[$field_name] = preg_replace("/[^0-9-.]/", '', $line_data[$idx]);
+                    case 'duration':
+                        $dat[$fHeaderKey] = floatval($fldValue);
                         break;
-                    case 'category_code':
-                        $dat[$field_name] = intval($line_data[$idx]);
+                    case 'question':
+                        $dat[$fHeaderKey] = ucwords($fldValue);
                         break;
-                    case 'date':
-                        $dat[$field_name] = date("Y-m-d", strtotime($line_data[$idx]));
+                    case 'answer':
+                    case 'script_id':
+                        $dat[$fHeaderKey] = intval($fldValue);
                         break;
-                    case 'zip':
-                        $dat[$field_name] = preg_replace("/[^0-9]/", '', $line_data[$idx]);
+                    case 'play_index':
+                        $dat[$fHeaderKey] = boolval($fldValue);
                         break;
-                    case 'address1':
-                        $full_address = $line_data[$idx];
-                        // IF IT DOESNT CONTAIN THE SECOND ADDRESS LINE
-                        if(!$has_address2_field){
-                            // ATTEMPT TO PARSE THE FIRST LINE INTO 2 LINES
-                            $tidx = stripos($line_data[$idx]," suite");
-                            $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," ste");
-                            $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," apt");
-                            $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," BLDG");
-                            $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," UNIT");
-                            $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," LOT");
-                            $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," SPC");
-                            $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx]," TRLR");
-                            $tidx = ($tidx > -1)?$tidx:strripos($line_data[$idx],"#");
-                            // POSSIBLE DIVIDER DETECTED
-                            if($tidx > -1){
-                                $dat[$field_name] = trim(substr($line_data[$idx], 0,  $tidx));
-                                $dat['address2'] = trim(substr($line_data[$idx], $tidx));
-                                // NOTHING DETECTED, KEEP WHOLE
-                            }else{
-                                $dat[$field_name] = $line_data[$idx];
-                            }
-                            // ELSE JUST STORE AS ADDRESS1
-                        }else{
-                            $dat[$field_name] = $line_data[$idx];
-                        }
+                    case 'script_repeat_mode':
+                        $dat[$fHeaderKey] = boolval($fldValue) ? "yes" : "no";
                         break;
                 }
             }
-            $dat['unique_id'] = md5(trim($dat['company']).' '.trim($dat['zip']).' '.substr($full_address,0,8));
-            // MUST HAVE A DATE SPECIFIED, TO BE INCLUDED
-            if($dat['date']){
-                $cnt += aadd($dat, $this->expenses_table);
+            // Check for an id - UPDATE if present, INSERT if not
+            if($quizRow['id']) {
+                aedit($quizRow['id'], $dat, $this->expenses_table);
+                $sCount++;
+            } else {
+                aadd($dat, $this->expenses_table);
+                $sCount++;
             }
-            $succCount++;
         }
-        $response = [1, $succCount];
+        $response = [1, $sCount];
         return $response;
     }
 
