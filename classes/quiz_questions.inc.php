@@ -43,8 +43,8 @@ class QuizQuestions
             accessDenied("Quiz Questions");
             return;
         } else {
-            if (isset($_REQUEST['import_quiz'])) {
-                $this->importQuizQuestions($_REQUEST['f_quiz_id'], $_FILES);
+            if (isset($_REQUEST['import_questions'])) {
+                $this->importQuizQuestions();
             }
             if (isset($_REQUEST['add_question'])) {
                 $this->makeAdd($_REQUEST['add_question']);
@@ -178,6 +178,31 @@ class QuizQuestions
                 questionsrchtog = !questionsrchtog;
                 ieDisplay('question_search_table', questionsrchtog);
             }
+
+
+            function submitImportForm(frm) {
+                let params = getFormValues(frm);
+                $.ajax({
+                    type: "POST",
+                    cache: false,
+                    url: 'api/api.php?get=quiz_questions&action=import',
+                    data: params,
+                    error: function () {
+                        alert("Error in form. Please contact an admin.");
+                    },
+                    success: function (response) {
+                        let resultCode = response[0];
+                        let resultMessage = response[1];
+                        if (resultCode > 0) {
+                            alert(resultMessage);
+                            return;
+                        }
+                        loadQuestions();
+                        alert(resultMessage);
+                    }
+                });
+            }
+
         </script>
         <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <div class="block">
@@ -233,8 +258,8 @@ class QuizQuestions
         <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <div id="dialog-modal-add-question" title="Adding new Question" class="nod"></div>
         <div id="dialog-upload-import-file" title="Import Quiz Questions" class="nod">
-            <form method="POST" enctype="multipart/form-data" action="index.php?area=quiz_questions&printable=1&no_script=1">
-                <input type="hidden" name="import_quiz"/>
+            <form method="POST" enctype="multipart/form-data" action="<?= $_SERVER['REQUEST_URI']; ?>">
+                <input type="hidden" name="import_questions" />
                 <table class="table table-sm">
                     <tr>
                         <th>Select Quiz:</th>
@@ -280,16 +305,18 @@ class QuizQuestions
         <?
     }
 
-    function importQuizQuestions($qID, $qFile) {
-        $response = array();
-        $qtmpFileName = $qFile['questions_file']['tmp_name'];
-        $qusrFileName = $qFile['questions_file']['name'];
+    function importQuizQuestions() {
+        $qID = intval($_POST['f_quiz_id']);
+        $qFile = $_FILES['questions_file'];
+        $qtmpFileName = $qFile['tmp_name'];
+        $qusrFileName = $qFile['name'];
         // Get Quiz ID from filename
         $t = explode($qusrFileName, '-');
         $fQuizID = intval($t[2]);
         if ($qID != $fQuizID) {
-            $response = [0, "Quiz ID does not match file!"];
-            return $response;
+            $out = [0, "Quiz ID does not match file!"];
+            echo $out;
+            exit;
         }
         // Get the file as a CSV (Intrinsic) and load it into an array
         $fArray = $fFields = array();
@@ -309,13 +336,15 @@ class QuizQuestions
                 $i++;
             }
             if (!feof($fHandle)) {
-                $response = [0, "Unexpected file error!"];
-                return $response;
+                $out = [0, "Unexpected file error!"];
+                echo $out;
+                exit;
             }
             fclose($fHandle);
         } else {
-            $response = [0, "File not found!"];
-            return $response;
+            $out = [0, "File not found!"];
+            echo $out;
+            exit;
         }
         // Iterate through the data and update the table (if necessary)
         foreach($fArray as $quizRowNum => $quizRow) {
@@ -324,28 +353,29 @@ class QuizQuestions
             $dat = array();
             $dat['quiz_id']	= $qID;
             $sCount = 0;
-            foreach($fFields as $fHeaderKey => $fldValue){
+            foreach($quizRow as $fHeaderKey => $fldValue){
                 // Strip any style quotes from the current value
-                preg_replace("/<!--.*?-->/", "", $fldValue);
-                // duration,question,answer,variables,file,script_id,play_index,script_repeat_mode
+                str_replace('"', "", $fldValue);
+                str_replace("'", "", $fldValue);
+                // ID,Duration,Question,Answer,Variables,Filename,ScriptID,PlayIndex,RepeatMode
                 switch($fHeaderKey){
                     default:
                         $dat[$fHeaderKey] = trim($fldValue);
                         break;
-                    case 'duration':
+                    case 'Duration':
                         $dat[$fHeaderKey] = floatval($fldValue);
                         break;
-                    case 'question':
+                    case 'Question':
                         $dat[$fHeaderKey] = ucwords($fldValue);
                         break;
-                    case 'answer':
-                    case 'script_id':
+                    case 'Answer':
+                    case 'ScriptID':
                         $dat[$fHeaderKey] = intval($fldValue);
                         break;
-                    case 'play_index':
+                    case 'PlayIndex':
                         $dat[$fHeaderKey] = boolval($fldValue);
                         break;
-                    case 'script_repeat_mode':
+                    case 'RepeatMode':
                         $dat[$fHeaderKey] = boolval($fldValue) ? "yes" : "no";
                         break;
                 }
@@ -359,8 +389,8 @@ class QuizQuestions
                 $sCount++;
             }
         }
-        $response = [1, $sCount];
-        return $response;
+        $out = [1, $sCount];
+        echo $out;
     }
 
     function makeAdd($id)
@@ -391,7 +421,6 @@ class QuizQuestions
                 }
                 return true;
             }
-
             function checkQuestionFrm(frm) {
                 var params = getFormValues(frm, 'validateQuestionField');
                 // FORM VALIDATION FAILED!
