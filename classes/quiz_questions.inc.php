@@ -281,40 +281,48 @@ class QuizQuestions
     }
 
     function importQuizQuestions($qID, $qFile) {
-        $filename = $qFile['questions_file']['tmp_name'];
+        $qtmpFileName = $qFile['questions_file']['tmp_name'];
+        $qusrFileName = $qFile['questions_file']['name'];
         // Get Quiz ID from filename
-        // $qid =
-        if(stripos($filename, ".tsv") > -1){
-            $sep = "\t";
-        }else{
-            $sep = ",";
+        $t = explode($qusrFileName, '-');
+        $fQuizID = intval($t[2]);
+        if ($qID != $fQuizID) {
+            exit("ERROR: Quiz IDs must match!\n");
         }
-        $row = 0;
         // Get the file as a CSV (Intrinsic) and load it into an array
-        $csvData = [];
-        if (($handle = fopen($filename, "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, $sep)) !== FALSE) {
-                for ($c=0; $c < count($data); $c++) {
-                    $csvData[$row] = $data[$c];
+        // duration,question,answer,variables,file,script_id,play_index,script_repeat_mode
+        $fArray = $fFields = array();
+        $i = 0;
+        $fHandle = @fopen($qFile, "r");
+        if ($fHandle) {
+            while (($fRow = fgetcsv($fHandle, 1000)) !== FALSE) {
+                // Get the field names from the header row
+                if (empty($fFields)) {
+                    $fFields = $fRow;
+                    continue;
                 }
-                $row++;
+                // Assign the file's values associatively so we can create our insert statements without worry
+                foreach ($fRow as $fKey => $fValue) {
+                    $fArray[$i][$fFields[$fKey]] = $fValue;
+                }
+                $i++;
             }
-            fclose($handle);
+            if (!feof($fHandle)) {
+                exit("ERROR: Unexpected file failure\n");
+            }
+            fclose($fHandle);
+        } else {
+            exit("ERROR: Unable to open file\n");
         }
         // First line is always the header
-        $headerRow = $csvData[0];
-        // Remaining lines are actual data
-        $quizData = array_splice($csvData,1,1);
+        $headerRow = $fFields;
         // Iterate through the data and update the table (if necessary)
-        foreach($quizData as $quizRowNum => $quizRowData) {
+        foreach($fArray as $quizRowNum => $quizRow) {
             // SKIP BLANK LINES
-            if (trim($quizRowData) == '') continue;
-            $line_data = str_getcsv ($line,$sep,'"');
+            if (!is_array($quizRow)) continue;
             $dat = array();
-            $dat['pac_id']		= $_SESSION['fecdata']['current_pac']['id'];
-            $dat['filing_id']	= $_SESSION['fecdata']['current_file']['id'];
-            $full_address = '';
-            foreach($header_format as $idx=>$field_name){
+            $dat['quiz_id']	= $qID;
+            foreach($fFields as $fHeaderKey => $field_name){
                 // DETECT AND STRIP QUOTES
                 if($line_data[$idx][0] == '"' && $line_data[$idx][strlen($line_data[$idx])-1] == '"'){
                     $line_data[$idx] = substr($line_data[$idx],1, strlen($line_data[$idx])-2);
