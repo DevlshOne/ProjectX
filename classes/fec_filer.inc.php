@@ -617,7 +617,8 @@ WHERE total_amount >= 200
 //						echo nl2br(print_r($_FILES,1));
 //						exit;
 
-						$cnt = $this->importExpenses($_FILES['expense_file']['tmp_name'], $_FILES['expense_file']['name']);//importSchedule(trim($_REQUEST['schedule_code']), $_FILES['schedule_file']['tmp_name'], $_FILES['schedule_file']['name'] );
+						$cnt = $this->importExpenses($_FILES['expense_file']['tmp_name'], $_FILES['expense_file']['name']);
+						//importSchedule(trim($_REQUEST['schedule_code']), $_FILES['schedule_file']['tmp_name'], $_FILES['schedule_file']['name'] );
 
 						jsAlert("Successfully uploaded ".$cnt." records!");
 
@@ -5565,16 +5566,16 @@ WHERE total_amount >= 200
 	 * Calculate the Column B numbers, using the specified previous (Quarter)'s filing
 	 *
 	 * Quote from FEC F3X MANUAL:
-	 *	To derive the “Calendar Year-toDate”
+	 *	To derive the ï¿½Calendar Year-toDateï¿½
 		figure for each category, the
 		political committee should add the
-		“Calendar Year-to-Date” total from
-		the previous report to the “Total This
-		Period” from Column A for the current
+		ï¿½Calendar Year-to-Dateï¿½ total from
+		the previous report to the ï¿½Total This
+		Periodï¿½ from Column A for the current
 		report. For the first report filed
-		for a calendar year, the “Calendar
-		Year-to-Date” figure is equal to the
-		“Total This Period” figure
+		for a calendar year, the ï¿½Calendar
+		Year-to-Dateï¿½ figure is equal to the
+		ï¿½Total This Periodï¿½ figure
 	 *
 	 */
 	function calculateYearToDateTotals($prev_file_id){

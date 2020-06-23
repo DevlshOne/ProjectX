@@ -190,10 +190,11 @@ class API_Questions
                         $out .= ']' . "\n";
                         break;
                     case 'csv':
-                        $filename = "QuizQuestions-" . $dat['quiz_id'] . ".csv";
+                        $filename = "QuizQuestions-" . date("Ymd") . "-" . $dat['quiz_id'] . ".csv";
                         $out = "Duration,Question,Answer,Variables,Filename,Script,Index,Repeat\r\n";
                         while ($row = mysqli_fetch_array($res, MYSQLI_ASSOC)) {
-                            $out .= $row['duration'] . "," .
+                            $out .= $row['id'] . "," .
+                                $row['duration'] . "," .
                                 $row['question'] . "," .
                                 $row['answer'] . "," .
                                 htmlentities($row['variables']) . "," .

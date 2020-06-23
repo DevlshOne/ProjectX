@@ -233,7 +233,7 @@ class QuizQuestions
         <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <div id="dialog-modal-add-question" title="Adding new Question" class="nod"></div>
         <div id="dialog-upload-import-file" title="Import Quiz Questions" class="nod">
-            <form method="POST" enctype="multipart/form-data" action="<?= $_SERVER['REQUEST_URI']; ?>">
+            <form method="POST" enctype="multipart/form-data" action="index.php?area=quiz_questions&printable=1&no_script=1">
                 <input type="hidden" name="import_quiz"/>
                 <table class="table table-sm">
                     <tr>
@@ -281,19 +281,21 @@ class QuizQuestions
     }
 
     function importQuizQuestions($qID, $qFile) {
+        $response = array();
         $qtmpFileName = $qFile['questions_file']['tmp_name'];
         $qusrFileName = $qFile['questions_file']['name'];
         // Get Quiz ID from filename
         $t = explode($qusrFileName, '-');
         $fQuizID = intval($t[2]);
         if ($qID != $fQuizID) {
-            exit("ERROR: Quiz IDs must match!\n");
+            $response = [0, "Quiz ID does not match file!"];
+            return $response;
         }
         // Get the file as a CSV (Intrinsic) and load it into an array
         // duration,question,answer,variables,file,script_id,play_index,script_repeat_mode
         $fArray = $fFields = array();
         $i = 0;
-        $fHandle = @fopen($qFile, "r");
+        $fHandle = @fopen($qtmpFileName, "r");
         if ($fHandle) {
             while (($fRow = fgetcsv($fHandle, 1000)) !== FALSE) {
                 // Get the field names from the header row
@@ -308,11 +310,13 @@ class QuizQuestions
                 $i++;
             }
             if (!feof($fHandle)) {
-                exit("ERROR: Unexpected file failure\n");
+                $response = [0, "Unexpected file error!"];
+                return $response;
             }
             fclose($fHandle);
         } else {
-            exit("ERROR: Unable to open file\n");
+            $response = [0, "File not found!"];
+            return $response;
         }
         // First line is always the header
         $headerRow = $fFields;
@@ -322,6 +326,7 @@ class QuizQuestions
             if (!is_array($quizRow)) continue;
             $dat = array();
             $dat['quiz_id']	= $qID;
+            $succCount = 0;
             foreach($fFields as $fHeaderKey => $field_name){
                 // DETECT AND STRIP QUOTES
                 if($line_data[$idx][0] == '"' && $line_data[$idx][strlen($line_data[$idx])-1] == '"'){
@@ -371,15 +376,17 @@ class QuizQuestions
                             $dat[$field_name] = $line_data[$idx];
                         }
                         break;
-                } // END SWITCH(field name)
-            } // END FOREACH(header field)
+                }
+            }
             $dat['unique_id'] = md5(trim($dat['company']).' '.trim($dat['zip']).' '.substr($full_address,0,8));
             // MUST HAVE A DATE SPECIFIED, TO BE INCLUDED
             if($dat['date']){
                 $cnt += aadd($dat, $this->expenses_table);
             }
-        } // END FOREACH(line)
-        return $cnt;
+            $succCount++;
+        }
+        $response = [1, $succCount];
+        return $response;
     }
 
     function makeAdd($id)
