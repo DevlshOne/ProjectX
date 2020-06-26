@@ -8,21 +8,15 @@ $_SESSION['quiz_questions'] = new QuizQuestions;
 
 class QuizQuestions
 {
-
     var $table = 'quiz_questions';            ## Classes main table to operate on
     var $orderby = 'id';        ## Default Order field
     var $orderdir = 'DESC';    ## Default order direction
-
-
     ## Page  Configuration
     var $pagesize = 20;    ## Adjusts how many items will appear on each page
     var $index = 0;        ## You dont really want to mess with this variable. Index is adjusted by code, to change the pages
-
     var $index_name = 'question_list';    ## THIS IS FOR THE NEXT PAGE SYSTEM; jsNextPage($total,$obj, $jsfunc) is located in the /jsfunc.php file
     var $frm_name = 'questionnextfrm';
-
     var $order_prepend = 'question_';                ## THIS IS USED TO KEEP THE ORDER URLS FROM DIFFERENT AREAS FROM COLLIDING
-
     function QuizQuestions()
     {
         ## REQURES DB CONNECTION!
@@ -44,7 +38,8 @@ class QuizQuestions
             return;
         } else {
             if (isset($_REQUEST['import_questions'])) {
-                $this->importQuizQuestions();
+                $this->importQuizQuestions($_REQUEST['f_quiz_id'], $_FILES['questions_file']);
+                jsRedirect(stripurl(array('quiz_questions', 'no_script')));
             }
             if (isset($_REQUEST['add_question'])) {
                 $this->makeAdd($_REQUEST['add_question']);
@@ -82,6 +77,10 @@ class QuizQuestions
                 let frm = getEl('<?=$this->frm_name?>');
                 let <?=$this->order_prepend?>pagesize = 0;
                 if (csv_mode) {
+                    if(!frm.s_quiz_id.value) {
+                        alert('You must select a Quiz ID to export!');
+                        loadQuestions();
+                    }
                     <?=$this->order_prepend?>pagesize = <?=$this->order_prepend?>totalcount;
                 } else {
                     <?=$this->order_prepend?>pagesize = $('#<?=$this->order_prepend?>pagesizeDD').val();
@@ -178,31 +177,6 @@ class QuizQuestions
                 questionsrchtog = !questionsrchtog;
                 ieDisplay('question_search_table', questionsrchtog);
             }
-
-
-            function submitImportForm(frm) {
-                let params = getFormValues(frm);
-                $.ajax({
-                    type: "POST",
-                    cache: false,
-                    url: 'api/api.php?get=quiz_questions&action=import',
-                    data: params,
-                    error: function () {
-                        alert("Error in form. Please contact an admin.");
-                    },
-                    success: function (response) {
-                        let resultCode = response[0];
-                        let resultMessage = response[1];
-                        if (resultCode > 0) {
-                            alert(resultMessage);
-                            return;
-                        }
-                        loadQuestions();
-                        alert(resultMessage);
-                    }
-                });
-            }
-
         </script>
         <!-- ****START**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <div class="block">
@@ -258,7 +232,7 @@ class QuizQuestions
         <!-- ****END**** THIS AREA REPLACES THE OLD TABLES WITH THE NEW ONEUI INTERFACE BASED ON BOOTSTRAP -->
         <div id="dialog-modal-add-question" title="Adding new Question" class="nod"></div>
         <div id="dialog-upload-import-file" title="Import Quiz Questions" class="nod">
-            <form method="POST" enctype="multipart/form-data" action="<?= $_SERVER['REQUEST_URI']; ?>">
+            <form method="POST" enctype="multipart/form-data" action="<?=$_SERVER['REQUEST_URI'];?>">
                 <input type="hidden" name="import_questions" />
                 <table class="table table-sm">
                     <tr>
@@ -305,18 +279,16 @@ class QuizQuestions
         <?
     }
 
-    function importQuizQuestions() {
-        $qID = intval($_POST['f_quiz_id']);
-        $qFile = $_FILES['questions_file'];
+    function importQuizQuestions($qID, $qFile) {
+        $out = array();
         $qtmpFileName = $qFile['tmp_name'];
         $qusrFileName = $qFile['name'];
         // Get Quiz ID from filename
-        $t = explode($qusrFileName, '-');
+        $t = explode("-", $qusrFileName);
         $fQuizID = intval($t[2]);
         if ($qID != $fQuizID) {
-            $out = [0, "Quiz ID does not match file!"];
-            echo $out;
-            exit;
+            jsAlert("Quiz ID selected (" . $qID . ") does not match file (" . $fQuizID . ")");
+            return;
         }
         // Get the file as a CSV (Intrinsic) and load it into an array
         $fArray = $fFields = array();
@@ -336,23 +308,21 @@ class QuizQuestions
                 $i++;
             }
             if (!feof($fHandle)) {
-                $out = [0, "Unexpected file error!"];
-                echo $out;
-                exit;
+                jsAlert("Unexpected file error");
+                return;
             }
             fclose($fHandle);
         } else {
-            $out = [0, "File not found!"];
-            echo $out;
-            exit;
+            jsAlert("File not found");
+            return;
         }
         // Iterate through the data and update the table (if necessary)
+        $sCount = 0;
         foreach($fArray as $quizRowNum => $quizRow) {
             // SKIP BLANK LINES
             if (!is_array($quizRow)) continue;
             $dat = array();
             $dat['quiz_id']	= $qID;
-            $sCount = 0;
             foreach($quizRow as $fHeaderKey => $fldValue){
                 // Strip any style quotes from the current value
                 str_replace('"', "", $fldValue);
@@ -363,34 +333,43 @@ class QuizQuestions
                         $dat[$fHeaderKey] = trim($fldValue);
                         break;
                     case 'Duration':
-                        $dat[$fHeaderKey] = floatval($fldValue);
+                        $dat['duration'] = floatval($fldValue);
                         break;
                     case 'Question':
-                        $dat[$fHeaderKey] = ucwords($fldValue);
+                        $dat['question'] = ucwords($fldValue);
+                        break;
+                    case 'Variables':
+                        $dat['variables'] = trim($fldValue);
+                        break;
+                    case 'Filename':
+                        $dat['file'] = trim($fldValue);
                         break;
                     case 'Answer':
+                        $dat['answer'] = intval($fldValue);
+                        break;
                     case 'ScriptID':
-                        $dat[$fHeaderKey] = intval($fldValue);
+                        $dat['script_id'] = intval($fldValue);
                         break;
                     case 'PlayIndex':
-                        $dat[$fHeaderKey] = boolval($fldValue);
+                        $dat['play_index'] = intval($fldValue);
                         break;
                     case 'RepeatMode':
-                        $dat[$fHeaderKey] = boolval($fldValue) ? "yes" : "no";
+                        $dat['script_repeat_mode'] = trim($fldValue);
                         break;
                 }
+                unset($dat['ID']);
             }
             // Check for an id - UPDATE if present, INSERT if not
             if($quizRow['id']) {
-                aedit($quizRow['id'], $dat, $this->expenses_table);
+                 aedit($quizRow['id'], $dat, $this->table);
                 $sCount++;
             } else {
-                aadd($dat, $this->expenses_table);
+                 aadd($dat, $this->table);
                 $sCount++;
             }
         }
-        $out = [1, $sCount];
-        echo $out;
+        jsAlert("Successfully imported " . $sCount . " records");
+        return;
     }
 
     function makeAdd($id)

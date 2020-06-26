@@ -1,20 +1,13 @@
 <?php
 
-
 class API_Questions
 {
-
     var $xml_parent_tagname = "Questions";
     var $xml_record_tagname = "Question";
-
     var $json_parent_tagname = "ResultSet";
     var $json_record_tagname = "Result";
-
-
     function handleAPI()
     {
-
-
         if (!checkAccess('quiz_questions')) {
             $_SESSION['api']->errorOut('Access denied to Quiz Questions');
             return;
@@ -138,54 +131,32 @@ class API_Questions
         }
     }
 
-
     function handleSecondaryAjax()
     {
-
-
         $out_stack = array();
-
         //print_r($_REQUEST);
-
         foreach ($_REQUEST['special_stack'] as $idx => $data) {
-
             $tmparr = preg_split("/:/", $data);
-
             //print_r($tmparr);
-
-
             switch ($tmparr[1]) {
                 default:
-
                     ## ERROR
                     $out_stack[$idx] = -1;
-
                     break;
                 case 'quiz_name':
-
                     // COULD BE REPLACED LATER WITH A CUSOMIZABLE SCREEN DB TABLE
                     if ($tmparr[2] <= 0) {
                         $out_stack[$idx] = '-';
                     } else {
-
                         //echo "ID#".$tmparr[2];
-
                         list($out_stack[$idx]) = $_SESSION['dbapi']->queryROW("SELECT name FROM quiz WHERE id=" . intval($tmparr[2]));
                     }
-
                     break;
-
             }## END SWITCH
-
-
         }
-
-
         $out = $_SESSION['api']->renderSecondaryAjaxXML('Data', $out_stack);
-
         //print_r($out_stack);
         echo $out;
-
     } ## END HANDLE SECONDARY AJAX
 
 
