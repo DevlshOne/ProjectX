@@ -163,7 +163,7 @@ class QuizQuestions
                     $('#' + objname).dialog("option", "title", 'Adding new Question');
                 }
                 $('#' + objname).dialog("open");
-                $('#' + objname).html('<table border="0" width="100%" height="100%"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load("index.php?area=quiz_questions&add_question=" + id + "&printable=1&no_script=1");
+                $('#' + objname).html('<table  class="table table-sm"><tr><td align="center"><img src="images/ajax-loader.gif" border="0" /> Loading...</td></tr></table>').load("index.php?area=quiz_questions&add_question=" + id + "&printable=1&no_script=1");
             }
 
             function resetQuestionForm(frm) {
@@ -280,7 +280,6 @@ class QuizQuestions
     }
 
     function importQuizQuestions($qID, $qFile) {
-        $out = array();
         $qtmpFileName = $qFile['tmp_name'];
         $qusrFileName = $qFile['name'];
         // Get Quiz ID from filename
@@ -401,18 +400,20 @@ class QuizQuestions
                 return true;
             }
             function checkQuestionFrm(frm) {
-                var params = getFormValues(frm, 'validateQuestionField');
+                let params = getFormValues(frm, 'validateQuestionField');
+                const selectedFile = document.getElementById('audio_file').files[0];
+                if (selectedFile.name !== undefined) {
+                    // params.filename = selectedFile.name;
+                    params += "&wavfile=" + selectedFile;
+                }
+                debugger;
                 // FORM VALIDATION FAILED!
-                // param[0] == field name
-                // param[1] == field value
+                // params[0] == field name
+                // params[1] == field value
                 if (typeof params == "object") {
                     switch (params[0]) {
                         default:
                             alert("Error submitting form. Check your values");
-                            break;
-                        case 'filename':
-                            alert("Please enter the filename for this name.");
-                            eval('try{frm.' + params[0] + '.select();}catch(e){}');
                             break;
                     }
                     // SUCCESS - POST AJAX TO SERVER
@@ -420,9 +421,12 @@ class QuizQuestions
                     //alert("Form validated, posting");
                     $.ajax({
                         type: "POST",
+                        method: 'POST',
                         cache: false,
                         url: 'api/api.php?get=quiz_questions&mode=xml&action=edit',
                         data: params,
+                        contentType: false,
+                        processData: false,
                         error: function () {
                             alert("Error saving user form. Please contact an admin.");
                         },
@@ -472,24 +476,24 @@ class QuizQuestions
             $('#dialog-modal-add-question').dialog("option", "title", '<?=($id) ? 'Editing Question #' . $id . ' - ' . htmlentities($row['question']) : 'Adding new Question'?>');
         </script>
         <div class="text-center" id="quiz_media_player" title="Playing Quiz File">
-            <form method="POST" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkQuestionFrm(this); return false">
+            <form method="POST" enctype="multipart/form-data" action="<?= stripurl('') ?>" autocomplete="off" onsubmit="checkQuestionFrm(this); return false">
                 <input type="hidden" id="adding_question" name="adding_question" value="<?= $id ?>">
-                <table border="0" align="center">
+                <table class="table table-sm">
                     <tr>
-                        <th align="left" height="30">Quiz:</th>
+                        <th class="text-left" height="30">Quiz:</th>
                         <td><?= $this->makeDD('quiz_id', $row['quiz_id'], '', "", 0, 0); ?></td>
                     </tr>
                     <tr>
-                        <th align="left" height="30">Question:</th>
+                        <th class="text-left" height="30">Question:</th>
                         <td><input name="question" type="text" size="50" value="<?= htmlentities($row['question']) ?>"></td>
                     </tr>
                     <tr>
-                        <th align="left" height="30">Answer:</th>
+                        <th class="text-left" height="30">Answer:</th>
                         <td><input name="answer" type="text" size="5" value="<?= htmlentities($row['answer']) ?>"></td>
                     </tr>
                     <tr>
-                        <th align="left" height="30">Filename:</th>
-                        <td><input name="file" type="text" size="50" value="<?= htmlentities($row['file']) ?>"></td>
+                        <th class="text-left" height="30">Sound File:</th>
+                        <td><?=htmlentities($row['file']);?><br /><input title="Upload a sound file to assign to this question" name="audio_file" id="audio_file" type="file" accept="audio/wav"></td>
                     </tr>
                     <tr>
                         <th colspan="2" align="center"><input type="submit" value="Save Changes">

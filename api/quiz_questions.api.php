@@ -35,10 +35,26 @@ class API_Questions
             case 'edit':
                 $id = intval($_POST['adding_question']);
                 unset($dat);
+                $uploadedFile = $_FILES['wavfile'];
+                if (!empty($uploadedFile)) {
+                    $qtmpFileName = $uploadedFile['tmp_name'];
+                    $qusrFileName = $uploadedFile['name'];
+                    $qnewFileName = $qusrFileName + "-" + uniqid(rand(), true);
+                    $dat['file'] = trim($qnewFileName);
+                    $fHandle = @fopen($qtmpFileName, "r");
+                    if ($fHandle) {
+                        move_uploaded_file($qtmpFileName, $_SESSION['site_config']['upload_dir'] + "quiz/" + intval($_POST['quiz_id']) + "/" + $qnewFileName);
+                        fclose($fHandle);
+                    } else {
+                        jsAlert("File not found");
+                        return;
+                    }
+                } else {
+                    $dat['file'] = trim($_POST['file']);
+                }
                 $dat['quiz_id'] = intval($_POST['quiz_id']);
                 $dat['question'] = trim($_POST['question']);
                 $dat['answer'] = trim($_POST['answer']);
-                $dat['file'] = trim($_POST['file']);
                 if ($id) {
                     $_SESSION['dbapi']->aedit($id, $dat, $_SESSION['dbapi']->quiz_questions->table);
                     logAction('edit', 'quiz_questions', $id, "Question=" . $dat['question']);
