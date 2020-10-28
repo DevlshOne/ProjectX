@@ -6,6 +6,7 @@ class API_Questions
     var $xml_record_tagname = "Question";
     var $json_parent_tagname = "ResultSet";
     var $json_record_tagname = "Result";
+
     function handleAPI()
     {
         if (!checkAccess('quiz_questions')) {
@@ -32,26 +33,34 @@ class API_Questions
                 ///$out .= "</".$this->xml_record_tagname.">";
                 echo $out;
                 break;
-            case 'edit':
-                $id = intval($_POST['adding_question']);
-                unset($dat);
-                $uploadedFile = $_FILES['wavfile'];
-                if (!empty($uploadedFile)) {
+            case 'upload':
+                $id = intval($_REQUEST['id']);
+                if (0 < $_FILES['wavfile']['error']) {
+                    $out = 'Error: ' . $_FILES['wavfile']['error'] . '<br>';
+                } else {
+                    $uploadedFile = $_FILES['wavfile'];
                     $qtmpFileName = $uploadedFile['tmp_name'];
                     $qusrFileName = $uploadedFile['name'];
                     $qnewFileName = $qusrFileName + "-" + uniqid(rand(), true);
                     $dat['file'] = trim($qnewFileName);
-                    $fHandle = @fopen($qtmpFileName, "r");
-                    if ($fHandle) {
-                        move_uploaded_file($qtmpFileName, $_SESSION['site_config']['upload_dir'] + "quiz/" + intval($_POST['quiz_id']) + "/" + $qnewFileName);
-                        fclose($fHandle);
-                    } else {
-                        jsAlert("File not found");
-                        return;
+                    if (!is_dir($_SESSION['site_config']['upload_dir'] + "quiz")) {
+                        mkdir($_SESSION['site_config']['upload_dir'] + "quiz");
                     }
-                } else {
-                    $dat['file'] = trim($_POST['file']);
+                    if (!is_dir($_SESSION['site_config']['upload_dir'] + "quiz/" + intval($_POST['quiz_id']))) {
+                        mkdir($_SESSION['site_config']['upload_dir'] + "quiz/" + intval($_POST['quiz_id']));
+                    }
+                    if (!move_uploaded_file($qtmpFileName, $_SESSION['site_config']['upload_dir'] + "quiz/" + intval($_POST['quiz_id']) + "/" + $qnewFileName)) {
+                        $out = "Error: Cannot move uploaded file from " . $qtmpFileName . " to " . $qnewFileName;
+                        exit;
+                    } else {
+                        $out = "File successfully uploaded";
+                        logAction('upload', 'quiz_questions', $id, "File=" . $dat['file']);
+                    };
                 }
+                break;
+            case 'edit':
+                $id = intval($_POST['adding_question']);
+                unset($dat);
                 $dat['quiz_id'] = intval($_POST['quiz_id']);
                 $dat['question'] = trim($_POST['question']);
                 $dat['answer'] = trim($_POST['answer']);
@@ -65,7 +74,6 @@ class API_Questions
                 }
                 $_SESSION['api']->outputEditSuccess($id);
                 break;
-
             default:
             case 'list':
                 $dat = array();
@@ -143,7 +151,6 @@ class API_Questions
                 }
                 ## OUTPUT DATA!
                 echo $out;
-
         }
     }
 

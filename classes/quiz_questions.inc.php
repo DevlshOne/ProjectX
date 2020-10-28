@@ -401,12 +401,6 @@ class QuizQuestions
             }
             function checkQuestionFrm(frm) {
                 let params = getFormValues(frm, 'validateQuestionField');
-                const selectedFile = document.getElementById('audio_file').files[0];
-                if (selectedFile.name !== undefined) {
-                    // params.filename = selectedFile.name;
-                    params += "&wavfile=" + selectedFile;
-                }
-                debugger;
                 // FORM VALIDATION FAILED!
                 // params[0] == field name
                 // params[1] == field value
@@ -424,6 +418,7 @@ class QuizQuestions
                         method: 'POST',
                         cache: false,
                         url: 'api/api.php?get=quiz_questions&mode=xml&action=edit',
+                        // data: params,
                         data: params,
                         contentType: false,
                         processData: false,
@@ -472,6 +467,26 @@ class QuizQuestions
                 $('#quiz_media_player').empty();
             }
 
+            function uploadSoundFile(file) {
+                let audioFile = $('#newSoundFile').prop('files')[0];
+                let questionID = $('#adding_question').value();
+                let data = new FormData(frm);
+                data.append('questionid', questionID);
+                data.append('wavfile', audioFile);
+                console.log(data);
+                $.ajax({
+                    url: 'api/api.php?get=quiz_questions&mode=xml&action=upload',
+                    dataType: 'text',
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    data: data,
+                    type: 'post',
+                    success: function(response){
+                        alert(response);
+                    }
+                });
+            }
             // SET TITLEBAR
             $('#dialog-modal-add-question').dialog("option", "title", '<?=($id) ? 'Editing Question #' . $id . ' - ' . htmlentities($row['question']) : 'Adding new Question'?>');
         </script>
@@ -493,7 +508,11 @@ class QuizQuestions
                     </tr>
                     <tr>
                         <th class="text-left" height="30">Sound File:</th>
-                        <td><?=htmlentities($row['file']);?><br /><input title="Upload a sound file to assign to this question" name="audio_file" id="audio_file" type="file" accept="audio/wav"></td>
+                        <td>
+                            <?=htmlentities($row['file']);?><br />
+                            <input title="Upload a sound file to assign to this question" name="newSoundFile" id="newSoundFile" type="file" accept="audio/wav"><br />
+                            <input type="button" class="btn btn-sm btn-warning" title="Upload File" id="uploadSoundFile" onclick="uploadSoundFile()" value="Upload" />
+                        </td>
                     </tr>
                     <tr>
                         <th colspan="2" align="center"><input type="submit" value="Save Changes">
